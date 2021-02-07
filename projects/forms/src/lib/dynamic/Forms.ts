@@ -54,27 +54,27 @@ export class Forms
         }
     }
 
-    public async showform(form:string)
+    public showform(form:string)
     {
-        let i:number = 0;
-        while(this.form == null && ++i < 10)
-        setTimeout(function() {console.log("Waiting form form")}, 10);
-
         let def:Definition = this.forms[form.toLowerCase()];
         if (def != null && def.ref == null) def.ref = this.builder.createComponent(def.component);
 
-        this.app.attachView(def.ref.hostView);
-        let element:HTMLElement = (def.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-
-        let formsarea:HTMLElement = await this.form.getFormsArea();
-
-        if (this.stack.length > 0)
+        if (this.form == null)
         {
-            let last:Definition = this.stack[this.stack.length-1];
-            let prev:HTMLElement = (last.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-            formsarea.removeChild(prev);
+            window.alert("showform cannot be called before form-component is initialized");
+            return;
         }
 
+        let formsarea:HTMLElement = this.form.getFormsArea();
+        let element:HTMLElement = (def.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+
+        if (formsarea == null)
+        {
+            window.alert("showform cannot be called before form-component is initialized");
+            return;
+        }
+
+        this.app.attachView(def.ref.hostView);
         formsarea.appendChild(element);
     }
 }

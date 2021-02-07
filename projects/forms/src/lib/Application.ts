@@ -41,7 +41,7 @@ export class Application
         document.title = this.title$;
     }
 
-    public async showform(form:string)
+    public showform(form:string)
     {
         this.impl.showform(form);
     }

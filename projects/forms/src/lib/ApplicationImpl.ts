@@ -28,7 +28,7 @@ export class ApplicationImpl
     }
 
 
-    public async showform(form:string)
+    public showform(form:string)
     {
         this.forms.showform(form);
     }
