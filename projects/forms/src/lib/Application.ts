@@ -1,25 +1,33 @@
-import { Form } from "./dynamic/Form";
-import { Injectable } from '@angular/core';
+import { Builder } from "./dynamic/Builder";
+import { FormsDefinition } from "./FormsDefinition";
+import { ApplicationImpl } from "./ApplicationImpl";
+import { Injectable, ApplicationRef } from '@angular/core';
 
 
 @Injectable({
     providedIn: 'root',
   })
 
+
 export class Application
 {
     private title$:string;
-    private form$:Form = null;
+    private impl:ApplicationImpl;
 
 
-    public get form() : Form
+    constructor(aref:ApplicationRef, builder:Builder)
     {
-        return(this.form$);
+        this.impl = new ApplicationImpl(aref,builder);
     }
 
-    public set form(form:Form)
+    private getImplementation() : ApplicationImpl
     {
-        this.form$ = form;
+        return(this.impl);
+    }
+
+    public setFormsDefinitions(forms:FormsDefinition[]) : void
+    {
+        this.impl.setFormsDefinitions(forms);
     }
 
     public get title() : string
@@ -31,5 +39,10 @@ export class Application
     {
         this.title$ = title;
         document.title = this.title$;
+    }
+
+    public async showform(form:string)
+    {
+        this.impl.showform(form);
     }
 }

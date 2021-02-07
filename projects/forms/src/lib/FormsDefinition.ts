@@ -1,4 +1,4 @@
-export interface FormDefinition
+export interface FormsDefinition
 {
     url?:string;
     name:string;

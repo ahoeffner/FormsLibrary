@@ -7,17 +7,13 @@ import { Injectable, Injector, ComponentFactoryResolver, ComponentRef, Applicati
 
 export class Builder
 {
-    public static builder:Builder = null;
-
     constructor(private resolver:ComponentFactoryResolver, private injector:Injector, private app:ApplicationRef)
     {
-        if (Builder.builder == null) Builder.builder = this;
     }
 
-    public createComponent<C>(component:any) : C
+    public createComponent(component:any) : ComponentRef<any>
     {
         let cref:ComponentRef<any> = this.resolver.resolveComponentFactory(component).create(this.injector);
-        cref.instance.init(this.app,cref);
-        return(cref.instance as C);
+        return(cref);
     }
 }

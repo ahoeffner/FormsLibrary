@@ -1,49 +1,29 @@
-import { Page } from './Page';
-import { Builder } from './Builder';
-import { Component } from '@angular/core';
 import { Application } from '../Application';
+import { ApplicationImpl } from '../ApplicationImpl';
+import { Implementations } from '../Implementations';
+import { Component, ViewChild, ElementRef } from '@angular/core';
 
 
 @Component({
   selector: 'form',
-  template: '',
+  template: '<div #formarea></div>',
   styleUrls: []
 })
 
 
 export class Form
 {
-  private url:string;
-  private page:Page = null;
+	@ViewChild("formarea") private formarea: ElementRef;
 
+	constructor(appintf:Application)
+	{
+		Implementations.get<ApplicationImpl>(appintf).setForm(this);
+	}
 
-  constructor(app:Application, private builder:Builder)
-  {
-    app.form = this;
-    this.url = window.location.protocol + '//' + window.location.host;
-  }
-
-
-  public newform(form:any, title?:string, url?:string) : void
-  {
-    this.display(form,url,title,true);
-  }
-
-
-  public callform(form:any, title?:string, url?:string) : void
-  {
-    this.display(form,url,title,false);
-  }
-
-
-  private display(form:any, url:string, title:string, destroy:boolean) : void
-  {
-    if (this.page != null) this.page.dismiss(destroy);
-    this.page = this.builder.createComponent(form);
-
-    let state = {additionalInformation: 'None'};
-    window.history.replaceState(state,title,this.url+"/"+url);
-
-    this.page.display();
-  }
+	public async getFormsArea() : Promise<HTMLElement>
+	{
+        while(this.formarea == null)
+        setTimeout(function() {}, 10);
+        return(this.formarea.nativeElement);
+	}
 }
