@@ -24,25 +24,25 @@ export class Form
   }
 
 
-  public newform(form:any) : void
+  public newform(form:any, title?:string, url?:string) : void
   {
-    this.display(form,true);
+    this.display(form,url,title,true);
   }
 
 
-  public callform(form:any) : void
+  public callform(form:any, title?:string, url?:string) : void
   {
-    this.display(form,false);
+    this.display(form,url,title,false);
   }
 
 
-  private display(form:any, destroy:boolean) : void
+  private display(form:any, url:string, title:string, destroy:boolean) : void
   {
     if (this.page != null) this.page.dismiss(destroy);
     this.page = this.builder.createComponent(form);
 
     let state = {additionalInformation: 'None'};
-    window.history.replaceState(state,this.page.name(),this.url+"/"+this.page.url());
+    window.history.replaceState(state,title,this.url+"/"+url);
 
     this.page.display();
   }

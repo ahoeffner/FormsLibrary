@@ -1,16 +1,13 @@
 import { ComponentRef, ApplicationRef, EmbeddedViewRef } from '@angular/core';
 
 
-export abstract class Page
+export class Page
 {
     private app: ApplicationRef;
     private ref:ComponentRef<any>;
     private element:HTMLElement = null;
 
     constructor() {}
-
-    public abstract url() : string;
-    public abstract name() : string;
 
     public init(app: ApplicationRef, ref:ComponentRef<any>)
     {
