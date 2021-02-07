@@ -2,5 +2,5 @@
  * Public API Surface of forms
  */
 
-export {Form} from './lib/dynamic/Form';
+export {Page} from './lib/dynamic/Page';
 export {Application} from './lib/Application';
