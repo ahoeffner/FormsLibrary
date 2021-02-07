@@ -18,16 +18,17 @@ interface Definition
 export class Forms
 {
     private form:Form;
-    private stack:Definition[] = [];
+    private url:string;
+    private current:HTMLElement;
     private forms:Definition[] = [];
 
     constructor(private app:ApplicationRef, private builder:Builder)
     {
+        this.url = window.location.protocol + '//' + window.location.host;
     }
 
     public setForm(form:Form) : void
     {
-        console.log("setForm");
         this.form = form;
     }
 
@@ -73,6 +74,12 @@ export class Forms
             window.alert("showform cannot be called before form-component is initialized");
             return;
         }
+
+        let state = {additionalInformation: 'None'};
+        window.history.replaceState(state,def.name,this.url+"/"+def.url);
+
+        if (this.current != null) formsarea.removeChild(this.current);
+        this.current = element;
 
         this.app.attachView(def.ref.hostView);
         formsarea.appendChild(element);
