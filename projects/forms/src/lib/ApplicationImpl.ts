@@ -20,6 +20,8 @@ export class ApplicationImpl
     public setFormsDefinitions(forms:FormsDefinition[]) : void
     {
         this.forms.setFormsDefinitions(forms);
+        let form:string = window.location.pathname;
+        if (form.length > 1) this.showform(form.substring(1));
     }
 
 
@@ -31,6 +33,13 @@ export class ApplicationImpl
 
 
     public showform(form:string)
+    {
+        if (this.ready) this.forms.showform(form);
+        else setTimeout(() => {this.showform(form);},10);
+    }
+
+
+    public callform(form:string)
     {
         if (this.ready) this.forms.showform(form);
         else setTimeout(() => {this.showform(form);},10);

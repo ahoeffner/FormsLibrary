@@ -55,10 +55,24 @@ export class Forms
         }
     }
 
-    public showform(form:string)
+    public callform(form:string) : void
+    {
+        this.display(form,true);
+    }
+
+    public showform(form:string) : void
+    {
+        this.display(form,false);
+    }
+
+    private display(form:string, call:boolean) : void
     {
         let def:Definition = this.forms[form.toLowerCase()];
-        if (def != null && def.ref == null) def.ref = this.builder.createComponent(def.component);
+
+        if (def == null) return;
+        if (!call && !def.navigable) return;
+
+        if (def.ref == null) def.ref = this.builder.createComponent(def.component);
 
         let formsarea:HTMLElement = this.form.getFormsArea();
         let element:HTMLElement = (def.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
