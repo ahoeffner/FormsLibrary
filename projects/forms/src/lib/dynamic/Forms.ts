@@ -60,20 +60,8 @@ export class Forms
         let def:Definition = this.forms[form.toLowerCase()];
         if (def != null && def.ref == null) def.ref = this.builder.createComponent(def.component);
 
-        if (this.form == null)
-        {
-            window.alert("showform cannot be called before form-component is initialized");
-            return;
-        }
-
         let formsarea:HTMLElement = this.form.getFormsArea();
         let element:HTMLElement = (def.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-
-        if (formsarea == null)
-        {
-            window.alert("showform cannot be called before form-component is initialized");
-            return;
-        }
 
         let state = {additionalInformation: 'None'};
         window.history.replaceState(state,def.name,this.url+"/"+def.url);

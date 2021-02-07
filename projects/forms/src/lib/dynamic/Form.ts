@@ -1,7 +1,7 @@
 import { Application } from '../Application';
 import { ApplicationImpl } from '../ApplicationImpl';
 import { Implementations } from '../Implementations';
-import { Component, ViewChild, ElementRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 
 @Component({
@@ -11,18 +11,21 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 })
 
 
-export class Form
+export class Form implements AfterViewInit
 {
 	@ViewChild("formarea", {read: ElementRef}) private formarea: ElementRef;
 
-
-	constructor(appintf:Application)
+	constructor(private app:Application)
 	{
-		Implementations.get<ApplicationImpl>(appintf).setForm(this);
 	}
 
 	public getFormsArea() : HTMLElement
 	{
         return(this.formarea.nativeElement);
+	}
+
+	public ngAfterViewInit(): void
+	{
+		Implementations.get<ApplicationImpl>(this.app).setForm(this);
 	}
 }

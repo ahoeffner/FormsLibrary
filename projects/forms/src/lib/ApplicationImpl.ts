@@ -8,6 +8,7 @@ import { FormsDefinition } from "./FormsDefinition";
 export class ApplicationImpl
 {
     private forms:Forms;
+    private ready:boolean = false;
 
 
     constructor(aref:ApplicationRef, builder:Builder)
@@ -25,11 +26,13 @@ export class ApplicationImpl
     public setForm(form:Form)
     {
         this.forms.setForm(form);
+        this.ready = true;
     }
 
 
     public showform(form:string)
     {
-        this.forms.showform(form);
+        if (this.ready) this.forms.showform(form);
+        else setTimeout(() => {this.showform(form);},10);
     }
 }
