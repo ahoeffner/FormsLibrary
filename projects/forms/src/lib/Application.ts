@@ -45,4 +45,9 @@ export class Application
     {
         this.impl.showform(form);
     }
+
+    public callform(form:string)
+    {
+        this.impl.callform(form);
+    }
 }

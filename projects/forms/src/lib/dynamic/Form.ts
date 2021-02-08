@@ -6,7 +6,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'formarea',
-  template: '<p #formarea></p>',
+  template: '<div #formarea></div>',
   styleUrls: []
 })
 

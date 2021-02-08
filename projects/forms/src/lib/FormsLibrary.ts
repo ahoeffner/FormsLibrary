@@ -1,10 +1,11 @@
 import { Form } from './dynamic/Form';
 import { NgModule } from '@angular/core';
+import { Popup } from './dynamic/Popup';
 
 
 @NgModule({
-    declarations: [Form],
-    exports     : [Form],
+    declarations: [Form, Popup],
+    exports     : [Form, Popup],
 
     imports     : [
       ]

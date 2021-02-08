@@ -1,4 +1,5 @@
 import { Form } from "./dynamic/Form";
+import { Popup } from "./dynamic/Popup";
 import { Forms } from "./dynamic/Forms";
 import { Builder } from "./dynamic/Builder";
 import { ApplicationRef } from '@angular/core';
@@ -41,7 +42,14 @@ export class ApplicationImpl
 
     public callform(form:string)
     {
-        if (this.ready) this.forms.showform(form);
-        else setTimeout(() => {this.showform(form);},10);
+        if (this.ready) this.forms.callform(form);
+        else setTimeout(() => {this.callform(form);},10);
+    }
+
+
+    public createPopup(component:any) : Popup
+    {
+        let popup:Popup = new Popup();
+        return(popup);
     }
 }
