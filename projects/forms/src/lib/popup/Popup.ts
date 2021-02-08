@@ -14,4 +14,9 @@ export class Popup
     {
         return(this.impl);
     }
+
+    public close() : void
+    {
+        this.impl.close();
+    }
 }

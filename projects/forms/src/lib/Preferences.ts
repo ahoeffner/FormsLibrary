@@ -1,53 +1,58 @@
 export class Preferences
 {
-    private static accent:string = "#ff4081";
-    private static primary:string = "#303f9f";
-    private static textcolor:string = "white";
-    private static lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
+    private accent:string = "#ff4081";
+    private primary:string = "#303f9f";
+    private textcolor:string = "white";
+    private static prefs:Preferences = new Preferences();
+    private lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 
+    public static get() : Preferences
+    {
+        return(Preferences.prefs);
+    }
 
-    public static set theme(theme:string)
+    public set theme(theme:string)
     {
         if (theme.indexOf("indigo-pink") >= 0)
         {
-            Preferences.accent = "#ff4081";
-            Preferences.primary = "#303f9f";
+            this.accent = "#ff4081";
+            this.primary = "#303f9f";
         }
 
         if (theme.indexOf("pink-bluegrey") >= 0)
         {
-            Preferences.accent = "#b0bec5";
-            Preferences.primary = "#e91e63";
+            this.accent = "#b0bec5";
+            this.primary = "#e91e63";
         }
     }
 
 
-    public static get textColor() : string
+    public get textColor() : string
     {
-        return(Preferences.textcolor);
+        return(this.textcolor);
     }
 
 
-    public static get accentColor() : string
+    public get accentColor() : string
     {
-        return(Preferences.accent);
+        return(this.accent);
     }
 
 
-    public static get primaryColor() : string
+    public get primaryColor() : string
     {
-        return(Preferences.primary);
+        return(this.primary);
     }
 
 
-    public static set Lang(lang:string)
+    public set Lang(lang:string)
     {
-        Preferences.lang = lang;
+        this.lang = lang;
     }
 
 
-    public static get Lang() : string
+    public get Lang() : string
     {
-        return(Preferences.lang);
+        return(this.lang);
     }
 }

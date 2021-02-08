@@ -82,8 +82,8 @@ export class PopupWindow implements AfterViewInit
     public title : string = "";
     public width : string = "30vw";
     public height : string = "30vh";
-    public tcolor  : string = Preferences.textColor;
-    public bcolor  : string = Preferences.primaryColor;
+    public tcolor  : string = Preferences.get().textColor;
+    public bcolor  : string = Preferences.get().primaryColor;
 
 
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
