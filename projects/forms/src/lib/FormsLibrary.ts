@@ -1,11 +1,11 @@
-import { Form } from './dynamic/Form';
+import { FormArea } from './forms/FormArea';
 import { NgModule } from '@angular/core';
-import { Popup } from './dynamic/Popup';
+import { PopupWindow } from './popup/PopupWindow';
 
 
 @NgModule({
-    declarations: [Form, Popup],
-    exports     : [Form, Popup],
+    declarations: [FormArea, PopupWindow],
+    exports     : [FormArea],
 
     imports     : [
       ]

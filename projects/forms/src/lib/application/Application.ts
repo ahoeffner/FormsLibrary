@@ -1,7 +1,8 @@
-import { Builder } from "./dynamic/Builder";
-import { FormsDefinition } from "./FormsDefinition";
+import { Popup } from "../popup/Popup";
+import { Builder } from "../utils/Builder";
+import { Injectable } from '@angular/core';
 import { ApplicationImpl } from "./ApplicationImpl";
-import { Injectable, ApplicationRef } from '@angular/core';
+import { FormsDefinition } from "../forms/FormsDefinition";
 
 
 @Injectable({
@@ -11,13 +12,12 @@ import { Injectable, ApplicationRef } from '@angular/core';
 
 export class Application
 {
-    private title$:string;
     private impl:ApplicationImpl;
 
 
-    constructor(aref:ApplicationRef, builder:Builder)
+    constructor(builder:Builder)
     {
-        this.impl = new ApplicationImpl(aref,builder);
+        this.impl = new ApplicationImpl(builder);
     }
 
     private getImplementation() : ApplicationImpl
@@ -32,13 +32,12 @@ export class Application
 
     public get title() : string
     {
-        return(this.title$);
+        return(this.impl.getTitle());
     }
 
     public set title(title:string)
     {
-        this.title$ = title;
-        document.title = this.title$;
+        this.impl.setTitle(title);
     }
 
     public showform(form:string)
@@ -49,5 +48,15 @@ export class Application
     public callform(form:string)
     {
         this.impl.callform(form);
+    }
+
+    public closeform(form:string)
+    {
+        this.impl.closeform(form);
+    }
+
+    public showpopup(popup:Popup) : void
+    {
+        this.impl.showpopup(popup);
     }
 }

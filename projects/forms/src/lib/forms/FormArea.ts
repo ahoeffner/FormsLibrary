@@ -1,6 +1,6 @@
-import { Application } from '../Application';
-import { ApplicationImpl } from '../ApplicationImpl';
-import { Implementations } from '../Implementations';
+import { Application } from '../application/Application';
+import { Implementations } from '../utils/Implementations';
+import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 
@@ -11,7 +11,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 })
 
 
-export class Form implements AfterViewInit
+export class FormArea implements AfterViewInit
 {
 	@ViewChild("formarea", {read: ElementRef}) private formarea: ElementRef;
 
@@ -26,6 +26,6 @@ export class Form implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
-		Implementations.get<ApplicationImpl>(this.app).setForm(this);
+		Implementations.get<ApplicationImpl>(this.app).setFormArea(this);
 	}
 }
