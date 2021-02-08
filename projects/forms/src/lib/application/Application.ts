@@ -1,7 +1,7 @@
-import { Popup } from "../popup/Popup";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { ApplicationImpl } from "./ApplicationImpl";
+import { PopupWrapper } from "../popup/PopupWrapper";
 import { FormsDefinition } from "../forms/FormsDefinition";
 
 
@@ -55,7 +55,7 @@ export class Application
         this.impl.closeform(form);
     }
 
-    public showpopup(popup:Popup) : void
+    public showpopup(popup:PopupWrapper) : void
     {
         this.impl.showpopup(popup);
     }

@@ -1,7 +1,14 @@
+import { Popup } from './Popup';
 import { PopupImpl } from './PopupImpl';
 import { Builder } from '../utils/Builder';
 import { Preferences } from '../Preferences';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef } from '@angular/core';
+
+
+interface handler
+{
+    setImplHandler(handler:PopupImpl) : void;
+}
 
 
 @Component({
@@ -115,6 +122,10 @@ export class PopupWindow implements AfterViewInit
 		}
 
 		this.ref = this.builder.createComponent(this.popup.component);
+
+		if (this.ref.instance instanceof Popup)
+			(<handler><any>this.ref.instance).setImplHandler(this.popup);
+
 		this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.builder.getAppRef().attachView(this.ref.hostView);
         this.content.appendChild(this.element);
