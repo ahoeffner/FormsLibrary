@@ -18,7 +18,8 @@ interface handler
     <div class="modal">
       <div class="modal-block" style="top: {{top}}px; left: {{left}}px">
         <div class="container" style="width: {{width}}; height: {{height}};">
-          <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">{{title}}</div>
+		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
+		  <span style="display: inline-block; vertical-align: middle;">{{title}}</span></div>
           <div class="block"><div #content></div></div>
         </div>
       </div>
@@ -58,8 +59,8 @@ interface handler
         margin-left: 0;
         margin-right: 0;
         cursor:default;
-        font-size: larger;
-        text-align: center;
+        font-weight: bold;
+		text-align: center;
     }
 
     .block
