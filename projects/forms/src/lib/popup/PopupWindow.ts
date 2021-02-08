@@ -9,7 +9,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
   template:
   `
     <div class="modal">
-      <div class="modal-block" style="top: {{top}}; left: {{left}}">
+      <div class="modal-block" style="top: {{top}}px; left: {{left}}px">
         <div class="container" style="width: {{width}}; height: {{height}};">
           <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">{{title}}</div>
           <div class="block"><div #content></div></div>
