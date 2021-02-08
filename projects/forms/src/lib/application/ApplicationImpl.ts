@@ -1,9 +1,10 @@
 import { Popup } from "../popup/Popup";
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
-import { PopupWindow } from "../popup/PopupWindow";
+import { PopupImpl } from "../popup/PopupImpl";
 import { FormsControl } from "../forms/FormsControl";
 import { FormsDefinition } from "../forms/FormsDefinition";
+import { Implementations } from "../utils/Implementations";
 
 
 export class ApplicationImpl
@@ -69,6 +70,7 @@ export class ApplicationImpl
 
     public showpopup(popup:Popup) : void
     {
-        let win:PopupWindow = new PopupWindow(this.builder,popup);
+        let impl:PopupImpl = Implementations.get<PopupImpl>(popup);
+        impl.display(this.builder);
     }
 }

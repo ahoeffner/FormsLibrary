@@ -1,8 +1,6 @@
-import { Popup } from './Popup';
 import { PopupImpl } from './PopupImpl';
 import { Builder } from '../utils/Builder';
 import { Preferences } from '../Preferences';
-import { Implementations } from '../utils/Implementations';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef } from '@angular/core';
 
 
@@ -11,7 +9,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
   template:
   `
     <div class="modal">
-      <div class="modal-block" style="top: {{top}}px; left: {{left}}px">
+      <div class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
           <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">{{title}}</div>
           <div class="block"><div #content></div></div>
@@ -71,15 +69,16 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
 
 export class PopupWindow implements AfterViewInit
 {
+	private builder:Builder;
 	private popup:PopupImpl;
 	private element:HTMLElement;
 	private ref:ComponentRef<any>;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
 
-    public top : number = 20;
-    public left : number = 30;
-    public title : string = "";
+    public top : number = 40;
+    public left : number = 60;
+    public title : string = "???";
     public width : string = "30vw";
     public height : string = "30vh";
     public tcolor  : string = Preferences.get().textColor;
@@ -90,14 +89,31 @@ export class PopupWindow implements AfterViewInit
     @ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
 
 
-    constructor(private builder:Builder, pop:Popup)
-    {
-		this.popup = Implementations.get<PopupImpl>(pop);
+	public setPopupImpl(popup:PopupImpl) : void
+	{
+		this.top = popup.top;
+		this.left = popup.left;
+		this.width = popup.width;
+		this.height = popup.height;
+		this.title = popup.title;
+		this.popup = popup;
+	}
+
+
+	public setBuilder(builder:Builder) : void
+	{
+		this.builder = builder;
 	}
 
 
 	private display() : void
 	{
+		if (this.builder == null)
+		{
+			setTimeout(() => {this.display();},10);
+			return;
+		}
+
 		this.ref = this.builder.createComponent(this.popup.component);
 		this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.builder.getAppRef().attachView(this.ref.hostView);
