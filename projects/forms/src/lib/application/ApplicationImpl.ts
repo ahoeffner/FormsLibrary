@@ -65,16 +65,14 @@ export class ApplicationImpl
 
     public showform(form:string)
     {
-        let params:Parameters = this.getParams(form);
-        if (this.ready) this.formsctl.showform(form,params);
+        if (this.ready) this.formsctl.showform(form);
         else setTimeout(() => {this.showform(form);},10);
     }
 
 
     public callform(form:string)
     {
-        let params:Parameters = this.getParams(form);
-        if (this.ready) this.formsctl.callform(form,params);
+        if (this.ready) this.formsctl.callform(form);
         else setTimeout(() => {this.callform(form);},10);
     }
 
@@ -88,9 +86,7 @@ export class ApplicationImpl
 
     public showpopup(popup:any) : void
     {
-        let name:string = popup.constructor.name;
-        let params:Parameters = this.getParams(name);
-        let ctrl:PopupControl = new PopupControl(this.builder,popup,params);
+        let ctrl:PopupControl = new PopupControl(this.builder,popup);
         ctrl.display();
     }
 }

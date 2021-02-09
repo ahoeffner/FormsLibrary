@@ -4,7 +4,6 @@ import { FormArea } from "./FormArea";
 import { Builder } from "../utils/Builder";
 import { Protected } from '../utils/Protected';
 import { FormsDefinition } from "./FormsDefinition";
-import { Parameters } from "../application/Parameters";
 import { ComponentRef, EmbeddedViewRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -64,15 +63,15 @@ export class FormsControl
     }
 
 
-    public callform(form:string, params:Parameters) : void
+    public callform(form:string) : void
     {
-        this.display(form,true,params);
+        this.display(form,true);
     }
 
 
-    public showform(form:string, params:Parameters) : void
+    public showform(form:string) : void
     {
-        this.display(form,false,params);
+        this.display(form,false);
     }
 
 
@@ -98,7 +97,7 @@ export class FormsControl
         }
     }
 
-    private display(form:string, call:boolean, params:Parameters) : void
+    private display(form:string, call:boolean) : void
     {
         let def:Definition = this.forms[form.toLowerCase()];
 
@@ -120,7 +119,6 @@ export class FormsControl
             let impl:FormImpl = Protected.get<FormImpl>(def.ref.instance);
 
             impl.setApp(this.app);
-            impl.setParams(params);
         }
 
 

@@ -3,7 +3,6 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 
 export class FormImpl
 {
-    private params:Parameters;
     private app:ApplicationImpl;
 
     public setApp(app:ApplicationImpl) : void
@@ -11,14 +10,8 @@ export class FormImpl
         this.app = app;
     }
 
-    public setParams(params:Parameters) : void
+    public getParameters(component:string) : Parameters
     {
-        this.params = params;
-    }
-
-    public getParameters(component?:string) : Parameters
-    {
-        if (component == null) return(this.params);
-        else return(this.app.getParams(component));
+        return(this.app.getParams(component));
     }
 }

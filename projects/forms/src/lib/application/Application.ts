@@ -51,7 +51,7 @@ export class Application
 
     public closeform(form:string)
     {
-        this.impl.closeform(form);
+        this.impl.closeform(form,false);
     }
 
     public showpopup(popup:any) : void
