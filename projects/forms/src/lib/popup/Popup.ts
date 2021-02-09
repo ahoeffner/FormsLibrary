@@ -1,10 +1,12 @@
 import { PopupControl } from "./PopupControl";
+import { Parameters } from "../application/Parameters";
+
 
 export class Popup
 {
     private impl:PopupControl;
 
-    private setImplementation(impl:PopupControl) : void
+    private setProtected(impl:PopupControl) : void
     {
         this.impl = impl;
     }
@@ -32,6 +34,11 @@ export class Popup
     public getHeight() : number
     {
         return(300);
+    }
+
+    public getParameters() : Parameters
+    {
+        return(this.impl.getParameters());
     }
 
     public close() : void

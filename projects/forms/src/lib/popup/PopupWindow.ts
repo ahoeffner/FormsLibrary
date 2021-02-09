@@ -2,7 +2,7 @@ import { Popup } from './Popup';
 import { Builder } from '../utils/Builder';
 import { Preferences } from '../Preferences';
 import { PopupControl } from './PopupControl';
-import { Implementations } from '../utils/Implementations';
+import { Protected } from '../utils/Protected';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 
@@ -54,7 +54,6 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
         margin-left: 0;
         margin-right: 0;
         cursor:default;
-        font-weight: bold;
 		text-align: center;
     }
 
@@ -95,6 +94,7 @@ export class PopupWindow implements AfterViewInit
 
 	constructor(private change:ChangeDetectorRef) {}
 
+
 	public setControl(ctrl:PopupControl) : void
 	{
 		this.ctrl = ctrl;
@@ -125,7 +125,7 @@ export class PopupWindow implements AfterViewInit
 		if (!(this.ref.instance instanceof Popup)) return;
 
 		let popup:Popup = this.ref.instance;
-		Implementations.set(popup,this.ctrl);
+		Protected.set(popup,this.ctrl);
 
 		this.title = popup.getTitle();
 		this.top = popup.getOffsetTop();

@@ -1,4 +1,6 @@
 import { FormImpl } from "./FormImpl";
+import { Parameters } from "../application/Parameters";
+
 
 export class Form
 {
@@ -9,8 +11,13 @@ export class Form
         this.impl = new FormImpl();
     }
 
-    private getImplementation() : FormImpl
+    private getProtected() : FormImpl
     {
         return(this.impl);
+    }
+
+    public getParameters(component?:string) : Parameters
+    {
+        return(this.impl.getParameters(component));
     }
 }

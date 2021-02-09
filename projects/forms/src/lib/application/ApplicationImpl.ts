@@ -1,3 +1,4 @@
+import { Parameters } from "./Parameters";
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
 import { PopupControl } from "../popup/PopupControl";
@@ -10,12 +11,20 @@ export class ApplicationImpl
     private title:string = null;
     private ready:boolean = false;
     private formsctl:FormsControl;
+    private params:Parameters[] = [];
+
+
+    constructor(private builder:Builder)
+    {
+        this.formsctl = new FormsControl(this,builder);
+    }
 
 
     public getTitle() : string
     {
         return(this.title);
     }
+
 
     public setTitle(title:string)
     {
@@ -24,9 +33,18 @@ export class ApplicationImpl
     }
 
 
-    constructor(private builder:Builder)
+    public getParams(name:string) : Parameters
     {
-        this.formsctl = new FormsControl(this,builder);
+        name = name.toLowerCase();
+        let params:Parameters = this.params[name];
+
+        if (params == null)
+        {
+            params = new Parameters();
+            this.params[name] = params;
+        }
+
+        return(params);
     }
 
 
@@ -47,27 +65,32 @@ export class ApplicationImpl
 
     public showform(form:string)
     {
-        if (this.ready) this.formsctl.showform(form);
+        let params:Parameters = this.getParams(form);
+        if (this.ready) this.formsctl.showform(form,params);
         else setTimeout(() => {this.showform(form);},10);
     }
 
 
     public callform(form:string)
     {
-        if (this.ready) this.formsctl.callform(form);
+        let params:Parameters = this.getParams(form);
+        if (this.ready) this.formsctl.callform(form,params);
         else setTimeout(() => {this.callform(form);},10);
     }
 
 
-    public closeform(form:string)
+    public closeform(form:string, destroy:boolean)
     {
-        if (this.ready) this.formsctl.closeform(form);
-        else setTimeout(() => {this.closeform(form);},10);
+        if (this.ready) this.formsctl.closeform(form,destroy);
+        else setTimeout(() => {this.closeform(form,destroy);},10);
     }
 
 
     public showpopup(popup:any) : void
     {
-        (new PopupControl(this.builder,popup)).display();
+        let name:string = popup.constructor.name;
+        let params:Parameters = this.getParams(name);
+        let ctrl:PopupControl = new PopupControl(this.builder,popup,params);
+        ctrl.display();
     }
 }

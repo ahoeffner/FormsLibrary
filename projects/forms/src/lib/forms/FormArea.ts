@@ -1,5 +1,5 @@
 import { Application } from '../application/Application';
-import { Implementations } from '../utils/Implementations';
+import { Protected } from '../utils/Protected';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
@@ -26,6 +26,6 @@ export class FormArea implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
-		Implementations.get<ApplicationImpl>(this.app).setFormArea(this);
+		Protected.get<ApplicationImpl>(this.app).setFormArea(this);
 	}
 }

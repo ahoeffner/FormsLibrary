@@ -1,6 +1,6 @@
-import { Popup } from "./Popup";
 import { Builder } from "../utils/Builder";
 import { PopupWindow } from "./PopupWindow";
+import { Parameters } from "../application/Parameters";
 import { ComponentRef, EmbeddedViewRef, ApplicationRef } from '@angular/core';
 
 
@@ -11,7 +11,7 @@ export class PopupControl
     private element:HTMLElement;
     private ref:ComponentRef<any>;
 
-    constructor(private builder:Builder, public component:any) {}
+    constructor(private builder:Builder, public component:any, public params:Parameters) {}
 
     public display() : void
     {
@@ -30,6 +30,10 @@ export class PopupControl
         document.body.appendChild(this.element);
     }
 
+    public getParameters() : Parameters
+    {
+        return(this.params);
+    }
 
     public close() : void
     {

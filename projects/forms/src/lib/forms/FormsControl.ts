@@ -2,8 +2,9 @@ import { Form } from "./Form";
 import { FormImpl } from "./FormImpl";
 import { FormArea } from "./FormArea";
 import { Builder } from "../utils/Builder";
+import { Protected } from '../utils/Protected';
 import { FormsDefinition } from "./FormsDefinition";
-import { Implementations } from '../utils/Implementations';
+import { Parameters } from "../application/Parameters";
 import { ComponentRef, EmbeddedViewRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -63,19 +64,19 @@ export class FormsControl
     }
 
 
-    public callform(form:string) : void
+    public callform(form:string, params:Parameters) : void
     {
-        this.display(form,true);
+        this.display(form,true,params);
     }
 
 
-    public showform(form:string) : void
+    public showform(form:string, params:Parameters) : void
     {
-        this.display(form,false);
+        this.display(form,false,params);
     }
 
 
-    public closeform(form:string) : void
+    public closeform(form:string, destroy:boolean) : void
     {
         let def:Definition = this.forms[form.toLowerCase()];
 
@@ -90,17 +91,20 @@ export class FormsControl
             this.builder.getAppRef().detachView(def.ref.hostView);
         }
 
-        def.ref.destroy();
-        def.ref = null;
+        if (destroy)
+        {
+            def.ref.destroy();
+            def.ref = null;
+        }
     }
 
-    private display(form:string, call:boolean) : void
+    private display(form:string, call:boolean, params:Parameters) : void
     {
         let def:Definition = this.forms[form.toLowerCase()];
 
         if (def == null) return;
-        if (call) this.closeform(form);
         if (!call && !def.navigable) return;
+        if (call) this.closeform(form,true);
 
         if (def.ref == null)
         {
@@ -113,7 +117,10 @@ export class FormsControl
                 return;
             }
 
-            Implementations.get<FormImpl>(def.ref.instance).setApp(this.app);
+            let impl:FormImpl = Protected.get<FormImpl>(def.ref.instance);
+
+            impl.setApp(this.app);
+            impl.setParams(params);
         }
 
 
