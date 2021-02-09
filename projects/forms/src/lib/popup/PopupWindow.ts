@@ -3,7 +3,7 @@ import { Builder } from '../utils/Builder';
 import { Preferences } from '../Preferences';
 import { PopupControl } from './PopupControl';
 import { Implementations } from '../utils/Implementations';
-import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -67,7 +67,8 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
         overflow: auto;
         position: absolute;
     }
-`]
+`],
+changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 export class PopupWindow implements AfterViewInit
@@ -90,8 +91,9 @@ export class PopupWindow implements AfterViewInit
 
 
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
-    @ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
+	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
 
+	constructor(private change:ChangeDetectorRef) {}
 
 	public setControl(ctrl:PopupControl) : void
 	{
@@ -133,7 +135,9 @@ export class PopupWindow implements AfterViewInit
 
 		this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.builder.getAppRef().attachView(this.ref.hostView);
-        this.content.appendChild(this.element);
+		this.content.appendChild(this.element);
+
+		this.change.detectChanges();
 	}
 
 
@@ -204,5 +208,7 @@ export class PopupWindow implements AfterViewInit
 
 		this.topbar.style.top = this.top + "px";
 		this.topbar.style.left = this.left + "px";
+
+		this.change.detectChanges();
 	}
 }
