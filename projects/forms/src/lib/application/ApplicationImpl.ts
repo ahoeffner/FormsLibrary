@@ -52,7 +52,15 @@ export class ApplicationImpl
     {
         this.formsctl.setFormsDefinitions(forms);
         let form:string = window.location.pathname;
-        if (form.length > 1) this.showform(form.substring(1));
+
+        if (form.length > 1)
+        {
+            let name:string = form.substring(1);
+            let params:Parameters = this.getParameters(name);
+            let urlparams = new URLSearchParams(window.location.search);
+            urlparams.forEach((value,key) => {params.set(key,value)});
+            this.showform(name);
+        }
     }
 
 

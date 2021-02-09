@@ -23,7 +23,7 @@ export class FormsControl
     private url:string;
     private formarea:FormArea;
     private current:HTMLElement;
-    private forms:Definition[] = [];
+    private forms:Map<string,Definition> = new Map<string,Definition>();
 
 
     constructor(private app:ApplicationImpl, private builder:Builder)
@@ -55,7 +55,7 @@ export class FormsControl
                 navigable: navigable
             };
 
-            this.forms[fname] = def;
+            this.forms.set(fname,def);
         }
     }
 
@@ -81,7 +81,7 @@ export class FormsControl
     public closeform(form:any, destroy:boolean) : void
     {
         let name:string = this.getName(form);
-        let def:Definition = this.forms[name];
+        let def:Definition = this.forms.get(name);
 
         if (def == null || def.ref == null) return;
         let formsarea:HTMLElement = this.formarea.getFormsArea();
@@ -104,7 +104,7 @@ export class FormsControl
     private display(form:any, call:boolean, close:boolean) : void
     {
         let name:string = this.getName(form);
-        let def:Definition = this.forms[name];
+        let def:Definition = this.forms.get(name);
 
         if (def == null) return;
         if (!call && !def.navigable) return;
