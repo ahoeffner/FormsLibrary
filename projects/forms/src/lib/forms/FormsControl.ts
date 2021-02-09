@@ -99,6 +99,7 @@ export class FormsControl
         let def:Definition = this.forms[form.toLowerCase()];
 
         if (def == null) return;
+        if (call) this.closeform(form);
         if (!call && !def.navigable) return;
 
         if (def.ref == null)

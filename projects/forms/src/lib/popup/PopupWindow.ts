@@ -1,14 +1,9 @@
 import { Popup } from './Popup';
-import { PopupImpl } from './PopupImpl';
 import { Builder } from '../utils/Builder';
 import { Preferences } from '../Preferences';
+import { PopupControl } from './PopupControl';
+import { Implementations } from '../utils/Implementations';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef } from '@angular/core';
-
-
-interface handler
-{
-    setImplHandler(handler:PopupImpl) : void;
-}
 
 
 @Component({
@@ -77,8 +72,9 @@ interface handler
 
 export class PopupWindow implements AfterViewInit
 {
+	private popup:any;
 	private builder:Builder;
-	private popup:PopupImpl;
+	private ctrl:PopupControl;
 	private element:HTMLElement;
 	private ref:ComponentRef<any>;
     private topbar:HTMLDivElement;
@@ -97,13 +93,14 @@ export class PopupWindow implements AfterViewInit
     @ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
 
 
-	public setPopupImpl(popup:PopupImpl) : void
+	public setControl(ctrl:PopupControl) : void
 	{
-		this.top = popup.top;
-		this.left = popup.left;
-		this.width = popup.width;
-		this.height = popup.height;
-		this.title = popup.title;
+		this.ctrl = ctrl;
+	}
+
+
+	public setComponent(popup:any) : void
+	{
 		this.popup = popup;
 	}
 
@@ -116,16 +113,23 @@ export class PopupWindow implements AfterViewInit
 
 	private display() : void
 	{
-		if (this.builder == null)
+		if (this.popup == null)
 		{
 			setTimeout(() => {this.display();},10);
 			return;
 		}
 
-		this.ref = this.builder.createComponent(this.popup.component);
+		this.ref = this.builder.createComponent(this.popup);
+		if (!(this.ref.instance instanceof Popup)) return;
 
-		if (this.ref.instance instanceof Popup)
-			(<handler><any>this.ref.instance).setImplHandler(this.popup);
+		let popup:Popup = this.ref.instance;
+		Implementations.set(popup,this.ctrl);
+
+		this.title = popup.getTitle();
+		this.top = popup.getOffsetTop();
+		this.left = popup.getOffsetLeft();
+		this.width = popup.getWidth()+"px";
+		this.height = popup.getHeight()+"px";
 
 		this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.builder.getAppRef().attachView(this.ref.hostView);

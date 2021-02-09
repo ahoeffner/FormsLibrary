@@ -1,10 +1,8 @@
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
-import { PopupImpl } from "../popup/PopupImpl";
+import { PopupControl } from "../popup/PopupControl";
 import { FormsControl } from "../forms/FormsControl";
-import { PopupWrapper } from "../popup/PopupWrapper";
 import { FormsDefinition } from "../forms/FormsDefinition";
-import { Implementations } from "../utils/Implementations";
 
 
 export class ApplicationImpl
@@ -68,9 +66,8 @@ export class ApplicationImpl
     }
 
 
-    public showpopup(popup:PopupWrapper) : void
+    public showpopup(popup:any) : void
     {
-        let impl:PopupImpl = Implementations.get<PopupImpl>(popup);
-        impl.display(this.builder);
+        (new PopupControl(this.builder,popup)).display();
     }
 }

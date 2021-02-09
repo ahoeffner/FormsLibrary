@@ -1,16 +1,41 @@
-import { PopupImpl } from "./PopupImpl";
+import { PopupControl } from "./PopupControl";
 
 export class Popup
 {
-    private handler:PopupImpl;
+    private impl:PopupControl;
 
-    private setImplHandler(handler:PopupImpl) : void
+    private setImplementation(impl:PopupControl) : void
     {
-        this.handler = handler;
+        this.impl = impl;
+    }
+
+    public getTitle() : string
+    {
+        return("???");
+    }
+
+    public getOffsetTop() : number
+    {
+        return(40);
+    }
+
+    public getOffsetLeft() : number
+    {
+        return(60);
+    }
+
+    public getWidth() : number
+    {
+        return(500);
+    }
+
+    public getHeight() : number
+    {
+        return(300);
     }
 
     public close() : void
     {
-        this.handler.close();
+        this.impl.close();
     }
 }

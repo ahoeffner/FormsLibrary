@@ -1,6 +1,7 @@
 interface impl
 {
     getImplementation() : any;
+    setImplementation(impl:any) : void;
 }
 
 export class Implementations
@@ -9,5 +10,10 @@ export class Implementations
     {
         let impl:C = (<impl><any>comp).getImplementation();
         return(impl);
+    }
+
+    public static set<C>(comp:any, impl:any) : void
+    {
+        (<impl><any>comp).setImplementation(impl);
     }
 }

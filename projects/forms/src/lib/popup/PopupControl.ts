@@ -1,32 +1,28 @@
+import { Popup } from "./Popup";
 import { Builder } from "../utils/Builder";
 import { PopupWindow } from "./PopupWindow";
 import { ComponentRef, EmbeddedViewRef, ApplicationRef } from '@angular/core';
 
 
-export class PopupImpl
+export class PopupControl
 {
     private win:PopupWindow;
     private app:ApplicationRef;
     private element:HTMLElement;
     private ref:ComponentRef<any>;
 
-    public top : number = 40;
-    public left : number = 60;
-    public title : string = "???";
-    public width : string = "30vw";
-    public height : string = "30vh";
+    constructor(private builder:Builder, public component:any) {}
 
-    constructor(public component:any) {}
-
-    public display(builder:Builder) : void
+    public display() : void
     {
-        this.app = builder.getAppRef();
-        this.ref = builder.createComponent(PopupWindow);
+        this.app = this.builder.getAppRef();
+        this.ref = this.builder.createComponent(PopupWindow);
 
         this.win = this.ref.instance;
 
-        this.win.setPopupImpl(this);
-        this.win.setBuilder(builder);
+        this.win.setControl(this);
+        this.win.setBuilder(this.builder);
+        this.win.setComponent(this.component);
 
         this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
