@@ -148,6 +148,7 @@ export class FormsControl
 
     private getName(component:any)
     {
+        if (component == null) return(null);
         let name:string = component.constructor.name;
 
         if (name == "String") name = component;
