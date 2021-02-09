@@ -1,8 +1,7 @@
-import { Popup } from './Popup';
-import { Builder } from '../utils/Builder';
 import { Preferences } from '../Preferences';
 import { PopupControl } from './PopupControl';
 import { Protected } from '../utils/Protected';
+import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 
@@ -73,8 +72,8 @@ changeDetection: ChangeDetectionStrategy.OnPush
 export class PopupWindow implements AfterViewInit
 {
 	private popup:any;
-	private builder:Builder;
 	private ctrl:PopupControl;
+	private app:ApplicationImpl;
 	private element:HTMLElement;
 	private ref:ComponentRef<any>;
     private topbar:HTMLDivElement;
@@ -107,9 +106,9 @@ export class PopupWindow implements AfterViewInit
 	}
 
 
-	public setBuilder(builder:Builder) : void
+	public setApp(app:ApplicationImpl) : void
 	{
-		this.builder = builder;
+		this.app = app;
 	}
 
 
@@ -121,10 +120,9 @@ export class PopupWindow implements AfterViewInit
 			return;
 		}
 
-		this.ref = this.builder.createComponent(this.popup);
-		if (!(this.ref.instance instanceof Popup)) return;
+		this.ref = this.app.builder.createComponent(this.popup);
+		let popup:any = this.ref.instance;
 
-		let popup:Popup = this.ref.instance;
 		Protected.set(popup,this.ctrl);
 
 		this.title = popup.getTitle();
@@ -134,7 +132,7 @@ export class PopupWindow implements AfterViewInit
 		this.height = popup.getHeight()+"px";
 
 		this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		this.builder.getAppRef().attachView(this.ref.hostView);
+		this.app.builder.getAppRef().attachView(this.ref.hostView);
 		this.content.appendChild(this.element);
 
 		this.change.detectChanges();
@@ -144,7 +142,7 @@ export class PopupWindow implements AfterViewInit
 	public close() : void
 	{
 		this.content.removeChild(this.element);
-		this.builder.getAppRef().detachView(this.ref.hostView);
+		this.app.builder.getAppRef().detachView(this.ref.hostView);
 		this.ref.destroy();
 	}
 

@@ -10,7 +10,6 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 
 interface Definition
 {
-    url?:string;
     name:string;
     title:string;
     component:any;
@@ -45,39 +44,44 @@ export class FormsControl
         {
             let navigable:boolean = true;
             let form:FormsDefinition = forms[i];
-            let url:string = form.name.toLowerCase();
-            if (form.hasOwnProperty("url")) url = form.url;
+            let fname:string = this.getName(form.component);
             if (form.hasOwnProperty("navigable")) navigable = form.navigable;
 
             let def:Definition =
             {
-                url: url,
-                name: form.name,
+                name: fname,
                 title: form.title,
                 component: form.component,
                 navigable: navigable
             };
 
-            this.forms[form.name.toLowerCase()] = def;
+            this.forms[fname] = def;
         }
     }
 
 
-    public callform(form:string) : void
+    public newform(form:any) : void
     {
-        this.display(form,true);
+        this.display(form,false,true);
     }
 
 
-    public showform(form:string) : void
+    public callform(form:any) : void
     {
-        this.display(form,false);
+        this.display(form,true,true);
     }
 
 
-    public closeform(form:string, destroy:boolean) : void
+    public showform(form:any) : void
     {
-        let def:Definition = this.forms[form.toLowerCase()];
+        this.display(form,false,false);
+    }
+
+
+    public closeform(form:any, destroy:boolean) : void
+    {
+        let name:string = this.getName(form);
+        let def:Definition = this.forms[name];
 
         if (def == null || def.ref == null) return;
         let formsarea:HTMLElement = this.formarea.getFormsArea();
@@ -97,13 +101,14 @@ export class FormsControl
         }
     }
 
-    private display(form:string, call:boolean) : void
+    private display(form:any, call:boolean, close:boolean) : void
     {
-        let def:Definition = this.forms[form.toLowerCase()];
+        let name:string = this.getName(form);
+        let def:Definition = this.forms[name];
 
         if (def == null) return;
         if (!call && !def.navigable) return;
-        if (call) this.closeform(form,true);
+        if (close) this.closeform(form,true);
 
         if (def.ref == null)
         {
@@ -126,7 +131,7 @@ export class FormsControl
         let element:HTMLElement = (def.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
         let state = {additionalInformation: 'None'};
-        window.history.replaceState(state,def.name,this.url+"/"+def.url);
+        window.history.replaceState(state,def.name,this.url+"/"+def.name);
 
         if (this.current != null)
         {
@@ -138,5 +143,16 @@ export class FormsControl
         this.builder.getAppRef().attachView(def.ref.hostView);
 
         formsarea.appendChild(element);
+    }
+
+
+    private getName(component:any)
+    {
+        let name:string = component.constructor.name;
+
+        if (name == "String") name = component;
+        if (name == "Function") name = component.name;
+
+        return(name.toLowerCase());
     }
 }

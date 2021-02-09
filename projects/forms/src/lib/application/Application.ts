@@ -39,19 +39,9 @@ export class Application
         this.impl.setTitle(title);
     }
 
-    public showform(form:string)
+    public showform(form:any)
     {
         this.impl.showform(form);
-    }
-
-    public callform(form:string)
-    {
-        this.impl.callform(form);
-    }
-
-    public closeform(form:string)
-    {
-        this.impl.closeform(form,false);
     }
 
     public showpopup(popup:any) : void

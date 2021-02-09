@@ -1,13 +1,17 @@
 import { PopupControl } from "./PopupControl";
+import { Parameters } from "../application/Parameters";
+import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
 export class Popup
 {
     private ctrl:PopupControl;
+    private app:ApplicationImpl;
 
-    private setProtected(impl:PopupControl) : void
+    private setProtected(parent:any) : void
     {
-        this.ctrl = impl;
+        if (parent instanceof PopupControl) this.ctrl = parent;
+        if (parent instanceof ApplicationImpl) this.app = parent;
     }
 
     public getTitle() : string
@@ -33,6 +37,12 @@ export class Popup
     public getHeight() : number
     {
         return(300);
+    }
+
+    public getParameters(component?:any) : Parameters
+    {
+        if (component == null) component = this;
+        return(this.app.getParameters(component));
     }
 
     public close() : void

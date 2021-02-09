@@ -16,8 +16,9 @@ export class Form
         return(this.impl);
     }
 
-    public getParameters(component?:string) : Parameters
+    public getParameters(component?:any) : Parameters
     {
+        if (component == null) component = this;
         return(this.impl.getParameters(component));
     }
 }

@@ -14,7 +14,7 @@ export class ApplicationImpl
     private params:Parameters[] = [];
 
 
-    constructor(private builder:Builder)
+    constructor(public builder:Builder)
     {
         this.formsctl = new FormsControl(this,builder);
     }
@@ -33,9 +33,9 @@ export class ApplicationImpl
     }
 
 
-    public getParams(name:string) : Parameters
+    public getParameters(component:any) : Parameters
     {
-        name = name.toLowerCase();
+        let name:string = this.getName(component);
         let params:Parameters = this.params[name];
 
         if (params == null)
@@ -63,21 +63,28 @@ export class ApplicationImpl
     }
 
 
-    public showform(form:string)
+    public newform(form:any)
+    {
+        if (this.ready) this.formsctl.newform(form);
+        else setTimeout(() => {this.newform(form);},10);
+    }
+
+
+    public showform(form:any)
     {
         if (this.ready) this.formsctl.showform(form);
         else setTimeout(() => {this.showform(form);},10);
     }
 
 
-    public callform(form:string)
+    public callform(form:any)
     {
         if (this.ready) this.formsctl.callform(form);
         else setTimeout(() => {this.callform(form);},10);
     }
 
 
-    public closeform(form:string, destroy:boolean)
+    public closeform(form:any, destroy:boolean)
     {
         if (this.ready) this.formsctl.closeform(form,destroy);
         else setTimeout(() => {this.closeform(form,destroy);},10);
@@ -86,7 +93,18 @@ export class ApplicationImpl
 
     public showpopup(popup:any) : void
     {
-        let ctrl:PopupControl = new PopupControl(this.builder,popup);
+        let ctrl:PopupControl = new PopupControl(this,popup);
         ctrl.display();
+    }
+
+
+    private getName(component:any)
+    {
+        let name:string = component.constructor.name;
+
+        if (name == "String") name = component;
+        if (name == "Function") name = component.name;
+
+        return(name.toLowerCase());
     }
 }

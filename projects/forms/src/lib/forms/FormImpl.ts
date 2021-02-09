@@ -10,8 +10,8 @@ export class FormImpl
         this.app = app;
     }
 
-    public getParameters(component:string) : Parameters
+    public getParameters(component:any) : Parameters
     {
-        return(this.app.getParams(component));
+        return(this.app.getParameters(component));
     }
 }

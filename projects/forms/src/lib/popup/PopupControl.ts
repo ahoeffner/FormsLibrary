@@ -1,31 +1,31 @@
-import { Builder } from "../utils/Builder";
 import { PopupWindow } from "./PopupWindow";
+import { ApplicationImpl } from "../application/ApplicationImpl";
 import { ComponentRef, EmbeddedViewRef, ApplicationRef } from '@angular/core';
 
 
 export class PopupControl
 {
     private win:PopupWindow;
-    private app:ApplicationRef;
     private element:HTMLElement;
-    private ref:ComponentRef<any>;
+    private appref:ApplicationRef;
+    private cmpref:ComponentRef<any>;
 
-    constructor(private builder:Builder, public component:any) {}
+    constructor(private app:ApplicationImpl, public component:any) {}
 
     public display() : void
     {
-        this.app = this.builder.getAppRef();
-        this.ref = this.builder.createComponent(PopupWindow);
+        this.appref = this.app.builder.getAppRef();
+        this.cmpref = this.app.builder.createComponent(PopupWindow);
 
-        this.win = this.ref.instance;
+        this.win = this.cmpref.instance;
 
+        this.win.setApp(this.app);
         this.win.setControl(this);
-        this.win.setBuilder(this.builder);
         this.win.setComponent(this.component);
 
-        this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+        this.element = (this.cmpref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
-        this.app.attachView(this.ref.hostView);
+        this.appref.attachView(this.cmpref.hostView);
         document.body.appendChild(this.element);
     }
 
@@ -33,6 +33,6 @@ export class PopupControl
     {
         this.win.close();
         document.body.removeChild(this.element);
-        this.app.detachView(this.ref.hostView);
+        this.appref.detachView(this.cmpref.hostView);
    }
 }
