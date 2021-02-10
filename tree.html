@@ -1,0 +1,88 @@
+<html>
+<head>
+<style>
+ul, #Tree {
+  list-style-type: none;
+}
+
+#Tree {
+  margin: 0;
+  padding: 0;
+}
+
+.folder {
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none;
+}
+
+.folder::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.folder-down::before {
+  -ms-transform: rotate(90deg); /* IE 9 */
+  -webkit-transform: rotate(90deg); /* Safari */'
+  transform: rotate(90deg);  
+}
+
+.element {
+  display: none;
+}
+
+.active {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<h2>Tree View</h2>
+
+<ul id="Tree">
+  <li><span id="root" class="folder">Beverages</span>
+    <ul class="element">
+      <li>Water</li>
+      <li>Coffee</li>
+      <li><span class="folder">Tea</span>
+        <ul class="element">
+          <li>Black Tea</li>
+          <li>White Tea</li>
+          <li><span class="folder">Green Tea</span>
+            <ul class="element">
+              <li>Sencha</li>
+              <li>Gyokuro</li>
+              <li>Matcha</li>
+              <li>Pi Lo Chun</li>
+            </ul>
+          </li>
+        </ul>
+      </li>  
+    </ul>
+  </li>
+</ul>
+
+<script>
+var toggler = document.getElementsByClassName("folder");
+var i;
+
+for (i = 0; i < toggler.length; i++)
+  toggler[i].addEventListener("click", function() {openclose(event.target)});
+
+function openclose(elem)
+{
+    elem.parentElement.querySelector(".element").classList.toggle("active");
+    elem.classList.toggle("folder-down");
+}
+
+openclose(document.getElementById("root"));
+
+</script>
+
+</body>
+</html>

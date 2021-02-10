@@ -1,6 +1,7 @@
 import { Form } from "./Form";
 import { FormImpl } from "./FormImpl";
 import { FormArea } from "./FormArea";
+import { Utils } from "../utils/Utils";
 import { Builder } from "../utils/Builder";
 import { Protected } from '../utils/Protected';
 import { FormsDefinition } from "./FormsDefinition";
@@ -23,6 +24,7 @@ export class FormsControl
     private url:string;
     private formarea:FormArea;
     private current:HTMLElement;
+    private utils:Utils = new Utils();
     private forms:Map<string,Definition> = new Map<string,Definition>();
 
 
@@ -44,7 +46,7 @@ export class FormsControl
         {
             let navigable:boolean = true;
             let form:FormsDefinition = forms[i];
-            let fname:string = this.getName(form.component);
+            let fname:string = this.utils.getName(form.component);
             if (form.hasOwnProperty("navigable")) navigable = form.navigable;
 
             let def:Definition =
@@ -80,7 +82,7 @@ export class FormsControl
 
     public closeform(form:any, destroy:boolean) : void
     {
-        let name:string = this.getName(form);
+        let name:string = this.utils.getName(form);
         let def:Definition = this.forms.get(name);
 
         if (def == null || def.ref == null) return;
@@ -103,7 +105,7 @@ export class FormsControl
 
     private display(form:any, call:boolean, close:boolean) : void
     {
-        let name:string = this.getName(form);
+        let name:string = this.utils.getName(form);
         let def:Definition = this.forms.get(name);
 
         if (def == null) return;
@@ -143,17 +145,5 @@ export class FormsControl
         this.builder.getAppRef().attachView(def.ref.hostView);
 
         formsarea.appendChild(element);
-    }
-
-
-    private getName(component:any)
-    {
-        if (component == null) return(null);
-        let name:string = component.constructor.name;
-
-        if (name == "String") name = component;
-        if (name == "Function") name = component.name;
-
-        return(name.toLowerCase());
     }
 }

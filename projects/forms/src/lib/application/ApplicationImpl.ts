@@ -1,3 +1,4 @@
+import { Utils } from "../utils/Utils";
 import { Parameters } from "./Parameters";
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
@@ -12,6 +13,7 @@ export class ApplicationImpl
     private ready:boolean = false;
     private formsctl:FormsControl;
     private params:Parameters[] = [];
+    private utils:Utils = new Utils();
 
 
     constructor(public builder:Builder)
@@ -35,7 +37,7 @@ export class ApplicationImpl
 
     public getParameters(component:any) : Parameters
     {
-        let name:string = this.getName(component);
+        let name:string = this.utils.getName(component);
         let params:Parameters = this.params[name];
 
         if (params == null)
@@ -103,17 +105,5 @@ export class ApplicationImpl
     {
         let ctrl:PopupControl = new PopupControl(this,popup);
         ctrl.display();
-    }
-
-
-    private getName(component:any)
-    {
-        if (component == null) return(null);
-        let name:string = component.constructor.name;
-
-        if (name == "String") name = component;
-        if (name == "Function") name = component.name;
-
-        return(name.toLowerCase());
     }
 }
