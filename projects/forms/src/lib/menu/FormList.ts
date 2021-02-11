@@ -10,28 +10,101 @@ import { Component, ViewChild,ElementRef } from '@angular/core';
 
 export class FormList
 {
-	public page:string = "";
-	public tree:HTMLDivElement;
+	private root:Folder;
+	private page:string = "";
+
+	private test:string[] = [];
+
+	private tree:HTMLDivElement;
     @ViewChild("tree", {read: ElementRef}) private treelem: ElementRef;
 
     constructor(app:Application)
     {
+		this.root = new Folder("/","Forms");
+
+		this.test.push("main");
+		this.test.push("/dept/fdept");
+		this.test.push("/dept/depts/sales/fsales1");
+		this.test.push("/dept/depts/sales/fsales2");
+		this.test.push("/dept/depts/consulting/cons1");
+		this.test.push("/dept/depts/consulting/cons2");
+		this.test.push("/loc/locs/US/fus1");
+		this.test.push("/loc/locs/US/fus2");
+		this.test.push("/loc/locs/UK/fuk1");
+		this.test.push("/loc/floc");
+
+		this.parse();
+
 		this.page += "<html>\n";
 		this.page += "  <head>\n";
 		this.page += "    <style>\n";
 		this.page += this.styles()+ "\n";
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
-		this.page += "  <ul id='Tree'>\n";
-		this.page += "     <li><span id='/' class='folder'>Forms</span>\n";
-		this.page += "       <ul class='form'>\n";
-		this.page += this.content("/",1) + "\n";
-		this.page += "       </ul>\n";
-		this.page += "	   </li>\n";
-		this.page += "   </ul>\n";
+		this.page += "    <ul id='Tree'>\n";
+		this.page += this.print(this.root,"      ");
+		this.page += "    </ul>\n";
 		this.page += "</html>\n";
 
-		console.log(this.page);
+		//console.log(this.page);
+	}
+
+
+	private print(root:Folder, indent:string) : string
+	{
+		let html:string = "";
+
+		html += indent+"<li><span id="+root.id+" class='folder'>"+root.name+"</span>\n";
+		html += indent+"  <ul class='form'>\n";
+
+		for(let i = 0; i < root.folders.length; i++)
+		{
+			let folder:Folder = root.folders[i];
+			html += this.print(folder,indent+"  ");
+		}
+
+		for(let f = 0; f < root.forms.length; f++)
+		{
+			let form:string = root.forms[f];
+			html += indent+"  <li>"+form+"</li>\n";
+		}
+
+		html += "  </ul>";
+		html += "</li>";
+
+		return(html);
+	}
+
+
+	private parse() : void
+	{
+		for(let i = 0; i < this.test.length; i++)
+		{
+			let path:string = this.test[i];
+			path = path.replace(" ","");
+
+			let form:string = path;
+			let folder:string = "/";
+
+			let pos:number = path.lastIndexOf("/");
+
+			if (pos >= 0)
+			{
+				form = path.substring(pos+1);
+				folder = path.substring(0,pos);
+			}
+
+			let current:Folder = this.root;
+			let parts:string[] = folder.split("/");
+
+			for(let p = 1; p < parts.length; p++)
+			{
+				if (parts[p] == "") parts[p] = "/";
+				current = current.getFolder(parts[p]);
+			}
+
+			current.addForm(form);
+		}
 	}
 
 
@@ -55,73 +128,6 @@ export class FormList
 		let folder:HTMLElement = event.target;
 		folder.parentElement.querySelector('.form').classList.toggle('active');
 		folder.classList.toggle("folder-open");
-	}
-
-
-	private content(parent:string, indent:number) : string
-	{
-		let list:string = "";
-		let folders:string[] = this.getFolders(parent);
-
-		for(let folder of folders)
-		{
-			list += "<li><span class='folder'>"+folder+"</span>\n";
-			let forms:string[] = this.getForms(parent+folder+"/");
-
-			list += "<ul class='form'>\n";
-			for(let form of forms)
-				list += "<li>"+form+"</li>\n";
-			list += "</ul>\n";
-
-			list += this.content(parent+folder+"/",0);
-
-			list += "</li>\n";
-		}
-
-		return(list);
-	}
-
-
-	private getFolders(parent:string) : string[]
-	{
-		console.log("Get sub for <"+parent+">")
-		if (parent == "/")
-		{
-			return(["dept","emp"] as string[]);
-		}
-
-		if (parent == "/dept")
-		{
-			return(["subdept1","subdept2"]);
-		}
-
-		if (parent == "/emp")
-		{
-			return(["subemp"]);
-		}
-
-		return([]);
-	}
-
-
-	private getForms(parent:string) : string[]
-	{
-		if (parent == "/")
-		{
-			return(["dept","emp"]);
-		}
-
-		if (parent == "/dept")
-		{
-			return(["subdept1","subdept2"]);
-		}
-
-		if (parent == "/emp")
-		{
-			return(["subemp"]);
-		}
-
-		return([]);
 	}
 
 
@@ -176,5 +182,39 @@ export class FormList
 		`;
 
 		return(styles);
+	}
+}
+
+
+class Folder
+{
+	id:string;
+	name:string;
+	forms:string[] = [];
+	folders:Folder[] = [];
+
+	constructor(id:string, name:string)
+	{
+		this.id = id;
+		this.name = name;
+	}
+
+	getFolder(next:string) : Folder
+	{
+		if (next == this.id) return(this);
+
+		for(let i = 0; i < this.folders.length; i++)
+			if (this.folders[i].id == next) return(this.folders[i]);
+
+		let folder:Folder = new Folder(next,next);
+		this.folders.push(folder);
+
+		return(folder);
+	}
+
+
+	addForm(form:string) : void
+	{
+		this.forms.push(form);
 	}
 }
