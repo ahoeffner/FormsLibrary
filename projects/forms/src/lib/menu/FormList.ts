@@ -24,7 +24,7 @@ export class FormList
 
     constructor(app:Application)
     {
-		this.root = new Folder("/","Forms");
+		this.root = new Folder("/","");
 
 		this.test.push("main");
 		this.test.push("/dept/fdept");
@@ -70,7 +70,7 @@ export class FormList
 		for(let f = 0; f < root.forms.length; f++)
 		{
 			let form:string = root.forms[f];
-			html += indent+"  <li id="+form+" class='form'>"+form+"</li>\n";
+			html += indent+"  <li><span id="+form+" class='form'>"+form+"</span></li>\n";
 		}
 
 		html += "  </ul>";
@@ -205,9 +205,10 @@ export class FormList
 
 		.form::before
 		{
-			width:24px;
-			height: 24px;
+			width:20px;
+			height: 20px;
 			content: "";
+			margin-left: 5px;
 			margin-right: 2px;
 			display: inline-block;
 			vertical-align: middle;
