@@ -4,7 +4,10 @@ import { Component, ViewChild,ElementRef } from '@angular/core';
 
 @Component({
     selector: 'formlist',
-    template: '<div style="display: inline-block; white-space: nowrap;" #tree></div>',
+    template:
+	`
+		<div style="display: inline-block; white-space: nowrap;" #tree></div>
+	`,
     styles: []
   })
 
@@ -41,9 +44,9 @@ export class FormList
 		this.page += this.styles()+ "\n";
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
-		this.page += "    <ul id='Tree'>\n";
-		this.page += this.print(this.root,"      ");
-		this.page += "    </ul>\n";
+		this.page += "  <ul id='Tree'>\n";
+		this.page += this.print(this.root,"    ");
+		this.page += "  </ul>\n";
 		this.page += "</html>\n";
 
 		//console.log(this.page);
@@ -110,8 +113,8 @@ export class FormList
 	public ngAfterViewInit(): void
 	{
 		this.tree = this.treelem?.nativeElement as HTMLDivElement;
-		this.tree.innerHTML = this.page;
 
+		this.tree.innerHTML = this.page;
 		let folders:HTMLCollectionOf<Element> = this.tree.getElementsByClassName("folder");
 
 		for(let i = 0; i < folders.length; i++)
@@ -152,17 +155,26 @@ export class FormList
 
 		.folder::before
 		{
-			content: "\\25B6";
-			color: blue;
-			display: inline-block;
+			width:24px;
+			height: 24px;
+			content: "";
 			margin-right: 6px;
+			display: inline-block;
+			vertical-align: middle;
+			background-size: 100% 100%;
+			background-image:url('/assets/closed.jpg');
 		}
 
 		.folder-open::before
 		{
-			-ms-transform: rotate(90deg); /* IE 9 */
-			-webkit-transform: rotate(90deg); /* Safari */'
-			transform: rotate(90deg);
+			width:24px;
+			height: 24px;
+			content: "";
+			margin-right: 6px;
+			display: inline-block;
+			vertical-align: middle;
+			background-size: 100% 100%;
+			background-image:url('/assets/open.jpg');
 		}
 
 		.form
