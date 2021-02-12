@@ -148,16 +148,12 @@ export class FormList
 		.folder
 		{
 			cursor: pointer;
-			-webkit-user-select: none; /* Safari 3.1+ */
-			-moz-user-select: none; /* Firefox 2+ */
-			-ms-user-select: none; /* IE 10+ */
-			user-select: none;
 		  }
 
 		.folder::before
 		{
 			content: "\\25B6";
-			color: black;
+			color: blue;
 			display: inline-block;
 			margin-right: 6px;
 		}
@@ -172,6 +168,7 @@ export class FormList
 		.form
 		{
 			display: none;
+			cursor: pointer;
 		}
 
 		.active
