@@ -205,8 +205,8 @@ export class FormList
 
 		.form::before
 		{
-			width:20px;
-			height: 20px;
+			width:28px;
+			height: 22px;
 			content: "";
 			margin-left: 5px;
 			margin-right: 2px;
