@@ -81,7 +81,6 @@ export class FormList
 		for(let i = 0; i < this.test.length; i++)
 		{
 			let path:string = this.test[i];
-			path = path.replace(" ","");
 
 			let form:string = path;
 			let folder:string = "/";
@@ -100,7 +99,7 @@ export class FormList
 			for(let p = 1; p < parts.length; p++)
 			{
 				if (parts[p] == "") parts[p] = "/";
-				current = current.getFolder(parts[p]);
+				current = current.getFolder(parts[p].trim());
 			}
 
 			current.addForm(form);
