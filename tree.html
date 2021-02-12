@@ -15,7 +15,9 @@ ul, #Tree {
 }
 
 .folder::before {
-  content: "C";
+  content: "";
+  background-image:url('closed.jpg');
+  background-size: 100% 100%;
   display: inline-block;
   vertical-align: middle;
   height: 32px;
@@ -24,7 +26,9 @@ ul, #Tree {
 }
 
 .folder-down::before {
-    content:  "O";
+    content:  "";
+    background-image:url('open.jpg');
+    background-size: 100% 100%;
     display: inline-block;
     vertical-align: middle;
     height: 32px;
@@ -48,7 +52,7 @@ ul, #Tree {
 <ul id="Tree">
   <li><span id="root" class="folder">Beverages</span>
     <ul class="element">
-      <li>Water</li>
+      <li name="form">Water</li>
       <li>Coffee</li>
       <li><span class="folder">Tea</span>
         <ul class="element">
@@ -69,8 +73,12 @@ ul, #Tree {
 </ul>
 
 <script>
-var toggler = document.getElementsByClassName("folder");
 var i;
+var forms = document.getElementsByName("form");
+var toggler = document.getElementsByClassName("folder");
+
+for (i = 0; i < forms.length; i++)
+  forms[i].addEventListener("click", function() {showform(event.target)});
 
 for (i = 0; i < toggler.length; i++)
   toggler[i].addEventListener("click", function() {openclose(event.target)});
@@ -79,6 +87,11 @@ function openclose(elem)
 {
     elem.parentElement.querySelector(".element").classList.toggle("active");
     elem.classList.toggle("folder-down");
+}
+
+function showform(elem)
+{
+  window.alert("show form "+elem);
 }
 
 openclose(document.getElementById("root"));

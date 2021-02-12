@@ -15,6 +15,7 @@ export class FormList
 {
 	private root:Folder;
 	private page:string = "";
+	private folders:Map<string,Element> = new Map<string,Element>();
 
 	private test:string[] = [];
 
@@ -58,7 +59,7 @@ export class FormList
 		let html:string = "";
 
 		html += indent+"<li><span id="+root.id+" class='folder'>"+root.name+"</span>\n";
-		html += indent+"  <ul class='form'>\n";
+		html += indent+"  <ul class='list'>\n";
 
 		for(let i = 0; i < root.folders.length; i++)
 		{
@@ -69,7 +70,7 @@ export class FormList
 		for(let f = 0; f < root.forms.length; f++)
 		{
 			let form:string = root.forms[f];
-			html += indent+"  <li>"+form+"</li>\n";
+			html += indent+"  <li id="+form+" class='form'>"+form+"</li>\n";
 		}
 
 		html += "  </ul>";
@@ -120,16 +121,40 @@ export class FormList
 		for(let i = 0; i < folders.length; i++)
 		{
 			let folder:Element = folders.item(i);
-			folder.addEventListener("click", this.openclose);
+			folder.addEventListener("click", this.toggle);
 		}
+
+		for (let i = 0; i < folders.length; i++)
+		{
+			let folder:Element = folders.item(i);
+			this.folders.set(folder.id,folder);
+		}
+
+		let forms:HTMLCollectionOf<Element> = this.tree.getElementsByClassName("form");
+
+		for(let i = 0; i < forms.length; i++)
+		{
+			let form:Element = forms.item(i);
+			form.addEventListener("click", this.show);
+		}
+
+		let root:Element = this.folders.get("/");
+		this.toggle({target: root});
 	}
 
 
-	public openclose(event:any): void
+	public toggle(event:any) : void
 	{
 		let folder:HTMLElement = event.target;
-		folder.parentElement.querySelector('.form').classList.toggle('active');
+		folder.parentElement.querySelector('.list').classList.toggle('active');
 		folder.classList.toggle("folder-open");
+	}
+
+
+	public show(event:any) : void
+	{
+		let form:HTMLElement = event.target.id;
+		console.log("showform "+form);
 	}
 
 
@@ -137,8 +162,9 @@ export class FormList
 	{
 		let styles:string =
 		`
-		ul, #Tree
+		ul, li, #Tree
 		{
+			padding-left: 8px;
 			list-style-type: none;
 		}
 
@@ -151,14 +177,14 @@ export class FormList
 		.folder
 		{
 			cursor: pointer;
-		  }
+		}
 
 		.folder::before
 		{
 			width:24px;
 			height: 24px;
 			content: "";
-			margin-right: 6px;
+			margin-right: 2px;
 			display: inline-block;
 			vertical-align: middle;
 			background-size: 100% 100%;
@@ -170,14 +196,26 @@ export class FormList
 			width:24px;
 			height: 24px;
 			content: "";
-			margin-right: 6px;
+			margin-right: 2px;
 			display: inline-block;
 			vertical-align: middle;
 			background-size: 100% 100%;
 			background-image:url('/assets/open.jpg');
 		}
 
-		.form
+		.form::before
+		{
+			width:24px;
+			height: 24px;
+			content: "";
+			margin-right: 2px;
+			display: inline-block;
+			vertical-align: middle;
+			background-size: 100% 100%;
+			background-image:url('/assets/form.jpg');
+		}
+
+		.list
 		{
 			display: none;
 			cursor: pointer;
