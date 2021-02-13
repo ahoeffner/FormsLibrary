@@ -1,5 +1,6 @@
 import { Application } from '../application/Application';
 import { Component, ViewChild,ElementRef } from '@angular/core';
+import { Preferences } from '../Preferences';
 
 
 @Component({
@@ -203,17 +204,20 @@ export class FormList
 			background-image:url('/assets/open.jpg');
 		}
 
+		.form
+		{
+			color: formcolor;
+			font-style: italic;
+		}
+
 		.form::before
 		{
-			width:28px;
-			height: 22px;
-			content: "";
-			margin-left: 5px;
-			margin-right: 2px;
+			color: formcolor;
+			content: "-";
+			margin-left: 8px;
+			margin-right: 8px;
 			display: inline-block;
 			vertical-align: middle;
-			background-size: 100% 100%;
-			background-image:url('/assets/form.jpg');
 		}
 
 		.list
@@ -227,6 +231,9 @@ export class FormList
 			display: block;
 		}
 		`;
+
+		let color:string = Preferences.get().primaryColor;
+		styles = styles.replace("formcolor",color);
 
 		return(styles);
 	}
