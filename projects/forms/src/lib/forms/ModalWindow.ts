@@ -94,13 +94,13 @@ export class ModalWindow implements AfterViewInit
 	constructor(private change:ChangeDetectorRef) {}
 
 
-	public setForm(form:FormInstance, options:ModalOptions) : void
+	public setForm(form:FormInstance) : void
 	{
 		this.title = form.title;
-		this.top = options.offsetTop;
-		this.left = options.offsetLeft;
-		this.width = options.width+"px";
-		this.height = options.height+"px";
+		this.top = form.modalopts.offsetTop;
+		this.left = form.modalopts.offsetLeft;
+		this.width = form.modalopts.width+"px";
+		this.height = form.modalopts.height+"px";
 		this.form = form;
 	}
 
@@ -149,6 +149,8 @@ export class ModalWindow implements AfterViewInit
 
 		this.app.builder.getAppRef().detachView(this.winref.hostView);
 		this.winref.destroy();
+
+		this.winref = null;
 	}
 
 

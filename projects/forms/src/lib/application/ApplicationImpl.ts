@@ -109,4 +109,10 @@ export class ApplicationImpl
         if (this.ready) this.formsctl.closeform(form,destroy);
         else setTimeout(() => {this.closeform(form,destroy);},10);
     }
+
+
+    public getFormInstance(form:any, modal?:ModalOptions) : FormInstance
+    {
+        return(this.formsctl.getFormInstance(form,modal));
+    }
 }

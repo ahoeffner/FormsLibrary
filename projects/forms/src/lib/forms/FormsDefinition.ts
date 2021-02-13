@@ -29,7 +29,8 @@ export interface FormInstance
     title:string;
     component:any;
     navigable?:boolean;
-    modal:ModalOptions;
+    modaldef:ModalOptions;
+    modalopts:ModalOptions;
     ref?:ComponentRef<any>;
 }
 
@@ -55,6 +56,7 @@ export class Options
 
     public override(options:ModalOptions, base:ModalOptions) : ModalOptions
     {
+        if (options == null && base == null) return(null);
         if (base == null) base = this.complete(base,true);
         if (!options.hasOwnProperty("width")) options.width = base.width;
         if (!options.hasOwnProperty("height")) options.height = base.height;
@@ -83,9 +85,10 @@ export class Options
         {
             name: fname,
             path: form.path,
-            modal: form.modal,
             title: form.title,
             navigable: navigable,
+            modaldef: form.modal,
+            modalopts: form.modal,
             component: form.component,
         };
 

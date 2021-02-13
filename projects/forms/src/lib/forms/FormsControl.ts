@@ -81,7 +81,7 @@ export class FormsControl
     public showform(form:any, newform:boolean, modal:ModalOptions) : void
     {
         if (newform) this.closeform(form,true);
-        this.display(form,this.getModalOptions(form,modal));
+        this.display(form,modal);
     }
 
 
@@ -104,6 +104,7 @@ export class FormsControl
         if (destroy)
         {
             def.ref.destroy();
+            def.modalopts = null;
             def.ref = null;
         }
     }
@@ -111,30 +112,14 @@ export class FormsControl
 
     private display(form:any, modal:ModalOptions) : void
     {
-        let name:string = this.utils.getName(form);
-        let formdef:FormInstance = this.forms.get(name);
-
+        let formdef:FormInstance = this.getFormInstance(form,modal);
         if (formdef == null) return;
-
-        if (formdef.ref == null)
-        {
-            formdef.ref = this.builder.createComponent(formdef.component);
-
-            if (!(formdef.ref.instance instanceof Form))
-            {
-                let name:string = formdef.ref.instance.constructor.name;
-                window.alert("Component "+name+" is not an instance of Form");
-                return;
-            }
-
-            let impl:FormImpl = Protected.get<FormImpl>(formdef.ref.instance);
-            impl.setApplication(this.app);
-        }
 
         let formsarea:HTMLElement = this.formarea.getFormsArea();
         let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
         document.title = formdef.title;
+
         let state = {additionalInformation: 'None'};
         window.history.replaceState(state,formdef.name,this.url+formdef.path);
 
@@ -158,7 +143,7 @@ export class FormsControl
 
             win.setWinRef(winref);
             win.setApplication(this.app);
-            win.setForm(formdef,this.getModalOptions(form,formdef.modal));
+            win.setForm(formdef);
 
             let element:HTMLElement = (winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
             this.builder.getAppRef().attachView(winref.hostView);
@@ -168,16 +153,28 @@ export class FormsControl
     }
 
 
-    private getModalOptions(form:any, options:ModalOptions) : ModalOptions
+    public getFormInstance(form:any, modal?:ModalOptions) : FormInstance
     {
-        let optutil:Options = new Options();
         let name:string = this.utils.getName(form);
         let formdef:FormInstance = this.forms.get(name);
-
         if (formdef == null) return(null);
-        if (options == null) options = formdef.modal;
-        else options = optutil.override(options,formdef.modal);
 
-        return(options);
+        if (formdef.ref == null)
+        {
+            formdef.ref = this.builder.createComponent(formdef.component);
+
+            if (!(formdef.ref.instance instanceof Form))
+            {
+                let name:string = formdef.ref.instance.constructor.name;
+                window.alert("Component "+name+" is not an instance of Form");
+                return;
+            }
+
+            let impl:FormImpl = Protected.get<FormImpl>(formdef.ref.instance);
+            impl.setApplication(this.app);
+        }
+
+        let optutil:Options = new Options();
+        formdef.modalopts = optutil.override(modal,formdef.modaldef);
     }
 }

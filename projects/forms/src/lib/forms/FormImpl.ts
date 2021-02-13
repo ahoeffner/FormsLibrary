@@ -39,6 +39,6 @@ export class FormImpl
     public close(dismiss?:boolean) : void
     {
         if (this.win != null) this.win.close();
-        else this.app.closeform(this.form,dismiss);
+        this.app.closeform(this.form,dismiss);
     }
 }
