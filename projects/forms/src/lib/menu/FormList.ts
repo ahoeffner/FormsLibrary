@@ -1,6 +1,6 @@
 import { Preferences } from '../Preferences';
 import { Protected } from '../utils/Protected';
-import { Definition } from '../forms/FormsDefinition';
+import { FormInstance } from '../forms/FormsDefinition';
 import { Application } from '../application/Application';
 import { Component, ViewChild,ElementRef } from '@angular/core';
 import { ApplicationImpl } from '../application/ApplicationImpl';
@@ -8,7 +8,7 @@ import { ApplicationImpl } from '../application/ApplicationImpl';
 interface Form
 {
 	name:string;
-	def:Definition;
+	def:FormInstance;
 }
 
 
@@ -26,7 +26,7 @@ export class FormList
 	private root:Folder;
 	private page:string = "";
 	private app:ApplicationImpl;
-	private formsdef:Definition[];
+	private formsdef:FormInstance[];
 	private folders:Map<string,Element> = new Map<string,Element>();
 
 	private tree:HTMLDivElement;
@@ -266,7 +266,7 @@ class Folder
 	}
 
 
-	addForm(name:string, form:Definition) : void
+	addForm(name:string, form:FormInstance) : void
 	{
 		this.forms.push({name:name, def:form});
 	}

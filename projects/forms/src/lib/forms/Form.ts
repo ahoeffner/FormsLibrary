@@ -11,6 +11,11 @@ export class Form
         this.impl = new FormImpl();
     }
 
+    private setProtected(parent:any) : void
+    {
+        
+    }
+
     private getProtected() : FormImpl
     {
         return(this.impl);

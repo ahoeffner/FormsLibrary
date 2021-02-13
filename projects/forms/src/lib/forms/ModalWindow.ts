@@ -1,12 +1,13 @@
+import { FormImpl } from './FormImpl';
 import { Preferences } from '../Preferences';
-import { PopupControl } from './PopupControl';
-import { Protected } from '../utils/Protected';
+import { FormInstance, ModalOptions } from './FormsDefinition';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Protected } from '../utils/Protected';
 
 
 @Component({
-  selector: 'popup',
+  selector: 'alex-window',
   template:
   `
     <div class="modal">
@@ -69,13 +70,12 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
 changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class PopupWindow implements AfterViewInit
+
+export class ModalWindow implements AfterViewInit
 {
-	private popup:any;
-	private ctrl:PopupControl;
-	private app:ApplicationImpl;
+	private impl:FormImpl;
+	private form:FormInstance;
 	private element:HTMLElement;
-	private ref:ComponentRef<any>;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
 
@@ -87,52 +87,36 @@ export class PopupWindow implements AfterViewInit
     public tcolor  : string = Preferences.get().textColor;
     public bcolor  : string = Preferences.get().primaryColor;
 
-
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
-	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
+    @ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
 
-	constructor(private change:ChangeDetectorRef) {}
+    constructor(private change:ChangeDetectorRef) {}
 
 
-	public setControl(ctrl:PopupControl) : void
+	public setForm(form:FormInstance, options:ModalOptions) : void
 	{
-		this.ctrl = ctrl;
-	}
+		this.title = form.title;
+		this.top = options.offsetTop;
+		this.left = options.offsetLeft;
+		this.width = options.width+"px";
+		this.height = options.height+"px";
+		this.impl = Protected.get(form.ref.instance);
 
-
-	public setComponent(popup:any) : void
-	{
-		this.popup = popup;
-	}
-
-
-	public setApp(app:ApplicationImpl) : void
-	{
-		this.app = app;
+		this.form = form;
 	}
 
 
 	private display() : void
 	{
-		if (this.popup == null)
+		if (this.form == null)
 		{
 			setTimeout(() => {this.display();},10);
 			return;
 		}
 
-		this.ref = this.app.builder.createComponent(this.popup);
-		let popup:any = this.ref.instance;
+		let app:ApplicationImpl = this.impl.getApplication();
 
-		Protected.set(popup,this.ctrl);
-
-		//this.title = popup.getTitle();
-		//this.top = popup.getOffsetTop();
-		//this.left = popup.getOffsetLeft();
-		//this.width = popup.getWidth()+"px";
-		//this.height = popup.getHeight()+"px";
-
-		this.element = (this.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		this.app.builder.getAppRef().attachView(this.ref.hostView);
+		this.element = (this.form.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.content.appendChild(this.element);
 
 		this.change.detectChanges();
@@ -142,25 +126,26 @@ export class PopupWindow implements AfterViewInit
 	public close() : void
 	{
 		this.content.removeChild(this.element);
-		this.app.builder.getAppRef().detachView(this.ref.hostView);
-		this.ref.destroy();
+		let app:ApplicationImpl = this.impl.getApplication();
+		app.builder.getAppRef().detachView(this.form.ref.hostView);
 	}
 
 
-	public ngAfterViewInit(): void
-	{
+    public ngAfterViewInit(): void
+    {
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
 		this.topbar.addEventListener("mouseup", () => {this.mouseup();});
 		this.topbar.addEventListener("mousedown", (event) => {this.mousedown(event);});
 
 		this.display();
-	}
+    }
 
 
 	private offx:number = 0;
 	private offy:number = 0;
 	private move:boolean = false;
+
 
 	private mouseup()
 	{
@@ -171,6 +156,7 @@ export class PopupWindow implements AfterViewInit
 			window.removeEventListener("mousemove", (event) => {this.movePopup(event);});
 	  	}
 	}
+
 
 	private mousedown(event:any) : void
 	{
@@ -192,6 +178,7 @@ export class PopupWindow implements AfterViewInit
 			this.offx = +event.clientX - this.left;
 	  	}
 	}
+
 
 	private movePopup(event:any) : void
 	{

@@ -22,14 +22,14 @@ export interface FormsDefinition
 }
 
 
-export interface Definition
+export interface FormInstance
 {
     name:string;
     path:string;
     title:string;
     component:any;
     navigable?:boolean;
-    options:ModalOptions;
+    modal:ModalOptions;
     ref?:ComponentRef<any>;
 }
 
@@ -64,7 +64,7 @@ export class Options
     }
 
 
-    public convert(form:FormsDefinition) : Definition
+    public convert(form:FormsDefinition) : FormInstance
     {
         let fname:string = this.utils.getName(form.component);
 
@@ -79,11 +79,11 @@ export class Options
         path = path.trim();
         if (!path.startsWith("/")) path = "/" + path;
 
-        let def:Definition =
+        let def:FormInstance =
         {
             name: fname,
             path: form.path,
-            options: form.modal,
+            modal: form.modal,
             title: form.title,
             navigable: navigable,
             component: form.component,

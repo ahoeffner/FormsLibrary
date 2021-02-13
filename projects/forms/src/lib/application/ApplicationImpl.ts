@@ -2,10 +2,10 @@ import { Utils } from "../utils/Utils";
 import { Parameters } from "./Parameters";
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
-import { Definition } from '../forms/FormsControl';
 import { PopupControl } from "../popup/PopupControl";
 import { FormsControl } from "../forms/FormsControl";
-import { FormsDefinition } from "../forms/FormsDefinition";
+import { FormInstance } from '../forms/FormsDefinition';
+import { FormsDefinition, ModalOptions } from "../forms/FormsDefinition";
 
 
 export class ApplicationImpl
@@ -38,6 +38,8 @@ export class ApplicationImpl
 
     public getParameters(component:any) : Parameters
     {
+        if (component == null) return(null);
+        
         let name:string = this.utils.getName(component);
         let params:Parameters = this.params.get(name);
 
@@ -58,22 +60,25 @@ export class ApplicationImpl
 
         if (form.length > 1)
         {
-            let name:string = form.substring(1);
+            let name:string = this.formsctl.findFormByPath(form);
+            if (name == null) return;
+
             let params:Parameters = this.getParameters(name);
             let urlparams = new URLSearchParams(window.location.search);
             urlparams.forEach((value,key) => {params.set(key,value)});
+
             this.showform(name);
         }
     }
 
 
-    public getFormsList() : Definition[]
+    public getFormsList() : FormInstance[]
     {
         return(this.formsctl.getFormsList());
     }
 
 
-    public getFormsDefinitions() : Map<string,Definition>
+    public getFormsDefinitions() : Map<string,FormInstance>
     {
         return(this.formsctl.getFormsDefinitions());
     }
@@ -86,24 +91,17 @@ export class ApplicationImpl
     }
 
 
-    public newform(form:any)
+    public newform(form:any, modal?:ModalOptions)
     {
-        if (this.ready) this.formsctl.newform(form);
+        if (this.ready) this.formsctl.showform(form,false,modal);
         else setTimeout(() => {this.newform(form);},10);
     }
 
 
-    public showform(form:any)
+    public showform(form:any, modal?:ModalOptions)
     {
-        if (this.ready) this.formsctl.showform(form);
+        if (this.ready) this.formsctl.showform(form,false,modal);
         else setTimeout(() => {this.showform(form);},10);
-    }
-
-
-    public callform(form:any)
-    {
-        if (this.ready) this.formsctl.callform(form);
-        else setTimeout(() => {this.callform(form);},10);
     }
 
 

@@ -1,5 +1,5 @@
-import { Application } from '../application/Application';
 import { Protected } from '../utils/Protected';
+import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
