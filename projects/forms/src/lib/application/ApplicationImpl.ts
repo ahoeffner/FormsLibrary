@@ -39,7 +39,7 @@ export class ApplicationImpl
     public getParameters(component:any) : Parameters
     {
         if (component == null) return(null);
-        
+
         let name:string = this.utils.getName(component);
         let params:Parameters = this.params.get(name);
 
@@ -109,12 +109,5 @@ export class ApplicationImpl
     {
         if (this.ready) this.formsctl.closeform(form,destroy);
         else setTimeout(() => {this.closeform(form,destroy);},10);
-    }
-
-
-    public showpopup(popup:any) : void
-    {
-        let ctrl:PopupControl = new PopupControl(this,popup);
-        ctrl.display();
     }
 }

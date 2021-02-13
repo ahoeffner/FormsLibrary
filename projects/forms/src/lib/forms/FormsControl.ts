@@ -112,58 +112,56 @@ export class FormsControl
     private display(form:any, modal:ModalOptions) : void
     {
         let name:string = this.utils.getName(form);
-        let def:FormInstance = this.forms.get(name);
+        let formdef:FormInstance = this.forms.get(name);
 
-        if (def == null) return;
+        if (formdef == null) return;
 
-        if (def.ref == null)
+        if (formdef.ref == null)
         {
-            def.ref = this.builder.createComponent(def.component);
+            formdef.ref = this.builder.createComponent(formdef.component);
 
-            if (!(def.ref.instance instanceof Form))
+            if (!(formdef.ref.instance instanceof Form))
             {
-                let name:string = def.ref.instance.constructor.name;
+                let name:string = formdef.ref.instance.constructor.name;
                 window.alert("Component "+name+" is not an instance of Form");
                 return;
             }
+
+            let impl:FormImpl = Protected.get<FormImpl>(formdef.ref.instance);
+            impl.setApplication(this.app);
         }
 
-        let impl:FormImpl = Protected.get<FormImpl>(def.ref.instance);
-        impl.setApplication(this.app);
-
         let formsarea:HTMLElement = this.formarea.getFormsArea();
-        let element:HTMLElement = (def.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+        let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
-        document.title = def.title;
+        document.title = formdef.title;
         let state = {additionalInformation: 'None'};
-        window.history.replaceState(state,def.name,this.url+def.path);
+        window.history.replaceState(state,formdef.name,this.url+formdef.path);
 
         if (modal == null)
         {
             if (this.current != null)
             {
                 formsarea.removeChild(this.current.element);
-                this.builder.getAppRef().detachView(def.ref.hostView);
+                this.builder.getAppRef().detachView(formdef.ref.hostView);
             }
 
-            this.current = {formdef: def, element: element};
-            this.builder.getAppRef().attachView(def.ref.hostView);
+            this.current = {formdef: formdef, element: element};
+            this.builder.getAppRef().attachView(formdef.ref.hostView);
 
             formsarea.appendChild(element);
         }
         else
         {
-            let appref = this.app.builder.getAppRef();
-            let winref = this.app.builder.createComponent(ModalWindow);
-
+            let winref:ComponentRef<any> = this.app.builder.createComponent(ModalWindow);
             let win:ModalWindow = winref.instance;
 
-            impl.setModal(win);
-            win.setForm(def,modal);
+            win.setApplication(this.app);
+            win.setForm(formdef,this.getModalOptions(form,formdef.modal));
 
             let element:HTMLElement = (winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+            this.builder.getAppRef().attachView(winref.hostView);
 
-            appref.attachView(winref.hostView);
             document.body.appendChild(element);
         }
     }

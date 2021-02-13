@@ -43,9 +43,4 @@ export class Application
     {
         this.impl.showform(form);
     }
-
-    public showpopup(popup:any) : void
-    {
-        this.impl.showpopup(popup);
-    }
 }

@@ -2,6 +2,7 @@ import { ModalWindow } from "./ModalWindow";
 import { Parameters } from "../application/Parameters";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
+
 export class FormImpl
 {
     private win:ModalWindow;
@@ -20,7 +21,7 @@ export class FormImpl
     }
 
 
-    public setModal(win:ModalWindow) : void
+    public setModalWindow(win:ModalWindow) : void
     {
         this.win = win;
     }

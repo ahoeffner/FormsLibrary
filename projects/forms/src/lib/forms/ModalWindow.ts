@@ -1,13 +1,13 @@
-import { FormImpl } from './FormImpl';
+import { FormImpl } from "./FormImpl";
 import { Preferences } from '../Preferences';
+import { Protected } from '../utils/Protected';
 import { FormInstance, ModalOptions } from './FormsDefinition';
 import { ApplicationImpl } from '../application/ApplicationImpl';
-import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { Protected } from '../utils/Protected';
+import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
-  selector: 'alex-window',
+  selector: 'modal',
   template:
   `
     <div class="modal">
@@ -70,11 +70,10 @@ import { Protected } from '../utils/Protected';
 changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-
 export class ModalWindow implements AfterViewInit
 {
-	private impl:FormImpl;
 	private form:FormInstance;
+	private app:ApplicationImpl;
 	private element:HTMLElement;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
@@ -87,10 +86,11 @@ export class ModalWindow implements AfterViewInit
     public tcolor  : string = Preferences.get().textColor;
     public bcolor  : string = Preferences.get().primaryColor;
 
-    @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
-    @ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
 
-    constructor(private change:ChangeDetectorRef) {}
+    @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
+	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
+
+	constructor(private change:ChangeDetectorRef) {}
 
 
 	public setForm(form:FormInstance, options:ModalOptions) : void
@@ -100,9 +100,13 @@ export class ModalWindow implements AfterViewInit
 		this.left = options.offsetLeft;
 		this.width = options.width+"px";
 		this.height = options.height+"px";
-		this.impl = Protected.get(form.ref.instance);
-
 		this.form = form;
+	}
+
+
+	public setApplication(app:ApplicationImpl) : void
+	{
+		this.app = app;
 	}
 
 
@@ -114,39 +118,40 @@ export class ModalWindow implements AfterViewInit
 			return;
 		}
 
-		let app:ApplicationImpl = this.impl.getApplication();
-		this.form.ref = app.builder.createComponent(this.form.component);
-
 		this.element = (this.form.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		this.app.builder.getAppRef().attachView(this.form.ref.hostView);
 		this.content.appendChild(this.element);
 
 		this.change.detectChanges();
-	}
+
+		let impl:FormImpl = Protected.get(this.form.ref.instance);
+		impl.setModalWindow(this);
+}
 
 
 	public close() : void
 	{
 		this.content.removeChild(this.element);
-		let app:ApplicationImpl = this.impl.getApplication();
-		app.builder.getAppRef().detachView(this.form.ref.hostView);
+		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
+
+		let impl:FormImpl = Protected.get(this.form.ref.instance);
+		impl.setModalWindow(null);
 	}
 
 
-    public ngAfterViewInit(): void
-    {
+	public ngAfterViewInit(): void
+	{
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
 		this.topbar.addEventListener("mouseup", () => {this.mouseup();});
 		this.topbar.addEventListener("mousedown", (event) => {this.mousedown(event);});
-
 		this.display();
-    }
+	}
 
 
 	private offx:number = 0;
 	private offy:number = 0;
 	private move:boolean = false;
-
 
 	private mouseup()
 	{
@@ -157,7 +162,6 @@ export class ModalWindow implements AfterViewInit
 			window.removeEventListener("mousemove", (event) => {this.movePopup(event);});
 	  	}
 	}
-
 
 	private mousedown(event:any) : void
 	{
@@ -179,7 +183,6 @@ export class ModalWindow implements AfterViewInit
 			this.offx = +event.clientX - this.left;
 	  	}
 	}
-
 
 	private movePopup(event:any) : void
 	{
