@@ -134,7 +134,7 @@ export class FormList
 		for(let i = 0; i < forms.length; i++)
 		{
 			let form:Element = forms.item(i);
-			form.addEventListener("click", this.show);
+			form.addEventListener("click", (event) => this.show(event));
 		}
 
 		let root:Element = this.folders.get("/");
