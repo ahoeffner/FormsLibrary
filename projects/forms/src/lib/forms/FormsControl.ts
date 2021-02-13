@@ -9,9 +9,10 @@ import { ComponentRef, EmbeddedViewRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
-interface Definition
+export interface Definition
 {
     name:string;
+    path:string;
     title:string;
     component:any;
     navigable?:boolean;
@@ -25,6 +26,7 @@ export class FormsControl
     private formarea:FormArea;
     private current:HTMLElement;
     private utils:Utils = new Utils();
+    private formlist:Definition[] = [];
     private forms:Map<string,Definition> = new Map<string,Definition>();
 
 
@@ -44,21 +46,42 @@ export class FormsControl
     {
         for(let i=0; i < forms.length; i++)
         {
-            let navigable:boolean = true;
             let form:FormsDefinition = forms[i];
             let fname:string = this.utils.getName(form.component);
+
+            let navigable:boolean = true;
             if (form.hasOwnProperty("navigable")) navigable = form.navigable;
+
+            let path:string = "/"+fname;
+            if (form.hasOwnProperty("path")) path = form.path;
+
+            path = path.trim();
+            if (!path.startsWith("/")) path = "/" + path;
 
             let def:Definition =
             {
+                path: path,
                 name: fname,
                 title: form.title,
                 component: form.component,
                 navigable: navigable
             };
 
+            this.formlist.push(def);
             this.forms.set(fname,def);
         }
+    }
+
+
+    public getFormsList() : Definition[]
+    {
+        return(this.formlist);
+    }
+
+
+    public getFormsDefinitions() : Map<string,Definition>
+    {
+        return(this.forms);
     }
 
 

@@ -2,6 +2,7 @@ import { Utils } from "../utils/Utils";
 import { Parameters } from "./Parameters";
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
+import { Definition } from '../forms/FormsControl';
 import { PopupControl } from "../popup/PopupControl";
 import { FormsControl } from "../forms/FormsControl";
 import { FormsDefinition } from "../forms/FormsDefinition";
@@ -12,8 +13,8 @@ export class ApplicationImpl
     private title:string = null;
     private ready:boolean = false;
     private formsctl:FormsControl;
-    private params:Parameters[] = [];
     private utils:Utils = new Utils();
+    private params:Map<string,Parameters> = new Map<string,Parameters>();
 
 
     constructor(public builder:Builder)
@@ -38,12 +39,12 @@ export class ApplicationImpl
     public getParameters(component:any) : Parameters
     {
         let name:string = this.utils.getName(component);
-        let params:Parameters = this.params[name];
+        let params:Parameters = this.params.get(name);
 
         if (params == null)
         {
             params = new Parameters();
-            this.params[name] = params;
+            this.params.set(name,params);
         }
 
         return(params);
@@ -63,6 +64,18 @@ export class ApplicationImpl
             urlparams.forEach((value,key) => {params.set(key,value)});
             this.showform(name);
         }
+    }
+
+
+    public getFormsList() : Definition[]
+    {
+        return(this.formsctl.getFormsList());
+    }
+
+
+    public getFormsDefinitions() : Map<string,Definition>
+    {
+        return(this.formsctl.getFormsDefinitions());
     }
 
 

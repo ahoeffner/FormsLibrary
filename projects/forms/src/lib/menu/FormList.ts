@@ -1,6 +1,15 @@
+import { Preferences } from '../Preferences';
+import { Protected } from '../utils/Protected';
+import { Definition } from '../forms/FormsControl';
 import { Application } from '../application/Application';
 import { Component, ViewChild,ElementRef } from '@angular/core';
-import { Preferences } from '../Preferences';
+import { ApplicationImpl } from '../application/ApplicationImpl';
+
+interface Form
+{
+	name:string;
+	def:Definition;
+}
 
 
 @Component({
@@ -16,9 +25,9 @@ export class FormList
 {
 	private root:Folder;
 	private page:string = "";
+	private app:ApplicationImpl;
+	private formsdef:Definition[];
 	private folders:Map<string,Element> = new Map<string,Element>();
-
-	private test:string[] = [];
 
 	private tree:HTMLDivElement;
     @ViewChild("tree", {read: ElementRef}) private treelem: ElementRef;
@@ -26,17 +35,8 @@ export class FormList
     constructor(app:Application)
     {
 		this.root = new Folder("/","");
-
-		this.test.push("main");
-		this.test.push("/dept/fdept");
-		this.test.push("/dept/depts/sales/fsales1");
-		this.test.push("/dept/depts/sales/fsales2");
-		this.test.push("/dept/depts/consulting/cons1");
-		this.test.push("/dept/depts/consulting/cons2");
-		this.test.push("/loc/locs/US/fus1");
-		this.test.push("/loc/locs/US/fus2");
-		this.test.push("/loc/locs/UK/fuk1");
-		this.test.push("/loc/floc");
+		this.app = Protected.get<ApplicationImpl>(app);
+		this.formsdef = this.app.getFormsList();
 
 		this.parse();
 
@@ -50,8 +50,6 @@ export class FormList
 		this.page += this.print(this.root,"    ");
 		this.page += "  </ul>\n";
 		this.page += "</html>\n";
-
-		//console.log(this.page);
 	}
 
 
@@ -70,8 +68,8 @@ export class FormList
 
 		for(let f = 0; f < root.forms.length; f++)
 		{
-			let form:string = root.forms[f];
-			html += indent+"  <li><span id="+form+" class='form'>"+form+"</span></li>\n";
+			let form:Form = root.forms[f];
+			html += indent+"  <li><span id="+form.def.name+" class='form'>"+form.name+"</span></li>\n";
 		}
 
 		html += "  </ul>";
@@ -83,9 +81,9 @@ export class FormList
 
 	private parse() : void
 	{
-		for(let i = 0; i < this.test.length; i++)
+		for(let i = 0; i < this.formsdef.length; i++)
 		{
-			let path:string = this.test[i];
+			let path:string = this.formsdef[i].path;
 
 			let form:string = path;
 			let folder:string = "/";
@@ -107,7 +105,7 @@ export class FormList
 				current = current.getFolder(parts[p].trim());
 			}
 
-			current.addForm(form);
+			current.addForm(form,this.formsdef[i]);
 		}
 	}
 
@@ -244,7 +242,7 @@ class Folder
 {
 	id:string;
 	name:string;
-	forms:string[] = [];
+	forms:Form[] = [];
 	folders:Folder[] = [];
 
 	constructor(id:string, name:string)
@@ -267,8 +265,8 @@ class Folder
 	}
 
 
-	addForm(form:string) : void
+	addForm(name:string, form:Definition) : void
 	{
-		this.forms.push(form);
+		this.forms.push({name:name, def:form});
 	}
 }
