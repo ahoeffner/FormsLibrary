@@ -123,7 +123,7 @@ export class FormsControl
         let state = {additionalInformation: 'None'};
         window.history.replaceState(state,formdef.name,this.url+formdef.path);
 
-        if (modal == null)
+        if (formdef.modalopts == null)
         {
             if (this.current != null)
             {
@@ -176,5 +176,7 @@ export class FormsControl
 
         let optutil:Options = new Options();
         formdef.modalopts = optutil.override(modal,formdef.modaldef);
+
+        return(formdef);
     }
 }

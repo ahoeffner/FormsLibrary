@@ -56,12 +56,16 @@ export class Options
 
     public override(options:ModalOptions, base:ModalOptions) : ModalOptions
     {
-        if (options == null && base == null) return(null);
+        if (options == undefined) return(base);
+        if (options == null) return(null);
+
         if (base == null) base = this.complete(base,true);
+
         if (!options.hasOwnProperty("width")) options.width = base.width;
         if (!options.hasOwnProperty("height")) options.height = base.height;
         if (!options.hasOwnProperty("offsetTop")) options.offsetTop = base.offsetTop;
         if (!options.hasOwnProperty("offsetLeft")) options.offsetLeft = base.offsetLeft;
+
         return(options);
     }
 
