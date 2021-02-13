@@ -69,7 +69,7 @@ export class FormList
 		for(let f = 0; f < root.forms.length; f++)
 		{
 			let form:Form = root.forms[f];
-			html += indent+"  <li><span id="+form.def.name+" class='form'>"+form.name+"</span></li>\n";
+			html += indent+"  <li><span id="+form.def.name+" title='"+form.def.title+"' class='form'>"+form.name+"</span></li>\n";
 		}
 
 		html += "  </ul>";
