@@ -153,7 +153,7 @@ export class FormList
 	public show(event:any) : void
 	{
 		let form:HTMLElement = event.target.id;
-		console.log("showform "+form);
+		this.app.showform(form);
 	}
 
 
