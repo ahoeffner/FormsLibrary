@@ -57,7 +57,7 @@ export class FormList
 	{
 		let html:string = "";
 
-		html += indent+"<li><span id="+root.id+" class='folder'>"+root.name+"</span>\n";
+		html += indent+"<li><span id='"+root.id+"' class='folder'>"+root.name+"</span>\n";
 		html += indent+"  <ul class='list'>\n";
 
 		for(let i = 0; i < root.folders.length; i++)
@@ -69,7 +69,7 @@ export class FormList
 		for(let f = 0; f < root.forms.length; f++)
 		{
 			let form:Form = root.forms[f];
-			html += indent+"  <li><span id="+form.def.name+" title='"+form.def.title+"' class='form'>"+form.name+"</span></li>\n";
+			html += indent+"  <li><span id='"+form.def.name+"' title='"+form.def.title+"' class='form'>"+form.name+"</span></li>\n";
 		}
 
 		html += "  </ul>";
