@@ -8,12 +8,12 @@ export class Form
 
     constructor()
     {
-        this.impl = new FormImpl();
+        this.impl = new FormImpl(this);
     }
 
     private setProtected(parent:any) : void
     {
-        
+
     }
 
     private getProtected() : FormImpl
@@ -25,5 +25,11 @@ export class Form
     {
         if (component == null) component = this;
         return(this.impl.getParameters(component));
+    }
+
+
+    public close(dismiss?:boolean) : void
+    {
+        this.impl.close(dismiss);
     }
 }

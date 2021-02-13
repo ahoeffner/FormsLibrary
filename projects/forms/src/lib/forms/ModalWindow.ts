@@ -3,7 +3,7 @@ import { Preferences } from '../Preferences';
 import { Protected } from '../utils/Protected';
 import { FormInstance, ModalOptions } from './FormsDefinition';
 import { ApplicationImpl } from '../application/ApplicationImpl';
-import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
 
 
 @Component({
@@ -77,6 +77,7 @@ export class ModalWindow implements AfterViewInit
 	private element:HTMLElement;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
+	private winref:ComponentRef<any>;
 
     public top : number = 40;
     public left : number = 60;
@@ -101,6 +102,12 @@ export class ModalWindow implements AfterViewInit
 		this.width = options.width+"px";
 		this.height = options.height+"px";
 		this.form = form;
+	}
+
+
+	public setWinRef(winref:ComponentRef<any>) : void
+	{
+		this.winref = winref;
 	}
 
 
@@ -136,6 +143,12 @@ export class ModalWindow implements AfterViewInit
 
 		let impl:FormImpl = Protected.get(this.form.ref.instance);
 		impl.setModalWindow(null);
+
+		let element:HTMLElement = (this.winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		document.body.removeChild(element);
+
+		this.app.builder.getAppRef().detachView(this.winref.hostView);
+		this.winref.destroy();
 	}
 
 

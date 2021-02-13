@@ -9,6 +9,9 @@ export class FormImpl
     private app:ApplicationImpl;
 
 
+    constructor(private form:any) {}
+
+
     public getApplication() : ApplicationImpl
     {
         return(this.app);
@@ -30,5 +33,12 @@ export class FormImpl
     public getParameters(component:any) : Parameters
     {
         return(this.app.getParameters(component));
+    }
+
+
+    public close(dismiss?:boolean) : void
+    {
+        if (this.win != null) this.win.close();
+        else this.app.closeform(this.form,dismiss);
     }
 }

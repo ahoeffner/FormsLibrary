@@ -156,6 +156,7 @@ export class FormsControl
             let winref:ComponentRef<any> = this.app.builder.createComponent(ModalWindow);
             let win:ModalWindow = winref.instance;
 
+            win.setWinRef(winref);
             win.setApplication(this.app);
             win.setForm(formdef,this.getModalOptions(form,formdef.modal));
 
