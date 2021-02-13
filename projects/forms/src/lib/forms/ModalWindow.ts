@@ -115,6 +115,7 @@ export class ModalWindow implements AfterViewInit
 		}
 
 		let app:ApplicationImpl = this.impl.getApplication();
+		this.form.ref = app.builder.createComponent(this.form.component);
 
 		this.element = (this.form.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.content.appendChild(this.element);
