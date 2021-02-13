@@ -4,20 +4,9 @@ import { FormArea } from "./FormArea";
 import { Utils } from "../utils/Utils";
 import { Builder } from "../utils/Builder";
 import { Protected } from '../utils/Protected';
-import { FormsDefinition } from "./FormsDefinition";
-import { ComponentRef, EmbeddedViewRef } from '@angular/core';
+import { EmbeddedViewRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
-
-
-export interface Definition
-{
-    name:string;
-    path:string;
-    title:string;
-    component:any;
-    navigable?:boolean;
-    ref?:ComponentRef<any>;
-}
+import { FormsDefinition, Definition, Options } from "./FormsDefinition";
 
 
 export class FormsControl
@@ -44,31 +33,15 @@ export class FormsControl
 
     public setFormsDefinitions(forms:FormsDefinition[]) : void
     {
+        let options:Options = new Options();
+
         for(let i=0; i < forms.length; i++)
         {
             let form:FormsDefinition = forms[i];
-            let fname:string = this.utils.getName(form.component);
-
-            let navigable:boolean = true;
-            if (form.hasOwnProperty("navigable")) navigable = form.navigable;
-
-            let path:string = "/"+fname;
-            if (form.hasOwnProperty("path")) path = form.path;
-
-            path = path.trim();
-            if (!path.startsWith("/")) path = "/" + path;
-
-            let def:Definition =
-            {
-                path: path,
-                name: fname,
-                title: form.title,
-                component: form.component,
-                navigable: navigable
-            };
+            let def:Definition = options.convert(form);
 
             this.formlist.push(def);
-            this.forms.set(fname,def);
+            this.forms.set(def.name,def);
         }
     }
 

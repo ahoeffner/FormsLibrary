@@ -1,6 +1,6 @@
 import { Preferences } from '../Preferences';
 import { Protected } from '../utils/Protected';
-import { Definition } from '../forms/FormsControl';
+import { Definition } from '../forms/FormsDefinition';
 import { Application } from '../application/Application';
 import { Component, ViewChild,ElementRef } from '@angular/core';
 import { ApplicationImpl } from '../application/ApplicationImpl';
@@ -36,8 +36,8 @@ export class FormList
     {
 		this.root = new Folder("/","");
 		this.app = Protected.get<ApplicationImpl>(app);
-		this.formsdef = this.app.getFormsList();
 
+		this.formsdef = this.app.getFormsList();
 		this.parse();
 
 		this.page += "<html>\n";
@@ -84,6 +84,7 @@ export class FormList
 		for(let i = 0; i < this.formsdef.length; i++)
 		{
 			let path:string = this.formsdef[i].path;
+			if (!this.formsdef[i].navigable) continue;
 
 			let form:string = path;
 			let folder:string = "/";
