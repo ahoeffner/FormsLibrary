@@ -56,9 +56,7 @@ export class Options
 
     public override(options:ModalOptions, base:ModalOptions) : ModalOptions
     {
-        if (options == undefined) return(base);
-        if (options == null) return(null);
-
+        if (options == null) return(base);
         if (base == null) base = this.complete(base,true);
 
         if (!options.hasOwnProperty("width")) options.width = base.width;
