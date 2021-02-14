@@ -82,10 +82,10 @@ export class FormsControl
     }
 
 
-    public showform(form:any, newform:boolean) : void
+    public showform(form:any, newform:boolean, parameters:Map<string,any>) : void
     {
         if (newform) this.closeform(form,true);
-        this.displayform(form);
+        this.displayform(form,parameters);
     }
 
 
@@ -143,19 +143,21 @@ export class FormsControl
     }
 
 
-    private displayform(form:any) : void
+    private displayform(form:any, parameters:Map<string,any>) : void
     {
         let formdef:FormInstance = this.getFormInstance(form);
-        this.display(formdef);
+        this.display(formdef,parameters);
     }
 
 
-    public display(formdef:FormInstance) : void
+    public display(formdef:FormInstance, parameters:Map<string,any>) : void
     {
-        if (formdef == null) return;
-
+        if (formdef == null || formdef.ref == null) return;
         let formsarea:HTMLElement = this.formarea.getFormsArea();
         let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+
+        let impl:FormImpl = Protected.get(formdef.ref.instance);
+		impl.setParameters(parameters);
 
         document.title = formdef.title;
 
@@ -200,7 +202,7 @@ export class FormsControl
 
         if (formdef.ref == null)
             formdef.ref = this.createForm(formdef.component);
-            
+
         return(formdef);
     }
 

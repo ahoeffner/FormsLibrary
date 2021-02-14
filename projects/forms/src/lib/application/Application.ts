@@ -39,8 +39,8 @@ export class Application
         this.impl.setTitle(title);
     }
 
-    public showform(form:any)
+    public showform(form:any, parameters?:Map<string,any>)
     {
-        this.impl.showform(form);
+        this.impl.showform(form,parameters);
     }
 }

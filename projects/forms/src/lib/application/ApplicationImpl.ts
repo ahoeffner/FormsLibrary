@@ -71,24 +71,24 @@ export class ApplicationImpl
     }
 
 
-    public newform(form:any)
+    public newform(form:any, parameters:Map<string,any>)
     {
-        if (this.ready) this.formsctl.showform(form,false);
-        else setTimeout(() => {this.newform(form);},10);
+        if (this.ready) this.formsctl.showform(form,false,parameters);
+        else setTimeout(() => {this.newform(form,parameters);},10);
     }
 
 
-    public showinstance(inst:FormInstance)
+    public showinstance(inst:FormInstance, parameters:Map<string,any>)
     {
-        if (this.ready) this.formsctl.display(inst);
-        else setTimeout(() => {this.showinstance(inst);},10);
+        if (this.ready) this.formsctl.display(inst,parameters);
+        else setTimeout(() => {this.showinstance(inst,parameters);},10);
     }
 
 
-    public showform(form:any)
+    public showform(form:any, parameters?:Map<string,any>)
     {
-        if (this.ready) this.formsctl.showform(form,false);
-        else setTimeout(() => {this.showform(form);},10);
+        if (this.ready) this.formsctl.showform(form,false,parameters);
+        else setTimeout(() => {this.showform(form,parameters);},10);
     }
 
 

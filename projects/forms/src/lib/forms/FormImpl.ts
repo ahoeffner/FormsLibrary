@@ -1,4 +1,5 @@
 import { ModalWindow } from "./ModalWindow";
+import { StackElement } from "./StackElement";
 import { InstanceID, FormInstance } from "./FormsDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -8,6 +9,8 @@ export class FormImpl
     private win:ModalWindow;
     private inst:InstanceID;
     private app:ApplicationImpl;
+    private stack:StackElement[];
+    private parameters:Map<string,any> = new Map<string,any>();
 
 
     constructor(private form:any) {}
@@ -37,32 +40,52 @@ export class FormImpl
     }
 
 
+    public setStack(stack:StackElement[]) : void
+    {
+        this.stack = stack;
+    }
+
+
+    public getStack() : StackElement[]
+    {
+        return(this.stack);
+    }
+
+
     public getModalWindow() : ModalWindow
     {
         return(this.win);
     }
 
 
-    public callForm(form:any) : void
+    public setParameters(params:Map<string,any>) : void
+    {
+        this.parameters = params;
+    }
+
+
+    public getParameters() : Map<string,any>
+    {
+        return(this.parameters);
+    }
+
+
+    public callForm(form:any, parameters?:Map<string,any>) : InstanceID
     {
         let id:InstanceID = this.app.getNewInstance(form);
         let inst:FormInstance = this.app.getInstance(id);
 
         if (this.win != null)
         {
-            this.win.newForm(inst);
+            this.win.newForm(inst,parameters);
         }
         else
         {
             inst.modalopts = {width: 0, height: 0};
-            this.app.showinstance(inst);
+            this.app.showinstance(inst,parameters);
         }
-    }
 
-
-    public getParameters() : Map<string,any>
-    {
-        return(null);
+        return(id);
     }
 
 

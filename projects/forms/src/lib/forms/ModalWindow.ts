@@ -67,8 +67,10 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         top: 3vh;
         right: 0;
         bottom: 0;
+		display: flex;
         overflow: auto;
         position: absolute;
+		justify-content: center;
     }
 `],
 changeDetection: ChangeDetectionStrategy.OnPush
@@ -122,13 +124,15 @@ export class ModalWindow implements AfterViewInit
 	}
 
 
-	public newForm(form:FormInstance) : void
+	public newForm(form:FormInstance, parameters:Map<string,any>) : void
 	{
 		this.content.removeChild(this.element);
 		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
 
 		let impl:FormImpl = Protected.get(this.form.ref.instance);
+
 		impl.setModalWindow(null);
+		impl.setParameters(parameters);
 
 		this.form = form;
 		this.display();
