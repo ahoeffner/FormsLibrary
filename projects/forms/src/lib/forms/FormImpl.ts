@@ -97,6 +97,8 @@ export class FormImpl
     {
         this.stack.forEach((id) =>
         {
+            id.form.clearStack();
+            
             if (id.ref != null)
                 this.app.closeInstance(id,true);
         });
