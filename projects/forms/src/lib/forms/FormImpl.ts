@@ -46,8 +46,8 @@ export class FormImpl
 
     public callForm(form:any) : void
     {
-        let id:InstanceID = this.app.getFormsControl().getNewInstance(form);
-        let inst:FormInstance = this.app.getFormsControl().getInstance(id);
+        let id:InstanceID = this.app.getNewInstance(form);
+        let inst:FormInstance = this.app.getInstance(id);
 
         if (this.win != null)
         {
@@ -56,7 +56,7 @@ export class FormImpl
         else
         {
             inst.modalopts = {width: 0, height: 0};
-            this.app.getFormsControl().display(inst);
+            this.app.showinstance(inst);
         }
     }
 

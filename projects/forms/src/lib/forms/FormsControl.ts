@@ -54,7 +54,7 @@ export class FormsControl
             this.forms.set(def.name,def);
         }
 
-        this.instances = new FormsInstance(this.app, this.forms);
+        this.instances = new FormsInstance(this,this.forms);
     }
 
 

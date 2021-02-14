@@ -35,12 +35,6 @@ export class ApplicationImpl
     }
 
 
-    public getFormsControl() : FormsControl
-    {
-        return(this.formsctl);
-    }
-
-
     public getParameters(component:any) : Parameters
     {
         if (component == null) return(null);
@@ -100,6 +94,13 @@ export class ApplicationImpl
     {
         if (this.ready) this.formsctl.showform(form,false,modal);
         else setTimeout(() => {this.newform(form);},10);
+    }
+
+
+    public showinstance(inst:FormInstance)
+    {
+        if (this.ready) this.formsctl.display(inst);
+        else setTimeout(() => {this.showinstance(inst);},10);
     }
 
 

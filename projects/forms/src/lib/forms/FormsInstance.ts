@@ -9,14 +9,12 @@ import { FormInstance, InstanceID, ModalOptions, FormUtil } from "./FormsDefinit
 
 export class FormsInstance
 {
-    private ctrl:FormsControl;
     private utils:Utils = new Utils();
     private futil:FormUtil = new FormUtil();
 
 
-    constructor(app:ApplicationImpl, private forms:Map<string,FormInstance>)
+    constructor(private ctrl:FormsControl, private forms:Map<string,FormInstance>)
     {
-        this.ctrl = app.getFormsControl();
     }
 
 
