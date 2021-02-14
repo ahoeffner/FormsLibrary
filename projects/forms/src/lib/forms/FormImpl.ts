@@ -1,5 +1,4 @@
 import { ModalWindow } from "./ModalWindow";
-import { Parameters } from "../application/Parameters";
 import { InstanceID, FormInstance } from "./FormsDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -61,10 +60,9 @@ export class FormImpl
     }
 
 
-    public getParameters(component:any) : Parameters
+    public getParameters() : Map<string,any>
     {
-        if (component == null) component = this.form;
-        return(this.app.getParameters(component));
+        return(null);
     }
 
 

@@ -1,5 +1,4 @@
 import { FormImpl } from "./FormImpl";
-import { Parameters } from "../application/Parameters";
 
 
 export class Form
@@ -21,9 +20,9 @@ export class Form
         this.impl.callForm(form);
     }
 
-    public getParameters(component?:any) : Parameters
+    public getParameters() : Map<string,any>
     {
-        return(this.impl.getParameters(component));
+        return(this.impl.getParameters());
     }
 
 

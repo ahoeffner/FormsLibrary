@@ -82,10 +82,10 @@ export class FormsControl
     }
 
 
-    public showform(form:any, newform:boolean, modal:ModalOptions) : void
+    public showform(form:any, newform:boolean) : void
     {
         if (newform) this.closeform(form,true);
-        this.displayform(form,modal);
+        this.displayform(form);
     }
 
 
@@ -143,9 +143,9 @@ export class FormsControl
     }
 
 
-    private displayform(form:any, modal:ModalOptions) : void
+    private displayform(form:any) : void
     {
-        let formdef:FormInstance = this.getFormInstance(form,modal);
+        let formdef:FormInstance = this.getFormInstance(form);
         this.display(formdef);
     }
 
@@ -192,7 +192,7 @@ export class FormsControl
     }
 
 
-    public getFormInstance(form:any, modal?:ModalOptions) : FormInstance
+    public getFormInstance(form:any) : FormInstance
     {
         let name:string = this.utils.getName(form);
         let formdef:FormInstance = this.forms.get(name);
@@ -200,10 +200,7 @@ export class FormsControl
 
         if (formdef.ref == null)
             formdef.ref = this.createForm(formdef.component);
-
-        let optutil:FormUtil = new FormUtil();
-        formdef.modalopts = optutil.override(modal,formdef.modaldef);
-
+            
         return(formdef);
     }
 
