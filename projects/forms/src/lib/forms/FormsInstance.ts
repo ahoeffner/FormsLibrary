@@ -29,15 +29,16 @@ export class FormsInstance
         let ref:ComponentRef<any> = this.ctrl.createForm(def.component);
         if (ref == null) return(null);
 
+        let impl:FormImpl = Protected.get(ref.instance);
+
         let id:InstanceID =
         {
             ref: ref,
+            form: impl,
             name: def.name,
-            modalopts: modal,
-            form: ref.instance
+            modalopts: modal
         }
 
-        let impl:FormImpl = Protected.get(ref.instance);
         impl.setInstanceID(id);
 
         return(id);

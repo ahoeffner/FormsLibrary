@@ -9,8 +9,8 @@ export class FormImpl
     private win:ModalWindow;
     private inst:InstanceID;
     private app:ApplicationImpl;
-    private stack:Map<string,any> = new Map<string,any>();
     private parameters:Map<string,any> = new Map<string,any>();
+    private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
 
     constructor(private form:any) {}
@@ -62,14 +62,15 @@ export class FormImpl
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
-        let inst:FormInstance = this.stack.get(name);
+        let id:InstanceID = this.stack.get(name);
 
-        if (inst == null)
+        if (id == null)
         {
             let id:InstanceID = this.app.getNewInstance(form);
-            inst = this.app.getInstance(id);
-            this.stack.set(name,inst);
+            this.stack.set(name,id);
         }
+
+        let inst:FormInstance = this.app.getInstance(id);
 
         if (this.win != null)
         {
@@ -89,5 +90,17 @@ export class FormImpl
 
         if (this.inst == null) this.app.closeform(this.form,dismiss);
         else this.app.closeInstance(this.inst,dismiss);
+    }
+
+
+    public clearStack() : void
+    {
+        this.stack.forEach((id) =>
+        {
+            if (id.ref != null)
+                this.app.closeInstance(id,true);
+        });
+
+        this.stack.clear();
     }
 }
