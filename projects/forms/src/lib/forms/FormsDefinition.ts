@@ -22,6 +22,14 @@ export interface FormsDefinition
 }
 
 
+export interface InstanceID
+{
+    name:string;
+    modalopts:ModalOptions;
+    ref:ComponentRef<any>;
+}
+
+
 export interface FormInstance
 {
     name:string;
@@ -34,7 +42,7 @@ export interface FormInstance
     ref?:ComponentRef<any>;
 }
 
-export class Options
+export class FormUtil
 {
     private utils:Utils = new Utils();
 
@@ -95,5 +103,21 @@ export class Options
         };
 
         return(def);
+    }
+
+
+    public clone(base:FormInstance) : FormInstance
+    {
+        let clone:FormInstance =
+        {
+            name: base.name,
+            path: base.path,
+            title: base.title,
+            modaldef: base.modaldef,
+            modalopts: base.modaldef,
+            component: base.component,
+            navigable: base.navigable
+        }
+        return(clone);
     }
 }

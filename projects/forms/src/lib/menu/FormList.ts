@@ -34,7 +34,7 @@ export class FormList
 
     constructor(app:Application)
     {
-		this.root = new Folder("/","");
+		this.root = new Folder("/","/");
 		this.app = Protected.get<ApplicationImpl>(app);
 
 		this.formsdef = this.app.getFormsList();

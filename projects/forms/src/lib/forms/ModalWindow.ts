@@ -1,7 +1,7 @@
 import { FormImpl } from "./FormImpl";
 import { Preferences } from '../Preferences';
 import { Protected } from '../utils/Protected';
-import { FormInstance, ModalOptions } from './FormsDefinition';
+import { FormInstance } from './FormsDefinition';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
 

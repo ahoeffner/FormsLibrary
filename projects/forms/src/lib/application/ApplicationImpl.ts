@@ -35,6 +35,12 @@ export class ApplicationImpl
     }
 
 
+    public getFormsControl() : FormsControl
+    {
+        return(this.formsctl);
+    }
+
+
     public getParameters(component:any) : Parameters
     {
         if (component == null) return(null);
