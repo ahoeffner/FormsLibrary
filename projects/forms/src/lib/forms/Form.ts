@@ -11,19 +11,18 @@ export class Form
         this.impl = new FormImpl(this);
     }
 
-    private setProtected(parent:any) : void
-    {
-
-    }
-
     private getProtected() : FormImpl
     {
         return(this.impl);
     }
 
+    public callForm(form:any) : void
+    {
+        this.impl.callForm(form);
+    }
+
     public getParameters(component?:any) : Parameters
     {
-        if (component == null) component = this;
         return(this.impl.getParameters(component));
     }
 

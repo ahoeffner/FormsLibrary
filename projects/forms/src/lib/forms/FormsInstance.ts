@@ -1,6 +1,8 @@
+import { FormImpl } from "./FormImpl";
 import { Utils } from "../utils/Utils";
 import { ComponentRef } from "@angular/core";
 import { FormsControl } from "./FormsControl";
+import { Protected } from '../utils/Protected';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FormInstance, InstanceID, ModalOptions, FormUtil } from "./FormsDefinition";
 
@@ -27,6 +29,7 @@ export class FormsInstance
         if (def == null) return(null);
 
         let ref:ComponentRef<any> = this.ctrl.createForm(def.component);
+        if (ref == null) return(null);
 
         let id:InstanceID =
         {
@@ -34,6 +37,9 @@ export class FormsInstance
             modalopts: modal,
             ref: ref
         }
+
+        let impl:FormImpl = Protected.get(ref.instance);
+        impl.setInstanceID(id);
 
         return(id);
     }

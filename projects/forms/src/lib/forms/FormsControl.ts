@@ -123,7 +123,11 @@ export class FormsControl
         let formsarea:HTMLElement = this.formarea.getFormsArea();
         let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
-        if (this.current != null && this.current.element == element)
+        let impl:FormImpl = Protected.get(formdef.ref.instance);
+        let win:boolean = (impl.getModalWindow() != null);
+        impl.setModalWindow(null);
+
+        if (!win && this.current != null && this.current.element == element)
         {
             this.current = null;
             formsarea.removeChild(element);

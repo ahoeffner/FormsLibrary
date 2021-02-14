@@ -14,7 +14,11 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
       <div class="modal-block" style="top: {{top}}px; left: {{left}}px">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		  <span style="display: inline-block; vertical-align: middle;">{{title}}</span></div>
+		    <span style="display: inline-block; vertical-align: middle;">{{title}}</span>
+			<span style="position: absolute; right: 0">
+				<button href="" (click)="closeForm()">X</button>
+			</span>
+		  </div>
           <div class="block"><div #content></div></div>
         </div>
       </div>
@@ -101,7 +105,33 @@ export class ModalWindow implements AfterViewInit
 		this.left = form.modalopts.offsetLeft;
 		this.width = form.modalopts.width+"px";
 		this.height = form.modalopts.height+"px";
+
+		if (form.modalopts.width == 0)
+		{
+			this.top = 10;
+			this.width = "98vw";
+		}
+
+		if (form.modalopts.height == 0)
+		{
+			this.left = 10;
+			this.height = "98vh";
+		}
+
 		this.form = form;
+	}
+
+
+	public newForm(form:FormInstance) : void
+	{
+		this.content.removeChild(this.element);
+		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
+
+		let impl:FormImpl = Protected.get(this.form.ref.instance);
+		impl.setModalWindow(null);
+
+		this.form = form;
+		this.display();
 	}
 
 
@@ -114,6 +144,28 @@ export class ModalWindow implements AfterViewInit
 	public setApplication(app:ApplicationImpl) : void
 	{
 		this.app = app;
+	}
+
+
+	public closeForm() : void
+	{
+		let impl:FormImpl = Protected.get(this.form.ref.instance);
+		impl.close(true);
+	}
+
+
+	public close() : void
+	{
+		this.content.removeChild(this.element);
+		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
+
+		let element:HTMLElement = (this.winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		document.body.removeChild(element);
+
+		this.app.builder.getAppRef().detachView(this.winref.hostView);
+		this.winref.destroy();
+
+		this.winref = null;
 	}
 
 
@@ -133,24 +185,6 @@ export class ModalWindow implements AfterViewInit
 
 		let impl:FormImpl = Protected.get(this.form.ref.instance);
 		impl.setModalWindow(this);
-}
-
-
-	public close() : void
-	{
-		this.content.removeChild(this.element);
-		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
-
-		let impl:FormImpl = Protected.get(this.form.ref.instance);
-		impl.setModalWindow(null);
-
-		let element:HTMLElement = (this.winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		document.body.removeChild(element);
-
-		this.app.builder.getAppRef().detachView(this.winref.hostView);
-		this.winref.destroy();
-
-		this.winref = null;
 	}
 
 

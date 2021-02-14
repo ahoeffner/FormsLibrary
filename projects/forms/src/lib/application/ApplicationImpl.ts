@@ -4,7 +4,7 @@ import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
 import { FormsControl } from "../forms/FormsControl";
 import { FormInstance } from '../forms/FormsDefinition';
-import { FormsDefinition, ModalOptions } from "../forms/FormsDefinition";
+import { FormsDefinition, ModalOptions, InstanceID } from "../forms/FormsDefinition";
 
 
 export class ApplicationImpl
@@ -120,5 +120,23 @@ export class ApplicationImpl
     public getFormInstance(form:any, modal?:ModalOptions) : FormInstance
     {
         return(this.formsctl.getFormInstance(form,modal));
+    }
+
+
+    public getNewInstance(form:any, modal?:ModalOptions) : InstanceID
+    {
+        return(this.formsctl.getNewInstance(form,modal));
+    }
+
+
+    public getInstance(id:InstanceID) : FormInstance
+    {
+        return(this.formsctl.getInstance(id));
+    }
+
+
+    public closeInstance<C>(id:InstanceID, destroy:boolean) : C
+    {
+        return(this.formsctl.closeInstance<C>(id,destroy));
     }
 }
