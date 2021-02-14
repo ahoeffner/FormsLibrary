@@ -52,9 +52,14 @@ export class FormsInstance
     }
 
 
-    public closeInstance(id:InstanceID, destroy:boolean) : void
+    public closeInstance<C>(id:InstanceID, destroy:boolean) : C
     {
+        let clazz:any = null;
+        if (id.ref != null) clazz = id.ref.instance;
+
         let inst:FormInstance = this.getInstance(id);
         this.ctrl.close(inst,destroy);
+
+        return(clazz as C);
     }
 }

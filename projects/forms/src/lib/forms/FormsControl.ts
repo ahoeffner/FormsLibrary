@@ -101,9 +101,9 @@ export class FormsControl
     }
 
 
-    public closeInstance(id:InstanceID, destroy:boolean) : void
+    public closeInstance<C>(id:InstanceID, destroy:boolean) : C
     {
-        this.instances.closeInstance(id,destroy);
+        return(this.instances.closeInstance<C>(id,destroy));
     }
 
 
