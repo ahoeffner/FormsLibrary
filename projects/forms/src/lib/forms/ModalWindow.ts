@@ -19,7 +19,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 				<button href="" (click)="closeForm()">X</button>
 			</span>
 		  </div>
-          <div class="block"><div #content></div></div>
+          <div class="block" style="margin-top: {{tmargin}};"><div #content></div></div>
         </div>
       </div>
     </div>
@@ -90,6 +90,7 @@ export class ModalWindow implements AfterViewInit
     public title : string = "???";
     public width : string = "30vw";
     public height : string = "30vh";
+    public tmargin : string = "1vh";
     public tcolor  : string = Preferences.get().textColor;
     public bcolor  : string = Preferences.get().primaryColor;
 

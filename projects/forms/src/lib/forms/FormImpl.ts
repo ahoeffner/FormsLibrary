@@ -66,7 +66,7 @@ export class FormImpl
 
         if (id == null)
         {
-            let id:InstanceID = this.app.getNewInstance(form);
+            id = this.app.getNewInstance(form);
             this.stack.set(name,id);
         }
 

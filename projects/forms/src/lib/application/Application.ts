@@ -39,6 +39,11 @@ export class Application
         this.impl.setTitle(title);
     }
 
+    public newform(form:any, parameters?:Map<string,any>)
+    {
+        this.impl.newform(form,parameters);
+    }
+
     public showform(form:any, parameters?:Map<string,any>)
     {
         this.impl.showform(form,parameters);
