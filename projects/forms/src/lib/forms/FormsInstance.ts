@@ -31,9 +31,10 @@ export class FormsInstance
 
         let id:InstanceID =
         {
+            ref: ref,
             name: def.name,
             modalopts: modal,
-            ref: ref
+            form: ref.instance
         }
 
         let impl:FormImpl = Protected.get(ref.instance);
@@ -64,6 +65,7 @@ export class FormsInstance
         let inst:FormInstance = this.getInstance(id);
         this.ctrl.close(inst,destroy);
 
+        if (destroy) inst.ref = null;
         return(clazz as C);
     }
 }

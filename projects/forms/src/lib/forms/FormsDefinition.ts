@@ -1,3 +1,4 @@
+import { FormImpl } from './FormImpl';
 import { Utils } from '../utils/Utils';
 import { ComponentRef } from '@angular/core';
 
@@ -25,6 +26,7 @@ export interface FormsDefinition
 export interface InstanceID
 {
     name:string;
+    form:FormImpl;
     modalopts:ModalOptions;
     ref:ComponentRef<any>;
 }
