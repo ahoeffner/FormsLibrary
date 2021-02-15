@@ -125,17 +125,12 @@ export class ModalWindow implements AfterViewInit
 	}
 
 
-	public newForm(form:FormInstance, parameters:Map<string,any>) : void
+	public newForm(form:FormInstance) : void
 	{
 		this.title = form.title;
 
 		this.content.removeChild(this.element);
 		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
-
-		let impl:FormImpl = Protected.get(this.form.ref.instance);
-
-		impl.setModalWindow(null);
-		impl.setParameters(parameters);
 
 		this.form = form;
 		this.display();

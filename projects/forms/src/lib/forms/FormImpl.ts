@@ -8,9 +8,9 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 
 export class FormImpl
 {
-    private parent:FormImpl;
     private win:ModalWindow;
     private inst:InstanceID;
+    private parent:InstanceID;
     private app:ApplicationImpl;
     private cancelled:boolean = false;
     private parameters:Map<string,any> = new Map<string,any>();
@@ -32,9 +32,9 @@ export class FormImpl
     }
 
 
-    public setParent(form:FormImpl) : void
+    public setParent(parent:InstanceID) : void
     {
-        this.parent = form;
+        this.parent = parent;
     }
 
 
@@ -83,7 +83,11 @@ export class FormImpl
         if (id == null)
         {
             id = this.app.getNewInstance(form);
-            id.form.setParent(this);
+            id.form.setParent(this.inst);
+
+            let impl:FormImpl = Protected.get(id.ref.instance);
+            impl.setParameters(parameters);
+
             this.stack.set(name,id);
         }
 
@@ -91,7 +95,7 @@ export class FormImpl
 
         if (this.win != null)
         {
-            this.win.newForm(inst,parameters);
+            this.win.newForm(inst);
         }
         else
         {
@@ -117,17 +121,27 @@ export class FormImpl
     public onClose(impl:FormImpl) : void
     {
         Protected.callback(this.form,impl.form);
+
+        console.log(impl.form.constructor.name+" was closed");
+        console.log("this.inst="+this.inst+" this.win="+this.win);
+
+        if (this.inst != null && this.win != null)
+        {
+            console.log("now reopening "+this.inst.form.form.constructor.name);
+            let inst:FormInstance = this.app.getInstance(this.inst);
+            this.win.newForm(inst);
+        }
     }
 
 
     public close(dismiss?:boolean) : void
     {
-        if (this.win != null) this.win.close();
+        if (this.win != null && this.parent == null) this.win.close();
 
         if (this.inst == null) this.app.closeform(this.form,dismiss);
         else this.app.closeInstance(this.inst,dismiss);
 
-        if (this.parent != null) this.parent.onClose(this);
+        if (this.parent != null) this.parent.form.onClose(this);
     }
 
 

@@ -33,6 +33,11 @@ export class Form
         return(this.impl.getCallStack());
     }
 
+    public clearStack() : void
+    {
+        this.impl.clearStack();
+    }
+
     public getParameters() : Map<string,any>
     {
         return(this.impl.getParameters());
