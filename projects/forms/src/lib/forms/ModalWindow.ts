@@ -127,6 +127,8 @@ export class ModalWindow implements AfterViewInit
 
 	public newForm(form:FormInstance, parameters:Map<string,any>) : void
 	{
+		this.title = form.title;
+
 		this.content.removeChild(this.element);
 		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
 

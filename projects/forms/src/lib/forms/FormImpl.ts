@@ -1,14 +1,18 @@
+import { Form } from "./Form";
 import { Utils } from "../utils/Utils";
 import { ModalWindow } from "./ModalWindow";
+import { Protected } from "../utils/Protected";
 import { InstanceID, FormInstance } from "./FormsDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
 export class FormImpl
 {
+    private parent:FormImpl;
     private win:ModalWindow;
     private inst:InstanceID;
     private app:ApplicationImpl;
+    private cancelled:boolean = false;
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
@@ -16,9 +20,21 @@ export class FormImpl
     constructor(private form:any) {}
 
 
+    public getForm() : Form
+    {
+        return(this.form);
+    }
+
+
     public getApplication() : ApplicationImpl
     {
         return(this.app);
+    }
+
+
+    public setParent(form:FormImpl) : void
+    {
+        this.parent = form;
     }
 
 
@@ -67,6 +83,7 @@ export class FormImpl
         if (id == null)
         {
             id = this.app.getNewInstance(form);
+            id.form.setParent(this);
             this.stack.set(name,id);
         }
 
@@ -84,12 +101,46 @@ export class FormImpl
     }
 
 
+    public wasCancelled() : boolean
+    {
+        return(this.cancelled);
+    }
+
+
+    public cancel(dismiss?:boolean) : void
+    {
+        this.cancelled = true;
+        this.close(dismiss);
+    }
+
+
+    public onClose(impl:FormImpl) : void
+    {
+        Protected.callback(this.form,impl.form);
+    }
+
+
     public close(dismiss?:boolean) : void
     {
         if (this.win != null) this.win.close();
 
         if (this.inst == null) this.app.closeform(this.form,dismiss);
         else this.app.closeInstance(this.inst,dismiss);
+
+        if (this.parent != null) this.parent.onClose(this);
+    }
+
+
+    public getCallStack() : Form[]
+    {
+        let stack:Form[] = [];
+
+        this.stack.forEach((id) =>
+        {
+            stack.push(id.form.getForm())
+        });
+
+        return(stack);
     }
 
 
@@ -98,7 +149,7 @@ export class FormImpl
         this.stack.forEach((id) =>
         {
             id.form.clearStack();
-            
+
             if (id.ref != null)
                 this.app.closeInstance(id,true);
         });

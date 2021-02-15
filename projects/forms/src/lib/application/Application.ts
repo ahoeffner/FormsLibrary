@@ -19,7 +19,7 @@ export class Application
         this.impl = new ApplicationImpl(builder);
     }
 
-    private getProtected() : ApplicationImpl
+    private _getProtected() : ApplicationImpl
     {
         return(this.impl);
     }

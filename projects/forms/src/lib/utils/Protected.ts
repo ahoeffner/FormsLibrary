@@ -1,11 +1,16 @@
+export interface CallBack
+{
+    _callback(type?:any) : void;
+}
+
 export interface getProtected
 {
-    getProtected(type?:any) : any;
+    _getProtected(type?:any) : any;
 }
 
 export interface setProtected
 {
-    setProtected(impl:any,type?:any) : void;
+    _setProtected(impl:any,type?:any) : void;
 }
 
 export class Protected
@@ -14,15 +19,20 @@ export class Protected
     {
         let impl:C = null;
 
-        if (type == null) impl = (<getProtected><any>comp).getProtected();
-        else              impl = (<getProtected><any>comp).getProtected(type);
+        if (type == null) impl = (<getProtected><any>comp)._getProtected();
+        else              impl = (<getProtected><any>comp)._getProtected(type);
 
         return(impl);
     }
 
     public static set(comp:any, impl:any, type?:any) : void
     {
-        if (type == null) (<setProtected><any>comp).setProtected(impl);
-        else              (<setProtected><any>comp).setProtected(impl,type);
+        if (type == null) (<setProtected><any>comp)._setProtected(impl);
+        else              (<setProtected><any>comp)._setProtected(impl,type);
+    }
+
+    public static callback(comp:any, args:any) : void
+    {
+        (<CallBack><any>comp)._callback(args);
     }
 }
