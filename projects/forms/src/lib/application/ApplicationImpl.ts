@@ -47,7 +47,7 @@ export class ApplicationImpl
             let urlparams = new URLSearchParams(window.location.search);
             urlparams.forEach((value,key) => {params.set(key,value)});
 
-            this.showform(name);
+            this.showform(name,params);
         }
     }
 

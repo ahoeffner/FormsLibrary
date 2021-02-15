@@ -154,15 +154,14 @@ export class FormImpl
     }
 
 
-    public clearStack(top:boolean) : void
+    public clearStack() : void
     {
-        console.log("clear stack for "+this.form.constructor.name);
         this.stack.forEach((id) =>
         {
-            id.form.clearStack(false);
+            id.form.clearStack();
 
             if (id.ref != null)
-                this.app.closeInstance(this.inst,true);
+                this.app.closeInstance(id,true);
         });
 
         this.stack.clear();

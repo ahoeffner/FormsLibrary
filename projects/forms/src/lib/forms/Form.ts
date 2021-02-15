@@ -35,7 +35,7 @@ export class Form
 
     public clearStack() : void
     {
-        this.impl.clearStack(true);
+        this.impl.clearStack();
     }
 
     public getParameters() : Map<string,any>
