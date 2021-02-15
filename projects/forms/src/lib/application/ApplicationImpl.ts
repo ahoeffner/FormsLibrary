@@ -1,9 +1,9 @@
-import { Utils } from "../utils/Utils";
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
 import { FormsControl } from "../forms/FormsControl";
+import { FormsInstance } from "../forms/FormsInstance";
 import { FormInstance } from '../forms/FormsDefinition';
-import { FormsDefinition, ModalOptions, InstanceID } from "../forms/FormsDefinition";
+import { FormDefinition, ModalOptions, InstanceID } from "../forms/FormsDefinition";
 
 
 export class ApplicationImpl
@@ -11,12 +11,13 @@ export class ApplicationImpl
     private title:string = null;
     private ready:boolean = false;
     private formsctl:FormsControl;
-    private utils:Utils = new Utils();
+    private instances:FormsInstance;
 
 
     constructor(public builder:Builder)
     {
         this.formsctl = new FormsControl(this,builder);
+        this.instances = new FormsInstance(this.formsctl);
     }
 
 
@@ -33,9 +34,12 @@ export class ApplicationImpl
     }
 
 
-    public setFormsDefinitions(forms:FormsDefinition[]) : void
+    public setFormsDefinitions(forms:FormDefinition[]) : void
     {
-        this.formsctl.setFormsDefinitions(forms);
+        let formsmap:Map<string,FormInstance> =
+            this.formsctl.setFormsDefinitions(forms);
+
+        this.instances.setFormsDefinitions(formsmap);
         let form:string = window.location.pathname;
 
         if (form.length > 1)
@@ -107,18 +111,18 @@ export class ApplicationImpl
 
     public getNewInstance(form:any, modal?:ModalOptions) : InstanceID
     {
-        return(this.formsctl.getNewInstance(form,modal));
+        return(this.instances.getNewInstance(form,modal));
     }
 
 
     public getInstance(id:InstanceID) : FormInstance
     {
-        return(this.formsctl.getInstance(id));
+        return(this.instances.getInstance(id));
     }
 
 
     public closeInstance<C>(id:InstanceID, destroy:boolean) : C
     {
-        return(this.formsctl.closeInstance<C>(id,destroy));
+        return(this.instances.closeInstance<C>(id,destroy));
     }
 }

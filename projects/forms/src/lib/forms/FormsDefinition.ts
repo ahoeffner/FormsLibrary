@@ -13,7 +13,7 @@ export interface ModalOptions
 }
 
 
-export interface FormsDefinition
+export interface FormDefinition
 {
     path?:string;
     title:string;
@@ -78,7 +78,7 @@ export class FormUtil
     }
 
 
-    public convert(form:FormsDefinition) : FormInstance
+    public convert(form:FormDefinition) : FormInstance
     {
         let fname:string = this.utils.getName(form.component);
 

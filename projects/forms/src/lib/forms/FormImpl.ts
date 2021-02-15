@@ -2,6 +2,7 @@ import { Form } from "./Form";
 import { Utils } from "../utils/Utils";
 import { ModalWindow } from "./ModalWindow";
 import { Protected } from "../utils/Protected";
+import { BlockDefinition } from '../blocks/BlockDefinition';
 import { InstanceID, FormInstance } from "./FormsDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -12,6 +13,7 @@ export class FormImpl
     private inst:InstanceID;
     private parent:InstanceID;
     private app:ApplicationImpl;
+    private blocks:BlockDefinition[];
     private cancelled:boolean = false;
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
@@ -41,6 +43,12 @@ export class FormImpl
     public setApplication(app:ApplicationImpl) : void
     {
         this.app = app;
+    }
+
+    
+    public setBlockDefinition(blocks:BlockDefinition[]) : void
+    {
+        this.blocks = blocks;
     }
 
 

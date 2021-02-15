@@ -1,4 +1,7 @@
 import { FormImpl } from "./FormImpl";
+import { Component, AfterViewInit } from '@angular/core';
+import { BlockDefinition } from '../blocks/BlockDefinition';
+
 
 export interface CallBack
 {
@@ -6,21 +9,32 @@ export interface CallBack
 }
 
 
+@Component({template: ''})
 
-export class Form
+export class Form implements AfterViewInit
 {
     private impl:FormImpl;
     private callbackfunc:CallBack;
 
-
     constructor()
     {
         this.impl = new FormImpl(this);
+
+        Reflect.defineProperty(this,"_getProtected", {value: () =>
+        {
+            return(this.impl);
+        }});
+
+        Reflect.defineProperty(this,"_callback", {value: (form:any) =>
+        {
+            if (this.callbackfunc == null) return;
+            this[this.callbackfunc.name](form);
+        }});
     }
 
-    private _getProtected() : FormImpl
+    public setBlockDefinition(blocks:BlockDefinition[]) : void
     {
-        return(this.impl);
+        this.impl.setBlockDefinition(blocks);
     }
 
     public callForm(form:any, parameters?:Map<string,any>) : void
@@ -58,9 +72,8 @@ export class Form
         this.callbackfunc = func;
     }
 
-    private _callback(form:any) : void
+    public ngAfterViewInit(): void
     {
-        if (this.callbackfunc == null) return;
-        this[this.callbackfunc.name](form);
+        console.log("ngAfterViewInit")
     }
 }

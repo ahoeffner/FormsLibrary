@@ -5,10 +5,9 @@ import { Utils } from "../utils/Utils";
 import { Builder } from "../utils/Builder";
 import { ModalWindow } from "./ModalWindow";
 import { Protected } from '../utils/Protected';
-import { FormsInstance } from "./FormsInstance";
 import { EmbeddedViewRef, ComponentRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { FormsDefinition, FormInstance, FormUtil, ModalOptions, InstanceID } from "./FormsDefinition";
+import { FormDefinition, FormInstance, FormUtil } from "./FormsDefinition";
 
 
 interface Current
@@ -23,7 +22,6 @@ export class FormsControl
     private url:string;
     private current:Current;
     private formarea:FormArea;
-    private instances:FormsInstance;
     private utils:Utils = new Utils();
     private formlist:FormInstance[] = [];
     private forms:Map<string,FormInstance> = new Map<string,FormInstance>();
@@ -41,20 +39,20 @@ export class FormsControl
     }
 
 
-    public setFormsDefinitions(forms:FormsDefinition[]) : void
+    public setFormsDefinitions(forms:FormDefinition[]) : Map<string,FormInstance>
     {
         let futil:FormUtil = new FormUtil();
 
         for(let i=0; i < forms.length; i++)
         {
-            let form:FormsDefinition = forms[i];
+            let form:FormDefinition = forms[i];
             let def:FormInstance = futil.convert(form);
 
             this.formlist.push(def);
             this.forms.set(def.name,def);
         }
 
-        this.instances = new FormsInstance(this,this.forms);
+        return(this.forms);
     }
 
 
@@ -86,24 +84,6 @@ export class FormsControl
     {
         if (newform) this.closeform(form,true);
         this.displayform(form,parameters);
-    }
-
-
-    public getNewInstance(form:any, modal?:ModalOptions) : InstanceID
-    {
-        return(this.instances.getNewInstance(form,modal));
-    }
-
-
-    public getInstance(id:InstanceID) : FormInstance
-    {
-        return(this.instances.getInstance(id));
-    }
-
-
-    public closeInstance<C>(id:InstanceID, destroy:boolean) : C
-    {
-        return(this.instances.closeInstance<C>(id,destroy));
     }
 
 

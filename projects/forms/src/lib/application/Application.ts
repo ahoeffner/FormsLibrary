@@ -1,7 +1,7 @@
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { ApplicationImpl } from "./ApplicationImpl";
-import { FormsDefinition } from "../forms/FormsDefinition";
+import { FormDefinition } from "../forms/FormsDefinition";
 
 
 @Injectable({
@@ -17,14 +17,10 @@ export class Application
     constructor(builder:Builder)
     {
         this.impl = new ApplicationImpl(builder);
+        Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.impl)}});
     }
 
-    private _getProtected() : ApplicationImpl
-    {
-        return(this.impl);
-    }
-
-    public setFormsDefinitions(forms:FormsDefinition[]) : void
+    public setFormsDefinitions(forms:FormDefinition[]) : void
     {
         this.impl.setFormsDefinitions(forms);
     }

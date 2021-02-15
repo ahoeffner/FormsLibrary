@@ -152,7 +152,7 @@ export class ModalWindow implements AfterViewInit
 	public closeForm() : void
 	{
 		let impl:FormImpl = Protected.get(this.form.ref.instance);
-		impl.close(true);
+		impl.cancel(true);
 	}
 
 

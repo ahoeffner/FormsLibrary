@@ -3,18 +3,21 @@ import { Utils } from "../utils/Utils";
 import { ComponentRef } from "@angular/core";
 import { FormsControl } from "./FormsControl";
 import { Protected } from '../utils/Protected';
-import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FormInstance, InstanceID, ModalOptions, FormUtil } from "./FormsDefinition";
 
 
 export class FormsInstance
 {
     private utils:Utils = new Utils();
+    private forms:Map<string,FormInstance>;
     private futil:FormUtil = new FormUtil();
 
+    constructor(private ctrl:FormsControl) {}
 
-    constructor(private ctrl:FormsControl, private forms:Map<string,FormInstance>)
+
+    public setFormsDefinitions(forms:Map<string,FormInstance>)
     {
+        this.forms = forms;
     }
 
 
