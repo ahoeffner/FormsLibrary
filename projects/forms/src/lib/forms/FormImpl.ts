@@ -120,13 +120,13 @@ export class FormImpl
 
     public onClose(impl:FormImpl) : void
     {
-        Protected.callback(this.form,impl.form);
-
         if (this.inst != null && this.win != null)
         {
             let inst:FormInstance = this.app.getInstance(this.inst);
             this.win.newForm(inst);
         }
+
+        Protected.callback(this.form,impl.form);
     }
 
 
@@ -154,15 +154,15 @@ export class FormImpl
     }
 
 
-    public clearStack() : void
+    public clearStack(top:boolean) : void
     {
         console.log("clear stack for "+this.form.constructor.name);
         this.stack.forEach((id) =>
         {
-            id.form.clearStack();
+            id.form.clearStack(false);
 
             if (id.ref != null)
-                this.app.closeInstance(id,true);
+                this.app.closeInstance(this.inst,true);
         });
 
         this.stack.clear();

@@ -125,7 +125,6 @@ export class FormsControl
 
         let impl:FormImpl = Protected.get(formdef.ref.instance);
         let win:boolean = (impl.getModalWindow() != null);
-        impl.setModalWindow(null);
 
         if (!win && this.current != null && this.current.element == element)
         {
