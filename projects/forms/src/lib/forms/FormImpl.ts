@@ -122,12 +122,8 @@ export class FormImpl
     {
         Protected.callback(this.form,impl.form);
 
-        console.log(impl.form.constructor.name+" was closed");
-        console.log("this.inst="+this.inst+" this.win="+this.win);
-
         if (this.inst != null && this.win != null)
         {
-            console.log("now reopening "+this.inst.form.form.constructor.name);
             let inst:FormInstance = this.app.getInstance(this.inst);
             this.win.newForm(inst);
         }
@@ -160,6 +156,7 @@ export class FormImpl
 
     public clearStack() : void
     {
+        console.log("clear stack for "+this.form.constructor.name);
         this.stack.forEach((id) =>
         {
             id.form.clearStack();
