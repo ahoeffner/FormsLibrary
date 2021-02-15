@@ -15,6 +15,7 @@ export class Form implements AfterViewInit
 {
     private impl:FormImpl;
     private callbackfunc:CallBack;
+    private vname:string;
 
     constructor()
     {
@@ -74,6 +75,13 @@ export class Form implements AfterViewInit
 
     public ngAfterViewInit(): void
     {
-        console.log("ngAfterViewInit")
+        let block:any = this[this.vname];
+        console.log("ngAfterViewInit block="+block.constructor.name);
+    }
+
+
+    public setBlock(vname:string, alias:string)
+    {
+        this.vname = vname;
     }
 }
