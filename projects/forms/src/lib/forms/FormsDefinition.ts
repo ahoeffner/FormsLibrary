@@ -26,7 +26,7 @@ export interface FormDefinition
 export interface InstanceID
 {
     name:string;
-    form:FormImpl;
+    impl:FormImpl;
     modalopts:ModalOptions;
     ref:ComponentRef<any>;
 }

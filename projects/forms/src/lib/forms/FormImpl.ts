@@ -11,7 +11,7 @@ export class FormImpl
     private name:string;
     private win:ModalWindow;
     private inst:InstanceID;
-    private parent:InstanceID;
+    private parent:FormImpl;
     private app:ApplicationImpl;
     private callbackfunc:CallBack;
     private cancelled:boolean = false;
@@ -38,7 +38,7 @@ export class FormImpl
     }
 
 
-    public setParent(parent:InstanceID) : void
+    public setParent(parent:FormImpl) : void
     {
         this.parent = parent;
     }
@@ -47,6 +47,12 @@ export class FormImpl
     public setApplication(app:ApplicationImpl) : void
     {
         this.app = app;
+    }
+
+
+    public getInstanceID() : InstanceID
+    {
+        return(this.inst);
     }
 
 
@@ -97,7 +103,7 @@ export class FormImpl
             let inst:InstanceID = this.inst;
 
             id = this.app.getNewInstance(form);
-            id.form.setParent(inst);
+            id.impl.setParent(this);
 
             let impl:FormImpl = Protected.get(id.ref.instance);
             impl.setParameters(parameters);
@@ -150,24 +156,27 @@ export class FormImpl
 
         this.app.closeInstance(this.inst,dismiss);
 
-        if (dismiss && this.parent != null)
-            this.parent.form.stack.delete(this.name);
+        if (dismiss && this.parent.getInstanceID() != null)
+            this.parent.stack.delete(this.name);
 
         if (this.cancelled)
             return;
 
-        if (this.parent == null)
+        let pinst:InstanceID = null;
+        if (parent != null) pinst = this.parent.getInstanceID();
+
+        if (pinst == null)
         {
             this.win.close();
         }
         else
         {
-            let inst:FormInstance = this.app.getInstance(this.parent);
+            let inst:FormInstance = this.app.getInstance(pinst);
             this.win.newForm(inst);
         }
 
         if (this.parent != null)
-            this.parent.form.onClose(this);
+            this.parent.onClose(this);
     }
 
 
@@ -177,7 +186,7 @@ export class FormImpl
 
         this.stack.forEach((id) =>
         {
-            stack.push(id.form.getForm())
+            stack.push(id.impl.getForm())
         });
 
         return(stack);
@@ -188,7 +197,7 @@ export class FormImpl
     {
         this.stack.forEach((id) =>
         {
-            id.form.clearStack();
+            id.impl.clearStack();
 
             if (id.ref != null)
                 this.app.closeInstance(id,true);

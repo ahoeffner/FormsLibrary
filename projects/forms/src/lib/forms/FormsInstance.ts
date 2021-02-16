@@ -37,7 +37,7 @@ export class FormsInstance
         let id:InstanceID =
         {
             ref: ref,
-            form: impl,
+            impl: impl,
             name: def.name,
             modalopts: modal
         }
