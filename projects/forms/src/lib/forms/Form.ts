@@ -1,6 +1,7 @@
 import { FormImpl } from "./FormImpl";
 import { Component, AfterViewInit } from '@angular/core';
-import { BlockDefinition } from '../blocks/BlockDefinition';
+import { BlockDefinition } from "../blocks/BlockDefinition";
+import { BlockDefinitions } from "../blocks/BlockUsage";
 
 
 export interface CallBack
@@ -14,8 +15,7 @@ export interface CallBack
 export class Form implements AfterViewInit
 {
     private impl:FormImpl;
-    private callbackfunc:CallBack;
-    private vname:string;
+
 
     constructor()
     {
@@ -25,17 +25,6 @@ export class Form implements AfterViewInit
         {
             return(this.impl);
         }});
-
-        Reflect.defineProperty(this,"_callback", {value: (form:any) =>
-        {
-            if (this.callbackfunc == null) return;
-            this[this.callbackfunc.name](form);
-        }});
-    }
-
-    public setBlockDefinition(blocks:BlockDefinition[]) : void
-    {
-        this.impl.setBlockDefinition(blocks);
     }
 
     public callForm(form:any, parameters?:Map<string,any>) : void
@@ -70,18 +59,24 @@ export class Form implements AfterViewInit
 
     public setCallback(func:CallBack) : void
     {
-        this.callbackfunc = func;
+        this.impl.setCallback(func);
     }
 
     public ngAfterViewInit(): void
     {
-        let block:any = this[this.vname];
-        console.log("ngAfterViewInit block="+block.constructor.name);
-    }
+        let blocks:BlockDefinition[] = BlockDefinitions.blocks;
 
+        for (let i = 0; i < blocks.length; i++)
+        {
+            console.log("this: "+this.constructor.name);
+            console.log("form: "+blocks[i].form.constructor.name);
+            console.log("this == form ? "+(this == blocks[i].form));
+            console.log("get1 ="+this["_getProtected"]);
+            console.log("get2 ="+blocks[i].form["_getProtected"]);
 
-    public setBlock(vname:string, alias:string)
-    {
-        this.vname = vname;
+            let vname:string = blocks[i].vname;
+            let block = this["emp"];
+            console.log(vname+" xxblock="+block);
+        }
     }
 }

@@ -1,8 +1,3 @@
-export interface CallBack
-{
-    _callback(type?:any) : void;
-}
-
 export interface getProtected
 {
     _getProtected(type?:any) : any;
@@ -29,10 +24,5 @@ export class Protected
     {
         if (type == null) (<setProtected><any>comp)._setProtected(impl);
         else              (<setProtected><any>comp)._setProtected(impl,type);
-    }
-
-    public static callback(comp:any, args:any) : void
-    {
-        (<CallBack><any>comp)._callback(args);
     }
 }

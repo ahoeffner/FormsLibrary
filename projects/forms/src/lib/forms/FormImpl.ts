@@ -1,5 +1,5 @@
-import { Form } from "./Form";
 import { Utils } from "../utils/Utils";
+import { Form, CallBack } from "./Form";
 import { ModalWindow } from "./ModalWindow";
 import { Protected } from "../utils/Protected";
 import { BlockDefinition } from '../blocks/BlockDefinition';
@@ -13,7 +13,7 @@ export class FormImpl
     private inst:InstanceID;
     private parent:InstanceID;
     private app:ApplicationImpl;
-    private blocks:BlockDefinition[];
+    private callbackfunc:CallBack;
     private cancelled:boolean = false;
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
@@ -45,12 +45,6 @@ export class FormImpl
         this.app = app;
     }
 
-    
-    public setBlockDefinition(blocks:BlockDefinition[]) : void
-    {
-        this.blocks = blocks;
-    }
-
 
     public setInstanceID(inst:InstanceID) : void
     {
@@ -67,6 +61,12 @@ export class FormImpl
     public getModalWindow() : ModalWindow
     {
         return(this.win);
+    }
+
+
+    public setCallback(func:CallBack) : void
+    {
+        this.callbackfunc = func;
     }
 
 
@@ -90,8 +90,15 @@ export class FormImpl
 
         if (id == null)
         {
+            let inst:InstanceID = this.inst;
+
+            if (inst == null)
+            {
+                console.log("create inst");
+            }
+
             id = this.app.getNewInstance(form);
-            id.form.setParent(this.inst);
+            id.form.setParent(inst);
 
             let impl:FormImpl = Protected.get(id.ref.instance);
             impl.setParameters(parameters);
@@ -134,7 +141,8 @@ export class FormImpl
             this.win.newForm(inst);
         }
 
-        Protected.callback(this.form,impl.form);
+        if (this.callbackfunc == null) return;
+        this.form[this.callbackfunc.name](impl.form);
     }
 
 
@@ -173,5 +181,11 @@ export class FormImpl
         });
 
         this.stack.clear();
+    }
+
+
+    public setBlock(vname:string, alias:string) : void
+    {
+        console.log("use "+alias+" for "+vname);
     }
 }

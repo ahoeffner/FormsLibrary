@@ -1,8 +1,11 @@
 import { Block } from './Block';
+import { Form } from '../forms/Form';
 import { ControlBlock } from './ControlBlock';
 
 export interface BlockDefinition
 {
+    form:Form,
     name?:string,
-    block:Block|ControlBlock
+    vname:string,
+    block?:Block|ControlBlock
 }
