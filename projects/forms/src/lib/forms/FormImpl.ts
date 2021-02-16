@@ -2,13 +2,13 @@ import { Utils } from "../utils/Utils";
 import { Form, CallBack } from "./Form";
 import { ModalWindow } from "./ModalWindow";
 import { Protected } from "../utils/Protected";
-import { BlockDefinition } from '../blocks/BlockDefinition';
 import { InstanceID, FormInstance } from "./FormsDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
 export class FormImpl
 {
+    private name:string;
     private win:ModalWindow;
     private inst:InstanceID;
     private parent:InstanceID;
@@ -19,7 +19,11 @@ export class FormImpl
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
 
-    constructor(private form:any) {}
+    constructor(private form:any)
+    {
+        let utils:Utils = new Utils();
+        this.name = utils.getName(form);
+    }
 
 
     public getForm() : Form
@@ -92,11 +96,6 @@ export class FormImpl
         {
             let inst:InstanceID = this.inst;
 
-            if (inst == null)
-            {
-                console.log("create inst");
-            }
-
             id = this.app.getNewInstance(form);
             id.form.setParent(inst);
 
@@ -126,21 +125,15 @@ export class FormImpl
     }
 
 
-    public cancel(dismiss?:boolean) : void
+    public cancel() : void
     {
         this.cancelled = true;
-        this.close(dismiss);
+        this.close(true);
     }
 
 
     public onClose(impl:FormImpl) : void
     {
-        if (this.inst != null && this.win != null)
-        {
-            let inst:FormInstance = this.app.getInstance(this.inst);
-            this.win.newForm(inst);
-        }
-
         if (this.callbackfunc == null) return;
         this.form[this.callbackfunc.name](impl.form);
     }
@@ -148,12 +141,33 @@ export class FormImpl
 
     public close(dismiss?:boolean) : void
     {
-        if (this.win != null && this.parent == null) this.win.close();
+        if (this.inst == null)
+        {
+            // Normal form behavior
+            this.app.closeform(this.form,dismiss);
+            return;
+        }
 
-        if (this.inst == null) this.app.closeform(this.form,dismiss);
-        else this.app.closeInstance(this.inst,dismiss);
+        this.app.closeInstance(this.inst,dismiss);
 
-        if (this.parent != null) this.parent.form.onClose(this);
+        if (dismiss && this.parent != null)
+            this.parent.form.stack.delete(this.name);
+
+        if (this.cancelled)
+            return;
+
+        if (this.parent == null)
+        {
+            this.win.close();
+        }
+        else
+        {
+            let inst:FormInstance = this.app.getInstance(this.parent);
+            this.win.newForm(inst);
+        }
+
+        if (this.parent != null)
+            this.parent.form.onClose(this);
     }
 
 

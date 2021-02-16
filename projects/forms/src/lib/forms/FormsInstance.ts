@@ -61,15 +61,15 @@ export class FormsInstance
     }
 
 
-    public closeInstance<C>(id:InstanceID, destroy:boolean) : C
+    public closeInstance(id:InstanceID, destroy:boolean) : void
     {
-        let clazz:any = null;
-        if (id.ref != null) clazz = id.ref.instance;
-
         let inst:FormInstance = this.getInstance(id);
-        this.ctrl.close(inst,destroy);
 
-        if (destroy) inst.ref = null;
-        return(clazz as C);
+        if (destroy)
+        {
+            inst.ref.destroy();
+            inst.modalopts = null;
+            inst.ref = null;
+        }
     }
 }

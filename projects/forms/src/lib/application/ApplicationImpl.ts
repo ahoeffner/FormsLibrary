@@ -121,8 +121,8 @@ export class ApplicationImpl
     }
 
 
-    public closeInstance<C>(id:InstanceID, destroy:boolean) : C
+    public closeInstance(id:InstanceID, destroy:boolean) : void
     {
-        return(this.instances.closeInstance<C>(id,destroy));
+        this.instances.closeInstance(id,destroy);
     }
 }

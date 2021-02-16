@@ -1,7 +1,7 @@
 import { FormImpl } from "./FormImpl";
+import { BlockProperty } from "../blocks/BlockProperty";
+import { Definitions } from "../Directives/Definitions";
 import { Component, AfterViewInit } from '@angular/core';
-import { BlockDefinition } from "../blocks/BlockDefinition";
-import { BlockDefinitions } from "../blocks/BlockUsage";
 
 
 export interface CallBack
@@ -64,19 +64,12 @@ export class Form implements AfterViewInit
 
     public ngAfterViewInit(): void
     {
-        let blocks:BlockDefinition[] = BlockDefinitions.blocks;
+        let blocks:BlockProperty[] = Definitions.getBlocks(this.constructor.name);
+        if (blocks == null) return;
 
         for (let i = 0; i < blocks.length; i++)
         {
-            console.log("this: "+this.constructor.name);
-            console.log("form: "+blocks[i].form.constructor.name);
-            console.log("this == form ? "+(this == blocks[i].form));
-            console.log("get1 ="+this["_getProtected"]);
-            console.log("get2 ="+blocks[i].form["_getProtected"]);
-
-            let vname:string = blocks[i].vname;
-            let block = this["emp"];
-            console.log(vname+" xxblock="+block);
+            let block = this[blocks[i].prop];
         }
     }
 }
