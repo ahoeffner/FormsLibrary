@@ -100,8 +100,6 @@ export class FormImpl
 
         if (id == null)
         {
-            let inst:InstanceID = this.inst;
-
             id = this.app.getNewInstance(form);
             id.impl.setParent(this);
 
@@ -156,14 +154,14 @@ export class FormImpl
 
         this.app.closeInstance(this.inst,dismiss);
 
-        if (dismiss && this.parent.getInstanceID() != null)
+        if (dismiss && this.parent != null && this.parent.getInstanceID() != null)
             this.parent.stack.delete(this.name);
 
         if (this.cancelled)
             return;
 
         let pinst:InstanceID = null;
-        if (parent != null) pinst = this.parent.getInstanceID();
+        if (this.parent != null) pinst = this.parent.getInstanceID();
 
         if (pinst == null)
         {

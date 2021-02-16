@@ -7,7 +7,7 @@ import { ModalWindow } from "./ModalWindow";
 import { Protected } from '../utils/Protected';
 import { EmbeddedViewRef, ComponentRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { FormDefinition, FormInstance, FormUtil } from "./FormsDefinition";
+import { FormDefinition, FormInstance, FormUtil, InstanceID } from "./FormsDefinition";
 
 
 interface Current
@@ -156,6 +156,16 @@ export class FormsControl
         {
             let winref:ComponentRef<any> = this.app.builder.createComponent(ModalWindow);
             let win:ModalWindow = winref.instance;
+
+            let id:InstanceID =
+            {
+                impl: impl,
+                ref: formdef.ref,
+                name: formdef.name,
+                modalopts: formdef.modalopts
+            }
+
+            impl.setInstanceID(id);
 
             win.setWinRef(winref);
             win.setApplication(this.app);
