@@ -148,9 +148,6 @@ export class FormImpl
         let pinst:InstanceID = null;
         if (this.parent != null) pinst = this.parent.getInstanceID();
 
-        console.log("pinst: "+(pinst != null));
-        console.log("parent: "+(this.parent != null));
-
         if (this.inst == null)
         {
             // Normal form behavior
