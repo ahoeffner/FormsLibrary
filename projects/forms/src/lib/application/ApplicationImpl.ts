@@ -103,7 +103,7 @@ export class ApplicationImpl
     }
 
 
-    public getFormInstance(form:any, modal?:ModalOptions) : FormInstance
+    public getFormInstance(form:any) : FormInstance
     {
         return(this.formsctl.getFormInstance(form));
     }

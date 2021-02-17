@@ -186,7 +186,10 @@ export class FormsControl
         if (formdef == null) return(null);
 
         if (formdef.ref == null)
+        {
+            formdef.modalopts = formdef.modaldef;
             formdef.ref = this.createForm(formdef.component);
+        }
 
         return(formdef);
     }

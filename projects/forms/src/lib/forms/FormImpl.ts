@@ -143,32 +143,53 @@ export class FormImpl
     }
 
 
-    public close(dismiss?:boolean) : void
+    public close(destroy?:boolean) : void
     {
-        if (this.inst == null)
-        {
-            // Normal form behavior
-            this.app.closeform(this.form,dismiss);
-            return;
-        }
-
-        this.app.closeInstance(this.inst,dismiss);
-
-        if (dismiss && this.parent != null && this.parent.getInstanceID() != null)
-            this.parent.stack.delete(this.name);
-
-        if (this.cancelled)
-            return;
-
         let pinst:InstanceID = null;
         if (this.parent != null) pinst = this.parent.getInstanceID();
 
-        if (pinst == null)
+        console.log("pinst: "+(pinst != null));
+        console.log("parent: "+(this.parent != null));
+
+        if (this.inst == null)
         {
-            this.win.close();
+            // Normal form behavior
+            this.app.closeform(this.form,destroy);
+            this.cancelled = false;
+            return;
         }
-        else
+
+        if (this.parent == null && pinst == null)
         {
+            // Called from menu
+            this.app.closeform(this.form,destroy);
+            if (!this.cancelled) this.win.close();
+        }
+
+        if (this.parent != null && pinst == null)
+        {
+            // Window root form
+            this.app.closeInstance(this.inst,destroy);
+            if (destroy) this.parent.stack.delete(this.name);
+            if (!this.cancelled) this.win.close();
+        }
+
+        if (this.parent != null && pinst != null)
+        {
+            // Form called from another form
+            this.app.closeInstance(this.inst,destroy);
+            if (destroy) this.parent.stack.delete(this.name);
+        }
+
+        if (this.cancelled)
+        {
+            this.cancelled = false;
+            return;
+        }
+
+        if (pinst != null)
+        {
+            // Form called from another form
             let inst:FormInstance = this.app.getInstance(pinst);
             this.win.newForm(inst);
         }
