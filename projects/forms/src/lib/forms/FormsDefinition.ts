@@ -6,10 +6,10 @@ import { ComponentRef } from '@angular/core';
 
 export interface ModalOptions
 {
-    width?:number;
-    height?:number;
-    offsetTop?:number;
-    offsetLeft?:number;
+    width?:string;
+    height?:string;
+    offsetTop?:string;
+    offsetLeft?:string;
 }
 
 
@@ -56,10 +56,10 @@ export class FormUtil
             else        return(null);
         }
 
-        if (!options.hasOwnProperty("width")) options.width = 500;
-        if (!options.hasOwnProperty("height")) options.height = 300;
-        if (!options.hasOwnProperty("offsetTop")) options.offsetTop = 40;
-        if (!options.hasOwnProperty("offsetLeft")) options.offsetLeft = 60;
+        if (!options.hasOwnProperty("width")) options.width = "500px";
+        if (!options.hasOwnProperty("height")) options.height = "300px";
+        if (!options.hasOwnProperty("offsetTop")) options.offsetTop = "10vh";
+        if (!options.hasOwnProperty("offsetLeft")) options.offsetLeft = "20vw";
         return(options);
     }
 

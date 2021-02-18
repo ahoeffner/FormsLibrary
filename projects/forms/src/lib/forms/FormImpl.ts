@@ -117,7 +117,7 @@ export class FormImpl
         }
         else
         {
-            inst.modalopts = {width: 0, height: 0};
+            inst.modalopts = {width: "", height: ""};
             this.app.showinstance(inst,parameters);
         }
     }

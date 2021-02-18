@@ -11,7 +11,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
   template:
   `
     <div class="modal">
-      <div class="modal-block" style="top: {{top}}px; left: {{left}}px">
+      <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
 		    <span style="display: inline-block; vertical-align: middle;">{{title}}</span>
@@ -40,8 +40,6 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 
     .modal-block
     {
-      top: 20vh;
-      left: 30vw;
       position: absolute;
       background-color: #fefefe;
     }
@@ -78,23 +76,30 @@ changeDetection: ChangeDetectionStrategy.OnPush
 
 export class ModalWindow implements AfterViewInit
 {
+	private posy:number;
+	private posx:number;
+	private sizex:number;
+	private sizey:number;
+
 	private form:FormInstance;
 	private app:ApplicationImpl;
 	private element:HTMLElement;
+    private window:HTMLDivElement;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
 	private winref:ComponentRef<any>;
 
-    public top : number = 40;
-    public left : number = 60;
+    public top : string = "";
+    public left : string = "";
     public title : string = "???";
-    public width : string = "30vw";
-    public height : string = "30vh";
+    public width : string = "99vw";
+    public height : string = "98vh";
     public tmargin : string = "1vh";
     public tcolor  : string = Preferences.get().textColor;
     public bcolor  : string = Preferences.get().primaryColor;
 
 
+    @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
 	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
 
@@ -104,21 +109,23 @@ export class ModalWindow implements AfterViewInit
 	public setForm(form:FormInstance) : void
 	{
 		this.title = form.title;
+
 		this.top = form.modalopts.offsetTop;
 		this.left = form.modalopts.offsetLeft;
-		this.width = form.modalopts.width+"px";
-		this.height = form.modalopts.height+"px";
 
-		if (form.modalopts.width == 0)
+		this.width = form.modalopts.width;
+		this.height = form.modalopts.height;
+
+		if (form.modalopts.width == "")
 		{
-			this.top = 10;
 			this.width = "98vw";
+			this.top = "10px";
 		}
 
-		if (form.modalopts.height == 0)
+		if (form.modalopts.height == "")
 		{
-			this.left = 10;
 			this.height = "98vh";
+			this.left = "10px";
 		}
 
 		this.form = form;
@@ -193,17 +200,73 @@ export class ModalWindow implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
+		this.window = this.windowElement?.nativeElement as HTMLDivElement;
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
+
 		this.topbar.addEventListener("mouseup", () => {this.mouseup();});
 		this.topbar.addEventListener("mousedown", (event) => {this.mousedown(event);});
+
 		this.display();
+
+		this.posy = this.window.offsetTop;
+		this.posx = this.window.offsetLeft;
+		this.sizex = this.window.offsetWidth;
+		this.sizey = this.window.offsetHeight;
+
+		window.addEventListener("mousemove", (event) => {this.mousemove(event);});
 	}
 
 
 	private offx:number = 0;
 	private offy:number = 0;
+
 	private move:boolean = false;
+	private resizex:boolean = false;
+	private resizey:boolean = false;
+
+
+	private mousemove(event:any) : any
+	{
+		event = event || window.event;
+		let posx:number = +event.clientX;
+		let posy:number = +event.clientY;
+
+		let offx:number = this.posx + this.sizex - posx;
+		let offy:number = this.posy + this.sizey - posy;
+
+		let after:boolean = false;
+		let before:boolean = false;
+		if (this.resizex || this.resizey) before = true;
+
+		this.resizex = false;
+		this.resizey = false;
+
+		if (offx > -5 && offx < 5) this.resizex = true;
+		if (offy > -5 && offy < 5) this.resizey = true;
+
+		if (this.resizex && !this.resizey)
+		{
+			after = true;
+			this.window.style.cursor = "col-resize";
+		}
+
+		if (this.resizey && !this.resizex)
+		{
+			after = true;
+			this.window.style.cursor = "row-resize";
+		}
+
+		if (this.resizex && this.resizey)
+		{
+			this.window.style.cursor = "move";
+		}
+
+		if (before && !after)
+		{
+			this.window.style.cursor = "default";
+		}
+	}
 
 	private mouseup()
 	{
@@ -231,8 +294,8 @@ export class ModalWindow implements AfterViewInit
 			window.addEventListener("mousemove", (event) => {this.movePopup(event);})
 
 			this.move = true;
-			this.offy = +event.clientY - this.top;
-			this.offx = +event.clientX - this.left;
+			this.offy = +event.clientY - this.posy;
+			this.offx = +event.clientX - this.posx;
 	  	}
 	}
 
@@ -241,14 +304,14 @@ export class ModalWindow implements AfterViewInit
 		if (!this.move) return;
 	  	event = event || window.event;
 
-		let deltay:number = +event.clientY - this.top;
-		let deltax:number = +event.clientX - this.left;
+		let deltay:number = +event.clientY - this.posy;
+		let deltax:number = +event.clientX - this.posx;
 
-		this.top += (deltay - this.offy);
-		this.left += (deltax - this.offx);
+		this.posy += (deltay - this.offy);
+		this.posx += (deltax - this.offx);
 
-		this.topbar.style.top = this.top + "px";
-		this.topbar.style.left = this.left + "px";
+		this.top = this.posy + "px";
+		this.left = this.posx + "px";
 
 		this.change.detectChanges();
 	}
