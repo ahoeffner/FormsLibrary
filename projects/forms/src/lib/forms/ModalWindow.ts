@@ -245,26 +245,43 @@ export class ModalWindow implements AfterViewInit
 		if (offx > -5 && offx < 5) this.resizex = true;
 		if (offy > -5 && offy < 5) this.resizey = true;
 
+		if (offx > -7 && offx < 7 && offy > -7 && offy < 7)
+		{
+			this.resizex = true;
+			this.resizey = true;
+		}
+
 		if (this.resizex && !this.resizey)
 		{
 			after = true;
-			this.window.style.cursor = "col-resize";
+			this.window.style.cursor = "e-resize";
+			document.body.style.cursor = "e-resize";
 		}
 
 		if (this.resizey && !this.resizex)
 		{
 			after = true;
-			this.window.style.cursor = "row-resize";
+			this.window.style.cursor = "s-resize";
+			document.body.style.cursor = "s-resize";
 		}
 
 		if (this.resizex && this.resizey)
 		{
-			this.window.style.cursor = "move";
+			after = true;
+			this.window.style.cursor = "se-resize";
+			document.body.style.cursor = "se-resize";
 		}
+
+		//if (this.resizex && !this.resizey)
+			//this.window.style.cursor = "col-resize";
+
+		//if (this.resizey && !this.resizex)
+			//this.window.style.cursor = "row-resize";
 
 		if (before && !after)
 		{
 			this.window.style.cursor = "default";
+			document.body.style.cursor = "default";
 		}
 	}
 
