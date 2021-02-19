@@ -10,7 +10,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
   selector: 'modal',
   template:
   `
-    <div class="modal">
+    <div #page class="modal">
       <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
@@ -78,6 +78,7 @@ export class ModalWindow implements AfterViewInit
 {
 	private form:FormInstance;
 	private app:ApplicationImpl;
+    private page:HTMLDivElement;
 	private element:HTMLElement;
     private window:HTMLDivElement;
     private topbar:HTMLDivElement;
@@ -94,6 +95,7 @@ export class ModalWindow implements AfterViewInit
     public bcolor  : string = Preferences.get().primaryColor;
 
 
+    @ViewChild("page", {read: ElementRef}) private pageElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
 	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
@@ -195,6 +197,7 @@ export class ModalWindow implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
+		this.page = this.pageElement?.nativeElement as HTMLDivElement;
 		this.window = this.windowElement?.nativeElement as HTMLDivElement;
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
@@ -206,12 +209,11 @@ export class ModalWindow implements AfterViewInit
 		this.sizex = this.window.offsetWidth;
 		this.sizey = this.window.offsetHeight;
 
-		document.addEventListener("mouseup",() => {this.mouseup();});
-		document.addEventListener("mousemove", (event) => {this.movePopup(event);})
-		document.addEventListener("mousemove", (event) => {this.resizePopup(event);});
-		document.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
-		document.addEventListener("mousedown", (event) => {this.startresize(event);});
-
+		this.page.addEventListener("mouseup",() => {this.mouseup();});
+		this.page.addEventListener("mousemove", (event) => {this.movePopup(event);})
+		this.page.addEventListener("mousemove", (event) => {this.resizePopup(event);});
+		this.page.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
+		this.page.addEventListener("mousedown", (event) => {this.startresize(event);});
 		this.topbar.addEventListener("mousedown", (event) => {this.startmove(event);});
 	}
 
@@ -343,7 +345,6 @@ export class ModalWindow implements AfterViewInit
 
 	private resizePopup(event:any) : void
 	{
-		console.log("resize");
 		if (!this.resz) return;
 	  	event = event || window.event;
 
