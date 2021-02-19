@@ -1,9 +1,9 @@
 import { Preferences } from '../Preferences';
 import { Protected } from '../utils/Protected';
-import { FormInstance } from '../forms/FormsDefinition';
+import { FormInstance } from '../forms/FormInstance';
 import { Application } from '../application/Application';
-import { Component, ViewChild,ElementRef } from '@angular/core';
 import { ApplicationImpl } from '../application/ApplicationImpl';
+import { Component, Input, ViewChild, ElementRef } from '@angular/core';
 
 interface Form
 {
@@ -26,15 +26,16 @@ export class FormList
 	private root:Folder;
 	private page:string = "";
 	private app:ApplicationImpl;
+	private tree:HTMLDivElement;
 	private formsdef:FormInstance[];
 	private folders:Map<string,Element> = new Map<string,Element>();
 
-	private tree:HTMLDivElement;
+    @Input('root') name: string = "/";
     @ViewChild("tree", {read: ElementRef}) private treelem: ElementRef;
 
     constructor(app:Application)
     {
-		this.root = new Folder("/","/");
+		this.root = new Folder("/",this.name);
 		this.app = Protected.get<ApplicationImpl>(app);
 
 		this.formsdef = this.app.getFormsList();

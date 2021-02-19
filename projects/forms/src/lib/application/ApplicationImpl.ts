@@ -1,9 +1,11 @@
 import { Builder } from "../utils/Builder";
 import { FormArea } from "../forms/FormArea";
+import { InstanceID } from "../forms/InstanceID";
+import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
-import { FormsInstance } from "../forms/FormsInstance";
-import { FormInstance } from '../forms/FormsDefinition';
-import { FormDefinition, ModalOptions, InstanceID } from "../forms/FormsDefinition";
+import { WindowOptions } from "../forms/WindowOptions";
+import { InstanceControl } from "../forms/InstanceControl";
+import { FormDefinition } from "../forms/FormsDefinition";
 
 
 export class ApplicationImpl
@@ -11,13 +13,13 @@ export class ApplicationImpl
     private title:string = null;
     private ready:boolean = false;
     private formsctl:FormsControl;
-    private instances:FormsInstance;
+    private instances:InstanceControl;
 
 
     constructor(public builder:Builder)
     {
         this.formsctl = new FormsControl(this,builder);
-        this.instances = new FormsInstance(this.formsctl);
+        this.instances = new InstanceControl(this.formsctl);
     }
 
 
@@ -109,7 +111,7 @@ export class ApplicationImpl
     }
 
 
-    public getNewInstance(form:any, modal?:ModalOptions) : InstanceID
+    public getNewInstance(form:any, modal?:WindowOptions) : InstanceID
     {
         return(this.instances.getNewInstance(form,modal));
     }

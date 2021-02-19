@@ -1,14 +1,16 @@
 import { Utils } from "../utils/Utils";
 import { Form, CallBack } from "./Form";
+import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
-import { Protected } from "../utils/Protected";
-import { InstanceID, FormInstance } from "./FormsDefinition";
+import { FormInstance } from "./FormInstance";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
 export class FormImpl
 {
     private name:string;
+    private path:string;
+    private title: string;
     private win:ModalWindow;
     private inst:InstanceID;
     private parent:FormImpl;
@@ -29,6 +31,18 @@ export class FormImpl
     public getForm() : Form
     {
         return(this.form);
+    }
+
+
+    public setPath(path:string) : void
+    {
+        this.path = path;
+    }
+
+
+    public setTitle(title:string) : void
+    {
+        this.title = title;
     }
 
 
@@ -101,10 +115,9 @@ export class FormImpl
         if (id == null)
         {
             id = this.app.getNewInstance(form);
-            id.impl.setParent(this);
 
-            let impl:FormImpl = Protected.get(id.ref.instance);
-            impl.setParameters(parameters);
+            id.impl.setParent(this);
+            id.impl.setParameters(parameters);
 
             this.stack.set(name,id);
         }
@@ -114,12 +127,36 @@ export class FormImpl
         if (this.win != null)
         {
             this.win.newForm(inst);
+            id.impl.display();
         }
         else
         {
-            inst.modalopts = {width: "", height: ""};
+            if (inst.windowdef != null) inst.windowopts = inst.windowdef;
+            else                        inst.windowopts = {width: "", height: ""};
+
             this.app.showinstance(inst,parameters);
         }
+    }
+
+
+    private showTitle(title:string) : void
+    {
+        document.title = this.title;
+    }
+
+
+    private showPath(path:string) : void
+    {
+        let state = {additionalInformation: 'None'};
+        let url:string = window.location.protocol + '//' + window.location.host;
+        window.history.replaceState(state,this.name,url+path);
+    }
+
+
+    public display() : void
+    {
+        this.showTitle(this.title);
+        if (this.parent == null) this.showPath(this.path);
     }
 
 
@@ -145,14 +182,24 @@ export class FormImpl
 
     public close(destroy?:boolean) : void
     {
+        if (this.parent != null)
+        {
+            this.parent.display();
+        }
+        else
+        {
+            this.showPath("");
+            this.showTitle("");
+        }
+
         let pinst:InstanceID = null;
         if (this.parent != null) pinst = this.parent.getInstanceID();
 
         if (this.inst == null)
         {
             // Normal form behavior
-            this.app.closeform(this.form,destroy);
             this.cancelled = false;
+            this.app.closeform(this.form,destroy);
             return;
         }
 

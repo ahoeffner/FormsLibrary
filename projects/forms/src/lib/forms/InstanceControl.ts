@@ -1,12 +1,15 @@
 import { FormImpl } from "./FormImpl";
+import { FormUtil } from "./FormUtil";
 import { Utils } from "../utils/Utils";
+import { InstanceID } from "./InstanceID";
 import { ComponentRef } from "@angular/core";
+import { FormInstance } from "./FormInstance";
 import { FormsControl } from "./FormsControl";
 import { Protected } from '../utils/Protected';
-import { FormInstance, InstanceID, ModalOptions, FormUtil } from "./FormsDefinition";
+import { WindowOptions } from "./WindowOptions";
 
 
-export class FormsInstance
+export class InstanceControl
 {
     private utils:Utils = new Utils();
     private forms:Map<string,FormInstance>;
@@ -21,7 +24,7 @@ export class FormsInstance
     }
 
 
-    public getNewInstance(form:any, modal?:ModalOptions) : InstanceID
+    public getNewInstance(form:any, modal?:WindowOptions) : InstanceID
     {
         let name:string = this.utils.getName(form);
         if (name == null) return(null);
@@ -43,6 +46,8 @@ export class FormsInstance
         }
 
         impl.setInstanceID(id);
+        impl.setPath(def.path);
+        impl.setTitle(def.title);
 
         return(id);
     }
@@ -55,7 +60,7 @@ export class FormsInstance
         if (id.ref == null) id.ref = this.ctrl.createForm(def.component);
 
         instance.ref = id.ref;
-        instance.modalopts = id.modalopts;
+        instance.windowopts = id.modalopts;
 
         return(instance);
     }
@@ -68,7 +73,7 @@ export class FormsInstance
         if (destroy)
         {
             inst.ref.destroy();
-            inst.modalopts = null;
+            inst.windowopts = null;
             inst.ref = null;
         }
     }

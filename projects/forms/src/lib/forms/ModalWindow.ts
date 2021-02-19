@@ -1,7 +1,7 @@
 import { FormImpl } from "./FormImpl";
 import { Preferences } from '../Preferences';
+import { FormInstance } from './FormInstance';
 import { Protected } from '../utils/Protected';
-import { FormInstance } from './FormsDefinition';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
 
@@ -107,19 +107,19 @@ export class ModalWindow implements AfterViewInit
 	{
 		this.title = form.title;
 
-		this.top = form.modalopts.offsetTop;
-		this.left = form.modalopts.offsetLeft;
+		this.top = form.windowopts.offsetTop;
+		this.left = form.windowopts.offsetLeft;
 
-		this.width = form.modalopts.width;
-		this.height = form.modalopts.height;
+		this.width = form.windowopts.width;
+		this.height = form.windowopts.height;
 
-		if (form.modalopts.width == "")
+		if (form.windowopts.width == "")
 		{
 			this.width = "98vw";
 			this.top = "10px";
 		}
 
-		if (form.modalopts.height == "")
+		if (form.windowopts.height == "")
 		{
 			this.height = "98vh";
 			this.left = "10px";

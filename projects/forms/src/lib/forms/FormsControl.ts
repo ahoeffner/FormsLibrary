@@ -1,13 +1,16 @@
 import { Form } from "./Form";
+import { FormUtil } from "./FormUtil";
 import { FormImpl } from "./FormImpl";
 import { FormArea } from "./FormArea";
 import { Utils } from "../utils/Utils";
+import { InstanceID } from "./InstanceID";
 import { Builder } from "../utils/Builder";
 import { ModalWindow } from "./ModalWindow";
+import { FormInstance } from "./FormInstance";
 import { Protected } from '../utils/Protected';
+import { FormDefinition } from "./FormsDefinition";
 import { EmbeddedViewRef, ComponentRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { FormDefinition, FormInstance, FormUtil, InstanceID } from "./FormsDefinition";
 
 
 interface Current
@@ -19,18 +22,13 @@ interface Current
 
 export class FormsControl
 {
-    private url:string;
     private current:Current;
     private formarea:FormArea;
     private utils:Utils = new Utils();
     private formlist:FormInstance[] = [];
     private forms:Map<string,FormInstance> = new Map<string,FormInstance>();
 
-
-    constructor(private app:ApplicationImpl, private builder:Builder)
-    {
-        this.url = window.location.protocol + '//' + window.location.host;
-    }
+    constructor(private app:ApplicationImpl, private builder:Builder) {}
 
 
     public setFormArea(formarea:FormArea) : void
@@ -113,7 +111,7 @@ export class FormsControl
         if (destroy)
         {
             formdef.ref.destroy();
-            formdef.modalopts = null;
+            formdef.windowopts = null;
             formdef.ref = null;
         }
     }
@@ -133,14 +131,13 @@ export class FormsControl
         let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
         let impl:FormImpl = Protected.get(formdef.ref.instance);
+
+        impl.setPath(formdef.path);
+        impl.setTitle(formdef.title);
 		impl.setParameters(parameters);
 
-        if (formdef.modalopts == null)
+        if (formdef.windowopts == null)
         {
-            document.title = formdef.title;
-            let state = {additionalInformation: 'None'};
-            window.history.replaceState(state,formdef.name,this.url+formdef.path);
-
             if (this.current != null)
             {
                 formsarea.removeChild(this.current.element);
@@ -162,7 +159,7 @@ export class FormsControl
                 impl: impl,
                 ref: formdef.ref,
                 name: formdef.name,
-                modalopts: formdef.modalopts
+                modalopts: formdef.windowopts
             }
 
             impl.setInstanceID(id);
@@ -176,6 +173,8 @@ export class FormsControl
 
             document.body.appendChild(element);
         }
+
+        impl.display();
     }
 
 
@@ -187,7 +186,7 @@ export class FormsControl
 
         if (formdef.ref == null)
         {
-            formdef.modalopts = formdef.modaldef;
+            formdef.windowopts = formdef.windowdef;
             formdef.ref = this.createForm(formdef.component);
         }
 
