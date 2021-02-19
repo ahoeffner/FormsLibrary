@@ -10,7 +10,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
   selector: 'modal',
   template:
   `
-    <div #page class="modal">
+    <div #canvas class="modal">
       <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
@@ -78,8 +78,8 @@ export class ModalWindow implements AfterViewInit
 {
 	private form:FormInstance;
 	private app:ApplicationImpl;
-    private page:HTMLDivElement;
 	private element:HTMLElement;
+    private canvas:HTMLDivElement;
     private window:HTMLDivElement;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
@@ -95,7 +95,7 @@ export class ModalWindow implements AfterViewInit
     public bcolor  : string = Preferences.get().primaryColor;
 
 
-    @ViewChild("page", {read: ElementRef}) private pageElement: ElementRef;
+    @ViewChild("canvas", {read: ElementRef}) private canvasElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
 	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
@@ -197,7 +197,7 @@ export class ModalWindow implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
-		this.page = this.pageElement?.nativeElement as HTMLDivElement;
+		this.canvas = this.canvasElement?.nativeElement as HTMLDivElement;
 		this.window = this.windowElement?.nativeElement as HTMLDivElement;
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
@@ -209,11 +209,11 @@ export class ModalWindow implements AfterViewInit
 		this.sizex = this.window.offsetWidth;
 		this.sizey = this.window.offsetHeight;
 
-		this.page.addEventListener("mouseup",() => {this.mouseup();});
-		this.page.addEventListener("mousemove", (event) => {this.movePopup(event);})
-		this.page.addEventListener("mousemove", (event) => {this.resizePopup(event);});
-		this.page.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
-		this.page.addEventListener("mousedown", (event) => {this.startresize(event);});
+		this.canvas.addEventListener("mouseup",() => {this.mouseup();});
+		this.canvas.addEventListener("mousemove", (event) => {this.movePopup(event);})
+		this.canvas.addEventListener("mousemove", (event) => {this.resizePopup(event);});
+		this.canvas.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
+		this.canvas.addEventListener("mousedown", (event) => {this.startresize(event);});
 		this.topbar.addEventListener("mousedown", (event) => {this.startmove(event);});
 	}
 
