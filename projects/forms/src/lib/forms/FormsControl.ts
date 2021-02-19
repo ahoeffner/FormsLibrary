@@ -78,10 +78,10 @@ export class FormsControl
     }
 
 
-    public showform(form:any, newform:boolean, parameters:Map<string,any>) : void
+    public showform(form:any, newform:boolean, parameters:Map<string,any>) : FormInstance
     {
         if (newform) this.closeform(form,true);
-        this.displayform(form,parameters);
+        return(this.displayform(form,parameters));
     }
 
 
@@ -117,10 +117,11 @@ export class FormsControl
     }
 
 
-    private displayform(form:any, parameters:Map<string,any>) : void
+    private displayform(form:any, parameters:Map<string,any>) : FormInstance
     {
         let formdef:FormInstance = this.getFormInstance(form);
         this.display(formdef,parameters);
+        return(formdef);
     }
 
 

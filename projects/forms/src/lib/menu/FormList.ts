@@ -27,6 +27,7 @@ export class FormList
 	private page:string = "";
 	private app:ApplicationImpl;
 	private tree:HTMLDivElement;
+	private ready:boolean = false;
 	private formsdef:FormInstance[];
 	private folders:Map<string,Element> = new Map<string,Element>();
 
@@ -37,6 +38,8 @@ export class FormList
     {
 		this.root = new Folder(this.name);
 		this.app = Protected.get<ApplicationImpl>(app);
+
+		this.app.setFormList(this);
 
 		this.formsdef = this.app.getFormsList();
 		this.parse();
@@ -56,6 +59,12 @@ export class FormList
 
 	public open(folder:string) : void
 	{
+		if (!this.ready)
+		{
+			setTimeout(() => {this.open(folder);},10);
+			return;
+		}
+
 		let path:string = "";
 		folder = folder.trim();
 		let parts:string[] = folder.split("/");
@@ -136,6 +145,7 @@ export class FormList
 
 	public ngAfterViewInit(): void
 	{
+		this.root.setName(this.name);
 		this.tree = this.treelem?.nativeElement as HTMLDivElement;
 
 		this.tree.innerHTML = this.page;
@@ -162,6 +172,8 @@ export class FormList
 		}
 
 		this.open("/");
+		this.folders.get("/").innerHTML = this.name;
+		this.ready = true;
 	}
 
 
@@ -268,6 +280,11 @@ class Folder
 	folders:Folder[] = [];
 
 	constructor(name:string)
+	{
+		this.name = name;
+	}
+
+	setName(name:string) : void
 	{
 		this.name = name;
 	}

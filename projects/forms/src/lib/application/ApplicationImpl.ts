@@ -1,4 +1,5 @@
 import { Builder } from "../utils/Builder";
+import { FormList } from "../menu/FormList";
 import { FormArea } from "../forms/FormArea";
 import { InstanceID } from "../forms/InstanceID";
 import { FormInstance } from '../forms/FormInstance';
@@ -13,6 +14,7 @@ export class ApplicationImpl
     private title:string = null;
     private ready:boolean = false;
     private formsctl:FormsControl;
+    private formlist:FormList = null;
     private instances:InstanceControl;
 
 
@@ -70,35 +72,49 @@ export class ApplicationImpl
     }
 
 
-    public setFormArea(form:FormArea)
+    public setFormList(formlist:FormList) : void
+    {
+        this.formlist = formlist;
+    }
+
+
+    public setFormArea(form:FormArea) : void
     {
         this.formsctl.setFormArea(form);
         this.ready = true;
     }
 
 
-    public newform(form:any, parameters:Map<string,any>)
+    public newform(form:any, parameters:Map<string,any>) : void
     {
-        if (this.ready) this.formsctl.showform(form,true,parameters);
+        let formdef:FormInstance = null;
+        if (this.ready) formdef = this.formsctl.showform(form,true,parameters);
         else setTimeout(() => {this.newform(form,parameters);},10);
+
+        if (this.formlist != null && formdef != null)
+            this.formlist.open(formdef.path);
     }
 
 
-    public showform(form:any, parameters?:Map<string,any>)
+    public showform(form:any, parameters?:Map<string,any>) : void
     {
-        if (this.ready) this.formsctl.showform(form,false,parameters);
+        let formdef:FormInstance = null;
+        if (this.ready) formdef = this.formsctl.showform(form,false,parameters);
         else setTimeout(() => {this.showform(form,parameters);},10);
+
+        if (this.formlist != null && formdef != null)
+            this.formlist.open(formdef.path);
     }
 
 
-    public showinstance(inst:FormInstance, parameters:Map<string,any>)
+    public showinstance(inst:FormInstance, parameters:Map<string,any>) : void
     {
         if (this.ready) this.formsctl.display(inst,parameters);
         else setTimeout(() => {this.showinstance(inst,parameters);},10);
     }
 
 
-    public closeform(form:any, destroy:boolean)
+    public closeform(form:any, destroy:boolean) : void
     {
         if (this.ready) this.formsctl.closeform(form,destroy);
         else setTimeout(() => {this.closeform(form,destroy);},10);
