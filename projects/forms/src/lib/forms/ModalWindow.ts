@@ -76,11 +76,6 @@ changeDetection: ChangeDetectionStrategy.OnPush
 
 export class ModalWindow implements AfterViewInit
 {
-	private posy:number;
-	private posx:number;
-	private sizex:number;
-	private sizey:number;
-
 	private form:FormInstance;
 	private app:ApplicationImpl;
 	private element:HTMLElement;
@@ -204,9 +199,6 @@ export class ModalWindow implements AfterViewInit
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
 
-		this.topbar.addEventListener("mouseup", () => {this.movemouseup();});
-		this.topbar.addEventListener("mousedown", (event) => {this.movemousedown(event);});
-
 		this.display();
 
 		this.posy = this.window.offsetTop;
@@ -214,44 +206,57 @@ export class ModalWindow implements AfterViewInit
 		this.sizex = this.window.offsetWidth;
 		this.sizey = this.window.offsetHeight;
 
-		window.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
-		window.addEventListener("mousedown", (event) => {this.resizemousedown(event);});
+		document.addEventListener("mouseup",() => {this.mouseup();});
+		document.addEventListener("mousemove", (event) => {this.movePopup(event);})
+		document.addEventListener("mousemove", (event) => {this.resizePopup(event);});
+		document.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
+		document.addEventListener("mousedown", (event) => {this.startresize(event);});
+
+		this.topbar.addEventListener("mousedown", (event) => {this.startmove(event);});
 	}
 
 
 	private offx:number = 0;
 	private offy:number = 0;
 
+	private posy:number;
+	private posx:number;
+
+	private sizex:number;
+	private sizey:number;
+
 	private move:boolean = false;
-	private resize:boolean = false;
+	private resz:boolean = false;
+
 	private resizex:boolean = false;
 	private resizey:boolean = false;
 
-	private movemouseup()
-	{
-		if (this.move)
-		{
-			this.move = false;
-			window.removeEventListener("mouseup", () => {this.movemouseup()});
-			window.removeEventListener("mousemove", (event) => {this.movePopup(event);});
-	  	}
-	}
 
-	private movemousedown(event:any) : void
+	private startmove(event:any) : void
 	{
-		if (this.resize)
+		if (this.resizexy)
 			return;
 
 		this.move = true;
+
 		event = event || window.event;
-
 		event.preventDefault();
-		window.addEventListener("mouseup",() => {this.movemouseup();})
-		window.addEventListener("mousemove", (event) => {this.movePopup(event);})
 
-		this.move = true;
 		this.offy = +event.clientY - this.posy;
 		this.offx = +event.clientX - this.posx;
+	}
+
+	private mouseup()
+	{
+		if (!this.move && !this.resz)
+			return;
+
+		this.move = false;
+		this.resz = false;
+		this.resizexy = false;
+
+		this.window.style.cursor = "default";
+		document.body.style.cursor = "default";
 	}
 
 	private movePopup(event:any) : void
@@ -274,6 +279,8 @@ export class ModalWindow implements AfterViewInit
 
 	private resizemousemove(event:any) : any
 	{
+		if (this.resz) return;
+
 		event = event || window.event;
 		let posx:number = +event.clientX;
 		let posy:number = +event.clientY;
@@ -287,10 +294,10 @@ export class ModalWindow implements AfterViewInit
 		this.resizex = false;
 		this.resizey = false;
 
-		if (offx > -5 && offx < 5) this.resizex = true;
-		if (offy > -5 && offy < 5) this.resizey = true;
+		if (offx > -5 && offx < 10 && posy > this.posy - 7 && posy < this.posy + this.sizey + 7) this.resizex = true;
+		if (offy > -5 && offy < 10 && posx > this.posx - 7 && posx < this.posx + this.sizex + 7) this.resizey = true;
 
-		if (offx > -7 && offx < 7 && offy > -7 && offy < 7)
+		if (this.resizex && this.resizey)
 		{
 			this.resizex = true;
 			this.resizey = true;
@@ -298,72 +305,78 @@ export class ModalWindow implements AfterViewInit
 
 		if (this.resizex && !this.resizey)
 		{
-			this.resize = true;
 			this.window.style.cursor = "e-resize";
 			document.body.style.cursor = "e-resize";
 		}
 
 		if (this.resizey && !this.resizex)
 		{
-			this.resize = true;
 			this.window.style.cursor = "s-resize";
 			document.body.style.cursor = "s-resize";
 		}
 
 		if (this.resizex && this.resizey)
 		{
-			this.resize = true;
 			this.window.style.cursor = "se-resize";
 			document.body.style.cursor = "se-resize";
 		}
 
-		if (before && !this.resize)
+		if (before && !this.resizexy)
 		{
 			this.window.style.cursor = "default";
 			document.body.style.cursor = "default";
 		}
 	}
 
-	private resizemouseup(event:any)
+	private startresize(event:any) : void
 	{
-		if (this.resize)
-		{
-			this.resize = false;
-			setTimeout(() => {this.resizemouseup(event)},1);
-			return;
-		}
-
-		event = event || window.event;
-		event.preventDefault();
-
-		this.window.style.cursor = "default";
-		document.body.style.cursor = "default";
-
-		console.log("remove listener");
-		document.removeEventListener("mouseup", (event) => {this.resizemouseup(event);});
-		document.removeEventListener("mousemove", (event) => {this.resizePopup(event);});
-		window.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
-	}
-
-	private resizemousedown(event:any) : void
-	{
-	  	if (!this.resize)
+	  	if (!this.resizexy)
 		  return;
 
+		this.resz = true;
 		event = event || window.event;
 		event.preventDefault();
 
-		this.offy = +event.clientY - this.posy;
-		this.offx = +event.clientX - this.posx;
-
-		console.log("add listener");
-		document.addEventListener("mouseup", (event) => {this.resizemouseup(event);});
-		document.addEventListener("mousemove", (event) => {this.resizePopup(event);});
-		window.removeEventListener("mousemove", (event) => {this.resizemousemove(event);});
+		this.offy = +event.clientY;
+		this.offx = +event.clientX;
 	}
 
 	private resizePopup(event:any) : void
 	{
-		console.log("resizing "+this.resize);
+		console.log("resize");
+		if (!this.resz) return;
+	  	event = event || window.event;
+
+		let deltay:number = +event.clientY - this.offy;
+		let deltax:number = +event.clientX - this.offx;
+
+		if (this.resizex)
+		{
+			this.sizex += deltax;
+			this.width = this.sizex+"px";
+		}
+
+		if (this.resizey)
+		{
+			this.sizey += deltay;
+			this.height = this.sizey+"px";
+		}
+
+		this.offy = +event.clientY;
+		this.offx = +event.clientX;
+
+		this.change.detectChanges();
+	}
+
+	private get resizexy() : boolean
+	{
+		if (this.resizex || this.resizey) return(true);
+		return(false);
+	}
+
+	private set resizexy(on:boolean)
+	{
+		this.resizex = on;
+		this.resizey = on;
 	}
 }
