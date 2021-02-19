@@ -60,11 +60,17 @@ export class FormList
 		folder = folder.trim();
 		let parts:string[] = folder.split("/");
 
+		let elem:Element = this.folders.get("/");
+		if (elem != null && !elem.classList.contains("folder-open"))
+			this.toggle({target: elem});
+
 		for(let p = 1; p < parts.length; p++)
 		{
 			path = path + "/" + parts[p];
-			let elem:Element = this.folders.get(path);
-			if (elem != null) this.toggle({target: elem});
+			elem = this.folders.get(path);
+
+			if (elem != null && !elem.classList.contains("folder-open"))
+				this.toggle({target: elem});
 		}
 	}
 
