@@ -35,7 +35,7 @@ export class FormList
 
     constructor(app:Application)
     {
-		this.root = new Folder("/",this.name);
+		this.root = new Folder(this.name);
 		this.app = Protected.get<ApplicationImpl>(app);
 
 		this.formsdef = this.app.getFormsList();
@@ -48,23 +48,39 @@ export class FormList
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
 		this.page += "  <ul id='Tree'>\n";
-		this.page += this.print(this.root,"    ");
+		this.page += this.print("/",this.root,"    ");
 		this.page += "  </ul>\n";
 		this.page += "</html>\n";
 	}
 
 
-	private print(root:Folder, indent:string) : string
+	public open(folder:string) : void
+	{
+		let path:string = "";
+		folder = folder.trim();
+		let parts:string[] = folder.split("/");
+
+		for(let p = 1; p < parts.length; p++)
+		{
+			path = path + "/" + parts[p];
+			let elem:Element = this.folders.get(path);
+			if (elem != null) this.toggle({target: elem});
+		}
+	}
+
+
+	private print(path:string, root:Folder, indent:string) : string
 	{
 		let html:string = "";
 
-		html += indent+"<li><span id='"+root.id+"' class='folder'>"+root.name+"</span>\n";
+		html += indent+"<li><span id='"+path+"' class='folder'>"+root.name+"</span>\n";
 		html += indent+"  <ul class='list'>\n";
 
+		if (path == "/") path = "";
 		for(let i = 0; i < root.folders.length; i++)
 		{
 			let folder:Folder = root.folders[i];
-			html += this.print(folder,indent+"  ");
+			html += this.print(path+"/"+folder.name,folder,indent+"  ");
 		}
 
 		for(let f = 0; f < root.forms.length; f++)
@@ -139,12 +155,11 @@ export class FormList
 			form.addEventListener("click", (event) => this.show(event));
 		}
 
-		let root:Element = this.folders.get("/");
-		this.toggle({target: root});
+		this.open("/");
 	}
 
 
-	public toggle(event:any) : void
+	private toggle(event:any) : void
 	{
 		let folder:HTMLElement = event.target;
 		folder.parentElement.querySelector('.list').classList.toggle('active');
@@ -152,7 +167,7 @@ export class FormList
 	}
 
 
-	public show(event:any) : void
+	private show(event:any) : void
 	{
 		let form:HTMLElement = event.target.id;
 		this.app.showform(form);
@@ -242,25 +257,23 @@ export class FormList
 
 class Folder
 {
-	id:string;
 	name:string;
 	forms:Form[] = [];
 	folders:Folder[] = [];
 
-	constructor(id:string, name:string)
+	constructor(name:string)
 	{
-		this.id = id;
 		this.name = name;
 	}
 
 	getFolder(next:string) : Folder
 	{
-		if (next == this.id) return(this);
+		if (next == this.name) return(this);
 
 		for(let i = 0; i < this.folders.length; i++)
-			if (this.folders[i].id == next) return(this.folders[i]);
+			if (this.folders[i].name == next) return(this.folders[i]);
 
-		let folder:Folder = new Folder(next,next);
+		let folder:Folder = new Folder(next);
 		this.folders.push(folder);
 
 		return(folder);
