@@ -46,14 +46,6 @@ export class FormImpl
     }
 
 
-    private showPath(path:string) : void
-    {
-        let state = {additionalInformation: 'None'};
-        let url:string = window.location.protocol + '//' + window.location.host;
-        window.history.replaceState(state,this.name,url+path);
-    }
-
-
     public getApplication() : ApplicationImpl
     {
         return(this.app);
@@ -151,7 +143,10 @@ export class FormImpl
     public start() : void
     {
         this.app.showTitle(this.title);
-        if (this.parent == null) this.showPath(this.path);
+
+        if (this.parent == null)
+            this.app.showPath(this.name,this.path);
+
         this.form.start();
     }
 
@@ -194,7 +189,7 @@ export class FormImpl
         }
         else
         {
-            this.showPath("");
+            this.app.showPath("","");
             this.app.showTitle(null);
         }
 

@@ -49,6 +49,14 @@ export class ApplicationImpl
     }
 
 
+    public showPath(name:string, path:string) : void
+    {
+        let state = {additionalInformation: 'None'};
+        let url:string = window.location.protocol + '//' + window.location.host;
+        window.history.replaceState(state,name,url+path);
+    }
+
+
     public setFormsDefinitions(forms:FormDefinition[]) : void
     {
         let formsmap:Map<string,FormInstance> =
