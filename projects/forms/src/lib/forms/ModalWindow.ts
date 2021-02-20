@@ -125,6 +125,9 @@ export class ModalWindow implements AfterViewInit
 			this.left = "10px";
 		}
 
+		let impl:FormImpl = Protected.get(form.ref.instance);
+		impl.setModalWindow(this);
+
 		this.form = form;
 	}
 
@@ -135,6 +138,9 @@ export class ModalWindow implements AfterViewInit
 
 		this.content.removeChild(this.element);
 		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
+
+		let impl:FormImpl = Protected.get(form.ref.instance);
+		impl.setModalWindow(this);
 
 		this.form = form;
 		this.display();
@@ -189,9 +195,6 @@ export class ModalWindow implements AfterViewInit
 		this.content.appendChild(this.element);
 
 		this.change.detectChanges();
-
-		let impl:FormImpl = Protected.get(this.form.ref.instance);
-		impl.setModalWindow(this);
 	}
 
 

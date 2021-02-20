@@ -180,6 +180,9 @@ export class FormImpl
         {
             console.log(error);
         }
+
+        if (cancelled && this.parent != null)
+            this.parent.onClose(this,cancelled);
     }
 
 
@@ -228,13 +231,7 @@ export class FormImpl
             if (destroy) this.parent.stack.delete(this.name);
         }
 
-        if (this.cancelled)
-        {
-            this.cancelled = false;
-            return;
-        }
-
-        if (pinst != null)
+        if (pinst != null && !this.cancelled)
         {
             // Form called from another form
             let inst:FormInstance = this.app.getInstance(pinst);

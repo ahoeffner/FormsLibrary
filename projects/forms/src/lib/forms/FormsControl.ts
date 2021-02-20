@@ -152,9 +152,6 @@ export class FormsControl
         }
         else
         {
-            let winref:ComponentRef<any> = this.app.builder.createComponent(ModalWindow);
-            let win:ModalWindow = winref.instance;
-
             let id:InstanceID =
             {
                 impl: impl,
@@ -164,18 +161,28 @@ export class FormsControl
             }
 
             impl.setInstanceID(id);
+            let win:ModalWindow = this.createWindow();
 
-            win.setWinRef(winref);
-            win.setApplication(this.app);
             win.setForm(formdef);
-
-            let element:HTMLElement = (winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-            this.builder.getAppRef().attachView(winref.hostView);
-
-            document.body.appendChild(element);
+            win.setApplication(this.app);
         }
 
         impl.start();
+    }
+
+
+    public createWindow() : ModalWindow
+    {
+        let winref:ComponentRef<any> = this.app.builder.createComponent(ModalWindow);
+        let win:ModalWindow = winref.instance;
+
+        win.setWinRef(winref);
+
+        let element:HTMLElement = (winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+        this.builder.getAppRef().attachView(winref.hostView);
+
+        document.body.appendChild(element);
+        return(win);
     }
 
 
