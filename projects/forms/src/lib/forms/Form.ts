@@ -30,9 +30,19 @@ export class Form implements AfterViewInit
     {
     }
 
-    public callForm(form:any, parameters?:Map<string,any>) : void
+    public newform(form:any, parameters?:Map<string,any>) : void
     {
-        this.impl.callForm(form,parameters);
+        this.impl.showform(form,true,parameters);
+    }
+
+    public showform(form:any, parameters?:Map<string,any>) : void
+    {
+        this.impl.showform(form,false,parameters);
+    }
+
+    public callform(form:any, parameters?:Map<string,any>) : void
+    {
+        this.impl.callForm(form,false,false,parameters);
     }
 
     public getCallStack() : Form[]

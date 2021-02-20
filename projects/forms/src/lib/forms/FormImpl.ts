@@ -107,19 +107,39 @@ export class FormImpl
     }
 
 
-    public callForm(form:any, parameters?:Map<string,any>) : void
+    public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    {
+        if (this.win == null)
+        {
+            this.app.showform(form,destroy,parameters);
+        }
+        else
+        {
+            this.callForm(form,destroy,true,parameters);
+        }
+    }
+
+
+    public callForm(form:any, destroy:boolean, replace:boolean, parameters?:Map<string,any>) : void
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
 
+        if (id != null && destroy)
+        {
+            id = null;
+            this.app.closeform(form,destroy);
+        }
+
         if (id == null)
         {
             id = this.app.getNewInstance(form);
 
-            id.impl.setParent(this);
-            id.impl.setParameters(parameters);
+            if (!replace) id.impl.setParent(this);
+            else   id.impl.setParent(this.parent);
 
+            id.impl.setParameters(parameters);
             this.stack.set(name,id);
         }
 
