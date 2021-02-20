@@ -1,2 +1,24 @@
 Listen on change-event for input
-Open formlist-path
+
+Library ng-package.json
+
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/forms",
+  "assets": ["./src/lib/assets"],
+  "lib": {
+    "entryFile": "src/public-api.ts"
+  }
+}
+
+Project angular.json:
+
+"assets": [
+    "projects/demo/src/favicon.ico",
+    "projects/demo/src/assets",
+    {
+    "glob": "**/*",
+    "input": "./node_modules/m42forms/src/lib/assets/",
+    "output": "./assets/"
+    }
+],

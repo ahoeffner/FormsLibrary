@@ -7,12 +7,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { MatButtonModule } from '@angular/material/button';
 
-import { Test } from './images/Test';
-
 
 @NgModule({
-    declarations: [FormList, FormArea, ModalWindow, Test],
-    exports     : [FormList, FormArea, Test],
+    declarations: [FormList, FormArea, ModalWindow],
+    exports     : [FormList, FormArea],
     imports     : [CommonModule, HttpClientModule, MatIconModule, MatButtonModule]
 })
 
