@@ -29,6 +29,7 @@ export class FormList
 	private tree:HTMLDivElement;
 	private ready:boolean = false;
 	private formsdef:FormInstance[];
+	private preferences:Preferences = new Preferences();
 	private folders:Map<string,Element> = new Map<string,Element>();
 
     @Input('root') name: string = "/";
@@ -265,7 +266,7 @@ export class FormList
 		}
 		`;
 
-		let color:string = Preferences.get().primaryColor;
+		let color:string = this.preferences.linkColor;
 		styles = styles.replace("formcolor",color);
 
 		return(styles);

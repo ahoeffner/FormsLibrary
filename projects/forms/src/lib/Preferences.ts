@@ -1,76 +1,97 @@
 export class Preferences
 {
-    private accent:string = "#ff4081";
-    private primary:string = "#303f9f";
-    private textcolor:string = "white";
-    private static prefs:Preferences = new Preferences();
-    private lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
-
-    public static get() : Preferences
-    {
-        return(Preferences.prefs);
-    }
+    private props:Properties = Properties.props;
 
     public set theme(theme:string)
     {
         if (theme.indexOf("indigo-pink") >= 0)
         {
-            this.accent = "#ff4081";
-            this.primary = "#303f9f";
+            this.props.accent = "#ff4081";
+            this.props.primary = "#303f9f";
         }
 
         if (theme.indexOf("pink-bluegrey") >= 0)
         {
-            this.accent = "#b0bec5";
-            this.primary = "#e91e63";
+            this.props.accent = "#b0bec5";
+            this.props.primary = "#e91e63";
         }
     }
 
+    public set titleColor(titlecolor:string)
+    {
+        this.props.titlecolor = titlecolor;
+    }
+
+    public get titleColor() : string
+    {
+        return(this.props.titlecolor);
+    }
 
     public set textColor(textcolor:string)
     {
-        this.textcolor = textcolor;
+        this.props.textcolor = textcolor;
     }
-
 
     public get textColor() : string
     {
-        return(this.textcolor);
+        return(this.props.textcolor);
     }
 
+    public set linkColor(linkcolor:string)
+    {
+        this.props.linkcolor = linkcolor;
+    }
+
+    public get linkColor() : string
+    {
+        return(this.props.linkcolor);
+    }
 
     public set accentColor(accent:string)
     {
-        this.accent = accent;
+        this.props.accent = accent;
     }
 
 
     public get accentColor() : string
     {
-        return(this.accent);
+        return(this.props.accent);
     }
 
 
     public set primaryColor(primary:string)
     {
-        this.primary = primary;
+        this.props.primary = primary;
     }
 
 
     public get primaryColor() : string
     {
-        return(this.primary);
+        return(this.props.primary);
     }
 
 
     public set Lang(lang:string)
     {
-        this.lang = lang;
+        this.props.lang = lang;
     }
 
 
     public get Lang() : string
     {
-        return(this.lang);
+        return(this.props.lang);
     }
+}
+
+
+class Properties
+{
+    public static props:Properties = new Properties();
+
+    public linkcolor:string = "blue";
+    public accent:string = "#ff4081";
+    public primary:string = "#303f9f";
+    public textcolor:string = "white";
+    public titlecolor:string = "black";
+    public lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 }

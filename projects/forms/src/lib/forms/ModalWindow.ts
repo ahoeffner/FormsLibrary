@@ -14,7 +14,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
       <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		    <span style="display: inline-block; vertical-align: middle;">{{title}}</span>
+		    <span></span>
 			<span style="position: absolute; right: 0">
 				<button href="" (click)="closeForm()">X</button>
 			</span>
@@ -59,6 +59,16 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		text-align: center;
     }
 
+	.center
+	{
+		top: 0;
+		bottom: 0;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
     .block
     {
         left: 0;
@@ -87,12 +97,13 @@ export class ModalWindow implements AfterViewInit
 
     public top : string = "";
     public left : string = "";
-    public title : string = "???";
+    public title : string = null;
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
-    public tcolor  : string = Preferences.get().textColor;
-    public bcolor  : string = Preferences.get().primaryColor;
+	public preferences:Preferences = new Preferences();
+    public tcolor  : string = this.preferences.titleColor;
+    public bcolor  : string = this.preferences.primaryColor;
 
 
     @ViewChild("canvas", {read: ElementRef}) private canvasElement: ElementRef;
@@ -202,6 +213,9 @@ export class ModalWindow implements AfterViewInit
 		this.window = this.windowElement?.nativeElement as HTMLDivElement;
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
+
+		if (this.title != null)
+			this.topbar.children[0].innerHTML = this.title;
 
 		this.display();
 

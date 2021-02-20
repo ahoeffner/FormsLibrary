@@ -1,6 +1,7 @@
 /*
  * Public API Surface of forms
  */
+export {Test} from './lib/images/Test';
 export {Block} from './lib/blocks/Block';
 export {BLOCK} from './lib/Directives/BLOCK';
 export {FormList} from './lib/menu/FormList';

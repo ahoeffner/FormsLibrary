@@ -48,6 +48,6 @@ export class Application
 
     public get preferences() : Preferences
     {
-        return(Preferences.get());
+        return(new Preferences());
     }
 }
