@@ -171,8 +171,15 @@ export class FormImpl
 
     public onClose(impl:FormImpl,cancelled:boolean) : void
     {
-        if (this.callbackfunc == null) return;
-        this.form[this.callbackfunc.name](impl.form,cancelled);
+        try
+        {
+            if (this.callbackfunc == null) return;
+            this.form[this.callbackfunc.name](impl.form,cancelled);
+        }
+        catch (error)
+        {
+            console.log(error);
+        }
     }
 
 
@@ -181,7 +188,6 @@ export class FormImpl
         if (this.parent != null)
         {
             this.parent.start();
-            this.parent.onClose(this,this.cancelled);
         }
         else
         {
@@ -234,6 +240,9 @@ export class FormImpl
             let inst:FormInstance = this.app.getInstance(pinst);
             this.win.newForm(inst);
         }
+
+        if (this.parent != null)
+            this.parent.onClose(this,this.cancelled);
     }
 
 
