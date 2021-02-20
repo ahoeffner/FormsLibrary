@@ -173,8 +173,8 @@ export class FormImpl
     {
         try
         {
-            if (this.callbackfunc == null) return;
-            this.form[this.callbackfunc.name](impl.form,cancelled);
+            if (this.callbackfunc != null)
+                this.form[this.callbackfunc.name](impl.form,cancelled);
         }
         catch (error)
         {
