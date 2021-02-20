@@ -46,6 +46,14 @@ export class FormImpl
     }
 
 
+    private showPath(path:string) : void
+    {
+        let state = {additionalInformation: 'None'};
+        let url:string = window.location.protocol + '//' + window.location.host;
+        window.history.replaceState(state,this.name,url+path);
+    }
+
+
     public getApplication() : ApplicationImpl
     {
         return(this.app);
@@ -96,7 +104,8 @@ export class FormImpl
 
     public setParameters(params:Map<string,any>) : void
     {
-        this.parameters = params;
+        if (params != null) this.parameters = params;
+        else this.parameters = new Map<string,InstanceID>();
     }
 
 
@@ -127,7 +136,7 @@ export class FormImpl
         if (this.win != null)
         {
             this.win.newForm(inst);
-            id.impl.display();
+            id.impl.start();
         }
         else
         {
@@ -139,24 +148,11 @@ export class FormImpl
     }
 
 
-    private showTitle(title:string) : void
+    public start() : void
     {
-        document.title = this.title;
-    }
-
-
-    private showPath(path:string) : void
-    {
-        let state = {additionalInformation: 'None'};
-        let url:string = window.location.protocol + '//' + window.location.host;
-        window.history.replaceState(state,this.name,url+path);
-    }
-
-
-    public display() : void
-    {
-        this.showTitle(this.title);
+        this.app.showTitle(this.title);
         if (this.parent == null) this.showPath(this.path);
+        this.form.start();
     }
 
 
@@ -173,10 +169,10 @@ export class FormImpl
     }
 
 
-    public onClose(impl:FormImpl) : void
+    public onClose(impl:FormImpl,cancel:boolean) : void
     {
         if (this.callbackfunc == null) return;
-        this.form[this.callbackfunc.name](impl.form);
+        this.form[this.callbackfunc.name](impl.form,cancel);
     }
 
 
@@ -184,12 +180,13 @@ export class FormImpl
     {
         if (this.parent != null)
         {
-            this.parent.display();
+            this.parent.start();
+            this.parent.onClose(this,this.cancelled);
         }
         else
         {
             this.showPath("");
-            this.showTitle("");
+            this.app.showTitle(null);
         }
 
         let pinst:InstanceID = null;
@@ -237,9 +234,6 @@ export class FormImpl
             let inst:FormInstance = this.app.getInstance(pinst);
             this.win.newForm(inst);
         }
-
-        if (this.parent != null)
-            this.parent.onClose(this);
     }
 
 

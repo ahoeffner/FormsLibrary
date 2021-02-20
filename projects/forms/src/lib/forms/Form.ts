@@ -6,7 +6,7 @@ import { Component, AfterViewInit } from '@angular/core';
 
 export interface CallBack
 {
-    (form:Form) : void;
+    (form:Form, cancel:boolean) : void;
 }
 
 
@@ -16,7 +16,6 @@ export class Form implements AfterViewInit
 {
     private impl:FormImpl;
 
-
     constructor()
     {
         this.impl = new FormImpl(this);
@@ -25,6 +24,10 @@ export class Form implements AfterViewInit
         {
             return(this.impl);
         }});
+    }
+
+    public start() : void
+    {
     }
 
     public callForm(form:any, parameters?:Map<string,any>) : void

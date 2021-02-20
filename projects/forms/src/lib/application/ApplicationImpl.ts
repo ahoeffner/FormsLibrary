@@ -34,7 +34,14 @@ export class ApplicationImpl
     public setTitle(title:string)
     {
         this.title = title;
-        document.title = this.title;
+        this.showTitle(title);
+    }
+
+
+    public showTitle(title:string) : void
+    {
+        if (title == null) title = this.title;
+        document.title = title;
     }
 
 
