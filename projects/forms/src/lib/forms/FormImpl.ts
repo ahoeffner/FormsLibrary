@@ -169,10 +169,10 @@ export class FormImpl
     }
 
 
-    public onClose(impl:FormImpl,cancel:boolean) : void
+    public onClose(impl:FormImpl,cancelled:boolean) : void
     {
         if (this.callbackfunc == null) return;
-        this.form[this.callbackfunc.name](impl.form,cancel);
+        this.form[this.callbackfunc.name](impl.form,cancelled);
     }
 
 
