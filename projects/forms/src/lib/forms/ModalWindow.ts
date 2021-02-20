@@ -52,7 +52,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 
     .topbar
     {
-        height: 3vh;
+        height: 1.5em;
         margin-left: 0;
         margin-right: 0;
         cursor:default;
@@ -105,8 +105,6 @@ export class ModalWindow implements AfterViewInit
 
 	public setForm(form:FormInstance) : void
 	{
-		this.title = form.title;
-
 		this.top = form.windowopts.offsetTop;
 		this.left = form.windowopts.offsetLeft;
 

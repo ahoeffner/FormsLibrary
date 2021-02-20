@@ -27,15 +27,33 @@ export class Preferences
     }
 
 
+    public set textColor(textcolor:string)
+    {
+        this.textcolor = textcolor;
+    }
+
+
     public get textColor() : string
     {
         return(this.textcolor);
     }
 
 
+    public set accentColor(accent:string)
+    {
+        this.accent = accent;
+    }
+
+
     public get accentColor() : string
     {
         return(this.accent);
+    }
+
+
+    public set primaryColor(primary:string)
+    {
+        this.primary = primary;
     }
 
 

@@ -1,5 +1,6 @@
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
+import { Preferences } from "../Preferences";
 import { ApplicationImpl } from "./ApplicationImpl";
 import { FormDefinition } from "../forms/FormsDefinition";
 
@@ -43,5 +44,10 @@ export class Application
     public showform(form:any, parameters?:Map<string,any>)
     {
         this.impl.showform(form,false,parameters);
+    }
+
+    public get preferences() : Preferences
+    {
+        return(Preferences.get());
     }
 }
