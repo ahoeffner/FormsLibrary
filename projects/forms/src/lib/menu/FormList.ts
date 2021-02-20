@@ -188,7 +188,7 @@ export class FormList
 	private show(event:any) : void
 	{
 		let form:HTMLElement = event.target.id;
-		this.app.showform(form);
+		this.app.showform(form,false);
 	}
 
 

@@ -37,11 +37,11 @@ export class Application
 
     public newform(form:any, parameters?:Map<string,any>)
     {
-        this.impl.newform(form,parameters);
+        this.impl.showform(form,true,parameters);
     }
 
     public showform(form:any, parameters?:Map<string,any>)
     {
-        this.impl.showform(form,parameters);
+        this.impl.showform(form,false,parameters);
     }
 }

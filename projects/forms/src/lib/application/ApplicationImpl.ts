@@ -66,7 +66,7 @@ export class ApplicationImpl
             let urlparams = new URLSearchParams(window.location.search);
             urlparams.forEach((value,key) => {params.set(key,value)});
 
-            this.showform(name,params);
+            this.showform(name,false,params);
         }
     }
 
@@ -96,37 +96,26 @@ export class ApplicationImpl
     }
 
 
-    public newform(form:any, parameters:Map<string,any>) : void
+    public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         let formdef:FormInstance = null;
-        if (this.ready) formdef = this.formsctl.showform(form,true,parameters);
-        else setTimeout(() => {this.newform(form,parameters);},10);
 
-        if (this.formlist != null && formdef != null)
-            this.formlist.open(formdef.path);
-
-        if (this.form != null && formdef.windowdef != null)
-            this.closeform(this.form.getForm(),false);
-
-        if (formdef != null)
+        if (this.form != null)
         {
-            let form:Form = formdef.ref.instance;
-            this.form = Protected.get<FormImpl>(form);
+            if (this.form.getModalWindow() != null)
+                return;
+                
+            this.closeform(this.form.getForm(),false);
         }
-    }
 
+        if (destroy)
+            this.closeform(form,true);
 
-    public showform(form:any, parameters?:Map<string,any>) : void
-    {
-        let formdef:FormInstance = null;
-        if (this.ready) formdef = this.formsctl.showform(form,false,parameters);
-        else setTimeout(() => {this.showform(form,parameters);},10);
+        if (this.ready) formdef = this.formsctl.showform(form,parameters);
+        else setTimeout(() => {this.showform(form,destroy,parameters);},10);
 
         if (this.formlist != null && formdef != null)
             this.formlist.open(formdef.path);
-
-        if (this.form != null && formdef.windowdef != null)
-            this.closeform(this.form.getForm(),false);
 
         if (formdef != null)
         {
@@ -147,6 +136,7 @@ export class ApplicationImpl
     {
         if (this.ready) this.formsctl.closeform(form,destroy);
         else setTimeout(() => {this.closeform(form,destroy);},10);
+        this.form = null;
     }
 
 
