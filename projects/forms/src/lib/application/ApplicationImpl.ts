@@ -1,6 +1,9 @@
+import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { FormList } from "../menu/FormList";
 import { FormArea } from "../forms/FormArea";
+import { FormImpl } from "../forms/FormImpl";
+import { Protected } from "../utils/Protected";
 import { InstanceID } from "../forms/InstanceID";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
@@ -12,6 +15,7 @@ import { FormDefinition } from "../forms/FormsDefinition";
 export class ApplicationImpl
 {
     private title:string = null;
+    private form:FormImpl = null;
     private ready:boolean = false;
     private formsctl:FormsControl;
     private formlist:FormList = null;
@@ -100,6 +104,15 @@ export class ApplicationImpl
 
         if (this.formlist != null && formdef != null)
             this.formlist.open(formdef.path);
+
+        if (this.form != null && formdef.windowdef != null)
+            this.closeform(this.form.getForm(),false);
+
+        if (formdef != null)
+        {
+            let form:Form = formdef.ref.instance;
+            this.form = Protected.get<FormImpl>(form);
+        }
     }
 
 
@@ -111,6 +124,15 @@ export class ApplicationImpl
 
         if (this.formlist != null && formdef != null)
             this.formlist.open(formdef.path);
+
+        if (this.form != null && formdef.windowdef != null)
+            this.closeform(this.form.getForm(),false);
+
+        if (formdef != null)
+        {
+            let form:Form = formdef.ref.instance;
+            this.form = Protected.get<FormImpl>(form);
+        }
     }
 
 
