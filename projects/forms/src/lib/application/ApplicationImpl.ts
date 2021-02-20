@@ -8,8 +8,8 @@ import { InstanceID } from "../forms/InstanceID";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
 import { WindowOptions } from "../forms/WindowOptions";
-import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinition } from "../forms/FormsDefinition";
+import { InstanceControl } from "../forms/InstanceControl";
 
 
 export class ApplicationImpl
@@ -104,7 +104,7 @@ export class ApplicationImpl
         {
             if (this.form.getModalWindow() != null)
                 return;
-                
+
             this.closeform(this.form.getForm(),false);
         }
 
