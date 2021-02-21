@@ -14,9 +14,9 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
       <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		    <span class="center"></span>
+		    <span class="center" style="color: {{tcolor}};"></span>
 			<span style="position: absolute; height: 1.5em; top: 0; right: 0; border-left: 1px solid black;">
-				<button style="color: {{tcolor}};" (click)="closeForm()">X</button>
+				<button style="color: {{btncolor}};" (click)="closeForm()">X</button>
 			</span>
 		  </div>
           <div class="block" style="margin-top: {{tmargin}};"><div #content></div></div>
@@ -118,6 +118,7 @@ export class ModalWindow implements AfterViewInit
 	public preferences:Preferences = new Preferences();
     public tcolor  : string = this.preferences.titleColor;
     public bcolor  : string = this.preferences.primaryColor;
+    public btncolor : string = this.preferences.btnTextColor;
 
 
     @ViewChild("canvas", {read: ElementRef}) private canvasElement: ElementRef;

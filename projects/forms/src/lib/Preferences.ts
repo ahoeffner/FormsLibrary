@@ -37,6 +37,16 @@ export class Preferences
         return(this.props.textcolor);
     }
 
+    public set btnTextColor(btntextcolor:string)
+    {
+        this.props.btntextcolor = btntextcolor;
+    }
+
+    public get btnTextColor() : string
+    {
+        return(this.props.btntextcolor);
+    }
+
     public set linkColor(linkcolor:string)
     {
         this.props.linkcolor = linkcolor;
@@ -93,5 +103,6 @@ class Properties
     public primary:string = "#303f9f";
     public textcolor:string = "white";
     public titlecolor:string = "black";
+    public btntextcolor:string = "black";
     public lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 }
