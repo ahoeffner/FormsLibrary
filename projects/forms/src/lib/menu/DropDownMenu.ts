@@ -14,6 +14,7 @@ export class DropDownMenu implements AfterViewInit
 {
     private menu:Menu;
     private html:HTMLDivElement;
+    private options:Map<string,Option> = new Map<string,Option>();
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
     public display(menu?:Menu) : void
@@ -30,11 +31,26 @@ export class DropDownMenu implements AfterViewInit
         this.menu = menu;
         this.html.innerHTML = this.menuhtml();
         let menus:HTMLCollectionOf<Element> = this.html.getElementsByClassName("menu");
+        let options:HTMLCollectionOf<Element> = this.html.getElementsByClassName("option");
 
         for(let i = 0; i < menus.length; i++)
-        {
 			menus[i].addEventListener("click", (event) => {this.toggle(event)});
+
+        for(let i = 0; i < options.length; i++)
+        {
+            let id:string = options[i].id;
+            let opt:Option = this.options.get(id);
+			options[i].addEventListener("click", (event) => {this.click(event)});
+            opt.elem = options[i];
         }
+
+    }
+
+
+    private click(event:any) : void
+    {
+        let opt:Option = this.options.get(event.target.id);
+        console.log(event.target+" clicked action="+opt.option.action);
     }
 
 
@@ -47,7 +63,7 @@ export class DropDownMenu implements AfterViewInit
         {
             this.closeall();
             menu.classList.add("show");
-            
+
             let options:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
             options.classList.add("show");
         }
@@ -109,6 +125,8 @@ export class DropDownMenu implements AfterViewInit
                 for(let f = 0; f < entries[i].options.length; f++)
                 {
                     let entry:MenuEntry = entries[i].options[f];
+                    this.options.set(id+"/"+entry.name,new Option(entries[i].options[f]));
+
                     html += indent+"    <button class='option' id='"+id+"/"+entry.name+"'>\n";
                     html += indent+entry.name+"\n";
                     html += indent+"    </button>\n";
@@ -168,6 +186,7 @@ export class DropDownMenu implements AfterViewInit
 
             .option
             {
+                width:100%
                 border: none;
                 color: black;
                 outline:none;
@@ -201,5 +220,17 @@ export class DropDownMenu implements AfterViewInit
     public ngAfterViewInit(): void
     {
         this.html = this.elem?.nativeElement as HTMLDivElement;
+    }
+}
+
+
+class Option
+{
+    elem:Element;
+    option:MenuEntry;
+
+    constructor(option:MenuEntry)
+    {
+        this.option = option;
     }
 }
