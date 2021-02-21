@@ -50,4 +50,9 @@ export class Application
     {
         return(new Preferences());
     }
+
+    public close() : void
+    {
+        this.impl.close();
+    }
 }

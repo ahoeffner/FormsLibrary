@@ -104,6 +104,12 @@ export class ApplicationImpl
     }
 
 
+    public getForm() : Form
+    {
+        return(this.form.getForm());
+    }
+
+
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         let formdef:FormInstance = null;
@@ -137,6 +143,13 @@ export class ApplicationImpl
     {
         if (this.ready) this.formsctl.display(inst,parameters);
         else setTimeout(() => {this.showinstance(inst,parameters);},10);
+    }
+
+
+    public close() : void
+    {
+        if (this.form != null)
+            this.closeform(this.form.getForm(),true);
     }
 
 
