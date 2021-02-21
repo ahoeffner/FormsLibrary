@@ -2,6 +2,7 @@ import { Menu } from './Menu';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Preferences } from '../Preferences';
 
 @Component({
     selector: '',
@@ -14,7 +15,6 @@ export class DropDownMenu implements AfterViewInit
     private menu:Menu;
     private html:HTMLDivElement;
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
-
 
     public display(menu?:Menu) : void
     {
@@ -99,6 +99,8 @@ export class DropDownMenu implements AfterViewInit
 
 	private styles() : string
 	{
+        let prefs:Preferences = new Preferences();
+
         let style:string =
         `
             .bar
@@ -107,23 +109,28 @@ export class DropDownMenu implements AfterViewInit
                 height: 100%;
                 display: flex;
                 position: relative;
-                border: 2px solid black;
                 white-space: nowrap;
-                background-color: grey;
+                background: transparent;
             }
 
             .entry
             {
                 border: none;
-                color: black;
+                color: `+prefs.btnTextColor+`;
+                outline:none;
                 cursor: pointer;
                 font-size: 16px;
-                background-color: transparent;
+                background: transparent;
             }
 
             .entry:hover, .entry:focus
             {
-                background-color: #2980B9;
+                font-weight: bold;
+            }
+
+            .entry:not(hover), .entry:not(focus)
+            {
+                font-weight: normal;
             }
 
             .menu
@@ -134,21 +141,21 @@ export class DropDownMenu implements AfterViewInit
 
             .content
             {
+                z-index: 1;
                 display: none;
+                overflow: auto;
+                min-width: 160px;
                 position: absolute;
                 background-color: #f1f1f1;
-                min-width: 160px;
-                overflow: auto;
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-                z-index: 1;
             }
 
             .content a
             {
                 color: black;
+                display: block;
                 padding: 12px 16px;
                 text-decoration: none;
-                display: block;
             }
 
             .content a:hover
@@ -158,8 +165,7 @@ export class DropDownMenu implements AfterViewInit
 
             .show
             {
-                display:
-                block;
+                display: block;
             }
         `;
 
