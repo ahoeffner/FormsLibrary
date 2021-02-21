@@ -33,7 +33,7 @@ export class DropDownMenu implements AfterViewInit
 
         for(let i = 0; i < menus.length; i++)
         {
-			menus[i].addEventListener("click", this.toggle);
+			menus[i].addEventListener("click", (event) => {this.toggle(event)});
         }
     }
 
@@ -45,6 +45,9 @@ export class DropDownMenu implements AfterViewInit
 
         if (menu.classList.contains("show"))
         {
+            this.closeall();
+            menu.classList.add("show");
+            
             let options:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
             options.classList.add("show");
         }
@@ -54,6 +57,15 @@ export class DropDownMenu implements AfterViewInit
             options.classList.remove("show");
         }
 	}
+
+
+    private closeall() : void
+    {
+        let open:HTMLCollectionOf<Element> = this.html.getElementsByClassName("show");
+
+        for(let i = 0; i < open.length; i++)
+            open[i].classList.remove("show");
+    }
 
 
     private menuhtml() : string
@@ -84,7 +96,6 @@ export class DropDownMenu implements AfterViewInit
         for(let i = 0; i < entries.length; i++)
         {
             let id:string = path+"/"+entries[i].name;
-            console.log("id="+id);
 
             html += indent+"<div class='menu'>\n";
             html += indent+"  <button id='"+id+"' class='entry'";
@@ -155,7 +166,17 @@ export class DropDownMenu implements AfterViewInit
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             }
 
-            options
+            .option
+            {
+                border: none;
+                color: black;
+                outline:none;
+                cursor: pointer;
+                font-size: 16px;
+                background: transparent;
+            }
+
+            .content .option
             {
                 color: black;
                 display: block;
@@ -163,7 +184,7 @@ export class DropDownMenu implements AfterViewInit
                 text-decoration: none;
             }
 
-            options:hover
+            .content .option:hover
             {
                 background-color: #ddd;
             }
