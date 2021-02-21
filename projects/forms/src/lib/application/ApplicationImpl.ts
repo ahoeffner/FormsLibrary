@@ -1,10 +1,13 @@
 import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { FormList } from "../menu/FormList";
+import { MenuArea } from "../menu/MenuArea";
 import { FormArea } from "../forms/FormArea";
 import { FormImpl } from "../forms/FormImpl";
 import { Protected } from "../utils/Protected";
 import { InstanceID } from "../forms/InstanceID";
+import { MenuFactory } from "../menu/MenuFactory";
+import { DropDownMenu } from "../menu/DropDownMenu";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
 import { WindowOptions } from "../forms/WindowOptions";
@@ -17,13 +20,15 @@ export class ApplicationImpl
     private title:string = null;
     private form:FormImpl = null;
     private ready:boolean = false;
-    private formsctl:FormsControl;
+    private menu:DropDownMenu = null;
     private formlist:FormList = null;
-    private instances:InstanceControl;
+    private formsctl:FormsControl = null;
+    private instances:InstanceControl = null;
 
 
     constructor(public builder:Builder)
     {
+        this.menu = new DropDownMenu();
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
     }
@@ -97,9 +102,16 @@ export class ApplicationImpl
     }
 
 
-    public setFormArea(form:FormArea) : void
+    public setMenuArea(area:MenuArea) : void
     {
-        this.formsctl.setFormArea(form);
+        let factory:MenuFactory = new MenuFactory(this.builder);
+        area.display(factory.create());
+    }
+
+
+    public setFormArea(area:FormArea) : void
+    {
+        this.formsctl.setFormArea(area);
         this.ready = true;
     }
 

@@ -1,13 +1,13 @@
 import { Menu } from './Menu';
-import { DefaultMenu } from './DefaultMenu';
 import { MenuEntry } from './MenuEntry';
+import { DefaultMenu } from './DefaultMenu';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
-    selector: 'basemenu',
+    selector: '',
     template:
 	`
-		<div #html style="">Hello</div>
+		<div #html></div>
 	`,
     styles:
     [
@@ -28,12 +28,6 @@ export class DropDownMenu implements AfterViewInit
     private menu:Menu;
     private html:HTMLDivElement;
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
-
-
-    constructor()
-    {
-        this.display();
-    }
 
 
     public display(menu?:Menu) : void
