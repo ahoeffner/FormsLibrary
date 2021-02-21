@@ -187,8 +187,10 @@ export class FormsControl
 
         if (formdef.ref == null)
         {
-            formdef.windowopts = formdef.windowdef;
             formdef.ref = this.createForm(formdef.component);
+
+            if (formdef.windowdef != null && formdef.windowdef.modal)
+                formdef.windowopts = formdef.windowdef;
         }
 
         return(formdef);

@@ -10,6 +10,6 @@ export interface FormInstance
     component:any;
     navigable?:boolean;
     windowdef:WindowOptions;
-    windowopts:WindowOptions;
+    windowopts?:WindowOptions;
     ref?:ComponentRef<any>;
 }

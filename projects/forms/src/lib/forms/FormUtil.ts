@@ -16,6 +16,7 @@ export class FormUtil
             else        return(null);
         }
 
+        if (!options.hasOwnProperty("always")) options.modal = false;
         if (!options.hasOwnProperty("width")) options.width = "500px";
         if (!options.hasOwnProperty("height")) options.height = "300px";
         if (!options.hasOwnProperty("offsetTop")) options.offsetTop = "10vh";
@@ -30,7 +31,7 @@ export class FormUtil
 
         let navigable:boolean = true;
 
-        form.modal = this.complete(form.modal);
+        form.windowopts = this.complete(form.windowopts);
         if (form.hasOwnProperty("navigable")) navigable = form.navigable;
 
         let path:string = "/"+fname;
@@ -45,9 +46,8 @@ export class FormUtil
             path: form.path,
             title: form.title,
             navigable: navigable,
-            windowdef: form.modal,
-            windowopts: form.modal,
             component: form.component,
+            windowdef: form.windowopts
         };
 
         return(def);

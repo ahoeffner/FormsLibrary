@@ -7,5 +7,5 @@ export interface FormDefinition
     title:string;
     component:any;
     navigable?:boolean;
-    modal?:WindowOptions;
+    windowopts?:WindowOptions;
 }
