@@ -14,9 +14,9 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
       <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		    <span></span>
-			<span style="position: absolute; right: 0">
-				<button href="" (click)="closeForm()">X</button>
+		    <span class="center"></span>
+			<span style="position: absolute; height: 1.5em; top: 0; right: 0; border-left: 1px solid black;">
+				<button style="color: {{tcolor}};" (click)="closeForm()">X</button>
 			</span>
 		  </div>
           <div class="block" style="margin-top: {{tmargin}};"><div #content></div></div>
@@ -57,7 +57,21 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         margin-right: 0;
         cursor:default;
 		text-align: center;
+        border-bottom: 2px solid black;
     }
+
+	button
+	{
+		height: 1.5em;
+		margin-top: 0.25em;
+		font-size: 0.75em;
+		font-weight: bold;
+        position: relative;
+		background: transparent;
+		border: 0px solid transparent;
+		box-shadow: 0px 0px 0px transparent;
+		text-shadow: 0px 0px 0px transparent;
+	}
 
 	.center
 	{
@@ -97,7 +111,7 @@ export class ModalWindow implements AfterViewInit
 
     public top : string = "";
     public left : string = "";
-    public title : string = null;
+    public title : string = "XX";
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
