@@ -139,14 +139,14 @@ export class ModalWindow implements AfterViewInit
 
 		if (form.windowopts.width == "")
 		{
-			this.width = "98vw";
-			this.top = "10px";
+			this.width = "99.25vw";
+			this.top = "1px";
 		}
 
 		if (form.windowopts.height == "")
 		{
-			this.height = "98vh";
-			this.left = "10px";
+			this.height = "99.00vh";
+			this.left = "1px";
 		}
 
 		let impl:FormImpl = Protected.get(form.ref.instance);
@@ -326,8 +326,8 @@ export class ModalWindow implements AfterViewInit
 		this.resizex = false;
 		this.resizey = false;
 
-		if (offx > -5 && offx < 10 && posy > this.posy - 7 && posy < this.posy + this.sizey + 7) this.resizex = true;
-		if (offy > -5 && offy < 10 && posx > this.posx - 7 && posx < this.posx + this.sizex + 7) this.resizey = true;
+		if (offx > -7 && offx < 10 && posy > this.posy - 7 && posy < this.posy + this.sizey + 7) this.resizex = true;
+		if (offy > -7 && offy < 10 && posx > this.posx - 7 && posx < this.posx + this.sizex + 7) this.resizey = true;
 
 		if (this.resizex && this.resizey)
 		{
