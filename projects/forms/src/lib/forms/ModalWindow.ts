@@ -75,9 +75,10 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		top: 50%;
 		width: 100%;
 		height: 100%;
-		position: relative;
+		outline:none;
 		font-size: 0.75em;
 		font-weight: bold;
+		position: relative;
 		background: transparent;
 		transform: translateY(-50%);
 		border: 0px solid transparent;

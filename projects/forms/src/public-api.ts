@@ -2,7 +2,6 @@
  * Public API Surface of forms
  */
 export {Block} from './lib/blocks/Block';
-export {Root} from './lib/application/Root';
 export {BLOCK} from './lib/Directives/BLOCK';
 export {FormList} from './lib/menu/FormList';
 export {FormArea} from './lib/forms/FormArea';
