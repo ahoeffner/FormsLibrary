@@ -1,8 +1,8 @@
-import { DropDownEntry } from './DropDownEntry';
+import { MenuEntry } from './MenuEntry';
 
 
 export interface Menu
 {
     handler:any;
-    entries:DropDownEntry[];
+    entries:MenuEntry[];
 }

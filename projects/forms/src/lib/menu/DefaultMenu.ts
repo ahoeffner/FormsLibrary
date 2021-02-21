@@ -1,21 +1,29 @@
 import { Menu } from './Menu';
-import { DropDownEntry } from './DropDownEntry';
+import { MenuEntry } from './MenuEntry';
 
 
 export class DefaultMenu implements Menu
 {
     handler: any;
-    entries: DropDownEntry[];
+    entries: MenuEntry[];
 
     constructor()
     {
         this.entries =
         [
             {
-                name: "Test", title: "Title", options:
+                name: "File", title: "File Menu", options:
                 [
                     {name: "file", action: null},
                     {name: "exit", action: null},
+                ]
+            }
+            ,
+            {
+                name: "Transactions", title: "Transaction Menu", options:
+                [
+                    {name: "rollback", action: null},
+                    {name: "rollback", action: null},
                 ]
             }
         ];

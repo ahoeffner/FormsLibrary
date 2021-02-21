@@ -1,6 +1,6 @@
 import { Menu } from './Menu';
 import { DefaultMenu } from './DefaultMenu';
-import { DropDownEntry } from './DropDownEntry';
+import { MenuEntry } from './MenuEntry';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
@@ -49,6 +49,7 @@ export class DropDownMenu implements AfterViewInit
 
         this.menu = menu;
         this.html.innerHTML = this.menuhtml();
+        console.log("html injected");
     }
 
 
@@ -59,50 +60,69 @@ export class DropDownMenu implements AfterViewInit
         html += "<html>\n";
 		html += "  <head>\n";
 		html += "    <style>\n";
-		//html += this.styles()+ "\n";
+		html += this.styles()+ "\n";
 		html += "    </style>\n";
 		html += "  </head>\n";
 		html += "  <body>\n";
-		html += this.entries(this.menu.entries)+ "\n";
+		html += "    <span class='bar'>\n";
+		html += this.entries("    ",this.menu.entries)+"\n";
+		html += "    </span>\n";
         html += "  </body>\n";
 		html += "</html>\n";
 
-        console.log(html);
         return(html);
     }
 
 
-    private entries(entries:DropDownEntry[]) : string
+    private entries(indent:string, entries:MenuEntry[]) : string
     {
         let html:string = "";
 
-        html += "<div class='menu'>";
-        html += "<div id='dropdown' class='content'>";
-        html += "<button>"+"Test"+"</button>";
-
         for(let i = 0; i < entries.length; i++)
         {
-            if (entries[i].options != null) this.entries(entries[i].options);
-            else html += "<button>"+entries[i].name+"</button>";
+            html += indent+"<div class='dropdown'>\n";
+            html += indent+"  <button class='dropdown'>"+entries[i].name+"</button>\n";
+            html += indent+"  <div id='"+entries[i].name+"' class='content'>\n";
+            html += indent+"    <a href='#home'>Home1</a>\n";
+            html += indent+"    <a href='#home'>Home2</a>\n";
+            html += indent+"  </div>\n";
+            html += indent+"</div>\n";
         }
 
-        html += "</div class='menu'>";
         return(html);
     }
+
+
+	private toggle(event:any) : void
+	{
+        console.log("toogle ");
+		let menu:HTMLElement = event.target;
+		menu.classList.toggle("show");
+	}
 
 
 	private styles() : string
 	{
         let style:string =
         `
-            .dropbtn
+            .bar
             {
-                background-color: #3498DB;
-                color: white;
-                padding: 16px;
-                font-size: 16px;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                position: relative;
+                border: 2px solid black;
+                white-space: nowrap;
+                background-color: grey;
+            }
+
+            .dropdown
+            {
                 border: none;
+                color: black;
                 cursor: pointer;
+                font-size: 16px;
+                background-color: transparent;
             }
 
             .dropbtn:hover, .dropbtn:focus
@@ -153,5 +173,14 @@ export class DropDownMenu implements AfterViewInit
     public ngAfterViewInit(): void
     {
         this.html = this.elem?.nativeElement as HTMLDivElement;
+        let menus:HTMLCollectionOf<Element> = this.html.getElementsByClassName("dropdown");
+
+        console.log("dropdowns: "+menus.length);
+
+        for(let i = 0; i < menus.length; i++)
+        {
+            console.log("add toogle "+menus[i].id);
+			menus[i].addEventListener("click", this.toggle);
+        }
     }
 }
