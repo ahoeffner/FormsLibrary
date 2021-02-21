@@ -40,14 +40,13 @@ export class DropDownMenu implements AfterViewInit
         {
             let id:string = options[i].id;
             let opt:Option = this.options.get(id);
-			options[i].addEventListener("click", (event) => {this.click(event)});
+			options[i].addEventListener("click", (event) => {this.action(event)});
             opt.elem = options[i];
         }
-
     }
 
 
-    private click(event:any) : void
+    private action(event:any) : void
     {
         let opt:Option = this.options.get(event.target.id);
         console.log(event.target+" clicked action="+opt.option.action);
@@ -57,30 +56,30 @@ export class DropDownMenu implements AfterViewInit
 	private toggle(event:any) : void
 	{
 		let menu:HTMLElement = event.target;
-		menu.classList.toggle("show");
+        let container:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
 
-        if (menu.classList.contains("show"))
+        container.classList.toggle("show");
+
+        if (container.classList.contains("show"))
         {
-            this.closeall();
-            menu.classList.add("show");
-
-            let options:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
-            options.classList.add("show");
+            this.closeall(container);
         }
         else
         {
-            let options:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
-            options.classList.remove("show");
+            container.classList.remove("show");
         }
 	}
 
 
-    private closeall() : void
+    private closeall(except:Element) : void
     {
         let open:HTMLCollectionOf<Element> = this.html.getElementsByClassName("show");
 
         for(let i = 0; i < open.length; i++)
-            open[i].classList.remove("show");
+        {
+            if (open[i].id != except.id)
+                open[i].classList.remove("show");
+        }
     }
 
 
@@ -118,7 +117,7 @@ export class DropDownMenu implements AfterViewInit
             html += indent+" style='margin-left: 4px; margin-right: 4px'>\n";
             html += indent+entries[i].name;
             html += indent+"  </button>\n";
-            html += indent+"  <div class='content'>\n";
+            html += indent+"  <div id='"+id+"-content' class='content'>\n";
 
             if (entries[i].options != null)
             {
@@ -186,7 +185,6 @@ export class DropDownMenu implements AfterViewInit
 
             .option
             {
-                width:100%
                 border: none;
                 color: black;
                 outline:none;
