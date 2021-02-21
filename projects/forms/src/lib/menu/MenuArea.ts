@@ -9,7 +9,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, Embedded
     selector: 'menuarea',
     template:
 	`
-		<div #menu>MenuArea</div>
+		<div #menu></div>
 	`
     , changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -22,33 +22,30 @@ export class MenuArea implements AfterViewInit
     private element:HTMLElement;
     @ViewChild("menu", {read: ElementRef}) private elem: ElementRef;
 
+
     constructor(app:Application, private change:ChangeDetectorRef)
     {
         this.app = Protected.get<ApplicationImpl>(app);
-        console.log("appimpl: "+this.app);
     }
+
 
     public display(menu:ComponentRef<DropDownMenu>) : void
     {
-        console.log("display "+this.menu);
-        return;
-
 		if (this.menu == null)
 		{
 			setTimeout(() => {this.display(menu);},10);
 			return;
 		}
 
-        console.log("replace");
         this.element = (menu.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.app.builder.getAppRef().attachView(menu.hostView);
 		this.menu.appendChild(this.element);
 		this.change.detectChanges();
     }
 
+
     public ngAfterViewInit(): void
     {
-        console.log("ngAfterViewInit");
         this.menu = this.elem?.nativeElement as HTMLDivElement;
 		this.app.setMenuArea(this);
     }
