@@ -3,7 +3,7 @@ import { Protected } from '../utils/Protected';
 import { FormInstance } from '../forms/FormInstance';
 import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
-import { Component, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
 interface Form
 {
@@ -16,24 +16,24 @@ interface Form
     selector: 'formlist',
     template:
 	`
-		<div style="display: inline-block; white-space: nowrap;" #tree></div>
+		<div #html style="display: inline-block; white-space: nowrap;"></div>
 	`,
     styles: []
   })
 
-export class FormList
+export class FormList implements AfterViewInit
 {
 	private root:Folder;
 	private page:string = "";
 	private app:ApplicationImpl;
-	private tree:HTMLDivElement;
+	private html:HTMLDivElement;
 	private ready:boolean = false;
 	private formsdef:FormInstance[];
 	private preferences:Preferences = new Preferences();
 	private folders:Map<string,Element> = new Map<string,Element>();
 
     @Input('root') name: string = "/";
-    @ViewChild("tree", {read: ElementRef}) private treelem: ElementRef;
+    @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
     constructor(app:Application)
     {
@@ -51,9 +51,11 @@ export class FormList
 		this.page += this.styles()+ "\n";
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
-		this.page += "  <ul id='Tree'>\n";
-		this.page += this.print("/",this.root,"    ");
-		this.page += "  </ul>\n";
+		this.page += "  <body>\n";
+		this.page += "    <ul id='Tree'>\n";
+		this.page += this.print("/",this.root,"      ");
+		this.page += "    </ul>\n";
+		this.page += "  </body>\n";
 		this.page += "</html>\n";
 	}
 
@@ -147,10 +149,10 @@ export class FormList
 	public ngAfterViewInit(): void
 	{
 		this.root.setName(this.name);
-		this.tree = this.treelem?.nativeElement as HTMLDivElement;
+		this.html = this.elem?.nativeElement as HTMLDivElement;
 
-		this.tree.innerHTML = this.page;
-		let folders:HTMLCollectionOf<Element> = this.tree.getElementsByClassName("folder");
+		this.html.innerHTML = this.page;
+		let folders:HTMLCollectionOf<Element> = this.html.getElementsByClassName("folder");
 
 		for(let i = 0; i < folders.length; i++)
 		{
@@ -164,7 +166,7 @@ export class FormList
 			this.folders.set(folder.id,folder);
 		}
 
-		let forms:HTMLCollectionOf<Element> = this.tree.getElementsByClassName("form");
+		let forms:HTMLCollectionOf<Element> = this.html.getElementsByClassName("form");
 
 		for(let i = 0; i < forms.length; i++)
 		{
