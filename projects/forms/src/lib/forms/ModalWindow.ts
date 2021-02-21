@@ -15,7 +15,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
 		    <span class="center" style="color: {{tcolor}};"></span>
-			<span style="position: absolute; height: 1.5em; top: 0; right: 0; border-left: 1px solid black;">
+			<span style="position: absolute; height: 1.5em; width: 1.75em; top: 0; right: 0; border-left: 1px solid black;">
 				<button style="color: {{btncolor}};" (click)="closeForm()">X</button>
 			</span>
 		  </div>
@@ -62,6 +62,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 
 	button
 	{
+		width: 1.75em;
 		height: 1.5em;
 		margin-top: 0.25em;
 		font-size: 0.75em;
@@ -111,7 +112,7 @@ export class ModalWindow implements AfterViewInit
 
     public top : string = "";
     public left : string = "";
-    public title : string = "XX";
+    public title : string = null;
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
@@ -139,14 +140,14 @@ export class ModalWindow implements AfterViewInit
 
 		if (form.windowopts.width == "")
 		{
+			this.left = "2px";
 			this.width = "99.25vw";
-			this.top = "2px";
 		}
 
 		if (form.windowopts.height == "")
 		{
-			this.height = "99.00vh";
-			this.left = "2px";
+			this.top = "4px";
+			this.height = "99vh";
 		}
 
 		let impl:FormImpl = Protected.get(form.ref.instance);
