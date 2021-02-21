@@ -140,13 +140,13 @@ export class ModalWindow implements AfterViewInit
 		if (form.windowopts.width == "")
 		{
 			this.width = "99.25vw";
-			this.top = "1px";
+			this.top = "2px";
 		}
 
 		if (form.windowopts.height == "")
 		{
 			this.height = "99.00vh";
-			this.left = "1px";
+			this.left = "2px";
 		}
 
 		let impl:FormImpl = Protected.get(form.ref.instance);

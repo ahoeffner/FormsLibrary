@@ -102,7 +102,7 @@ class Properties
     public accent:string = "#ff4081";
     public primary:string = "#303f9f";
     public textcolor:string = "white";
-    public titlecolor:string = "black";
-    public btntextcolor:string = "black";
+    public titlecolor:string = "white";
+    public btntextcolor:string = "white";
     public lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 }
