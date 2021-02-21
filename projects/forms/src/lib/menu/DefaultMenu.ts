@@ -22,7 +22,7 @@ export class DefaultMenu implements Menu
             {
                 name: "Transactions", title: "Transaction Menu", options:
                 [
-                    {name: "rollback", action: null},
+                    {name: "commit", action: null},
                     {name: "rollback", action: null},
                 ]
             }

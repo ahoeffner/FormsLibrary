@@ -68,7 +68,7 @@ export class DropDownMenu implements AfterViewInit
 		html += "  </head>\n";
 		html += "  <body>\n";
 		html += "    <span class='bar'>\n";
-		html += this.entries("      ",this.menu.entries);
+		html += this.entries("","",this.menu.entries);
 		html += "    </span>\n";
         html += "  </body>\n";
 		html += "</html>\n";
@@ -77,18 +77,33 @@ export class DropDownMenu implements AfterViewInit
     }
 
 
-    private entries(indent:string, entries:MenuEntry[]) : string
+    private entries(indent:string, path:string, entries:MenuEntry[]) : string
     {
         let html:string = "";
 
         for(let i = 0; i < entries.length; i++)
         {
-            console.log("add "+entries[i].name);
+            let id:string = path+"/"+entries[i].name;
+            console.log("id="+id);
+
             html += indent+"<div class='menu'>\n";
-            html += indent+"  <button id='"+entries[i].name+"' class='entry'>"+entries[i].name+"</button>\n";
-            html += indent+"  <div id='"+entries[i].name+"-options' class='content'>\n";
-            html += indent+"    <a id='home1' href='#home'>Home1</a>\n";
-            html += indent+"    <a id='home2' href='#home'>Home2</a>\n";
+            html += indent+"  <button id='"+id+"' class='entry'";
+            html += indent+" style='margin-left: 4px; margin-right: 4px'>\n";
+            html += indent+entries[i].name;
+            html += indent+"  </button>\n";
+            html += indent+"  <div class='content'>\n";
+
+            if (entries[i].options != null)
+            {
+                for(let f = 0; f < entries[i].options.length; f++)
+                {
+                    let entry:MenuEntry = entries[i].options[f];
+                    html += indent+"    <button class='option' id='"+id+"/"+entry.name+"'>\n";
+                    html += indent+entry.name+"\n";
+                    html += indent+"    </button>\n";
+                }
+            }
+
             html += indent+"  </div>\n";
             html += indent+"</div>\n";
         }
@@ -123,16 +138,6 @@ export class DropDownMenu implements AfterViewInit
                 background: transparent;
             }
 
-            .entry:hover, .entry:focus
-            {
-                font-weight: bold;
-            }
-
-            .entry:not(hover), .entry:not(focus)
-            {
-                font-weight: normal;
-            }
-
             .menu
             {
                 position: relative;
@@ -144,13 +149,13 @@ export class DropDownMenu implements AfterViewInit
                 z-index: 1;
                 display: none;
                 overflow: auto;
-                min-width: 160px;
+                min-width: 80px;
                 position: absolute;
                 background-color: #f1f1f1;
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             }
 
-            .content a
+            options
             {
                 color: black;
                 display: block;
@@ -158,7 +163,7 @@ export class DropDownMenu implements AfterViewInit
                 text-decoration: none;
             }
 
-            .content a:hover
+            options:hover
             {
                 background-color: #ddd;
             }
