@@ -15,7 +15,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
 		    <span class="center" style="color: {{tcolor}};"></span>
-			<span style="position: absolute; height: 1.5em; width: 1.75em; top: 0; right: 0; border-left: 1px solid black;">
+			<span class="close">
 				<button style="color: {{btncolor}};" (click)="closeForm()">X</button>
 			</span>
 		  </div>
@@ -60,15 +60,26 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         border-bottom: 2px solid black;
     }
 
+	.close
+	{
+		top: 0;
+		right: 0;
+		height: 1.5em;
+		width: 1.75em;
+		position: absolute;
+		border-left: 1px solid black;
+	}
+
 	button
 	{
-		width: 1.75em;
-		height: 1.5em;
-		margin-top: 0.25em;
+		top: 50%;
+		width: 100%;
+		height: 100%;
+		position: relative;
 		font-size: 0.75em;
 		font-weight: bold;
-        position: relative;
 		background: transparent;
+		transform: translateY(-50%);
 		border: 0px solid transparent;
 		box-shadow: 0px 0px 0px transparent;
 		text-shadow: 0px 0px 0px transparent;
