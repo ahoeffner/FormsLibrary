@@ -3,15 +3,14 @@ import { FormList } from './menu/FormList';
 import { FormArea } from './forms/FormArea';
 import { CommonModule } from "@angular/common";
 import { ModalWindow } from './forms/ModalWindow';
-import { MatIconModule } from '@angular/material/icon';
+import { DropDownMenu } from './menu/DropDownMenu';
 import { HttpClientModule } from '@angular/common/http';
-import { MatButtonModule } from '@angular/material/button';
 
 
 @NgModule({
-    declarations: [FormList, FormArea, ModalWindow],
-    exports     : [FormList, FormArea],
-    imports     : [CommonModule, HttpClientModule, MatIconModule, MatButtonModule]
+    declarations: [FormList, FormArea, ModalWindow, DropDownMenu],
+    exports     : [FormList, FormArea, DropDownMenu],
+    imports     : [CommonModule, HttpClientModule]
 })
 
 

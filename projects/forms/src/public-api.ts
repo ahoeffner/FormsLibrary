@@ -8,6 +8,8 @@ export {FormArea} from './lib/forms/FormArea';
 export {Preferences} from "./lib/Preferences";
 export {Form,CallBack} from './lib/forms/Form';
 export {FormsLibrary} from './lib/FormsLibrary';
+export {DropDownMenu} from './lib/menu/DropDownMenu';
+export {DropDownEntry} from './lib/menu/DropDownEntry';
 export {ControlBlock} from './lib/blocks/ControlBlock';
 export {WindowOptions} from './lib/forms/WindowOptions';
 export {Application} from './lib/application/Application';
