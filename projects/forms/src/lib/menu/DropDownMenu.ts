@@ -46,6 +46,13 @@ export class DropDownMenu implements AfterViewInit
     }
 
 
+    private click(event:any) : void
+    {
+        console.log("click-event ");
+        document.removeEventListener("click", (event) => {this.click(event);})
+    }
+
+
     private action(event:any) : void
     {
         let opt:Option = this.options.get(event.target.id);
@@ -63,6 +70,7 @@ export class DropDownMenu implements AfterViewInit
         if (container.classList.contains("show"))
         {
             this.closeall(container);
+            document.addEventListener("click", (event) => {this.click(event);})
         }
         else
         {
@@ -71,7 +79,7 @@ export class DropDownMenu implements AfterViewInit
 	}
 
 
-    private closeall(except:Element) : void
+    private closeall(except?:Element) : void
     {
         let open:HTMLCollectionOf<Element> = this.html.getElementsByClassName("show");
 
@@ -185,6 +193,7 @@ export class DropDownMenu implements AfterViewInit
 
             .option
             {
+                width: 100%;
                 border: none;
                 color: black;
                 outline:none;
