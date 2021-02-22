@@ -167,6 +167,12 @@ export class ApplicationImpl
 
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
+        if (!this.ready)
+        {
+            setTimeout(() => {this.showform(form,destroy,parameters);},10);
+            return;
+        }
+
         let formdef:FormInstance = null;
 
         if (this.form != null)
@@ -180,8 +186,8 @@ export class ApplicationImpl
         if (destroy)
             this.closeform(form,true);
 
-        if (this.ready) formdef = this.formsctl.showform(form,parameters);
-        else setTimeout(() => {this.showform(form,destroy,parameters);},10);
+        formdef = this.getFormInstance(form);
+        this.formsctl.display(form,parameters);
 
         if (this.formlist != null && formdef != null)
             this.formlist.open(formdef.path);

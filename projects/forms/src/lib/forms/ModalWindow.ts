@@ -120,10 +120,12 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private app:ApplicationImpl;
 	private element:HTMLElement;
     private menu:HTMLDivElement;
+	private menuelem:HTMLElement;
     private window:HTMLDivElement;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
 	private winref:ComponentRef<any>;
+	private menuref:ComponentRef<any>;
 
     public top : string = "";
     public left : string = "";
@@ -195,6 +197,9 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.content.removeChild(this.element);
 		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
 
+		this.menu.removeChild(this.menuelem);
+		this.app.builder.getAppRef().detachView(this.menuref.hostView);
+
 		let impl:FormImpl = Protected.get(form.formref.instance);
 		impl.setModalWindow(this);
 
@@ -262,13 +267,13 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private showmenu() : void
 	{
 		let impl:FormImpl = Protected.get(this.form.formref.instance);
-		let menu:ComponentRef<any> = impl.getFormMenu();
+		this.menuref = impl.getMenu();
 
-		let element:Element = (menu.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		this.app.builder.getAppRef().attachView(menu.hostView);
-		this.menu.appendChild(element);
+		this.menuelem = (this.menuref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		this.app.builder.getAppRef().attachView(this.menuref.hostView);
+		this.menu.appendChild(this.menuelem);
 
-		let ddmenu:DropDownMenu = menu.instance;
+		let ddmenu:DropDownMenu = this.menuref.instance;
 		this.initmenu(ddmenu);
 	}
 

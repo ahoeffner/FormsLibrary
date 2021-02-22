@@ -1,9 +1,11 @@
+import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Form, CallBack } from "./Form";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
+import { MenuFactory } from "../menu/MenuFactory";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -19,6 +21,7 @@ export class FormImpl
     private app:ApplicationImpl;
     private callbackfunc:CallBack;
     private cancelled:boolean = false;
+    private menu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
@@ -45,6 +48,30 @@ export class FormImpl
     public setTitle(title:string) : void
     {
         this.title = title;
+    }
+
+
+    public init() : void
+    {
+        this.form.init();
+    }
+
+
+    public start() : void
+    {
+        this.app.showTitle(this.title);
+
+        if (this.parent == null)
+            this.app.showPath(this.name,this.path);
+
+        this.form.start();
+    }
+
+
+    public setMenu(menu:Menu) : void
+    {
+        let factory:MenuFactory = new MenuFactory(this.app.builder);
+        this.menu = factory.create(menu);
     }
 
 
@@ -109,11 +136,11 @@ export class FormImpl
     }
 
 
-    public getFormMenu() : ComponentRef<DropDownMenu>
+    public getMenu() : ComponentRef<DropDownMenu>
     {
+        if (this.menu != null) return(this.menu);
         return(this.app.getDefaultMenu());
     }
-
 
 
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
@@ -166,17 +193,6 @@ export class FormImpl
 
             this.app.showinstance(inst,parameters);
         }
-    }
-
-
-    public start() : void
-    {
-        this.app.showTitle(this.title);
-
-        if (this.parent == null)
-            this.app.showPath(this.name,this.path);
-
-        this.form.start();
     }
 
 

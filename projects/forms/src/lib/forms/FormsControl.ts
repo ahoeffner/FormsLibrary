@@ -78,12 +78,6 @@ export class FormsControl
     }
 
 
-    public showform(form:any, parameters:Map<string,any>) : FormInstance
-    {
-        return(this.displayform(form,parameters));
-    }
-
-
     public closeform(form:any, destroy:boolean) : void
     {
         let name:string = this.utils.getName(form);
@@ -113,14 +107,6 @@ export class FormsControl
             formdef.windowopts = null;
             formdef.formref = null;
         }
-    }
-
-
-    private displayform(form:any, parameters:Map<string,any>) : FormInstance
-    {
-        let formdef:FormInstance = this.getFormInstance(form);
-        this.display(formdef,parameters);
-        return(formdef);
     }
 
 
@@ -210,6 +196,7 @@ export class FormsControl
 
         let impl:FormImpl = Protected.get<FormImpl>(ref.instance);
         impl.setApplication(this.app);
+        impl.init();
 
         return(ref);
     }

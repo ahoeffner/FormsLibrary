@@ -1,3 +1,4 @@
+import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
 import { BlockProperty } from "../blocks/BlockProperty";
 import { Definitions } from "../Directives/Definitions";
@@ -26,8 +27,17 @@ export class Form implements AfterViewInit
         }});
     }
 
+    public init() : void
+    {
+    }
+
     public start() : void
     {
+    }
+
+    public setMenu(menu:Menu)
+    {
+        this.impl.setMenu(menu);
     }
 
     public newform(form:any, parameters?:Map<string,any>) : void
