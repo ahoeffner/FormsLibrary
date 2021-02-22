@@ -58,7 +58,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         margin-left: 0;
         margin-right: 0;
         cursor:default;
-		text-align: center;
+		justify-content: center;
         border-bottom: 2px solid black;
     }
 
@@ -92,6 +92,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 	{
 		top: 0;
 		bottom: 0;
+		width: 93%;
 		height: 100%;
 		display: flex;
 		align-items: center;
@@ -283,7 +284,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		let impl:FormImpl = Protected.get(this.form.formref.instance);
 		ddmenu.getMenu().setForm(impl.getForm());
 
-		this.minw = this.menu.clientWidth;
+		this.minh = 100;
+		this.minw = this.menu.clientWidth + 50;
 	}
 
 
@@ -447,16 +449,14 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		let deltay:number = +event.clientY - this.offy;
 		let deltax:number = +event.clientX - this.offx;
 
-		if (this.resizex)
+		if (this.resizex && (this.sizex > this.minw || deltax > 0))
 		{
-			console.log("Width min: "+this.minw+" curr: "+this.sizex);
 			this.sizex += deltax;
 			this.width = this.sizex+"px";
 		}
 
-		if (this.resizey)
+		if (this.resizey && (this.sizey > this.minh || deltay > 0))
 		{
-			console.log("Height min: "+this.minw+" curr: "+this.sizey);
 			this.sizey += deltay;
 			this.height = this.sizey+"px";
 		}
