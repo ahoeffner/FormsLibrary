@@ -28,6 +28,34 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     }
 
 
+    public enable(menu?:string) : void
+    {
+        if (menu != null)
+        {
+            let elem:Element = this.menus.get(menu);
+            if (elem != null) elem.classList.remove("disabled");
+        }
+        else
+        {
+            this.menus.forEach((elem) => {elem.classList.remove("disabled")});
+        }
+    }
+
+
+    public disable(menu?:string) : void
+    {
+        if (menu != null)
+        {
+            let elem:Element = this.menus.get(menu);
+            if (elem != null) elem.classList.add("disabled");
+        }
+        else
+        {
+            this.menus.forEach((elem) => {elem.classList.add("disabled")});
+        }
+    }
+
+
     public display(menu?:Menu) : void
     {
         if (this.html == null)
@@ -58,6 +86,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 			options[i].addEventListener("click", (event) => {this.action(event)});
             opt.elem = options[i];
         }
+
+        this.enable("/connection");
     }
 
 

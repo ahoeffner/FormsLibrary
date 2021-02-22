@@ -45,6 +45,6 @@ export class Listener
     private onEvent(event:any) : void
     {
         let events:Map<string,onEventListener> = Listener.events.get(event.type);
-        events.forEach((value) => {value.onEvent(event)});
+        events.forEach((clazz) => {clazz.onEvent(event)});
     }
 }
