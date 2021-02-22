@@ -1,6 +1,7 @@
+import { Form } from '../forms/Form';
 import { MenuInterface } from "./MenuInterface";
 
-export class MenuHandler
+export abstract class MenuHandler
 {
     public ready:boolean = false;
     public menu:MenuInterface = null;
@@ -13,4 +14,7 @@ export class MenuHandler
             this.ready = true;
         }});
     }
+
+    abstract activate() : void;
+    abstract setForm(form:Form) : void;
 }

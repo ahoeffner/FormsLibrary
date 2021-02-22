@@ -5,7 +5,7 @@ export interface getProtected
 
 export interface setProtected
 {
-    _setProtected(impl:any,type?:any) : void;
+    _setProtected(args:any,type?:any) : void;
 }
 
 export class Protected
@@ -20,9 +20,9 @@ export class Protected
         return(impl);
     }
 
-    public static set(comp:any, impl:any, type?:any) : void
+    public static set(comp:any, args:any, type?:any) : void
     {
-        if (type == null) (<setProtected><any>comp)._setProtected(impl);
-        else              (<setProtected><any>comp)._setProtected(impl,type);
+        if (type == null) (<setProtected><any>comp)._setProtected(args);
+        else              (<setProtected><any>comp)._setProtected(args,type);
     }
 }

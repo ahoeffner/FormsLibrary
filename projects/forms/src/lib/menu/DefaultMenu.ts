@@ -1,5 +1,4 @@
 import { Menu } from './Menu';
-import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
 import { MenuHandler } from './MenuHandler';
 import { DefaultMenuHandler } from './DefaultMenuHandler';
@@ -7,7 +6,6 @@ import { DefaultMenuHandler } from './DefaultMenuHandler';
 
 export class DefaultMenu implements Menu
 {
-    private form:Form;
     private entries: MenuEntry[];
     private handler: DefaultMenuHandler;
 
@@ -19,7 +17,7 @@ export class DefaultMenu implements Menu
                 name: "Connection", title: "Connection to database", options:
                 [
                     {name: "connect", action: "connect"},
-                    {name: "disconnect", action: null},
+                    {name: "disconnect", action: "disconnect"},
                 ]
             }
             ,
@@ -66,39 +64,6 @@ export class DefaultMenu implements Menu
         ];
 
         this.handler = new DefaultMenuHandler();
-    }
-
-
-    private init() : void
-    {
-        if (this.form == null)
-        {
-            this.handler.menu.disable();
-            this.handler.menu.enable("/connection");
-        }
-        else
-        {
-            this.handler.menu.enable();
-        }
-    }
-
-
-    public activate() : void
-    {
-        this.init();
-    }
-
-
-    public deactivate() : void
-    {
-    }
-
-
-    public setForm(form: Form): void
-    {
-        this.form = form;
-        this.handler.form = form;
-        if (this.handler.ready) this.init();
     }
 
     getHandler(): MenuHandler

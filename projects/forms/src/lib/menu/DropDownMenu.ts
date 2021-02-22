@@ -101,7 +101,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             opt.elem = options[i];
         }
 
-        menu.activate();
+        menu.getHandler().activate();
     }
 
 

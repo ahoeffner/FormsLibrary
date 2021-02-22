@@ -190,7 +190,7 @@ export class ApplicationImpl
         {
             let form:Form = formdef.formref.instance;
             this.form = Protected.get<FormImpl>(form);
-            this.menu.setForm(form);
+            this.menu.getHandler().setForm(form);
         }
     }
 
@@ -212,7 +212,7 @@ export class ApplicationImpl
     {
         if (this.form == null) return;
         this.formsctl.closeform(form,destroy);
-        this.menu.setForm(null);
+        this.menu.getHandler().setForm(null);
         this.form = null;
     }
 
