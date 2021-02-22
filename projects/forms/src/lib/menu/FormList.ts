@@ -1,7 +1,7 @@
-import { Preferences } from '../Preferences';
 import { Protected } from '../utils/Protected';
 import { FormInstance } from '../forms/FormInstance';
 import { Application } from '../application/Application';
+import { Preferences } from '../application/Preferences';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
@@ -242,7 +242,7 @@ export class FormList implements AfterViewInit
 
 		.form
 		{
-			color: formcolor;
+			color: `+this.preferences.colors.link+`;
 			font-style: italic;
 		}
 
@@ -267,9 +267,6 @@ export class FormList implements AfterViewInit
 			display: block;
 		}
 		`;
-
-		let color:string = this.preferences.linkColor;
-		styles = styles.replace("formcolor",color);
 
 		return(styles);
 	}

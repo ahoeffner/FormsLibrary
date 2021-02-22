@@ -1,7 +1,7 @@
 import { FormImpl } from "./FormImpl";
-import { Preferences } from '../Preferences';
 import { FormInstance } from './FormInstance';
 import { Protected } from '../utils/Protected';
+import { Preferences } from '../application/Preferences';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
 
@@ -129,9 +129,9 @@ export class ModalWindow implements AfterViewInit
     public height : string = "98vh";
     public tmargin : string = "1vh";
 	public preferences:Preferences = new Preferences();
-    public tcolor  : string = this.preferences.titleColor;
-    public bcolor  : string = this.preferences.primaryColor;
-    public btncolor : string = this.preferences.btnTextColor;
+    public tcolor  : string = this.preferences.colors.title;
+    public bcolor  : string = this.preferences.colors.topbar;
+    public btncolor : string = this.preferences.colors.buttontext;
 
 
     @ViewChild("canvas", {read: ElementRef}) private canvasElement: ElementRef;

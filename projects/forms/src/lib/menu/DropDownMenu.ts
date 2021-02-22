@@ -1,7 +1,7 @@
 import { Menu } from './Menu';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
-import { Preferences } from '../Preferences';
+import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from '../utils/Listener';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
@@ -17,6 +17,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     private instance:string;
     private html:HTMLDivElement;
     private static instances:number = 0;
+    private menus:Map<string,Element> = new Map<string,Element>();
     private options:Map<string,Option> = new Map<string,Option>();
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
@@ -44,7 +45,11 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         let options:HTMLCollectionOf<Element> = this.html.getElementsByClassName("option");
 
         for(let i = 0; i < menus.length; i++)
-			menus[i].addEventListener("click", (event) => {this.toggle(event)});
+        {
+            menus[i].children[0].classList.add("disabled");
+            this.menus.set(menus[i].children[0].id,menus[i].children[0]);
+			menus[i].children[0].addEventListener("click", (event) => {this.toggle(event)});
+        }
 
         for(let i = 0; i < options.length; i++)
         {
@@ -69,7 +74,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     private action(event:any) : void
     {
         let opt:Option = this.options.get(event.target.id);
-        console.log(event.target+" clicked action="+opt.option.action);
+        console.log(event.target+" clicked action="+opt.option.name);
     }
 
 
@@ -77,6 +82,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 	{
 		let menu:HTMLElement = event.target;
         let container:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
+        console.log("click: "+menu.id+" "+menu.classList);
+        if (menu.classList.contains("disabled")) return;
 
         container.classList.toggle("show");
 
@@ -180,11 +187,16 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             .entry
             {
                 border: none;
-                color: `+prefs.btnTextColor+`;
+                color: `+prefs.colors.buttontext+`;
                 outline:none;
                 cursor: pointer;
                 font-size: 16px;
                 background: transparent;
+            }
+
+            .disabled
+            {
+                color: `+prefs.colors.disabled+`;
             }
 
             .menu
