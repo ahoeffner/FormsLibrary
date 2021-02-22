@@ -14,9 +14,18 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 export class DropDownMenu implements onEventListener, AfterViewInit
 {
     private menu:Menu;
+    private instance:string;
     private html:HTMLDivElement;
+    private static instances:number = 0;
     private options:Map<string,Option> = new Map<string,Option>();
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
+
+
+    constructor()
+    {
+        this.instance = "DropDownMenu-"+(DropDownMenu.instances++);
+    }
+
 
     public display(menu?:Menu) : void
     {
@@ -52,7 +61,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (!event.target.matches('.entry'))
         {
             this.closeall();
-            Listener.remove(this,"click");
+            Listener.remove(this.instance,"click");
         }
     }
 
@@ -74,7 +83,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (container.classList.contains("show"))
         {
             this.closeall(container);
-            setTimeout(() => {Listener.add(this,"click");},1);
+            setTimeout(() => {Listener.add(this.instance,this,"click");},1);
         }
         else
         {
@@ -138,9 +147,9 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                     let entry:MenuEntry = entries[i].options[f];
                     this.options.set(id+"/"+entry.name,new Option(entries[i].options[f]));
 
-                    html += indent+"    <button class='option' id='"+id+"/"+entry.name+"'>\n";
+                    html += indent+"    <a class='option' id='"+id+"/"+entry.name+"'>\n";
                     html += indent+entry.name+"\n";
-                    html += indent+"    </button>\n";
+                    html += indent+"    </a>\n";
                 }
             }
 
@@ -188,7 +197,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             {
                 z-index: 1;
                 display: none;
-                overflow: auto;
+                overflow: none;
                 min-width: 80px;
                 position: absolute;
                 background-color: #f1f1f1;

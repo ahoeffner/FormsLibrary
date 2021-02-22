@@ -10,7 +10,7 @@ export class Listener
         new Map<string,Map<string,onEventListener>>();
 
 
-    public static add(clazz:onEventListener, event:string) : void
+    public static add(id:string, clazz:onEventListener, event:string) : void
     {
         let events:Map<string,onEventListener> = Listener.events.get(event);
 
@@ -23,14 +23,14 @@ export class Listener
             listener.start(event);
         }
 
-        events.set(clazz.constructor.name,clazz);
+        events.set(id,clazz);
     }
 
 
-    public static remove(clazz:onEventListener, event:string) : void
+    public static remove(id:string, event:string) : void
     {
         let events:Map<string,onEventListener> = Listener.events.get(event);
-        events.delete(clazz.constructor.name);
+        events.delete(id);
     }
 
 

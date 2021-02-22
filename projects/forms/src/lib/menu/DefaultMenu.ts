@@ -29,9 +29,26 @@ export class DefaultMenu implements Menu
             }
             ,
             {
+                name: "Record", title: "Record actions", options:
+                [
+                    {name: "insert", action: null},
+                    {name: "delete", action: null},
+                    {name: "clear", action: null},
+                ]
+            }
+            ,
+            {
                 name: "Block", title: "Block actions", options:
                 [
                     {name: "clear", action: null},
+                ]
+            }
+            ,
+            {
+                name: "Form", title: "Form actions", options:
+                [
+                    {name: "clear", action: null},
+                    {name: "close", action: null},
                 ]
             }
             ,
