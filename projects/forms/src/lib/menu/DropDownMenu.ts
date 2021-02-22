@@ -50,7 +50,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     public onEvent(event:any) : void
     {
         console.log("click-event");
-        Listener.remove(this,"click");
+        //Listener.remove(this,"click");
     }
 
 
