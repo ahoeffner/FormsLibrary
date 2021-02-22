@@ -206,7 +206,6 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
             .option
             {
-                width: 100%;
                 border: none;
                 color: black;
                 outline:none;
