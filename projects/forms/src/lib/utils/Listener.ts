@@ -12,7 +12,6 @@ export class Listener
 
     public static add(clazz:onEventListener, event:string) : void
     {
-        console.log("add listener "+event);
         let events:Map<string,onEventListener> = Listener.events.get(event);
 
         if (events == null)
@@ -40,14 +39,13 @@ export class Listener
 
     private start(eventtype:string) : void
     {
-        console.log("adding event "+eventtype);
         window.addEventListener(eventtype, (event) => {this.onEvent(event)});
     }
 
     private onEvent(event:any) : void
     {
-        console.log("Listener event "+event.type);
         let events:Map<string,onEventListener> = Listener.events.get(event.type);
         events.forEach((value) => {value.onEvent(event)});
+        console.log("Listener "+event.type+" "+events.size);
     }
 }

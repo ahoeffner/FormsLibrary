@@ -49,8 +49,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
     public onEvent(event:any) : void
     {
-        console.log("click-event");
-        //Listener.remove(this,"click");
+        this.closeall();
+        Listener.remove(this,"click");
     }
 
 
@@ -71,7 +71,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (container.classList.contains("show"))
         {
             this.closeall(container);
-            Listener.add(this,"click");
+            setTimeout(() => {Listener.add(this,"click");},1);
         }
         else
         {
@@ -86,7 +86,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         for(let i = 0; i < open.length; i++)
         {
-            if (open[i].id != except.id)
+            if (except == null || open[i].id != except.id)
                 open[i].classList.remove("show");
         }
     }
