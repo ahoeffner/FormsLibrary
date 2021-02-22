@@ -1,8 +1,9 @@
 import { Menu } from './Menu';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Preferences } from '../Preferences';
+import { Listener, onEventListener } from '../utils/Listener';
+import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
     selector: '',
@@ -10,7 +11,7 @@ import { Preferences } from '../Preferences';
 })
 
 
-export class DropDownMenu implements AfterViewInit
+export class DropDownMenu implements onEventListener, AfterViewInit
 {
     private menu:Menu;
     private html:HTMLDivElement;
@@ -46,10 +47,10 @@ export class DropDownMenu implements AfterViewInit
     }
 
 
-    private click(event:any) : void
+    public onEvent(event:any) : void
     {
-        console.log("click-event ");
-        document.removeEventListener("click", (event) => {this.click(event);})
+        console.log("click-event");
+        Listener.remove(this,"click");
     }
 
 
@@ -70,7 +71,7 @@ export class DropDownMenu implements AfterViewInit
         if (container.classList.contains("show"))
         {
             this.closeall(container);
-            document.addEventListener("click", (event) => {this.click(event);})
+            Listener.add(this,"click");
         }
         else
         {

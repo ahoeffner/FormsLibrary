@@ -12,10 +12,26 @@ export class DefaultMenu implements Menu
         this.entries =
         [
             {
-                name: "File", title: "File Menu", options:
+                name: "Connection", title: "Connection to database", options:
                 [
-                    {name: "file", action: null},
-                    {name: "exit", action: null},
+                    {name: "connect", action: null},
+                    {name: "disconnect", action: null},
+                ]
+            }
+            ,
+            {
+                name: "Query", title: "Query actions", options:
+                [
+                    {name: "enter", action: null},
+                    {name: "execute", action: null},
+                    {name: "cancel", action: null},
+                ]
+            }
+            ,
+            {
+                name: "Block", title: "Block actions", options:
+                [
+                    {name: "clear", action: null},
                 ]
             }
             ,
