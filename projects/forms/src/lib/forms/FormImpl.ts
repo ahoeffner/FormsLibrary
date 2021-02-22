@@ -2,7 +2,9 @@ import { Utils } from "../utils/Utils";
 import { Form, CallBack } from "./Form";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
+import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
+import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
@@ -105,6 +107,13 @@ export class FormImpl
     {
         return(this.parameters);
     }
+
+
+    public getFormMenu() : ComponentRef<DropDownMenu>
+    {
+        return(this.app.getDefaultMenu());
+    }
+
 
 
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void

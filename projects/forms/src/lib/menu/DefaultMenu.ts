@@ -2,13 +2,14 @@ import { Menu } from './Menu';
 import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
 import { MenuHandler } from './MenuHandler';
+import { DefaultMenuHandler } from './DefaultMenuHandler';
 
 
 export class DefaultMenu implements Menu
 {
     private form:Form;
     private entries: MenuEntry[];
-    private handler: DefaultHandler;
+    private handler: DefaultMenuHandler;
 
     constructor()
     {
@@ -64,7 +65,7 @@ export class DefaultMenu implements Menu
             }
         ];
 
-        this.handler = new DefaultHandler();
+        this.handler = new DefaultMenuHandler();
     }
 
 
@@ -108,26 +109,5 @@ export class DefaultMenu implements Menu
     getEntries(): MenuEntry[]
     {
         return(this.entries);
-    }
-}
-
-
-class DefaultHandler extends MenuHandler
-{
-    public form:Form;
-
-    public connect() : void
-    {
-        console.log("connect");
-    }
-
-    public disconnect() : void
-    {
-        console.log("disconnect");
-    }
-
-    public close() : void
-    {
-        this.form.close(false);
     }
 }

@@ -1,11 +1,11 @@
 import { Menu } from './Menu';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
+import { Protected } from '../utils/Protected';
+import { MenuInterface } from './MenuInterface';
 import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from '../utils/Listener';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { MenuInterface } from './MenuInterface';
-import { Protected } from '../utils/Protected';
 
 @Component({
     selector: '',

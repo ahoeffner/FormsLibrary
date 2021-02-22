@@ -144,6 +144,7 @@ export class ModalWindow implements AfterViewInit
 
 	public setForm(form:FormInstance) : void
 	{
+		console.log("setForm");
 		this.top = form.windowopts.offsetTop;
 		this.left = form.windowopts.offsetLeft;
 
@@ -166,13 +167,12 @@ export class ModalWindow implements AfterViewInit
 		impl.setModalWindow(this);
 
 		this.form = form;
+		this.showmenu(impl);
 	}
 
 
 	public newForm(form:FormInstance) : void
 	{
-		this.title = form.title;
-
 		this.content.removeChild(this.element);
 		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
 
@@ -181,6 +181,25 @@ export class ModalWindow implements AfterViewInit
 
 		this.form = form;
 		this.display();
+	}
+
+
+	public showmenu(impl:FormImpl) : void
+	{
+		return;
+		
+		if (this.app == null)
+		{
+			setTimeout(() => {this.showmenu(impl)}, 10);
+			return;
+		}
+
+		let menu:ComponentRef<any> = impl.getFormMenu();
+		let element:Element = (menu.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		this.app.builder.getAppRef().attachView(menu.hostView);
+		this.topbar.removeChild(this.topbar.children[1]);
+		this.topbar.appendChild(element);
+		this.change.detectChanges();
 	}
 
 

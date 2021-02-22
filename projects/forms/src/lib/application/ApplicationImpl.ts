@@ -29,7 +29,8 @@ export class ApplicationImpl
     private mfactory:MenuFactory = null;
     private formsctl:FormsControl = null;
     private instances:InstanceControl = null;
-    private dropdown:ComponentRef<DropDownMenu> = null;
+    private ddmenu:ComponentRef<DropDownMenu> = null;
+    private defaultddmenu:ComponentRef<DropDownMenu> = null;
 
 
     constructor(public builder:Builder)
@@ -37,8 +38,8 @@ export class ApplicationImpl
         this.menu = new DefaultMenu();
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
-        this.dropdown = this.mfactory.create(this.menu);
         this.instances = new InstanceControl(this.formsctl);
+        this.defaultddmenu = this.mfactory.create(new DefaultMenu());
     }
 
 
@@ -57,20 +58,35 @@ export class ApplicationImpl
 
     public setMenu(menu:Menu) : void
     {
-        this.showMenu(menu);
-    }
-
-
-    public showMenu(menu:Menu) : void
-    {
         if (menu != this.menu)
         {
             this.menu = menu;
-            this.dropdown = this.mfactory.create(menu);
+            this.ddmenu = this.mfactory.create(this.menu);
         }
 
+        this.showMenu();
+    }
+
+
+    public setDefaultMenu(menu:Menu) : void
+    {
+        this.defaultddmenu = this.mfactory.create(menu);
+    }
+
+
+    public getDefaultMenu() : ComponentRef<DropDownMenu>
+    {
+        return(this.defaultddmenu);
+    }
+
+
+    public showMenu() : void
+    {
+        if (this.ddmenu == null)
+            this.ddmenu = this.mfactory.create(this.menu);
+
         if (this.marea != null)
-            this.marea.display(this.dropdown);
+            this.marea.display(this.ddmenu);
     }
 
 
@@ -132,7 +148,7 @@ export class ApplicationImpl
     public setMenuArea(area:MenuArea) : void
     {
         this.marea = area;
-        this.showMenu(this.menu);
+        this.showMenu();
     }
 
 
