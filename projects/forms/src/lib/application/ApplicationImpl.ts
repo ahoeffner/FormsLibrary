@@ -1,11 +1,14 @@
+import { Menu } from "../menu/Menu";
 import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { FormList } from "../menu/FormList";
 import { MenuArea } from "../menu/MenuArea";
 import { FormArea } from "../forms/FormArea";
 import { FormImpl } from "../forms/FormImpl";
+import { ComponentRef } from "@angular/core";
 import { Protected } from "../utils/Protected";
 import { InstanceID } from "../forms/InstanceID";
+import { DefaultMenu } from "../menu/DefaultMenu";
 import { MenuFactory } from "../menu/MenuFactory";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FormInstance } from '../forms/FormInstance';
@@ -17,19 +20,24 @@ import { InstanceControl } from "../forms/InstanceControl";
 
 export class ApplicationImpl
 {
+    private menu:Menu = null;
     private title:string = null;
     private form:FormImpl = null;
+    private marea:MenuArea = null;
     private ready:boolean = false;
-    private menu:DropDownMenu = null;
     private formlist:FormList = null;
+    private mfactory:MenuFactory = null;
     private formsctl:FormsControl = null;
     private instances:InstanceControl = null;
+    private dropdown:ComponentRef<DropDownMenu> = null;
 
 
     constructor(public builder:Builder)
     {
-        this.menu = new DropDownMenu();
+        this.menu = new DefaultMenu();
+        this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
+        this.dropdown = this.mfactory.create(this.menu);
         this.instances = new InstanceControl(this.formsctl);
     }
 
@@ -44,6 +52,25 @@ export class ApplicationImpl
     {
         this.title = title;
         this.showTitle(title);
+    }
+
+
+    public setMenu(menu:Menu) : void
+    {
+        this.showMenu(menu);
+    }
+
+
+    public showMenu(menu:Menu) : void
+    {
+        if (menu != this.menu)
+        {
+            this.menu = menu;
+            this.dropdown = this.mfactory.create(menu);
+        }
+
+        if (this.marea != null)
+            this.marea.display(this.dropdown);
     }
 
 
@@ -104,8 +131,8 @@ export class ApplicationImpl
 
     public setMenuArea(area:MenuArea) : void
     {
-        let factory:MenuFactory = new MenuFactory(this.builder);
-        area.display(factory.create());
+        this.marea = area;
+        this.showMenu(this.menu);
     }
 
 
@@ -147,6 +174,7 @@ export class ApplicationImpl
         {
             let form:Form = formdef.ref.instance;
             this.form = Protected.get<FormImpl>(form);
+            this.menu.setForm(form);
         }
     }
 
@@ -160,15 +188,15 @@ export class ApplicationImpl
 
     public close() : void
     {
-        if (this.form != null)
-            this.closeform(this.form.getForm(),true);
+        this.closeform(this.form.getForm(),true);
     }
 
 
     public closeform(form:any, destroy:boolean) : void
     {
-        if (this.ready) this.formsctl.closeform(form,destroy);
-        else setTimeout(() => {this.closeform(form,destroy);},10);
+        if (this.form == null) return;
+        this.formsctl.closeform(form,destroy);
+        this.menu.setForm(null);
         this.form = null;
     }
 

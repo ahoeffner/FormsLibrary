@@ -4,6 +4,8 @@ import { DefaultMenu } from './DefaultMenu';
 import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from '../utils/Listener';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { MenuInterface } from './MenuInterface';
+import { Protected } from '../utils/Protected';
 
 @Component({
     selector: '',
@@ -32,6 +34,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     {
         if (menu != null)
         {
+            menu = menu.toLowerCase();
             let elem:Element = this.menus.get(menu);
             if (elem != null) elem.classList.remove("disabled");
         }
@@ -46,6 +49,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     {
         if (menu != null)
         {
+            menu = menu.toLowerCase();
             let elem:Element = this.menus.get(menu);
             if (elem != null) elem.classList.add("disabled");
         }
@@ -68,6 +72,10 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             menu = new DefaultMenu();
 
         this.menu = menu;
+        let intf:MenuInterface = new MenuInterface(this);
+        Protected.set(menu.getHandler(),intf);
+
+        this.menu = menu;
         this.html.innerHTML = this.menuhtml();
         let menus:HTMLCollectionOf<Element> = this.html.getElementsByClassName("menu");
         let options:HTMLCollectionOf<Element> = this.html.getElementsByClassName("option");
@@ -87,7 +95,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             opt.elem = options[i];
         }
 
-        this.enable("/connection");
+        menu.activate();
     }
 
 
@@ -103,8 +111,9 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
     private action(event:any) : void
     {
+        let handler:any = this.menu.getHandler();
         let opt:Option = this.options.get(event.target.id);
-        console.log(event.target+" clicked action="+opt.option.name);
+        if (opt.option.action != null) handler[opt.option.action]();
     }
 
 
@@ -112,7 +121,6 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 	{
 		let menu:HTMLElement = event.target;
         let container:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
-        console.log("click: "+menu.id+" "+menu.classList);
         if (menu.classList.contains("disabled")) return;
 
         container.classList.toggle("show");
@@ -120,7 +128,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (container.classList.contains("show"))
         {
             this.closeall(container);
-            setTimeout(() => {Listener.add(this.instance,this,"click");},1);
+            Listener.add(this.instance,this,"click");
         }
         else
         {
@@ -153,7 +161,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 		html += "  </head>\n";
 		html += "  <body>\n";
 		html += "    <span class='bar'>\n";
-		html += this.entries("","",this.menu.entries);
+		html += this.entries("","",this.menu.getEntries());
 		html += "    </span>\n";
         html += "  </body>\n";
 		html += "</html>\n";
@@ -168,7 +176,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         for(let i = 0; i < entries.length; i++)
         {
-            let id:string = path+"/"+entries[i].name;
+            let id:string = path+"/"+entries[i].name.toLowerCase();
 
             html += indent+"<div class='menu'>\n";
             html += indent+"  <button id='"+id+"' class='entry'";
@@ -182,9 +190,10 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 for(let f = 0; f < entries[i].options.length; f++)
                 {
                     let entry:MenuEntry = entries[i].options[f];
-                    this.options.set(id+"/"+entry.name,new Option(entries[i].options[f]));
+                    let oid:string = id+"/"+entry.name.toLowerCase();
+                    this.options.set(oid,new Option(entries[i].options[f]));
 
-                    html += indent+"    <a class='option' id='"+id+"/"+entry.name+"'>\n";
+                    html += indent+"    <a class='option' id='"+oid+"'>\n";
                     html += indent+entry.name+"\n";
                     html += indent+"    </a>\n";
                 }

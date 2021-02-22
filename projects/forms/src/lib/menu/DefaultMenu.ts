@@ -1,11 +1,14 @@
 import { Menu } from './Menu';
+import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
+import { MenuHandler } from './MenuHandler';
 
 
 export class DefaultMenu implements Menu
 {
-    handler: any;
-    entries: MenuEntry[];
+    private form:Form;
+    private entries: MenuEntry[];
+    private handler: DefaultHandler;
 
     constructor()
     {
@@ -14,7 +17,7 @@ export class DefaultMenu implements Menu
             {
                 name: "Connection", title: "Connection to database", options:
                 [
-                    {name: "connect", action: null},
+                    {name: "connect", action: "connect"},
                     {name: "disconnect", action: null},
                 ]
             }
@@ -48,7 +51,7 @@ export class DefaultMenu implements Menu
                 name: "Form", title: "Form actions", options:
                 [
                     {name: "clear", action: null},
-                    {name: "close", action: null},
+                    {name: "close", action: "close"},
                 ]
             }
             ,
@@ -60,5 +63,71 @@ export class DefaultMenu implements Menu
                 ]
             }
         ];
+
+        this.handler = new DefaultHandler();
+    }
+
+
+    private init() : void
+    {
+        if (this.form == null)
+        {
+            this.handler.menu.disable();
+            this.handler.menu.enable("/connection");
+        }
+        else
+        {
+            this.handler.menu.enable();
+        }
+    }
+
+
+    public activate() : void
+    {
+        this.init();
+    }
+
+
+    public deactivate() : void
+    {
+    }
+
+
+    public setForm(form: Form): void
+    {
+        this.form = form;
+        this.handler.form = form;
+        if (this.handler.ready) this.init();
+    }
+
+    getHandler(): MenuHandler
+    {
+        return(this.handler);
+    }
+
+    getEntries(): MenuEntry[]
+    {
+        return(this.entries);
+    }
+}
+
+
+class DefaultHandler extends MenuHandler
+{
+    public form:Form;
+
+    public connect() : void
+    {
+        console.log("connect");
+    }
+
+    public disconnect() : void
+    {
+        console.log("disconnect");
+    }
+
+    public close() : void
+    {
+        this.form.close(false);
     }
 }
