@@ -59,7 +59,7 @@ export class InstanceControl
         let instance:FormInstance = this.futil.clone(def);
         if (id.ref == null) id.ref = this.ctrl.createForm(def.component);
 
-        instance.ref = id.ref;
+        instance.formref = id.ref;
         instance.windowopts = id.modalopts;
 
         return(instance);
@@ -72,9 +72,9 @@ export class InstanceControl
 
         if (destroy)
         {
-            inst.ref.destroy();
+            inst.formref.destroy();
             inst.windowopts = null;
-            inst.ref = null;
+            inst.formref = null;
         }
     }
 }

@@ -30,6 +30,12 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     }
 
 
+    public getMenu() : Menu
+    {
+        return(this.menu);
+    }
+
+
     public enable(menu?:string) : void
     {
         if (menu != null)

@@ -1,9 +1,7 @@
 import { FormImpl } from "./FormImpl";
 import { FormInstance } from './FormInstance';
 import { Protected } from '../utils/Protected';
-import { DropDownMenu } from "../menu/DropDownMenu";
 import { Preferences } from '../application/Preferences';
-import { Listener, onEventListener } from "../utils/Listener";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
 
@@ -12,11 +10,11 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
   selector: 'modal',
   template:
   `
-    <div class="modal">
+    <div #canvas class="modal">
       <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
         <div class="container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		    <span class="center" style="color: {{tcolor}};"><div #menu></div></span>
+		    <span class="center" style="color: {{tcolor}};"></span>
 			<span class="close">
 				<button style="color: {{btncolor}};" (click)="closeForm()">X</button>
 			</span>
@@ -113,12 +111,12 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ModalWindow implements onEventListener, AfterViewInit
+export class ModalWindow implements AfterViewInit
 {
 	private form:FormInstance;
 	private app:ApplicationImpl;
 	private element:HTMLElement;
-    private menu:HTMLDivElement;
+    private canvas:HTMLDivElement;
     private window:HTMLDivElement;
     private topbar:HTMLDivElement;
 	private content:HTMLDivElement;
@@ -126,44 +124,27 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
     public top : string = "";
     public left : string = "";
+    public title : string = null;
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
-
 	public preferences:Preferences = new Preferences();
     public tcolor  : string = this.preferences.colors.title;
     public bcolor  : string = this.preferences.colors.topbar;
     public btncolor : string = this.preferences.colors.buttontext;
 
-    @ViewChild("menu", {read: ElementRef}) private menuElement: ElementRef;
+
+    @ViewChild("canvas", {read: ElementRef}) private canvasElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
     @ViewChild("topbar", {read: ElementRef}) private topbarElement: ElementRef;
 	@ViewChild('content', {read: ElementRef}) private contentElement:ElementRef;
-
-	private minw:number = 0;
-	private minh:number = 0;
-
-	private offx:number = 0;
-	private offy:number = 0;
-
-	private posy:number;
-	private posx:number;
-
-	private sizex:number;
-	private sizey:number;
-
-	private move:boolean = false;
-	private resz:boolean = false;
-
-	private resizex:boolean = false;
-	private resizey:boolean = false;
-
 
 	constructor(private change:ChangeDetectorRef) {}
 
 
 	public setForm(form:FormInstance) : void
 	{
+		console.log("setForm");
 		this.top = form.windowopts.offsetTop;
 		this.left = form.windowopts.offsetLeft;
 
@@ -182,23 +163,43 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			this.height = "99vh";
 		}
 
-		let impl:FormImpl = Protected.get(form.formref.instance);
+		let impl:FormImpl = Protected.get(form.ref.instance);
 		impl.setModalWindow(this);
 
 		this.form = form;
+		this.showmenu(impl);
 	}
 
 
 	public newForm(form:FormInstance) : void
 	{
 		this.content.removeChild(this.element);
-		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
+		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
 
-		let impl:FormImpl = Protected.get(form.formref.instance);
+		let impl:FormImpl = Protected.get(form.ref.instance);
 		impl.setModalWindow(this);
 
 		this.form = form;
 		this.display();
+	}
+
+
+	public showmenu(impl:FormImpl) : void
+	{
+		return;
+		
+		if (this.app == null)
+		{
+			setTimeout(() => {this.showmenu(impl)}, 10);
+			return;
+		}
+
+		let menu:ComponentRef<any> = impl.getFormMenu();
+		let element:Element = (menu.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		this.app.builder.getAppRef().attachView(menu.hostView);
+		this.topbar.removeChild(this.topbar.children[1]);
+		this.topbar.appendChild(element);
+		this.change.detectChanges();
 	}
 
 
@@ -216,7 +217,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public closeForm() : void
 	{
-		let impl:FormImpl = Protected.get(this.form.formref.instance);
+		let impl:FormImpl = Protected.get(this.form.ref.instance);
 		this.close();
 		impl.cancel();
 	}
@@ -224,12 +225,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public close() : void
 	{
-		Listener.remove("modal","mouseup");
-		Listener.remove("modal","mousemove");
-		Listener.remove("modal","mousedown");
-
 		this.content.removeChild(this.element);
-		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
+		this.app.builder.getAppRef().detachView(this.form.ref.hostView);
 
 		let element:HTMLElement = (this.winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		document.body.removeChild(element);
@@ -249,50 +246,23 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			return;
 		}
 
-		this.element = (this.form.formref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		this.app.builder.getAppRef().attachView(this.form.formref.hostView);
+		this.element = (this.form.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+		this.app.builder.getAppRef().attachView(this.form.ref.hostView);
 		this.content.appendChild(this.element);
 
-		this.showmenu()
 		this.change.detectChanges();
-	}
-
-
-	private showmenu() : void
-	{
-		let impl:FormImpl = Protected.get(this.form.formref.instance);
-		let menu:ComponentRef<any> = impl.getFormMenu();
-
-		let element:Element = (menu.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		this.app.builder.getAppRef().attachView(menu.hostView);
-		this.menu.appendChild(element);
-
-		let ddmenu:DropDownMenu = menu.instance;
-		this.initmenu(ddmenu);
-	}
-
-
-	private initmenu(ddmenu:DropDownMenu) : void
-	{
-		if (ddmenu.getMenu() == null)
-		{
-			setTimeout(() => {this.initmenu(ddmenu)},10);
-			return;
-		}
-
-		let impl:FormImpl = Protected.get(this.form.formref.instance);
-		ddmenu.getMenu().setForm(impl.getForm());
-
-		this.minw = this.menu.clientWidth;
 	}
 
 
 	public ngAfterViewInit(): void
 	{
-		this.menu = this.menuElement?.nativeElement as HTMLDivElement;
+		this.canvas = this.canvasElement?.nativeElement as HTMLDivElement;
 		this.window = this.windowElement?.nativeElement as HTMLDivElement;
 		this.topbar = this.topbarElement?.nativeElement as HTMLDivElement;
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
+
+		if (this.title != null)
+			this.topbar.children[0].innerHTML = this.title;
 
 		this.display();
 
@@ -301,34 +271,30 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.sizex = this.window.offsetWidth;
 		this.sizey = this.window.offsetHeight;
 
-		Listener.add("modal",this,"mouseup");
-		Listener.add("modal",this,"mousemove");
-		Listener.add("modal",this,"mousedown");
-
+		this.canvas.addEventListener("mouseup",() => {this.mouseup();});
+		this.canvas.addEventListener("mousemove", (event) => {this.movePopup(event);})
+		this.canvas.addEventListener("mousemove", (event) => {this.resizePopup(event);});
+		this.canvas.addEventListener("mousemove", (event) => {this.resizemousemove(event);});
+		this.canvas.addEventListener("mousedown", (event) => {this.startresize(event);});
 		this.topbar.addEventListener("mousedown", (event) => {this.startmove(event);});
 	}
 
 
-    public onEvent(event:any) : void
-	{
-		switch(event.type)
-		{
-			case "mouseup":
-				this.mouseup();
-				break;
+	private offx:number = 0;
+	private offy:number = 0;
 
-			case "mousemove":
-				this.movePopup(event);
-				this.resizePopup(event);
-				this.resizemousemove(event);
-				break;
+	private posy:number;
+	private posx:number;
 
-			case "mousedown":
-				this.startmove(event);
-				this.startresize(event);
-				break;
-		}
-	}
+	private sizex:number;
+	private sizey:number;
+
+	private move:boolean = false;
+	private resz:boolean = false;
+
+	private resizex:boolean = false;
+	private resizey:boolean = false;
+
 
 	private startmove(event:any) : void
 	{
@@ -449,14 +415,12 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 		if (this.resizex)
 		{
-			console.log("Width min: "+this.minw+" curr: "+this.sizex);
 			this.sizex += deltax;
 			this.width = this.sizex+"px";
 		}
 
 		if (this.resizey)
 		{
-			console.log("Height min: "+this.minw+" curr: "+this.sizey);
 			this.sizey += deltay;
 			this.height = this.sizey+"px";
 		}

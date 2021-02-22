@@ -1,3 +1,4 @@
+import { Form } from "./Form";
 import { ComponentRef } from "@angular/core";
 import { WindowOptions } from "./WindowOptions";
 
@@ -11,5 +12,5 @@ export interface FormInstance
     navigable?:boolean;
     windowdef:WindowOptions;
     windowopts?:WindowOptions;
-    ref?:ComponentRef<any>;
+    formref?:ComponentRef<Form>;
 }

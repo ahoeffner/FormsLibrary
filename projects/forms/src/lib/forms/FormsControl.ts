@@ -89,29 +89,29 @@ export class FormsControl
         let name:string = this.utils.getName(form);
         let formdef:FormInstance = this.forms.get(name);
 
-        if (formdef == null || formdef.ref == null) return;
+        if (formdef == null || formdef.formref == null) return;
         this.close(formdef,destroy);
     }
 
 
     public close(formdef:FormInstance, destroy:boolean) : void
     {
-        if (formdef.ref == null) return;
+        if (formdef.formref == null) return;
         let formsarea:HTMLElement = this.formarea.getFormsArea();
-        let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+        let element:HTMLElement = (formdef.formref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
         if (this.current != null && this.current.element == element)
         {
             this.current = null;
             formsarea.removeChild(element);
-            this.builder.getAppRef().detachView(formdef.ref.hostView);
+            this.builder.getAppRef().detachView(formdef.formref.hostView);
         }
 
         if (destroy)
         {
-            formdef.ref.destroy();
+            formdef.formref.destroy();
             formdef.windowopts = null;
-            formdef.ref = null;
+            formdef.formref = null;
         }
     }
 
@@ -126,11 +126,11 @@ export class FormsControl
 
     public display(formdef:FormInstance, parameters:Map<string,any>) : void
     {
-        if (formdef == null || formdef.ref == null) return;
+        if (formdef == null || formdef.formref == null) return;
         let formsarea:HTMLElement = this.formarea.getFormsArea();
-        let element:HTMLElement = (formdef.ref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
+        let element:HTMLElement = (formdef.formref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
-        let impl:FormImpl = Protected.get(formdef.ref.instance);
+        let impl:FormImpl = Protected.get(formdef.formref.instance);
 
         impl.setPath(formdef.path);
         impl.setTitle(formdef.title);
@@ -139,7 +139,7 @@ export class FormsControl
         if (formdef.windowopts == null)
         {
             this.current = {formdef: formdef, element: element};
-            this.builder.getAppRef().attachView(formdef.ref.hostView);
+            this.builder.getAppRef().attachView(formdef.formref.hostView);
 
             formsarea.appendChild(element);
         }
@@ -148,7 +148,7 @@ export class FormsControl
             let id:InstanceID =
             {
                 impl: impl,
-                ref: formdef.ref,
+                ref: formdef.formref,
                 name: formdef.name,
                 modalopts: formdef.windowopts
             }
@@ -185,9 +185,9 @@ export class FormsControl
         let formdef:FormInstance = this.forms.get(name);
         if (formdef == null) return(null);
 
-        if (formdef.ref == null)
+        if (formdef.formref == null)
         {
-            formdef.ref = this.createForm(formdef.component);
+            formdef.formref = this.createForm(formdef.component);
 
             if (formdef.windowdef != null && formdef.windowdef.modal)
                 formdef.windowopts = formdef.windowdef;

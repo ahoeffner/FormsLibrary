@@ -188,7 +188,7 @@ export class ApplicationImpl
 
         if (formdef != null)
         {
-            let form:Form = formdef.ref.instance;
+            let form:Form = formdef.formref.instance;
             this.form = Protected.get<FormImpl>(form);
             this.menu.setForm(form);
         }
