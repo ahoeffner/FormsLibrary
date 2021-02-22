@@ -36,7 +36,7 @@ export class DefaultMenu implements Menu
             }
             ,
             {
-                name: "Transactions", title: "Transaction Menu", options:
+                name: "Transaction", title: "Transaction Menu", options:
                 [
                     {name: "commit", action: null},
                     {name: "rollback", action: null},

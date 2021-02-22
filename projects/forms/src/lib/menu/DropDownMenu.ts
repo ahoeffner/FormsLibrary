@@ -49,8 +49,11 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
     public onEvent(event:any) : void
     {
-        this.closeall();
-        Listener.remove(this,"click");
+        if (!event.target.matches('.entry'))
+        {
+            this.closeall();
+            Listener.remove(this,"click");
+        }
     }
 
 
