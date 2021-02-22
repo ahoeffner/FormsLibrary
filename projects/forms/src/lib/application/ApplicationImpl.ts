@@ -187,7 +187,12 @@ export class ApplicationImpl
             this.closeform(form,true);
 
         formdef = this.getFormInstance(form);
-        this.formsctl.display(form,parameters);
+        let impl:FormImpl = Protected.get(formdef.formref.instance);
+
+        this.ddmenu = impl.getMenu();
+        this.showMenu();
+
+        this.formsctl.display(formdef,parameters);
 
         if (this.formlist != null && formdef != null)
             this.formlist.open(formdef.path);

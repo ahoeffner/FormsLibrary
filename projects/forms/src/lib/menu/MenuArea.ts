@@ -20,6 +20,7 @@ export class MenuArea implements AfterViewInit
     private app:ApplicationImpl;
     private menu:HTMLDivElement;
     private element:HTMLElement;
+    private menuref:ComponentRef<any>;
     @ViewChild("menu", {read: ElementRef}) private elem: ElementRef;
 
 
@@ -37,8 +38,16 @@ export class MenuArea implements AfterViewInit
 			return;
 		}
 
+        if (this.element != null)
+        {
+            this.menu.removeChild(this.menu.children[0]);
+            this.app.builder.getAppRef().detachView(this.menuref.hostView);
+        }
+
+        this.menuref = menu;
+
         this.element = (menu.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
-		this.app.builder.getAppRef().attachView(menu.hostView);
+		this.app.builder.getAppRef().attachView(this.menuref.hostView);
 		this.menu.appendChild(this.element);
 		this.change.detectChanges();
     }
