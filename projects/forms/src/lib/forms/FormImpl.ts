@@ -5,7 +5,6 @@ import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
-import { MenuFactory } from "../menu/MenuFactory";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -13,6 +12,7 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 
 export class FormImpl
 {
+    private menu:Menu;
     private name:string;
     private path:string;
     private title: string;
@@ -22,7 +22,7 @@ export class FormImpl
     private app:ApplicationImpl;
     private callbackfunc:CallBack;
     private cancelled:boolean = false;
-    private menu:ComponentRef<DropDownMenu>;
+    private ddmenu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
@@ -71,8 +71,8 @@ export class FormImpl
 
     public setMenu(menu:Menu) : void
     {
-        let factory:MenuFactory = new MenuFactory(this.app.builder);
-        this.menu = factory.create(this.app,menu);
+        this.menu = menu;
+        this.ddmenu = this.app.createmenu(menu);
     }
 
 
@@ -139,10 +139,9 @@ export class FormImpl
 
     public getMenu() : ComponentRef<DropDownMenu>
     {
-        if (this.menu != null) return(this.menu);
-        let factory:MenuFactory = new MenuFactory(this.app.builder);
-        this.menu = factory.create(this.app,new DefaultMenu());
-        return(this.menu);
+        if (this.ddmenu != null) return(this.ddmenu);
+        this.setMenu(new DefaultMenu());
+        return(this.ddmenu);
     }
 
 

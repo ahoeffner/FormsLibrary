@@ -7,6 +7,7 @@ import { DropDownMenu } from "../menu/DropDownMenu";
 export class ApplicationState
 {
     public menu:Menu;
+    public defmenu:Menu;
     public form:FormImpl = null;
     public currentmenu:ComponentRef<DropDownMenu> = null;
     public defaultmenu:ComponentRef<DropDownMenu> = null;
