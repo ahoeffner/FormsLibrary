@@ -36,13 +36,14 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             return;
         }
 
-        inst.instance.getMenu().getHandler().setForm(form);
+        inst.instance.getMenu().getHandler().onFormChange(form);
     }
 
 
     constructor()
     {
         this.instance = "DropDownMenu-"+(DropDownMenu.instances++);
+        Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.app)}});
     }
 
 
@@ -119,7 +120,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             opt.elem = options[i];
         }
 
-        menu.getHandler().activate();
+        menu.getHandler().onInit();
     }
 
 

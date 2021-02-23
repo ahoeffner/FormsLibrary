@@ -54,4 +54,9 @@ export class Application
     {
         this.impl.close();
     }
+
+    public connect(usr?:string, pwd?:string) : void
+    {
+        console.log("connect");
+    }
 }

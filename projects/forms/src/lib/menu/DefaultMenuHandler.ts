@@ -6,34 +6,43 @@ export class DefaultMenuHandler extends MenuHandler
 {
     public form:Form;
 
-    public activate() : void
+    public onInit() : void
     {
         this.init();
+    }
+
+    public onConnect(): void
+    {
+        console.log("onConnect");
+    }
+
+    public onDisconnect(): void
+    {
+        console.log("onDisconnect");
+    }
+
+    public onFormChange(form: Form): void
+    {
+        this.form = form;
+        if (this.ready) this.init();
     }
 
     private init() : void
     {
         if (this.form == null)
         {
-            this.menu.disable();
-            this.menu.enable("/connection");
+            this.disable();
+            this.enable("/connection");
         }
         else
         {
-            this.menu.enable();
+            this.enable();
         }
     }
 
-    public setForm(form: Form): void
-    {
-        this.form = form;
-        if (this.ready) this.init();
-    }
-
-
     public connect() : void
     {
-        console.log("connect");
+        this.app.connect();
     }
 
     public disconnect() : void

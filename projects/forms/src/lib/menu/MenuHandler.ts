@@ -1,20 +1,48 @@
 import { Form } from '../forms/Form';
 import { MenuInterface } from "./MenuInterface";
+import { Application } from "../application/Application";
+
 
 export abstract class MenuHandler
 {
-    public ready:boolean = false;
-    public menu:MenuInterface = null;
+    private ready$:boolean = false;
+    private menu$:MenuInterface = null;
 
     constructor()
     {
         Reflect.defineProperty(this,"_setProtected", {value: (intf:MenuInterface) =>
         {
-            this.menu = intf;
-            this.ready = true;
+            this.menu$ = intf;
+            this.ready$ = true;
         }});
     }
 
-    abstract activate() : void;
-    abstract setForm(form:Form) : void;
+    public get ready() : boolean
+    {
+        return(this.ready$);
+    }
+
+
+    public get app() : Application
+    {
+        return(this.menu$.app);
+    }
+
+
+    public enable(menu?:string) : void
+    {
+        this.menu$.enable(menu);
+    }
+
+
+    public disable(menu?:string) : void
+    {
+        this.menu$.disable(menu);
+    }
+
+
+    abstract onInit() : void;
+    abstract onConnect() : void;
+    abstract onDisconnect() : void;
+    abstract onFormChange(form:Form) : void;
 }
