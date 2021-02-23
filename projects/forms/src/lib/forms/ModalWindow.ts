@@ -374,8 +374,11 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.posy += (deltay - this.offy);
 		this.posx += (deltax - this.offx);
 
-		this.top = this.posy + "px";
-		this.left = this.posx + "px";
+		if (this.posy > 0)
+			this.top = this.posy + "px";
+
+		if (this.posx > 0)
+			this.left = this.posx + "px";
 
 		this.change.detectChanges();
 	}
