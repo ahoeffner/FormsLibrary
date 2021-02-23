@@ -40,6 +40,11 @@ export abstract class MenuHandler
         this.menu$.disable(menu);
     }
 
+    public get connected() : boolean
+    {
+        return(this.menu$.isConnected());
+    }
+
 
     abstract onInit() : void;
     abstract onConnect() : void;

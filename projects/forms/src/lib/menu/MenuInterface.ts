@@ -20,6 +20,11 @@ export class MenuInterface
         return(this.impl$.getApplication());
     }
 
+    public isConnected() : boolean
+    {
+        return(this.impl$.appstate.connected());
+    }
+
     public enable(menu?:string)
     {
         this.menu.enable(menu);

@@ -13,12 +13,12 @@ export class DefaultMenuHandler extends MenuHandler
 
     public onConnect(): void
     {
-        console.log("onConnect");
+        this.init();
     }
 
     public onDisconnect(): void
     {
-        console.log("onDisconnect");
+        this.init();
     }
 
     public onFormChange(form: Form): void
@@ -29,7 +29,7 @@ export class DefaultMenuHandler extends MenuHandler
 
     private init() : void
     {
-        if (this.form == null)
+        if (this.form == null || !this.connected)
         {
             this.disable();
             this.enable("/connection");
