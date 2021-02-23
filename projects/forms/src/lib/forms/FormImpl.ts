@@ -6,6 +6,7 @@ import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
 import { MenuFactory } from "../menu/MenuFactory";
+import { DefaultMenu } from "../menu/DefaultMenu";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -139,7 +140,9 @@ export class FormImpl
     public getMenu() : ComponentRef<DropDownMenu>
     {
         if (this.menu != null) return(this.menu);
-        return(this.app.getDefaultMenu());
+        let factory:MenuFactory = new MenuFactory(this.app.builder);
+        this.menu = factory.create(new DefaultMenu());
+        return(this.menu);
     }
 
 

@@ -20,7 +20,6 @@ import { InstanceControl } from "../forms/InstanceControl";
 
 export class ApplicationImpl
 {
-    private menu:Menu = null;
     private title:string = null;
     private form:FormImpl = null;
     private marea:MenuArea = null;
@@ -29,17 +28,16 @@ export class ApplicationImpl
     private mfactory:MenuFactory = null;
     private formsctl:FormsControl = null;
     private instances:InstanceControl = null;
-    private ddmenu:ComponentRef<DropDownMenu> = null;
-    private defaultddmenu:ComponentRef<DropDownMenu> = null;
+    private currentmenu:ComponentRef<DropDownMenu> = null;
+    private defaultmenu:ComponentRef<DropDownMenu> = null;
 
 
     constructor(public builder:Builder)
     {
-        this.menu = new DefaultMenu();
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
-        this.defaultddmenu = this.mfactory.create(new DefaultMenu());
+        this.defaultmenu = this.mfactory.create(new DefaultMenu());
     }
 
 
@@ -58,35 +56,21 @@ export class ApplicationImpl
 
     public setMenu(menu:Menu) : void
     {
-        if (menu != this.menu)
-        {
-            this.menu = menu;
-            this.ddmenu = this.mfactory.create(this.menu);
-        }
-
-        this.showMenu();
+        this.currentmenu = this.mfactory.create(menu);
+        this.showMenu(this.currentmenu);
     }
 
 
     public setDefaultMenu(menu:Menu) : void
     {
-        this.defaultddmenu = this.mfactory.create(menu);
+        this.defaultmenu = this.mfactory.create(menu);
     }
 
 
-    public getDefaultMenu() : ComponentRef<DropDownMenu>
+    public showMenu(menu:ComponentRef<DropDownMenu>) : void
     {
-        return(this.defaultddmenu);
-    }
-
-
-    public showMenu() : void
-    {
-        if (this.ddmenu == null)
-            this.ddmenu = this.mfactory.create(this.menu);
-
         if (this.marea != null)
-            this.marea.display(this.ddmenu);
+            this.marea.display(menu);
     }
 
 
@@ -147,7 +131,7 @@ export class ApplicationImpl
     public setMenuArea(area:MenuArea) : void
     {
         this.marea = area;
-        this.showMenu();
+        this.showMenu(this.defaultmenu);
     }
 
 
@@ -189,10 +173,18 @@ export class ApplicationImpl
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
         this.form = impl;
-        this.ddmenu = impl.getMenu();
-        DropDownMenu.setForm(this.ddmenu,formdef.formref.instance);
+        this.currentmenu = impl.getMenu();
+        DropDownMenu.setForm(this.currentmenu,formdef.formref.instance);
 
-        this.showMenu();
+        if (formdef.windowdef == null || !formdef.windowdef.modal)
+        {
+            this.showMenu(this.currentmenu);
+        }
+        else
+        {
+            this.showMenu(this.defaultmenu);
+        }
+
         this.formsctl.display(formdef,parameters);
 
         if (this.formlist != null)
@@ -217,7 +209,7 @@ export class ApplicationImpl
     {
         if (this.form == null) return;
         this.formsctl.closeform(form,destroy);
-        DropDownMenu.setForm(this.ddmenu,null);
+        DropDownMenu.setForm(this.currentmenu,null);
         this.form = null;
     }
 
@@ -242,6 +234,7 @@ export class ApplicationImpl
 
     public closeInstance(id:InstanceID, destroy:boolean) : void
     {
+        this.form = null;
         this.instances.closeInstance(id,destroy);
     }
 }
