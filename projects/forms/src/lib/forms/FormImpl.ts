@@ -76,6 +76,12 @@ export class FormImpl
     }
 
 
+    public getMenu() : Menu
+    {
+        return(this.menu);
+    }
+
+
     public getApplication() : ApplicationImpl
     {
         return(this.app);
@@ -137,7 +143,7 @@ export class FormImpl
     }
 
 
-    public getMenu() : ComponentRef<DropDownMenu>
+    public getDropDownMenu() : ComponentRef<DropDownMenu>
     {
         if (this.ddmenu != null) return(this.ddmenu);
         this.setMenu(new DefaultMenu());

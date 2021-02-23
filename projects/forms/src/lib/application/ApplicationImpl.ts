@@ -1,5 +1,4 @@
 import { Menu } from "../menu/Menu";
-import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
 import { FormList } from "../menu/FormList";
@@ -42,6 +41,12 @@ export class ApplicationImpl
     }
 
 
+    public get appstate() : ApplicationState
+    {
+        return(this.state);
+    }
+
+
     public getApplication() :Application
     {
         return(this.app);
@@ -69,7 +74,6 @@ export class ApplicationImpl
 
     public setMenu(menu:Menu) : void
     {
-        this.state.menu = menu;
         this.state.currentmenu = this.createmenu(menu);
         this.showMenu(this.state.currentmenu);
     }
@@ -77,7 +81,6 @@ export class ApplicationImpl
 
     public setDefaultMenu(menu:Menu) : void
     {
-        this.state.defmenu = menu;
         this.state.defaultmenu = this.createmenu(menu);
         this.showMenu(this.state.currentmenu);
     }
@@ -151,12 +154,6 @@ export class ApplicationImpl
     }
 
 
-    public getForm() : Form
-    {
-        return(this.state.form.getForm());
-    }
-
-
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         if (!this.ready)
@@ -183,7 +180,7 @@ export class ApplicationImpl
 
         this.state.form = impl;
 
-        this.state.currentmenu = impl.getMenu();
+        this.state.currentmenu = impl.getDropDownMenu();
         DropDownMenu.setForm(this.state.currentmenu,formdef.formref.instance);
 
         if (formdef.windowdef == null || !formdef.windowdef.modal)
@@ -211,7 +208,7 @@ export class ApplicationImpl
 
     public closeform(form:any, destroy:boolean) : void
     {
-        if (this.state.form == null) return;
+        if (form == null) return;
         this.formsctl.closeform(form,destroy);
         DropDownMenu.setForm(this.state.currentmenu,null);
         this.state.form = null;
@@ -251,6 +248,7 @@ export class ApplicationImpl
 
     public createmenu(menu:Menu) : ComponentRef<DropDownMenu>
     {
+        this.state.menus.push(menu);
         let ddmenu:ComponentRef<DropDownMenu> = this.mfactory.create(this,menu);
         return(ddmenu);
     }

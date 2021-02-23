@@ -267,7 +267,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private showmenu() : void
 	{
 		let impl:FormImpl = Protected.get(this.form.formref.instance);
-		this.menuref = impl.getMenu();
+		this.menuref = impl.getDropDownMenu();
 
 		this.menuelem = (this.menuref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.app.builder.getAppRef().attachView(this.menuref.hostView);

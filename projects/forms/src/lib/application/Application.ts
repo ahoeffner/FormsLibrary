@@ -50,13 +50,18 @@ export class Application
         return(new Preferences());
     }
 
-    public close() : void
+    public closeform() : void
     {
         this.impl.close();
     }
 
     public connect(usr?:string, pwd?:string) : void
     {
-        console.log("connect");
+        this.impl.appstate.connect(usr,pwd);
+    }
+
+    public disconnect() : void
+    {
+        this.impl.appstate.disconnect();
     }
 }
