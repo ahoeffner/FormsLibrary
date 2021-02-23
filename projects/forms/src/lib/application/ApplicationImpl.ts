@@ -16,6 +16,7 @@ import { FormsControl } from "../forms/FormsControl";
 import { WindowOptions } from "../forms/WindowOptions";
 import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
+import { Application } from "./Application";
 
 
 export class ApplicationImpl
@@ -32,18 +33,24 @@ export class ApplicationImpl
     private defaultmenu:ComponentRef<DropDownMenu> = null;
 
 
-    constructor(public builder:Builder)
+    constructor(private app:Application, public builder:Builder)
     {
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
-        this.defaultmenu = this.mfactory.create(new DefaultMenu());
+        this.defaultmenu = this.mfactory.create(this,new DefaultMenu());
     }
 
 
     public getTitle() : string
     {
         return(this.title);
+    }
+
+
+    public getApplication() :Application
+    {
+        return(this.app);
     }
 
 
@@ -56,14 +63,14 @@ export class ApplicationImpl
 
     public setMenu(menu:Menu) : void
     {
-        this.currentmenu = this.mfactory.create(menu);
+        this.currentmenu = this.mfactory.create(this,menu);
         this.showMenu(this.currentmenu);
     }
 
 
     public setDefaultMenu(menu:Menu) : void
     {
-        this.defaultmenu = this.mfactory.create(menu);
+        this.defaultmenu = this.mfactory.create(this,menu);
     }
 
 

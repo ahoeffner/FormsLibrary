@@ -72,7 +72,7 @@ export class FormImpl
     public setMenu(menu:Menu) : void
     {
         let factory:MenuFactory = new MenuFactory(this.app.builder);
-        this.menu = factory.create(menu);
+        this.menu = factory.create(this.app,menu);
     }
 
 
@@ -141,7 +141,7 @@ export class FormImpl
     {
         if (this.menu != null) return(this.menu);
         let factory:MenuFactory = new MenuFactory(this.app.builder);
-        this.menu = factory.create(new DefaultMenu());
+        this.menu = factory.create(this.app,new DefaultMenu());
         return(this.menu);
     }
 

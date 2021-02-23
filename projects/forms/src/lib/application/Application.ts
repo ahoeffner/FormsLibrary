@@ -16,7 +16,7 @@ export class Application
 
     constructor(builder:Builder)
     {
-        this.impl = new ApplicationImpl(builder);
+        this.impl = new ApplicationImpl(this,builder);
         Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.impl)}});
     }
 
