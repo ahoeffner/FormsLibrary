@@ -1,11 +1,12 @@
 import { Menu } from './Menu';
+import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
 import { Protected } from '../utils/Protected';
 import { MenuInterface } from './MenuInterface';
 import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from '../utils/Listener';
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
     selector: '',
@@ -22,6 +23,17 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     private menus:Map<string,Element> = new Map<string,Element>();
     private options:Map<string,Option> = new Map<string,Option>();
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
+
+    public static setForm(inst:ComponentRef<DropDownMenu>, form:Form) : void
+    {
+        if (inst.instance.getMenu() == null)
+        {
+            setTimeout(() => {DropDownMenu.setForm(inst,form)},10);
+            return;
+        }
+
+        inst.instance.getMenu().getHandler().setForm(form);
+    }
 
 
     constructor()

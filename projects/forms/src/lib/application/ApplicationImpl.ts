@@ -121,7 +121,6 @@ export class ApplicationImpl
             let params:Map<string,any> = new Map<string,any>();
             let urlparams = new URLSearchParams(window.location.search);
             urlparams.forEach((value,key) => {params.set(key,value)});
-
             this.showform(name,false,params);
         }
     }
@@ -173,8 +172,6 @@ export class ApplicationImpl
             return;
         }
 
-        let formdef:FormInstance = null;
-
         if (this.form != null)
         {
             if (this.form.getModalWindow() != null)
@@ -186,23 +183,20 @@ export class ApplicationImpl
         if (destroy)
             this.closeform(form,true);
 
-        formdef = this.getFormInstance(form);
+        let formdef:FormInstance = this.getFormInstance(form);
+
+        if (formdef == null) return;
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
+        this.form = impl;
         this.ddmenu = impl.getMenu();
-        this.showMenu();
+        DropDownMenu.setForm(this.ddmenu,formdef.formref.instance);
 
+        this.showMenu();
         this.formsctl.display(formdef,parameters);
 
-        if (this.formlist != null && formdef != null)
+        if (this.formlist != null)
             this.formlist.open(formdef.path);
-
-        if (formdef != null)
-        {
-            let form:Form = formdef.formref.instance;
-            this.form = Protected.get<FormImpl>(form);
-            this.menu.getHandler().setForm(form);
-        }
     }
 
 
@@ -223,7 +217,7 @@ export class ApplicationImpl
     {
         if (this.form == null) return;
         this.formsctl.closeform(form,destroy);
-        this.menu.getHandler().setForm(null);
+        DropDownMenu.setForm(this.ddmenu,null);
         this.form = null;
     }
 
