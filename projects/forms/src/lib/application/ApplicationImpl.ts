@@ -1,6 +1,7 @@
 import { Menu } from "../menu/Menu";
 import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
+import { Application } from "./Application";
 import { FormList } from "../menu/FormList";
 import { MenuArea } from "../menu/MenuArea";
 import { FormArea } from "../forms/FormArea";
@@ -13,21 +14,21 @@ import { MenuFactory } from "../menu/MenuFactory";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
+import { ApplicationState } from "./ApplicationState";
 import { WindowOptions } from "../forms/WindowOptions";
 import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
-import { Application } from "./Application";
 
 
 export class ApplicationImpl
 {
     private title:string = null;
-    private form:FormImpl = null;
     private marea:MenuArea = null;
     private ready:boolean = false;
     private formlist:FormList = null;
     private mfactory:MenuFactory = null;
     private formsctl:FormsControl = null;
+    private state:ApplicationState = null;
     private instances:InstanceControl = null;
     private currentmenu:ComponentRef<DropDownMenu> = null;
     private defaultmenu:ComponentRef<DropDownMenu> = null;
@@ -35,6 +36,7 @@ export class ApplicationImpl
 
     constructor(private app:Application, public builder:Builder)
     {
+        this.state = new ApplicationState();
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
@@ -151,7 +153,7 @@ export class ApplicationImpl
 
     public getForm() : Form
     {
-        return(this.form.getForm());
+        return(this.state.form.getForm());
     }
 
 
@@ -163,12 +165,12 @@ export class ApplicationImpl
             return;
         }
 
-        if (this.form != null)
+        if (this.state.form != null)
         {
-            if (this.form.getModalWindow() != null)
+            if (this.state.form.getModalWindow() != null)
                 return;
 
-            this.closeform(this.form.getForm(),false);
+            this.closeform(this.state.form.getForm(),false);
         }
 
         if (destroy)
@@ -179,7 +181,7 @@ export class ApplicationImpl
         if (formdef == null) return;
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
-        this.form = impl;
+        this.state.form = impl;
 
         this.currentmenu = impl.getMenu();
         DropDownMenu.setForm(this.currentmenu,formdef.formref.instance);
@@ -209,16 +211,16 @@ export class ApplicationImpl
 
     public close() : void
     {
-        this.closeform(this.form.getForm(),true);
+        this.closeform(this.state.form.getForm(),true);
     }
 
 
     public closeform(form:any, destroy:boolean) : void
     {
-        if (this.form == null) return;
+        if (this.state.form == null) return;
         this.formsctl.closeform(form,destroy);
         DropDownMenu.setForm(this.currentmenu,null);
-        this.form = null;
+        this.state.form = null;
     }
 
 
