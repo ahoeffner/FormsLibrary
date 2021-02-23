@@ -175,13 +175,13 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 		if (form.windowopts.width == "")
 		{
-			this.left = "2px";
+			this.left = "0";
 			this.width = "99.25vw";
 		}
 
 		if (form.windowopts.height == "")
 		{
-			this.top = "4px";
+			this.top = "0";
 			this.height = "99vh";
 		}
 
@@ -331,7 +331,6 @@ export class ModalWindow implements onEventListener, AfterViewInit
 				break;
 
 			case "mousedown":
-				this.startmove(event);
 				this.startresize(event);
 				break;
 		}

@@ -173,6 +173,7 @@ export class ApplicationImpl
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
         this.form = impl;
+
         this.currentmenu = impl.getMenu();
         DropDownMenu.setForm(this.currentmenu,formdef.formref.instance);
 
@@ -234,7 +235,6 @@ export class ApplicationImpl
 
     public closeInstance(id:InstanceID, destroy:boolean) : void
     {
-        this.form = null;
         this.instances.closeInstance(id,destroy);
     }
 }

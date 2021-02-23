@@ -257,6 +257,7 @@ export class FormImpl
             // Called from menu
             this.app.closeform(this.form,destroy);
             if (!this.cancelled) this.win.close();
+            this.win = null;
         }
 
         if (this.parent != null && pinst == null)
@@ -265,6 +266,7 @@ export class FormImpl
             this.app.closeInstance(this.inst,destroy);
             if (destroy) this.parent.stack.delete(this.name);
             if (!this.cancelled) this.win.close();
+            this.win = null;
         }
 
         if (this.parent != null && pinst != null)
@@ -272,6 +274,7 @@ export class FormImpl
             // Form called from another form
             this.app.closeInstance(this.inst,destroy);
             if (destroy) this.parent.stack.delete(this.name);
+            if (this.cancelled) this.win = null;
         }
 
         if (pinst != null && !this.cancelled)
