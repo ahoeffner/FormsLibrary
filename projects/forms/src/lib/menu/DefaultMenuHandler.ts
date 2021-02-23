@@ -47,11 +47,12 @@ export class DefaultMenuHandler extends MenuHandler
 
     public disconnect() : void
     {
-        console.log("disconnect");
+        this.disable();
     }
 
     public close() : void
     {
         this.form.close(false);
+        this.enable("/connection");
     }
 }
