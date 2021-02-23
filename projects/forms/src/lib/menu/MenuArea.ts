@@ -40,7 +40,6 @@ export class MenuArea implements AfterViewInit
 
         if (this.element != null)
         {
-            this.menu.removeChild(this.menu.children[0]);
             this.app.builder.getAppRef().detachView(this.menuref.hostView);
         }
 

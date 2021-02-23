@@ -24,10 +24,12 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     private options:Map<string,Option> = new Map<string,Option>();
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
+    private static calls:number = 0;
     public static setForm(inst:ComponentRef<DropDownMenu>, form:Form) : void
     {
         if (inst.instance.getMenu() == null)
         {
+            if (DropDownMenu.calls++ > 10) return;
             setTimeout(() => {DropDownMenu.setForm(inst,form)},10);
             return;
         }
