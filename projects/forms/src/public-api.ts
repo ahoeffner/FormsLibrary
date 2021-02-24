@@ -17,6 +17,7 @@ export {Form,CallBack} from './lib/forms/Form';
 export {WindowOptions} from './lib/forms/WindowOptions';
 export {FormDefinition} from './lib/forms/FormsDefinition';
 
+export {Theme} from './lib/application/Themes';
 export {Application} from './lib/application/Application';
 export {Preferences} from "./lib/application/Preferences";
 
