@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Test</title>
+</head>
+<body>
+	<canvas id="canvas" width="95" height="35""></canvas>
+	<img style="height:25px" src="waiting1.gif">
+</body>
+<script type="text/javascript">
+	var c = document.getElementById("canvas");
+	var ctx = c.getContext("2d");
+
+	ctx.lineWidth = 15;
+	var bcolor = "#DCDCDC";
+	var pcolor = "yellow";
+
+	draw(ctx,0);
+
+	function draw(ctx,pick)
+	{
+		r = 6;
+		pick = pick % 3;
+
+		ctx.beginPath();
+
+		ctx.strokeStyle=bcolor;
+		if (pick == 0) ctx.strokeStyle=pcolor;
+		
+		ctx.arc(2*r+5, 2*r+5, r, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.closePath();
+
+		ctx.beginPath();
+		
+		ctx.strokeStyle=bcolor;
+		if (pick == 1) ctx.strokeStyle=pcolor;
+
+		ctx.arc(7*r+5, 2*r+5, r, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.closePath();
+
+		ctx.beginPath();
+		
+		ctx.strokeStyle=bcolor;
+		if (pick == 2) ctx.strokeStyle=pcolor;
+
+		ctx.arc(12*r+5, 2*r+5, r, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.closePath();
+
+		setTimeout(function(){ draw(ctx,pick+1); }, 300);
+	}
+</script>
+</html>
