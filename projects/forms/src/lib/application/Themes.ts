@@ -5,6 +5,7 @@ export interface Theme
     text:string;
     title:string;
     topbar:string;
+    folder:string;
     disabled:string;
     buttontext:string;
 }
@@ -17,24 +18,64 @@ export class Themes
 
     public static add(theme:Theme)
     {
-        Themes.themes.set(theme.name,theme);
+        Themes.themes.set(theme.name.toLowerCase(),theme);
     }
 
 
     public static get(name:string) : Theme
     {
-        return(Themes.themes.get(name));
+        return(Themes.themes.get(name.toLowerCase()));
     }
 }
 
 
 export class defaultTheme implements Theme
 {
-    public name: "default";
+    public name:string = "default";
+
     public link:string = "blue";
     public text:string = "white";
     public title:string = "white";
-    public topbar:string = "blue";
-    public disabled:string = "grey";
+    public topbar:string = "#303f9f";
+    public folder:string = "#303f9f";
+    public disabled:string = "silver";
     public buttontext:string = "white";
+}
+
+
+export class Indigo extends defaultTheme
+{
+    public name:string = "indigo";
+}
+
+
+export class Grey extends defaultTheme
+{
+    public name:string = "grey";
+    public topbar:string = "grey";
+    public folder:string = "grey";
+}
+
+
+export class Pink extends defaultTheme
+{
+    public name:string = "pink";
+    public link:string = "#464646";
+    public topbar:string = "#ff4081";
+    public folder:string = "#ff4081";
+    public disabled:string = "#464646";
+}
+
+
+export class Yellow implements Theme
+{
+    public name:string = "yellow";
+
+    public link:string = "grey";
+    public text:string = "white";
+    public title:string = "black";
+    public topbar:string = "yellow";
+    public folder:string = "grey";
+    public disabled:string = "grey";
+    public buttontext:string = "black";
 }

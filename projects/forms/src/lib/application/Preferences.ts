@@ -1,16 +1,27 @@
-import { Theme, defaultTheme, Themes } from "./Themes";
+import { Themes, Theme, defaultTheme, Yellow, Pink, Grey, Indigo } from "./Themes";
 
 export class Preferences
 {
     public colors:Theme;
     public environment:Environment;
 
-    private static scol:Colors = null;
+    private static scol:Theme = null;
     private static senv:Environment = null;
 
     public constructor()
     {
-        let theme:Theme = new defaultTheme();
+        let theme:Theme = null;
+
+        (Preferences.scol == null)
+        {
+            Themes.add(new Yellow());
+            Themes.add(new Pink());
+            Themes.add(new Grey());
+            Themes.add(new Indigo());
+            Themes.add(new defaultTheme());
+
+            theme = Themes.get("default");
+        }
 
         if (Preferences.senv == null) Preferences.senv = new Environment();
         if (Preferences.scol == null) Preferences.scol = new Colors(theme);
@@ -22,8 +33,16 @@ export class Preferences
 
     public setTheme(theme:string|Theme) : void
     {
-        Preferences.scol = new Colors(theme);
-        this.colors = Preferences.scol;
+        let ttheme:Theme = null;
+
+        if (typeof theme == 'object') ttheme = theme as Theme;
+        else                          ttheme = Themes.get(theme);
+
+        if (ttheme != null)
+        {
+            Preferences.scol = ttheme;
+            this.colors = Preferences.scol;
+        }
     }
 
 
@@ -41,6 +60,7 @@ class Colors implements Theme
     public text:string;
     public title:string;
     public topbar:string;
+    public folder:string;
     public disabled:string;
     public buttontext:string;
 
@@ -61,6 +81,7 @@ class Colors implements Theme
         this.text = ttheme.text;
         this.title = ttheme.title;
         this.topbar = ttheme.topbar;
+        this.folder = ttheme.folder;
         this.disabled = ttheme.disabled;
         this.buttontext = ttheme.buttontext;
     }

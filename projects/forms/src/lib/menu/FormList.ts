@@ -214,6 +214,7 @@ export class FormList implements AfterViewInit
 		.folder
 		{
 			cursor: pointer;
+			color: `+this.preferences.colors.folder+`;
 		}
 
 		.folder::before
@@ -242,7 +243,7 @@ export class FormList implements AfterViewInit
 
 		.form
 		{
-			color: `+this.preferences.colors.link+`;
+			color: `+this.preferences.colors.folder+`;
 			font-style: italic;
 		}
 
