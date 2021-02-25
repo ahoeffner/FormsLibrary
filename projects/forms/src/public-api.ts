@@ -9,10 +9,11 @@ export {MenuHandler} from './lib/menu/MenuHandler';
 export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 
 export {Block} from './lib/blocks/Block';
-export {BLOCK} from './lib/Directives/BLOCK';
+export {BLOCK} from './lib/annotations/BLOCK';
 
 export {Transaction} from './lib/database/Transaction';
 
+export {FORM} from './lib/annotations/FORM';
 export {FormList} from './lib/menu/FormList';
 export {FormArea} from './lib/forms/FormArea';
 export {Form,CallBack} from './lib/forms/Form';

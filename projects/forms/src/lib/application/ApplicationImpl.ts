@@ -17,6 +17,7 @@ import { ApplicationState } from "./ApplicationState";
 import { WindowOptions } from "../forms/WindowOptions";
 import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
+import { FormDefinitions } from "../annotations/FormDefinitions";
 
 
 export class ApplicationImpl
@@ -37,7 +38,10 @@ export class ApplicationImpl
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
+        this.setFormsDefinitions(FormDefinitions.getForms());
         this.state.defaultmenu = this.createmenu(new DefaultMenu());
+
+
     }
 
 
@@ -98,27 +102,6 @@ export class ApplicationImpl
         let state = {additionalInformation: 'None'};
         let url:string = window.location.protocol + '//' + window.location.host;
         window.history.replaceState(state,name,url+path);
-    }
-
-
-    public setFormsDefinitions(forms:FormDefinition[]) : void
-    {
-        let formsmap:Map<string,FormInstance> =
-            this.formsctl.setFormsDefinitions(forms);
-
-        this.instances.setFormsDefinitions(formsmap);
-        let form:string = window.location.pathname;
-
-        if (form.length > 1)
-        {
-            let name:string = this.formsctl.findFormByPath(form);
-            if (name == null) return;
-
-            let params:Map<string,any> = new Map<string,any>();
-            let urlparams = new URLSearchParams(window.location.search);
-            urlparams.forEach((value,key) => {params.set(key,value)});
-            this.showform(name,false,params);
-        }
     }
 
 
@@ -257,5 +240,26 @@ export class ApplicationImpl
         this.state.menus.push(menu);
         let ddmenu:ComponentRef<DropDownMenu> = this.mfactory.create(this,menu);
         return(ddmenu);
+    }
+
+
+    private setFormsDefinitions(forms:FormDefinition[]) : void
+    {
+        let formsmap:Map<string,FormInstance> =
+            this.formsctl.setFormsDefinitions(forms);
+
+        this.instances.setFormsDefinitions(formsmap);
+        let form:string = window.location.pathname;
+
+        if (form.length > 1)
+        {
+            let name:string = this.formsctl.findFormByPath(form);
+            if (name == null) return;
+
+            let params:Map<string,any> = new Map<string,any>();
+            let urlparams = new URLSearchParams(window.location.search);
+            urlparams.forEach((value,key) => {params.set(key,value)});
+            this.showform(name,false,params);
+        }
     }
 }

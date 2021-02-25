@@ -20,11 +20,6 @@ export class Application
         Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.impl)}});
     }
 
-    public setFormsDefinitions(forms:FormDefinition[]) : void
-    {
-        this.impl.setFormsDefinitions(forms);
-    }
-
     public get title() : string
     {
         return(this.impl.getTitle());

@@ -1,8 +1,7 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
-import { BlockProperty } from "../blocks/BlockProperty";
-import { Definitions } from "../Directives/Definitions";
 import { Component, AfterViewInit } from '@angular/core';
+import { BlockDefinitions } from "../annotations/BlockDefinitions";
 
 
 export interface CallBack
@@ -87,12 +86,13 @@ export class Form implements AfterViewInit
 
     public ngAfterViewInit(): void
     {
-        let blocks:BlockProperty[] = Definitions.getBlocks(this.constructor.name);
+        let blocks:any[] = BlockDefinitions.getBlocks(this.constructor.name);
         if (blocks == null) return;
 
         for (let i = 0; i < blocks.length; i++)
         {
             let block = this[blocks[i].prop];
+            let alias = this[blocks[i].alias];
         }
     }
 }
