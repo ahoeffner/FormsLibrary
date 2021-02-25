@@ -1,12 +1,23 @@
-import { Form } from '../forms/Form';
+import { Utils } from '../utils/Utils';
+import { BlockDefinition } from './BlockDefinition';
 import { BlockDefinitions } from './BlockDefinitions';
 
 
-export const BLOCK = (alias:string) =>
+export const BLOCK = (alias:string, component?:any) =>
 {
-    function def(form:Form, vname:string)
+    function def(form:any, prop?:string)
     {
-        BlockDefinitions.setBlock(form.constructor.name,{alias: alias, prop: vname});
+        let utils:Utils = new Utils();
+        let fname:string = utils.getName(form);
+
+        let def:BlockDefinition =
+        {
+            prop:prop,
+            alias: alias,
+            component: component
+        }
+
+        BlockDefinitions.setBlock(fname,def);
     }
     return(def);
 }

@@ -1,5 +1,6 @@
 import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
+import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
@@ -7,7 +8,9 @@ import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { BlockDefinition } from '../annotations/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { BlockDefinitions } from "../annotations/BlockDefinitions";
 
 
 export class FormImpl
@@ -24,10 +27,11 @@ export class FormImpl
     private cancelled:boolean = false;
     private ddmenu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
+    private blocks:Map<string,Block> = new Map<string,Block>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
 
-    constructor(private form:any)
+    constructor(private form:Form)
     {
         let utils:Utils = new Utils();
         this.name = utils.getName(form);
@@ -52,20 +56,39 @@ export class FormImpl
     }
 
 
-    public init() : void
+    public onInit() : void
     {
-        this.form.init();
+        this.form.onInit();
     }
 
 
-    public start() : void
+    public onStart() : void
     {
         this.app.showTitle(this.title);
 
         if (this.parent == null)
             this.app.showPath(this.name,this.path);
 
-        this.form.start();
+        this.form.onStart();
+    }
+
+
+    public setBlockDefinitions() : void
+    {
+        let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
+
+        for(let i = 0; i < blocks.length; i++)
+        {
+            let block:Block = this.blocks.get(blocks[i].alias);
+            if (block) window.alert("Block alias "+blocks[i].alias+" defined twice");
+
+            if (blocks[i].prop != null) block = this.form[blocks[i].prop];
+            else if (blocks[i].component != null) block = new blocks[i].component();
+
+            if (block == null) window.alert("Cannot create instance of "+blocks[i].alias);
+            this.blocks.set(blocks[i].alias,block);
+            console.log(blocks[i].alias+" "+block.constructor.name);
+        }
     }
 
 
@@ -192,7 +215,7 @@ export class FormImpl
         if (this.win != null)
         {
             this.win.newForm(inst);
-            id.impl.start();
+            id.impl.onStart();
         }
         else
         {
@@ -238,7 +261,7 @@ export class FormImpl
     {
         if (this.parent != null)
         {
-            this.parent.start();
+            this.parent.onStart();
         }
         else
         {

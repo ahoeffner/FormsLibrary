@@ -146,7 +146,7 @@ export class FormsControl
             win.setApplication(this.app);
         }
 
-        impl.start();
+        impl.onStart();
     }
 
 
@@ -196,7 +196,7 @@ export class FormsControl
 
         let impl:FormImpl = Protected.get<FormImpl>(ref.instance);
         impl.setApplication(this.app);
-        impl.init();
+        impl.onInit();
 
         return(ref);
     }

@@ -1,25 +1,28 @@
+import { BlockDefinition } from './BlockDefinition';
+
+
 export class BlockDefinitions
 {
     private static blocks:Map<string,any[]> =
-        new Map<string,any[]>();
+        new Map<string,BlockDefinition[]>();
 
 
     public static setBlock(form:string, def:any) : void
     {
-        let blocks:any[] = BlockDefinitions.blocks.get(form);
+        let blocks:BlockDefinition[] = BlockDefinitions.blocks.get(form);
 
         if  (blocks == null)
         {
             blocks = [];
-            BlockDefinitions.blocks.set(form,blocks);
+            BlockDefinitions.blocks.set(form.toLowerCase(),blocks);
         }
 
         blocks.push(def);
     }
 
 
-    public static getBlocks(form:string) : any[]
+    public static getBlocks(form:string) : BlockDefinition[]
     {
-        return(BlockDefinitions.blocks.get(form));
+        return(BlockDefinitions.blocks.get(form.toLowerCase()));
     }
 }

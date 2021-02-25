@@ -26,12 +26,25 @@ export class Form implements AfterViewInit
         }});
     }
 
-    public init() : void
+    public onInit() : void
     {
     }
 
-    public start() : void
+    public onStart() : void
     {
+    }
+
+    public onConnect() : void
+    {
+    }
+
+    public onDisconnect() : void
+    {
+    }
+
+    public get name() : string
+    {
+        return(this.constructor.name);
     }
 
     public setMenu(menu:Menu)
@@ -86,13 +99,6 @@ export class Form implements AfterViewInit
 
     public ngAfterViewInit(): void
     {
-        let blocks:any[] = BlockDefinitions.getBlocks(this.constructor.name);
-        if (blocks == null) return;
-
-        for (let i = 0; i < blocks.length; i++)
-        {
-            let block = this[blocks[i].prop];
-            let alias = this[blocks[i].alias];
-        }
-    }
+        this.impl.setBlockDefinitions();
+   }
 }
