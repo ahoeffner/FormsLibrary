@@ -1,21 +1,31 @@
-import { FormImpl } from "../forms/FormImpl";
 import { Menu } from "../menu/Menu";
+import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { Connection } from "../database/Connection";
 
 
 export class ApplicationState
 {
     public menus:Menu[] = [];
     public form:FormImpl = null;
-    private conn:boolean = false;
+    public connection:Connection;
     public currentmenu:ComponentRef<DropDownMenu> = null;
     public defaultmenu:ComponentRef<DropDownMenu> = null;
+
+    private conn:boolean = false;
+
+
+    constructor()
+    {
+        this.connection = new Connection();
+    }
 
 
     public async connect(usr?:string, pwd?:string) : Promise<boolean>
     {
-        this.conn = !this.conn;
+        this.conn = true;
+        this.connection.connect(usr,pwd);
 
         for(let i = 0; i < this.menus.length; i++)
             this.menus[i].getHandler().onConnect();
@@ -26,7 +36,7 @@ export class ApplicationState
 
     public async disconnect() : Promise<boolean>
     {
-        this.conn = !this.conn;
+        this.conn = false;
 
         for(let i = 0; i < this.menus.length; i++)
             this.menus[i].getHandler().onDisconnect();

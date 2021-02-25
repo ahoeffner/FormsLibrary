@@ -1,4 +1,7 @@
 Listen on change-event for input
+OnTransaction begin/end/com/roll
+Record next/prec/clear/dublicate
+Record current/database
 
 Library ng-package.json
 

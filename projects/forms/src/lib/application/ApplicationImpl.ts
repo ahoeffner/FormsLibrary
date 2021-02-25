@@ -82,7 +82,7 @@ export class ApplicationImpl
     public setDefaultMenu(menu:Menu) : void
     {
         this.state.defaultmenu = this.createmenu(menu);
-        this.showMenu(this.state.currentmenu);
+        this.showMenu(this.state.defaultmenu);
     }
 
 
@@ -180,17 +180,23 @@ export class ApplicationImpl
 
         this.state.form = impl;
 
-        this.state.currentmenu = impl.getDropDownMenu();
-        DropDownMenu.setForm(this.state.currentmenu,formdef.formref.instance);
+        let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
-        if (formdef.windowdef == null || !formdef.windowdef.modal)
+        if (fmenu != null)
         {
-            this.showMenu(this.state.currentmenu);
+            this.state.currentmenu = fmenu;
+            DropDownMenu.setForm(this.state.currentmenu,formdef.formref.instance);
+
+            if (formdef.windowdef == null || !formdef.windowdef.modal)
+            {
+                this.showMenu(this.state.currentmenu);
+            }
+            else
+            {
+                this.showMenu(this.state.defaultmenu);
+            }
         }
-        else
-        {
-            this.showMenu(this.state.defaultmenu);
-        }
+
 
         this.formsctl.display(formdef,parameters);
 

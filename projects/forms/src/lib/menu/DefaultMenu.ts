@@ -35,6 +35,8 @@ export class DefaultMenu implements Menu
                 [
                     {name: "insert", action: null},
                     {name: "delete", action: null},
+                    {name: "dublicate", action: null},
+                    {name: "undo", action: null},
                     {name: "clear", action: null},
                 ]
             }
@@ -42,6 +44,7 @@ export class DefaultMenu implements Menu
             {
                 name: "Block", title: "Block actions", options:
                 [
+                    {name: "undo", action: null},
                     {name: "clear", action: null},
                 ]
             }
@@ -49,6 +52,7 @@ export class DefaultMenu implements Menu
             {
                 name: "Form", title: "Form actions", options:
                 [
+                    {name: "undo", action: null},
                     {name: "clear", action: null},
                     {name: "close", action: "close"},
                 ]
