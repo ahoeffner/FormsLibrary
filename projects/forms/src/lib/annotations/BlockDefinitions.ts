@@ -17,7 +17,7 @@ export class BlockDefinitions
             BlockDefinitions.blocks.set(form.toLowerCase(),blocks);
         }
 
-        blocks.push(def);
+        blocks.unshift(def);
     }
 
 

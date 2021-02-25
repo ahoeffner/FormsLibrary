@@ -87,7 +87,6 @@ export class FormImpl
 
             if (block == null) window.alert("Cannot create instance of "+blocks[i].alias);
             this.blocks.set(blocks[i].alias,block);
-            console.log(blocks[i].alias+" "+block.constructor.name);
         }
     }
 
