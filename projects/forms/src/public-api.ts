@@ -11,6 +11,8 @@ export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 export {Block} from './lib/blocks/Block';
 export {BLOCK} from './lib/Directives/BLOCK';
 
+export {Transaction} from './lib/database/Transaction';
+
 export {FormList} from './lib/menu/FormList';
 export {FormArea} from './lib/forms/FormArea';
 export {Form,CallBack} from './lib/forms/Form';
