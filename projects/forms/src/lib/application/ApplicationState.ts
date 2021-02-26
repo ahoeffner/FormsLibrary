@@ -3,15 +3,16 @@ import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { Connection } from "../database/Connection";
+import { MenuHandler } from "../menu/MenuHandler";
 
 
 export class ApplicationState
 {
-    public menus:Menu[] = [];
     public form:FormImpl = null;
     public connection:Connection;
     public currentmenu:ComponentRef<DropDownMenu> = null;
     public defaultmenu:ComponentRef<DropDownMenu> = null;
+    public menus:Map<string,MenuHandler> = new Map<string,MenuHandler>();
 
     private conn:boolean = false;
 
@@ -22,14 +23,18 @@ export class ApplicationState
     }
 
 
+    public addMenu(menu:Menu) : void
+    {
+        let mhdl:MenuHandler = menu.getHandler();
+        this.menus.set(mhdl.guid,mhdl);
+    }
+
+
     public async connect(usr?:string, pwd?:string) : Promise<boolean>
     {
         this.conn = true;
         this.connection.connect(usr,pwd);
-
-        for(let i = 0; i < this.menus.length; i++)
-            this.menus[i].getHandler().onConnect();
-
+        this.menus.forEach((mhdl) => {mhdl.onConnect()});
         return(true);
     }
 
@@ -37,10 +42,7 @@ export class ApplicationState
     public async disconnect() : Promise<boolean>
     {
         this.conn = false;
-
-        for(let i = 0; i < this.menus.length; i++)
-            this.menus[i].getHandler().onDisconnect();
-
+        this.menus.forEach((mhdl) => {mhdl.onDisconnect()});
         return(true);
     }
 

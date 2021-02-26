@@ -6,16 +6,25 @@ import { Application } from "../application/Application";
 
 export abstract class MenuHandler
 {
+    private static _id:number = 0;
+
+    private guid$:string;
     private ready$:boolean = false;
     private menu$:MenuInterface = null;
 
     constructor()
     {
+        this.guid$ = "mhdl:"+MenuHandler._id++;
         Reflect.defineProperty(this,"_setProtected", {value: (intf:MenuInterface) =>
         {
             this.menu$ = intf;
             this.ready$ = true;
         }});
+    }
+
+    public get guid() : string
+    {
+        return(this.guid$);
     }
 
     public get ready() : boolean

@@ -22,8 +22,9 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     private app:ApplicationImpl;
     private html:HTMLDivElement;
     private static instances:number = 0;
-    private menus:Map<string,Element> = new Map<string,Element>();
     private options:Map<string,Option> = new Map<string,Option>();
+    private menus:Map<string,MenuOption> = new Map<string,MenuOption>();
+
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
     private static calls:number = 0;
@@ -55,31 +56,81 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
     public enable(menu?:string) : void
     {
-        if (menu != null)
+        if (menu == null)
         {
-            menu = menu.toLowerCase();
-            let elem:Element = this.menus.get(menu);
-            if (elem != null) elem.classList.remove("disabled");
+            this.menus.forEach((mopt) =>
+            {
+                mopt.elem.classList.remove("disabled");
+                mopt.options.forEach((opt) => {opt.elem.classList.remove("disabled")});
+            });
+            return;
         }
-        else
+
+        menu = menu.toLowerCase();
+        let mopt:MenuOption = this.menus.get(menu);
+
+        if (mopt != null)
         {
-            this.menus.forEach((elem) => {elem.classList.remove("disabled")});
+            mopt.elem.classList.remove("disabled");
+            mopt.options.forEach((opt) => {opt.elem.classList.remove("disabled")});
+            return;
         }
+
+        let option:string = menu;
+        mopt = this.menus.get(menu.substring(0,menu.lastIndexOf("/")));
+        if (mopt == null) return;
+
+        let enabled:number = 0;
+        mopt.options.forEach((opt) =>
+        {
+            if (opt.elem.id == option)
+                opt.elem.children[0].classList.remove("disabled");
+
+            if (!opt.elem.children[0].classList.contains("disabled"))
+                enabled++;
+        });
+
+        if (enabled > 0) mopt.elem.classList.remove("disabled");
     }
 
 
     public disable(menu?:string) : void
     {
-        if (menu != null)
+        if (menu == null)
         {
-            menu = menu.toLowerCase();
-            let elem:Element = this.menus.get(menu);
-            if (elem != null) elem.classList.add("disabled");
+            this.menus.forEach((mopt) =>
+            {
+                mopt.elem.classList.add("disabled");
+                mopt.options.forEach((opt) => {opt.elem.classList.add("disabled")});
+            });
+            return;
         }
-        else
+
+        menu = menu.toLowerCase();
+        let mopt:MenuOption = this.menus.get(menu);
+
+        if (mopt != null)
         {
-            this.menus.forEach((elem) => {elem.classList.add("disabled")});
+            mopt.elem.classList.add("disabled");
+            mopt.options.forEach((opt) => {opt.elem.classList.add("disabled")});
+            return;
         }
+
+        let option:string = menu;
+        mopt = this.menus.get(menu.substring(0,menu.lastIndexOf("/")));
+        if (mopt == null) return;
+
+        let enabled:number = 0;
+        mopt.options.forEach((opt) =>
+        {
+            if (opt.elem.id == option)
+                opt.elem.children[0].classList.add("disabled");
+
+            if (!opt.elem.children[0].classList.contains("disabled"))
+                enabled++;
+        });
+
+        if (enabled == 0) mopt.elem.classList.add("disabled");
     }
 
 
@@ -107,17 +158,24 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         for(let i = 0; i < menus.length; i++)
         {
-            menus[i].children[0].classList.add("disabled");
-            this.menus.set(menus[i].children[0].id,menus[i].children[0]);
-			menus[i].children[0].addEventListener("click", (event) => {this.toggle(event)});
+            let mopt:MenuOption = new MenuOption(menus[i].children[0]);
+            this.menus.set(mopt.elem.id,mopt);
+            mopt.elem.classList.add("disabled");
+			mopt.elem.addEventListener("click", (event) => {this.toggle(event)});
         }
 
         for(let i = 0; i < options.length; i++)
         {
             let id:string = options[i].id;
+            let menu:string = id.substring(0,id.lastIndexOf("/"));
+
             let opt:Option = this.options.get(id);
+            options[i].children[0].classList.add("disabled");
 			options[i].addEventListener("click", (event) => {this.action(event)});
             opt.elem = options[i];
+
+            let mopt:MenuOption = this.menus.get(menu);
+            mopt.options.push(opt);
         }
 
         menu.getHandler().onInit();
@@ -137,7 +195,24 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     private action(event:any) : void
     {
         let handler:any = this.menu.getHandler();
-        let opt:Option = this.options.get(event.target.id);
+
+        let link:Element = null;
+        let text:Element = event.target;
+
+        if (text.classList.contains("linktext"))
+        {
+            link = text.parentElement;
+        }
+        else
+        {
+            link = text;
+            text = text.children[0];
+        }
+
+        if (text.classList.contains("disabled"))
+            return;
+
+        let opt:Option = this.options.get(link.id);
         if (opt.option.action != null) handler[opt.option.action]();
     }
 
@@ -219,7 +294,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                     this.options.set(oid,new Option(entries[i].options[f]));
 
                     html += indent+"    <a class='option' id='"+oid+"'>\n";
-                    html += indent+entry.name+"\n";
+                    html += indent+"      <span class='linktext'>"+entry.name+"</span>\n";
                     html += indent+"    </a>\n";
                 }
             }
@@ -315,6 +390,18 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     public ngAfterViewInit(): void
     {
         this.html = this.elem?.nativeElement as HTMLDivElement;
+    }
+}
+
+
+class MenuOption
+{
+    elem:Element;
+    options:Option[] = [];
+
+    constructor(elem:Element)
+    {
+        this.elem = elem;
     }
 }
 

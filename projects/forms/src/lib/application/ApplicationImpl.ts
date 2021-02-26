@@ -248,7 +248,7 @@ export class ApplicationImpl
 
     public createmenu(menu:Menu) : ComponentRef<DropDownMenu>
     {
-        this.state.menus.push(menu);
+        this.state.addMenu(menu);
         let ddmenu:ComponentRef<DropDownMenu> = this.mfactory.create(this,menu);
         return(ddmenu);
     }
