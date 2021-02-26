@@ -1,7 +1,6 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
-import { Component, AfterViewInit } from '@angular/core';
-import { BlockDefinitions } from "../annotations/BlockDefinitions";
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 
 
 export interface CallBack
@@ -12,7 +11,7 @@ export interface CallBack
 
 @Component({template: ''})
 
-export class Form implements AfterViewInit
+export class Form implements OnInit, AfterViewInit
 {
     private impl:FormImpl;
 
@@ -95,6 +94,11 @@ export class Form implements AfterViewInit
     public setCallback(func:CallBack) : void
     {
         this.impl.setCallback(func);
+    }
+
+    public ngOnInit()
+    {
+        this.impl.getApplication().setBuild(this);
     }
 
     public ngAfterViewInit(): void

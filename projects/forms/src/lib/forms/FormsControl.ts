@@ -22,6 +22,7 @@ interface Current
 
 export class FormsControl
 {
+    private buiding:Form;
     private current:Current;
     private formarea:FormArea;
     private utils:Utils = new Utils();
@@ -51,6 +52,18 @@ export class FormsControl
         }
 
         return(this.forms);
+    }
+
+
+    public setBuild(form:Form) : void
+    {
+        this.buiding = form;
+    }
+
+
+    public getBuild() : Form
+    {
+        return(this.buiding);
     }
 
 

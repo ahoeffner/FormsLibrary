@@ -2,7 +2,6 @@ import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { Preferences } from "./Preferences";
 import { ApplicationImpl } from "./ApplicationImpl";
-import { FormDefinition } from "../forms/FormsDefinition";
 
 
 @Injectable({

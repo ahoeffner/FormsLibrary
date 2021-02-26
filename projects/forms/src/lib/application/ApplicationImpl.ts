@@ -1,4 +1,5 @@
 import { Menu } from "../menu/Menu";
+import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
 import { FormList } from "../menu/FormList";
@@ -40,8 +41,6 @@ export class ApplicationImpl
         this.instances = new InstanceControl(this.formsctl);
         this.setFormsDefinitions(FormDefinitions.getForms());
         this.state.defaultmenu = this.createmenu(new DefaultMenu());
-
-
     }
 
 
@@ -134,6 +133,18 @@ export class ApplicationImpl
     {
         this.formsctl.setFormArea(area);
         this.ready = true;
+    }
+
+
+    public setBuild(form:Form) : void
+    {
+        this.formsctl.setBuild(form);
+    }
+
+
+    public getBuild() : Form
+    {
+        return(this.formsctl.getBuild());
     }
 
 
