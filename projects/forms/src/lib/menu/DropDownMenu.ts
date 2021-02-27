@@ -61,7 +61,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             this.menus.forEach((mopt) =>
             {
                 mopt.elem.classList.remove("disabled");
-                mopt.options.forEach((opt) => {opt.elem.classList.remove("disabled")});
+                mopt.options.forEach((opt) => {opt.elem.children[0].classList.remove("disabled")});
             });
             return;
         }
@@ -72,7 +72,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (mopt != null)
         {
             mopt.elem.classList.remove("disabled");
-            mopt.options.forEach((opt) => {opt.elem.classList.remove("disabled")});
+            mopt.options.forEach((opt) => {opt.elem.children[0].classList.remove("disabled")});
             return;
         }
 
@@ -101,7 +101,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             this.menus.forEach((mopt) =>
             {
                 mopt.elem.classList.add("disabled");
-                mopt.options.forEach((opt) => {opt.elem.classList.add("disabled")});
+                mopt.options.forEach((opt) => {opt.elem.children[0].classList.add("disabled")});
             });
             return;
         }
@@ -112,7 +112,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (mopt != null)
         {
             mopt.elem.classList.add("disabled");
-            mopt.options.forEach((opt) => {opt.elem.classList.add("disabled")});
+            mopt.options.forEach((opt) => {opt.elem.children[0].classList.add("disabled")});
             return;
         }
 
