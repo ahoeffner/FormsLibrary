@@ -224,7 +224,20 @@ export class FormList implements AfterViewInit
 		html += "<span id='"+path+"' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
+		for(let i = 0; i < root.forms.length; i++)
+		{
+			last = false;
+			if (i == root.forms.length - 1) last = true;
+			html += this.form();
+		}
+
 		return(html);
+	}
+
+
+	private form() : string
+	{
+		return("");
 	}
 
 
