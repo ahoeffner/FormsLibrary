@@ -52,11 +52,12 @@ export class FormList implements AfterViewInit
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
-		this.page += "    <ul id='Tree'>\n";
-		this.page += this.print("/",this.root,"      ");
-		this.page += "    </ul>\n";
+		this.page += "    <div id='Tree'>\n";
+		this.page += this.print("/",this.root,1);
+		this.page += "    </div>\n";
 		this.page += "  </body>\n";
 		this.page += "</html>\n";
+		console.log(this.page);
 	}
 
 
@@ -87,28 +88,33 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private print(path:string, root:Folder, indent:string) : string
+	private print(path:string, root:Folder, level:number) : string
 	{
 		let html:string = "";
 
-		html += indent+"<li><span id='"+path+"' class='folder'>"+root.name+"</span>\n";
-		html += indent+"  <ul class='list'>\n";
+		for (let j = 0; j < level; j++)
+			html += "<span class='indent'></span>";
+
+		console.log("id="+path);
+		html += "<span id='"+path+"' class='folder'>"+root.name+"</span>\n";
+		html += "<span id='content-"+path+"' class='list'>\n";
 
 		if (path == "/") path = "";
 		for(let i = 0; i < root.folders.length; i++)
 		{
 			let folder:Folder = root.folders[i];
-			html += this.print(path+"/"+folder.name,folder,indent+"  ");
+			html += this.print(path+"/"+folder.name,folder,level+1);
 		}
 
+		/*
 		for(let f = 0; f < root.forms.length; f++)
 		{
 			let form:Form = root.forms[f];
-			html += indent+"  <li><span id='"+form.def.name+"' title='"+form.def.title+"' class='form'>"+form.name+"</span></li>\n";
+			html += "<span><span id='"+form.def.name+"' title='"+form.def.title+"' class='form'>&nbsp;-&nbsp;"+form.name+"</span></span>\n";
 		}
+		*/
 
-		html += "  </ul>";
-		html += "</li>";
+		html += "</span>";
 
 		return(html);
 	}
@@ -174,7 +180,7 @@ export class FormList implements AfterViewInit
 			form.addEventListener("click", (event) => this.show(event));
 		}
 
-		this.open("/");
+		//this.open("/");
 		this.folders.get("/").innerHTML = this.name;
 		this.ready = true;
 	}
@@ -183,6 +189,7 @@ export class FormList implements AfterViewInit
 	private toggle(event:any) : void
 	{
 		let folder:HTMLElement = event.target;
+		console.log("toggle: "+folder.parentElement.id);
 		folder.parentElement.querySelector('.list').classList.toggle('active');
 		folder.classList.toggle("folder-open");
 	}
@@ -211,6 +218,14 @@ export class FormList implements AfterViewInit
 			padding: 0;
 		}
 
+		.indent
+		{
+			width: 5px;
+			height: 5px;
+			display: inline-block;
+			background-color: blue;
+		}
+
 		.folder
 		{
 			cursor: pointer;
@@ -222,7 +237,6 @@ export class FormList implements AfterViewInit
 			width:24px;
 			height: 24px;
 			content: "";
-			margin-right: 2px;
 			display: inline-block;
 			vertical-align: middle;
 			background-size: 100% 100%;
@@ -234,7 +248,6 @@ export class FormList implements AfterViewInit
 			width:24px;
 			height: 24px;
 			content: "";
-			margin-right: 2px;
 			display: inline-block;
 			vertical-align: middle;
 			background-size: 100% 100%;
@@ -244,17 +257,9 @@ export class FormList implements AfterViewInit
 		.form
 		{
 			color: `+this.preferences.colors.folder+`;
+			margin-left: 0;
 			font-style: italic;
-		}
-
-		.form::before
-		{
-			color: formcolor;
-			content: "-";
-			margin-left: 8px;
-			margin-right: 8px;
-			display: inline-block;
-			vertical-align: middle;
+			border-left: 1px solid `+this.preferences.colors.folder+`;
 		}
 
 		.list
