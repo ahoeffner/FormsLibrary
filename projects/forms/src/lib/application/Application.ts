@@ -45,10 +45,11 @@ export class Application
         return(new Preferences());
     }
 
-    public closeform() : void
+    public closeform(destroy?:boolean) : void
     {
+        if (destroy == undefined) destroy = false;
         let form:FormImpl = this.impl.appstate.form;
-        if (form != null) form.close();
+        if (form != null) form.close(destroy);
     }
 
     public connect(usr?:string, pwd?:string) : void
