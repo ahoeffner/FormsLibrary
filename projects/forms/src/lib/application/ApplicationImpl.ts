@@ -211,6 +211,8 @@ export class ApplicationImpl
         if (form == null) return;
         this.formsctl.closeform(form,destroy);
         DropDownMenu.setForm(this.state.currentmenu,null);
+        this.showPath("","");
+        this.showTitle(null);
         this.state.form = null;
     }
 

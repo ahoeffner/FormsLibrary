@@ -18,7 +18,8 @@ export class FormImpl
     private menu:Menu;
     private name:string;
     private path:string;
-    private title: string;
+    private title:string;
+    private root:FormImpl;
     private win:ModalWindow;
     private inst:InstanceID;
     private parent:FormImpl;
@@ -108,6 +109,12 @@ export class FormImpl
     public getApplication() : ApplicationImpl
     {
         return(this.app);
+    }
+
+
+    public setRoot(root:FormImpl) : void
+    {
+        this.root = root;
     }
 
 
@@ -219,6 +226,9 @@ export class FormImpl
         }
         else
         {
+            id.impl.setRoot(this);
+            console.log("root set");
+
             if (inst.windowdef != null) inst.windowopts = inst.windowdef;
             else                        inst.windowopts = {width: "", height: ""};
 
@@ -299,6 +309,7 @@ export class FormImpl
 
         if (this.parent != null && pinst != null)
         {
+            console.log("Fuck");
             // Form called from another form
             this.app.closeInstance(this.inst,destroy);
             if (destroy) this.parent.stack.delete(this.name);
