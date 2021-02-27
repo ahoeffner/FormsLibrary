@@ -1,40 +1,87 @@
 <html>
   <head>
     <style>
-
-		ul, li, #Tree
-		{
-			padding-left: 8px;
-			list-style-type: none;
-		}
-
-		#Tree
-		{
+    	.tree
+    	{
 			margin: 0;
 			padding: 0;
+			font-size: 0;
+			border-collapse: collapse;
+    	}
+
+		img
+		{
+			width: 24px; 
+			height: 24px;
+			vertical-align: middle;
 		}
 
-		.indent
+		.lct
 		{
-			width: 5px;
-			height: 5px;
-			display: inline-block;
-			background-color: blue;
+			width: 16px;			
+			height: 24px;
+			white-space: nowrap;
+			display: inline-block; 
+			vertical-align: middle;
+		}
+
+		.txt
+		{
+			width: 16px;			
+			height: 19px;
+			font-size: 16px;
+			white-space: nowrap;
+			display: inline-block; 
+			vertical-align: bottom;
+		}
+
+		.off
+		{
+			width: 16px; 
+			height: 4px; 
+			display: block; 
+			border-left: 1px solid black; 
+		}
+
+		.vln
+		{
+			width: 16px; 
+			height: 12px; 
+			display: block; 
+			border-left: 1px solid black; 
+		}
+
+		.cnr
+		{
+			width: 16px; 
+			height: 8px; 
+			display: block; 
+			border-left: 1px solid black; 
+			border-bottom: 1px solid black;
+		}
+
+		.end
+		{
+			width: 16px; 
+			height: 12px; 
+			display: block; 
 		}
 
 		.folder
 		{
+			width: 24px; 
+			height: 24px;
 			cursor: pointer;
-			color: grey;
+			vertical-align: middle;
+			color: black;
 		}
 
 		.folder::before
 		{
-			width:24px;
+			width: 24px; 
 			height: 24px;
 			content: "";
 			display: inline-block;
-			vertical-align: middle;
 			background-size: 100% 100%;
 			background-image:url('closed.jpg');
 		}
@@ -45,33 +92,36 @@
 			height: 24px;
 			content: "";
 			display: inline-block;
-			vertical-align: middle;
 			background-size: 100% 100%;
 			background-image:url('open.jpg');
 		}
 
-		.form
+		.ind
 		{
-			color: grey;
-			margin-left: 0;
-			font-style: italic;
-			border-left: 1px solid grey;
+			width: 12px;			
+			height: 24px;
+			white-space: nowrap;
+			display: inline-block; 
+			vertical-align: middle;			
 		}
 
-		.xform::before
+		.link
 		{
-			color: formcolor;
-			content: "";
-			margin-top: 0;
-			margin-left: 0;
-			margin-right: 0;
-			font-style: normal;
-			display: inline-block;
-			vertical-align: middle;
+			width: 16px;			
+			height: 19px;
+			font-size: 16px;
+			margin-left: 8px;
+			white-space: nowrap;
+			display: inline-block; 
+			vertical-align: bottom;
 		}
 
-		.list
+		.forms
 		{
+			margin: 0;
+			padding: 0;
+			font-size: 0;
+			border-collapse: collapse;
 			display: none;
 			cursor: pointer;
 		}
@@ -80,43 +130,80 @@
 		{
 			display: block;
 		}
-		
     </style>
   </head>
   <body>
-    <div id='Tree'>
-		<span id='root' class='folder' onclick='toogle(event)'>root</span>
-		<div id='forms' class='list'>
 
-			<span class='indent'></span><span id='/forms' class='folder' onclick='toogle(event)'>forms</span>
-			<div id='sub' class='list'>
+Test color: `+this.preferences.colors.foldertree+`;
+<br>
+<br>
+  <div> <!-- Menu -->
+	<div class='tree'> <!-- Folder -->
+		<span class='folder folder-open'></span>
+		<span class='txt'>Root</span>
+	</div>
 
-				<span class='indent'></span><span id='/forms/gr1' class='folder' onclick='toogle(event)'>gr1</span>
-				<div class='list'>
-					<span id='test2' title='Demo Form Test4' class='form'>test4</span><br>
-					<span id='test2' title='Demo Form Test4' class='form'>test5</span><br>
-				</div><br>  <!--Sub-->
+	<div class='tree'> <!-- Folder -->
+		<span class='ind'></span>
 
-			<span id='test1' title='Demo Form Test1' class='form'>test1</span><br>
-			<span id='test2' title='Demo Form Test2' class='form'>test2</span><br>
+		<span class='lct'>
+	  		<span class='off'></span>
+	  		<span class='cnr'></span>		
+	  		<span class='vln'></span>		
+		</span>
 
-		</div><br>  <!--forms-->
+		<span class='folder folder-open'></span>
+		<span class='txt'>Hello I</span>
+	</div>
 
-		<span id='modal' class='indent'></span><span id='/modal' class='folder' onclick='toogle(event)'>modal</span>
-		<div class='list'>
-			<span id='test3' title='Demo Form Test3' class='form'>test3</span><br>
-		</div><br>  <!--Modal-->
+	<!-- Formlist -->
+	<div class='forms'>
+		<span class='lct'>
+	  		<span class='vln'></span>		
+	  		<span class='vln'></span>				
+		</span>
 
-	</div><br>  <!--root-->
-    </div> <!--Tree-->
+		<span class='ind'></span>
+		
+		<span class='lct'>
+	  		<span class='off'></span>
+	  		<span class='cnr'></span>		
+	  		<span class='vln'></span>		
+		</span>
+
+		<span class='link'>Form I</span>
+	</div>
+
+	<div class='forms'>
+		<span class='lct'>
+	  		<span class='vln'></span>		
+	  		<span class='vln'></span>				
+		</span>
+
+		<span class='ind'></span>
+		
+		<span class='lct'>
+	  		<span class='off'></span>
+	  		<span class='cnr'></span>		
+	  		<span class='end'></span>		
+		</span>
+
+		<span class='link'>Form II</span>
+	</div>
+  </div>
+
+  <div> <!-- Menu -->
+	<div class='tree'>	<!-- Folder -->
+		<span class='ind'></span>
+
+		<span class='lct'>
+	  		<span class='off'></span>
+	  		<span class='cnr'></span>		
+	  		<span class='end'></span>		
+		</span>
+		<span class='folder folder-open'></span>
+		<span class='txt'>Hello II</span>
+	</div>
+  </div>
   </body>
-
-<script type="text/javascript">
-	function toogle(event)
-	{
-		console.log("click "+event.target.id);
-		event.target.querySelector('.list').classList.toggle('active');
-		event.target.classList.toggle("folder-open");
-	}
-</script>
 </html>

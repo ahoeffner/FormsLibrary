@@ -5,8 +5,8 @@ export interface Theme
     text:string;
     title:string;
     topbar:string;
-    folder:string;
     disabled:string;
+    foldertree:string;
     buttontext:string;
 }
 
@@ -37,7 +37,7 @@ export class defaultTheme implements Theme
     public text:string = "white";
     public title:string = "white";
     public topbar:string = "#303f9f";
-    public folder:string = "#303f9f";
+    public foldertree:string = "#303f9f";
     public disabled:string = "silver";
     public buttontext:string = "white";
 }
@@ -53,7 +53,7 @@ export class Grey extends defaultTheme
 {
     public name:string = "grey";
     public topbar:string = "grey";
-    public folder:string = "grey";
+    public foldertree:string = "grey";
 }
 
 
@@ -62,7 +62,7 @@ export class Pink extends defaultTheme
     public name:string = "pink";
     public link:string = "#464646";
     public topbar:string = "#ff4081";
-    public folder:string = "#ff4081";
+    public foldertree:string = "#ff4081";
     public disabled:string = "#464646";
 }
 
@@ -75,7 +75,7 @@ export class Yellow implements Theme
     public text:string = "white";
     public title:string = "black";
     public topbar:string = "yellow";
-    public folder:string = "grey";
+    public foldertree:string = "grey";
     public disabled:string = "grey";
     public buttontext:string = "black";
 }

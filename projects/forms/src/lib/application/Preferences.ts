@@ -60,7 +60,7 @@ class Colors implements Theme
     public text:string;
     public title:string;
     public topbar:string;
-    public folder:string;
+    public foldertree:string;
     public disabled:string;
     public buttontext:string;
 
@@ -81,7 +81,7 @@ class Colors implements Theme
         this.text = ttheme.text;
         this.title = ttheme.title;
         this.topbar = ttheme.topbar;
-        this.folder = ttheme.folder;
+        this.foldertree = ttheme.foldertree;
         this.disabled = ttheme.disabled;
         this.buttontext = ttheme.buttontext;
     }

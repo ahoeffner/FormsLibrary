@@ -5,6 +5,7 @@ import { Preferences } from '../application/Preferences';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
+
 interface Form
 {
 	name:string;
@@ -37,6 +38,7 @@ export class FormList implements AfterViewInit
 
     constructor(app:Application)
     {
+		console.log("root: "+this.name);
 		this.root = new Folder(this.name);
 		this.app = Protected.get<ApplicationImpl>(app);
 
@@ -53,11 +55,10 @@ export class FormList implements AfterViewInit
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
 		this.page += "    <div id='Tree'>\n";
-		this.page += this.print("/",this.root,1);
+		this.page += this.print("/",this.root,0,true);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
 		this.page += "</html>\n";
-		console.log(this.page);
 	}
 
 
@@ -88,33 +89,20 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private print(path:string, root:Folder, level:number) : string
+	private print(path:string, root:Folder, level:number, last:boolean) : string
 	{
 		let html:string = "";
 
-		for (let j = 0; j < level; j++)
-			html += "<span class='indent'></span>";
-
-		console.log("id="+path);
-		html += "<span id='"+path+"' class='folder'>"+root.name+"</span>\n";
-		html += "<span id='content-"+path+"' class='list'>\n";
+		html += this.folder(path,root,level,last);
 
 		if (path == "/") path = "";
 		for(let i = 0; i < root.folders.length; i++)
 		{
+			last = false;
 			let folder:Folder = root.folders[i];
-			html += this.print(path+"/"+folder.name,folder,level+1);
+			if (i == root.folders.length - 1) last = true;
+			html += this.print(path+"/"+folder.name,folder,level+1,last);
 		}
-
-		/*
-		for(let f = 0; f < root.forms.length; f++)
-		{
-			let form:Form = root.forms[f];
-			html += "<span><span id='"+form.def.name+"' title='"+form.def.title+"' class='form'>&nbsp;-&nbsp;"+form.name+"</span></span>\n";
-		}
-		*/
-
-		html += "</span>";
 
 		return(html);
 	}
@@ -189,8 +177,8 @@ export class FormList implements AfterViewInit
 	private toggle(event:any) : void
 	{
 		let folder:HTMLElement = event.target;
-		console.log("toggle: "+folder.parentElement.id);
-		folder.parentElement.querySelector('.list').classList.toggle('active');
+		let entry:Element = folder.parentElement.parentElement;
+		entry.children[1].classList.toggle('active');
 		folder.classList.toggle("folder-open");
 	}
 
@@ -202,43 +190,132 @@ export class FormList implements AfterViewInit
 	}
 
 
+	private folder(path:string, root:Folder, level:number, last:boolean) : string
+	{
+		let html:string = "";
+		let lc:string = " <span class='vln'></span>\n";
+		if  (last) lc = " <span class='end'></span>\n";
+
+		html += "<div class='tree'>\n";
+
+		console.log("path: "+path+" "+root.name+" level: "+level+" last: "+last);
+
+		if (level > 0)
+		{
+			html += "<span class='ind'></span>\n";
+		}
+
+		for(let i = 1; i < level; i++)
+		{
+			html += "<span class='lct'>\n";
+			html += " <span class='vln'></span>\n";
+			html += " <span class='vln'></span>\n";
+			html += "</span>\n";
+			html += "<span class='ind'></span>\n";
+		}
+
+		if (level > 0)
+		{
+			html += "<span class='lct'>\n";
+			html += " <span class='off'></span>\n";
+			html += " <span class='cnr'></span>\n";
+			html += lc;
+			html += "</span>\n";
+		}
+
+		html += "<span id='"+path+"' class='folder'></span>\n";
+		html += "<span id='"+path+"' class='txt'>"+root.name+"</span>\n";
+		html += "</div>\n";
+
+		return(html);
+	}
+
+
 	private styles() : string
 	{
 		let styles:string =
 		`
-		ul, li, #Tree
-		{
-			padding-left: 8px;
-			list-style-type: none;
-		}
-
-		#Tree
-		{
+    	.tree
+    	{
 			margin: 0;
 			padding: 0;
+			font-size: 0;
+			border-collapse: collapse;
+    	}
+
+		img
+		{
+			width: 24px;
+			height: 24px;
+			vertical-align: middle;
 		}
 
-		.indent
+		.lct
 		{
-			width: 5px;
-			height: 5px;
+			width: 16px;
+			height: 24px;
+			white-space: nowrap;
 			display: inline-block;
-			background-color: blue;
+			vertical-align: middle;
+		}
+
+		.txt
+		{
+			width: 16px;
+			height: 19px;
+			font-size: 16px;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: bottom;
+		}
+
+		.off
+		{
+			width: 16px;
+			height: 4px;
+			display: block;
+			border-left: 1px solid `+this.preferences.colors.foldertree+`;
+		}
+
+		.vln
+		{
+			width: 16px;
+			height: 12px;
+			display: block;
+			border-left: 1px solid `+this.preferences.colors.foldertree+`;
+		}
+
+		.cnr
+		{
+			width: 16px;
+			height: 8px;
+			display: block;
+			border-left: 1px solid `+this.preferences.colors.foldertree+`;
+			border-bottom: 1px solid `+this.preferences.colors.foldertree+`;
+		}
+
+		.end
+		{
+			width: 16px;
+			height: 12px;
+			display: block;
 		}
 
 		.folder
 		{
+			width: 24px;
+			height: 24px;
 			cursor: pointer;
-			color: `+this.preferences.colors.folder+`;
+			vertical-align: middle;
+			color: `+this.preferences.colors.foldertree+`;
 		}
 
 		.folder::before
 		{
-			width:24px;
+			width: 24px;
 			height: 24px;
 			content: "";
 			display: inline-block;
-			vertical-align: middle;
 			background-size: 100% 100%;
 			background-image:url('/assets/closed.jpg');
 		}
@@ -249,21 +326,38 @@ export class FormList implements AfterViewInit
 			height: 24px;
 			content: "";
 			display: inline-block;
-			vertical-align: middle;
 			background-size: 100% 100%;
 			background-image:url('/assets/open.jpg');
 		}
 
-		.form
+		.ind
 		{
-			color: `+this.preferences.colors.folder+`;
-			margin-left: 0;
-			font-style: italic;
-			border-left: 1px solid `+this.preferences.colors.folder+`;
+			width: 12px;
+			height: 24px;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: middle;
 		}
 
-		.list
+		.link
 		{
+			width: 16px;
+			height: 19px;
+			font-size: 16px;
+			margin-left: 8px;
+			font-style: italic;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: bottom;
+			color: `+this.preferences.colors.link+`;
+		}
+
+		.forms
+		{
+			margin: 0;
+			padding: 0;
+			font-size: 0;
+			border-collapse: collapse;
 			display: none;
 			cursor: pointer;
 		}
