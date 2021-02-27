@@ -1,6 +1,7 @@
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { Preferences } from "./Preferences";
+import { FormImpl } from "../forms/FormImpl";
 import { ApplicationImpl } from "./ApplicationImpl";
 
 
@@ -46,7 +47,8 @@ export class Application
 
     public closeform() : void
     {
-        this.impl.close();
+        let form:FormImpl = this.impl.appstate.form;
+        if (form != null) form.close();
     }
 
     public connect(usr?:string, pwd?:string) : void

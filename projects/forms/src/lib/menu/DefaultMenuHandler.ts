@@ -34,13 +34,12 @@ export class DefaultMenuHandler extends MenuHandler
 
     private init() : void
     {
-        if (this.form != null && this.connected)
+        this.disable();
+
+        if (this.form != null)
         {
-            this.enable();
-        }
-        else
-        {
-            this.disable();
+            if (this.connected) this.enable();
+            else this.enable("/form/close");
         }
 
         if (this.connected)

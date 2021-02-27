@@ -25,22 +25,6 @@ export class Form implements OnInit, AfterViewInit
         }});
     }
 
-    public onInit() : void
-    {
-    }
-
-    public onStart() : void
-    {
-    }
-
-    public onConnect() : void
-    {
-    }
-
-    public onDisconnect() : void
-    {
-    }
-
     public get name() : string
     {
         return(this.constructor.name);

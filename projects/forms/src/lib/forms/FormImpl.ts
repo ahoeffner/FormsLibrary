@@ -57,20 +57,12 @@ export class FormImpl
     }
 
 
-    public onInit() : void
-    {
-        this.form.onInit();
-    }
-
-
     public onStart() : void
     {
         this.app.showTitle(this.title);
 
         if (this.parent == null)
             this.app.showPath(this.name,this.path);
-
-        this.form.onStart();
     }
 
 
@@ -222,12 +214,12 @@ export class FormImpl
         if (this.win != null)
         {
             this.win.newForm(inst);
+            id.impl.setRoot(this.root);
             id.impl.onStart();
         }
         else
         {
             id.impl.setRoot(this);
-            console.log("root set");
 
             if (inst.windowdef != null) inst.windowopts = inst.windowdef;
             else                        inst.windowopts = {width: "", height: ""};
@@ -269,62 +261,63 @@ export class FormImpl
 
     public close(destroy?:boolean) : void
     {
+        let win:boolean = (this.win != null);
+        let menu:boolean = (this.root == null);
+        let root:boolean = (this.parent == null);
+
         if (this.parent != null)
-        {
-            this.parent.onStart();
-        }
-        else
-        {
-            this.app.showPath("","");
-            this.app.showTitle(null);
-        }
+            this.parent.onClose(this,this.cancelled);
 
-        let pinst:InstanceID = null;
-        if (this.parent != null) pinst = this.parent.getInstanceID();
-
-        if (this.inst == null)
+        if (this.cancelled)
         {
-            // Normal form behavior
             this.cancelled = false;
+
+            if (menu)
+            {
+                //chain, started from menu, was cancelled
+                this.app.closeform(this,true);
+            }
+            else
+            {
+                //chain, started from form, was cancelled
+                this.parent.stack.delete(this.name);
+                this.app.closeInstance(this.inst,true);
+            }
+
+            return;
+        }
+
+        if (!win)
+        {
+            //Normal behaivior
             this.app.closeform(this.form,destroy);
             return;
         }
 
-        if (this.parent == null && pinst == null)
+        if (win && root)
         {
-            // Called from menu
+            //Root window
             this.app.closeform(this.form,destroy);
-            if (!this.cancelled) this.win.close();
-            this.win = null;
+            this.win.close();
+            return;
         }
 
-        if (this.parent != null && pinst == null)
-        {
-            // Window root form
-            this.app.closeInstance(this.inst,destroy);
-            if (destroy) this.parent.stack.delete(this.name);
-            if (!this.cancelled) this.win.close();
-            this.win = null;
-        }
+        //child closed
+        this.app.closeInstance(this.inst,destroy);
+        if (destroy) this.parent.stack.delete(this.name);
 
-        if (this.parent != null && pinst != null)
-        {
-            console.log("Fuck");
-            // Form called from another form
-            this.app.closeInstance(this.inst,destroy);
-            if (destroy) this.parent.stack.delete(this.name);
-            if (this.cancelled) this.win = null;
-        }
+        let pinst:InstanceID = null;
+        if (this.parent != null) pinst = this.parent.getInstanceID();
 
-        if (pinst != null && !this.cancelled)
+        if (pinst != null)
         {
-            // Form called from another form
+            //Parent is modal
             let inst:FormInstance = this.app.getInstance(pinst);
             this.win.newForm(inst);
+            return;
         }
 
-        if (this.parent != null)
-            this.parent.onClose(this,this.cancelled);
+        this.win.close();
     }
 
 

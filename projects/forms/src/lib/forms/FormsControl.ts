@@ -209,7 +209,6 @@ export class FormsControl
 
         let impl:FormImpl = Protected.get<FormImpl>(ref.instance);
         impl.setApplication(this.app);
-        impl.onInit();
 
         return(ref);
     }
