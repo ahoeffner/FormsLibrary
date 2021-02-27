@@ -38,7 +38,6 @@ export class FormList implements AfterViewInit
 
     constructor(app:Application)
     {
-		console.log("root: "+this.name);
 		this.root = new Folder(this.name);
 		this.app = Protected.get<ApplicationImpl>(app);
 
@@ -169,7 +168,7 @@ export class FormList implements AfterViewInit
 		}
 
 		//this.open("/");
-		this.folders.get("/").innerHTML = this.name;
+		//this.folders.get("/").innerHTML = this.name;
 		this.ready = true;
 	}
 
@@ -198,8 +197,6 @@ export class FormList implements AfterViewInit
 
 		html += "<div class='tree'>\n";
 
-		console.log("path: "+path+" "+root.name+" level: "+level+" last: "+last);
-
 		if (level > 0)
 		{
 			html += "<span class='ind'></span>\n";
@@ -223,7 +220,7 @@ export class FormList implements AfterViewInit
 			html += "</span>\n";
 		}
 
-		html += "<span id='"+path+"' class='folder'></span>\n";
+		html += "<span class='folder'></span>\n";
 		html += "<span id='"+path+"' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
