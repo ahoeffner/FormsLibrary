@@ -215,7 +215,7 @@ export class FormList implements AfterViewInit
 		let html:string = "";
 		html += "<div id='"+path+"' class='folder'>\n";
 
-		console.log(path+" level: "+level+" eol: "+eol);
+		console.log(path+" level: "+level+" eol: "+eol+" last: "+last[level]);
 
 		if (level > 0)
 		{
@@ -224,7 +224,10 @@ export class FormList implements AfterViewInit
 				html += this.indent(last[i]);
 		}
 
-		if (level > 0) html += this.pre(last[level]);
+		let xx:boolean = eol;
+		if (!last[level]) xx = false;
+
+		if (level > 0) html += this.pre(xx);
 		html += "<img id='"+path+"-img' src='/assets/open.jpg'>\n";
 		html += "<span id='"+path+"-lnk' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
@@ -237,7 +240,7 @@ export class FormList implements AfterViewInit
 	{
 		let html:string = "";
 
-		for(let i = 1; i < root.forms.length; i++)
+		for(let i = 0; i < root.forms.length; i++)
 		{
 			if (i == root.forms.length - 1) last[level] = true;
 			html += this.form(root.forms[i],level,last);
@@ -255,7 +258,7 @@ export class FormList implements AfterViewInit
 		html += this.half();
 		for(let i = 1; i < level; i++)
 		{
-			html += this.indent(false);
+			html += this.indent(last[i]);
 		}
 
 		if (level > 0) html += this.pre(last[last.length-1]);
