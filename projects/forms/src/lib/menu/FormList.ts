@@ -147,6 +147,8 @@ export class FormList implements AfterViewInit
 		this.html.innerHTML = this.page;
 		let folders:HTMLCollectionOf<Element> = this.html.getElementsByClassName("folder");
 
+		console.log("found "+folders.length+" folders");
+
 		for(let i = 0; i < folders.length; i++)
 		{
 			let folder:Element = folders.item(i);
@@ -195,7 +197,7 @@ export class FormList implements AfterViewInit
 		let lc:string = " <span class='vln'></span>\n";
 		if  (last) lc = " <span class='end'></span>\n";
 
-		html += "<div class='folder'>\n";
+		html += "<div id='img-"+path+"' class='folder'>\n";
 
 		if (level > 0)
 		{
@@ -220,8 +222,8 @@ export class FormList implements AfterViewInit
 			html += "</span>\n";
 		}
 
-		html += "<img src='/assets/open.jpg'>\n";
-		html += "<span id='"+path+"' class='txt'>"+root.name+"</span>\n";
+		html += "<img id='img-"+path+"' src='/assets/open.jpg'>\n";
+		html += "<span id='link-"+path+"' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
 		for(let i = 0; i < root.forms.length; i++)
