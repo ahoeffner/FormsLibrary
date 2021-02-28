@@ -1,0 +1,166 @@
+<html>
+  <head>
+    <style>
+
+		.flist
+		{
+			top: 0;
+			left: 5px;
+			width: 100%;
+			height: 100%;
+			min-width: 300px;
+			border: 1px solid black;
+		}
+
+    	.folder
+    	{
+			margin: 0;
+			padding: 0;
+			font-size: 0;
+			position: relative;
+			border-collapse: collapse;
+    	}
+
+		.lct
+		{
+			width: 16px;
+			height: 24px;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.txt
+		{
+			width: 16px;
+			height: 21px;
+			font-size: 16px;
+			cursor: pointer;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: bottom;
+		}
+
+		.off
+		{
+			width: 16px;
+			height: 4px;
+			display: block;
+			border-left: 1px solid grey;
+		}
+
+		.vln
+		{
+			width: 16px;
+			height: 12px;
+			display: block;
+			border-left: 1px solid grey;
+		}
+
+		.cnr
+		{
+			width: 16px;
+			height: 8px;
+			display: block;
+			border-left: 1px solid grey;
+			border-bottom: 1px solid grey;
+		}
+
+		.end
+		{
+			width: 16px;
+			height: 12px;
+			display: block;
+		}
+
+		img
+		{
+			width: 24px;
+			height: 24px;
+			cursor: pointer;
+			vertical-align: middle;
+		}
+
+		.ind
+		{
+			width: 12px;
+			height: 24px;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.link
+		{
+			width: 16px;
+			height: 19px;
+			font-size: 16px;
+			margin-left: 8px;
+			font-style: italic;
+			white-space: nowrap;
+			display: inline-block;
+			vertical-align: bottom;
+			color: blue;
+		}
+
+		.forms
+		{
+			margin: 0;
+			padding: 0;
+			font-size: 0;
+			border-collapse: collapse;
+			display: none;
+			cursor: pointer;
+		}
+
+		.active
+		{
+			display: block;
+		}
+		
+    </style>
+  </head>
+  <body>
+    <div class='flist' id='FolderList'>
+<div class='folder'>
+<img src='open.jpg'>
+<span id='/' class='txt'>/</span>
+</div>
+<div class='folder'>
+<span class='ind'></span>
+<span class='lct' onclick='console.log(123)'>
+ <span class='off' onclick='console.log(123)'></span>
+ <span class='cnr' onclick='console.log(123)'></span>
+ <span class='vln'></span>
+</span>
+<img src='open.jpg'>
+<span id='/forms' class='txt'>forms</span>
+</div>
+<div class='folder'>
+<span class='ind'></span>
+<span class='lct' onclick='console.log(123)'>
+ <span class='vln' onclick='console.log(123)'></span>
+ <span class='vln' onclick='console.log(123)'></span>
+</span>
+<span class='ind' onclick='console.log(123)'></span>
+<span class='lct' onclick='console.log(123)'>
+ <span class='off' onclick='console.log(123)'></span>
+ <span class='cnr' onclick='console.log(123)'></span>
+ <span class='end'></span>
+</span>
+<img src='open.jpg'>
+<span id='/forms/gr1' class='txt'>gr1</span>
+</div>
+<div class='folder'>
+<span class='ind'></span>
+<span class='lct' onclick='console.log(123)'>
+ <span class='off' onclick='console.log(123)'></span>
+ <span class='cnr' onclick='console.log(123)'></span>
+ <span class='end'></span>
+</span>
+<img src='open.jpg'>
+<span id='/modal' class='txt'>modal</span>
+</div>
+    </div>
+  </body>
+</html>

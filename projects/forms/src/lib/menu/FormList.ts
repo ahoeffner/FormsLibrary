@@ -251,7 +251,7 @@ export class FormList implements AfterViewInit
 			padding: 0;
 			font-size: 0;
 			cursor: pointer;
-			position: releative;
+			position: relative;
 			border-collapse: collapse;
     	}
 

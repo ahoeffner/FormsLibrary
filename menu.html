@@ -16,6 +16,13 @@
 			vertical-align: middle;
 		}
 
+		.simg
+		{
+			width: 16px; 
+			height: 16px;
+			vertical-align: middle;
+		}
+
 		.lct
 		{
 			width: 16px;			
@@ -67,35 +74,6 @@
 			display: block; 
 		}
 
-		.folder
-		{
-			width: 24px; 
-			height: 24px;
-			cursor: pointer;
-			vertical-align: middle;
-			color: black;
-		}
-
-		.folder::before
-		{
-			width: 24px; 
-			height: 24px;
-			content: "";
-			display: inline-block;
-			background-size: 100% 100%;
-			background-image:url('closed.jpg');
-		}
-
-		.folder-open::before
-		{
-			width:24px;
-			height: 24px;
-			content: "";
-			position: relative;
-			display: inline-block;
-			background-size: 100% 100%;
-			background-image:url('open.jpg');
-		}
 
 		.ind
 		{
@@ -123,7 +101,7 @@
 			padding: 0;
 			font-size: 0;
 			border-collapse: collapse;
-			display: none;
+			display: block;
 			cursor: pointer;
 		}
 
@@ -173,6 +151,7 @@
 	  		<span class='vln'></span>		
 		</span>
 
+		<img src="form.png">
 		<span class='link'>Form I</span>
 	</div>
 
