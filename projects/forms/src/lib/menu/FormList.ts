@@ -53,7 +53,7 @@ export class FormList implements AfterViewInit
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
 		this.page += "    <div class='folder-tree'>\n";
-		this.page += this.print("/",this.root,0,true);
+		this.page += this.print("/",this.root,0,[]);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
 		this.page += "</html>\n";
@@ -88,23 +88,24 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private print(path:string, root:Folder, level:number, last:boolean) : string
+	private print(path:string, root:Folder, level:number, last:boolean[]) : string
 	{
 		let html:string = "";
 
 		html += this.folder(path,root,level,last);
 		html += "<div class='folder-content' id='"+path+"-content'>";
 
+		last.push(false);
 		if (path == "/") path = "";
 		for(let i = 0; i < root.folders.length; i++)
 		{
-			last = false;
 			let folder:Folder = root.folders[i];
-			if (i == root.folders.length - 1) last = true;
+			if (i == root.folders.length - 1) last[last.length-1] = true;
 			html += this.print(path+"/"+folder.name,folder,level+1,last);
 		}
+		last.pop();
 
-		html += this.forms(root,level);
+		//html += this.forms(root,level);
 
 		html += "</div>";
 		return(html);
@@ -197,11 +198,18 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private folder(path:string, root:Folder, level:number, last:boolean) : string
+	private folder(path:string, root:Folder, level:number, last:boolean[]) : string
 	{
 		let html:string = "";
-		let lc:string = " <span class='vln'></span>\n";
-		if  (last) lc = " <span class='end'></span>\n";
+
+		if (root.name == "sub1")
+		{
+			console.log(path+" level: "+level);
+			for(let i = 0; i < last.length; i++)
+			{
+				console.log("i: "+i+" last: "+last[i]);
+			}
+		}
 
 		html += "<div id='"+path+"' class='folder'>\n";
 
@@ -218,6 +226,9 @@ export class FormList implements AfterViewInit
 			html += "</span>\n";
 			html += "<span class='ind'></span>\n";
 		}
+
+		let lc:string = " <span class='vln'></span>\n";
+		if  (last[last.length-1]) lc = " <span class='end'></span>\n";
 
 		if (level > 0)
 		{
@@ -254,6 +265,7 @@ export class FormList implements AfterViewInit
 	private form(form:Form, level:number, last:boolean)
 	{
 		let html:string = "";
+
 		let lc:string = " <span class='vln'></span>\n";
 		if  (last) lc = " <span class='end'></span>\n";
 
@@ -261,7 +273,7 @@ export class FormList implements AfterViewInit
 
 		if (level > 0)
 		{
-			html += "<span class='hind'></span>\n";
+			html += "<span class='ind'></span>\n";
 		}
 
 		for(let i = 0; i < level; i++)
@@ -273,8 +285,6 @@ export class FormList implements AfterViewInit
 			html += "<span class='ind'></span>\n";
 		}
 
-		html += "<span class='ind'></span>\n";
-
 		if (level > 0)
 		{
 			html += "<span class='lct'>\n";
@@ -284,7 +294,8 @@ export class FormList implements AfterViewInit
 			html += "</span>\n";
 		}
 
-		html += "<img id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
+		html += "<span class='ind'></span>\n";
+		html += "<img id='"+form.def.path+"-img' src='/assets/open.jpg'>\n";
 		html += "<span id='"+form.def.path+"-lnk' class='txt'>"+form.def.name+"</span>\n";
 		html += "</div>\n";
 
