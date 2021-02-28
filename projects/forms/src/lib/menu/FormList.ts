@@ -52,7 +52,7 @@ export class FormList implements AfterViewInit
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
-		this.page += "    <div id='FolderList'>\n";
+		this.page += "    <div class='folder-tree'>\n";
 		this.page += this.print("/",this.root,0,true);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
@@ -103,6 +103,8 @@ export class FormList implements AfterViewInit
 			if (i == root.folders.length - 1) last = true;
 			html += this.print(path+"/"+folder.name,folder,level+1,last);
 		}
+
+		html += this.forms(root,level);
 
 		html += "</div>";
 		return(html);
@@ -230,20 +232,63 @@ export class FormList implements AfterViewInit
 		html += "<span id='"+path+"-lnk' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
+		return(html);
+	}
+
+
+	private forms(root:Folder, level:number) : string
+	{
+		let html:string = "";
+
 		for(let i = 0; i < root.forms.length; i++)
 		{
-			last = false;
+			let last:boolean = false;
 			if (i == root.forms.length - 1) last = true;
-			html += this.form();
+			html += this.form(root.forms[i],level,last);
 		}
 
 		return(html);
 	}
 
 
-	private form() : string
+	private form(form:Form, level:number, last:boolean)
 	{
-		return("");
+		let html:string = "";
+		let lc:string = " <span class='vln'></span>\n";
+		if  (last) lc = " <span class='end'></span>\n";
+
+		html += "<div id='"+form.def.path+"' class='form'>\n";
+
+		if (level > 0)
+		{
+			html += "<span class='hind'></span>\n";
+		}
+
+		for(let i = 0; i < level; i++)
+		{
+			html += "<span class='lct'>\n";
+			html += " <span class='vln'></span>\n";
+			html += " <span class='vln'></span>\n";
+			html += "</span>\n";
+			html += "<span class='ind'></span>\n";
+		}
+
+		html += "<span class='ind'></span>\n";
+
+		if (level > 0)
+		{
+			html += "<span class='lct'>\n";
+			html += " <span class='off'></span>\n";
+			html += " <span class='cnr'></span>\n";
+			html += lc;
+			html += "</span>\n";
+		}
+
+		html += "<img id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
+		html += "<span id='"+form.def.path+"-lnk' class='txt'>"+form.def.name+"</span>\n";
+		html += "</div>\n";
+
+		return(html);
 	}
 
 
@@ -251,6 +296,11 @@ export class FormList implements AfterViewInit
 	{
 		let styles:string =
 		`
+		.folder-tree
+		{
+			position: fixed;
+		}
+
     	.folder
     	{
 			margin: 0;
@@ -327,6 +377,16 @@ export class FormList implements AfterViewInit
 		.ind
 		{
 			width: 12px;
+			height: 24px;
+			white-space: nowrap;
+			pointer-events:none;
+			display: inline-block;
+			vertical-align: middle;
+		}
+
+		.hind
+		{
+			width: 7px;
 			height: 24px;
 			white-space: nowrap;
 			pointer-events:none;
