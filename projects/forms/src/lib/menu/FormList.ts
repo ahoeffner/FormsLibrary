@@ -199,10 +199,6 @@ export class FormList implements AfterViewInit
 	{
 		let fname:string = event.target.id;
 		fname = fname.substring(0,fname.length-4);
-
-		let pos:number = fname.lastIndexOf("/");
-		if (pos >= 0) fname = fname.substring(pos+1);
-
 		this.app.showform(fname,false);
 	}
 
@@ -245,7 +241,7 @@ export class FormList implements AfterViewInit
 	private form(form:Form, level:number, last:boolean[])
 	{
 		let html:string = "";
-		html += "<div id='"+form.def.path+"' class='form'>\n";
+		html += "<div id='"+form.def.name+"' class='form'>\n";
 
 		html += this.half();
 		for(let i = 1; i < level; i++)
@@ -254,7 +250,7 @@ export class FormList implements AfterViewInit
 		if (level > 0) html += this.pre(last[last.length-1]);
 
 		//html += "<img id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
-		html += "<span id='"+form.def.path+"-lnk' class='link'> "+form.def.name+"</span>\n";
+		html += "<span id='"+form.def.name+"-lnk' class='link'> "+form.name+"</span>\n";
 		html += "</div>\n";
 
 		return(html);
@@ -486,10 +482,7 @@ class Folder
 		}
 
 		if (next == null)
-		{
-			console.log("this: "+this.name+" could not find <"+path[0]+">");
 			return(null);
-		}
 
 		path.shift();
 		return(next.findFolder(path));
@@ -502,7 +495,12 @@ class Folder
 
 	print() : void
 	{
-		console.log(this.name);
+		console.log("");
+		console.log("Folder: "+this.name);
+
+		for(let i = 0; i < this.forms.length; i++)
+			console.log("Form: "+this.forms[i].name);
+
 		for(let i = 0; i < this.folders.length; i++)
 			this.folders[i].print();
 	}
