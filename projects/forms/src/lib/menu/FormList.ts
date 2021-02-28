@@ -31,7 +31,6 @@ export class FormList implements AfterViewInit
 	private ready:boolean = false;
 	private formsdef:FormInstance[];
 	private preferences:Preferences = new Preferences();
-	private folders:Map<string,Element> = new Map<string,Element>();
 
     @Input('root') name: string = "/";
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
@@ -72,7 +71,7 @@ export class FormList implements AfterViewInit
 		let path:string = "";
 		folder = folder.trim();
 		let parts:string[] = folder.split("/");
-
+/*
 		let elem:Element = this.folders.get("/");
 		if (elem != null && !elem.classList.contains("folder-open"))
 			this.toggle({target: elem});
@@ -85,6 +84,7 @@ export class FormList implements AfterViewInit
 			if (elem != null && !elem.classList.contains("folder-open"))
 				this.toggle({target: elem});
 		}
+*/
 	}
 
 
@@ -93,6 +93,7 @@ export class FormList implements AfterViewInit
 		let html:string = "";
 
 		html += this.folder(path,root,level,last);
+		html += "<div class='folder-content' id='"+path+"-content'>";
 
 		if (path == "/") path = "";
 		for(let i = 0; i < root.folders.length; i++)
@@ -103,6 +104,7 @@ export class FormList implements AfterViewInit
 			html += this.print(path+"/"+folder.name,folder,level+1,last);
 		}
 
+		html += "</div>";
 		return(html);
 	}
 
@@ -141,24 +143,25 @@ export class FormList implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
-		this.root.setName(this.name);
 		this.html = this.elem?.nativeElement as HTMLDivElement;
 
 		this.html.innerHTML = this.page;
 		let folders:HTMLCollectionOf<Element> = this.html.getElementsByClassName("folder");
 
-		console.log("found "+folders.length+" folders");
-
-		for(let i = 0; i < folders.length; i++)
-		{
-			let folder:Element = folders.item(i);
-			folder.addEventListener("click", this.toggle);
-		}
-
 		for (let i = 0; i < folders.length; i++)
 		{
-			let folder:Element = folders.item(i);
-			this.folders.set(folder.id,folder);
+			let container:Element = folders.item(i);
+			let content:Element = document.getElementById(container.id+"-content");
+			let img:Element = container.querySelector("[id='"+container.id+"-img']");
+			let lnk:Element = container.querySelector("[id='"+container.id+"-lnk']");
+
+			let folder:Folder = this.root.findFolder(container.id.split("/"));
+
+			folder.img = img;
+			folder.lnk = lnk;
+			folder.content = content;
+			folder.img.addEventListener("click",(event) => this.toggle(event));
+			folder.lnk.addEventListener("click",(event) => this.toggle(event));
 		}
 
 		let forms:HTMLCollectionOf<Element> = this.html.getElementsByClassName("form");
@@ -170,17 +173,18 @@ export class FormList implements AfterViewInit
 		}
 
 		//this.open("/");
-		//this.folders.get("/").innerHTML = this.name;
+		this.root.lnk.innerHTML = this.name;
 		this.ready = true;
 	}
 
 
 	private toggle(event:any) : void
 	{
-		let folder:HTMLElement = event.target;
-		let entry:Element = folder.parentElement.parentElement;
-		entry.children[1].classList.toggle('active');
-		folder.classList.toggle("folder-open");
+		let fname:string = event.target.id;
+		fname = fname.substring(0,fname.length-4);
+
+		let folder:Folder = this.root.findFolder(fname.split("/"));
+		folder.content.classList.toggle("active");
 	}
 
 
@@ -197,7 +201,7 @@ export class FormList implements AfterViewInit
 		let lc:string = " <span class='vln'></span>\n";
 		if  (last) lc = " <span class='end'></span>\n";
 
-		html += "<div id='img-"+path+"' class='folder'>\n";
+		html += "<div id='"+path+"' class='folder'>\n";
 
 		if (level > 0)
 		{
@@ -222,8 +226,8 @@ export class FormList implements AfterViewInit
 			html += "</span>\n";
 		}
 
-		html += "<img id='img-"+path+"' src='/assets/open.jpg'>\n";
-		html += "<span id='link-"+path+"' class='txt'>"+root.name+"</span>\n";
+		html += "<img id='"+path+"-img' src='/assets/open.jpg'>\n";
+		html += "<span id='"+path+"-lnk' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
 		for(let i = 0; i < root.forms.length; i++)
@@ -257,6 +261,11 @@ export class FormList implements AfterViewInit
 			position: relative;
 			border-collapse: collapse;
     	}
+
+		.folder-content
+		{
+			display: none;
+		}
 
 		.lct
 		{
@@ -373,12 +382,11 @@ class Folder
 	forms:Form[] = [];
 	folders:Folder[] = [];
 
-	constructor(name:string)
-	{
-		this.name = name;
-	}
+	img:Element;
+	lnk:Element;
+	content:Element;
 
-	setName(name:string) : void
+	constructor(name:string)
 	{
 		this.name = name;
 	}
@@ -396,9 +404,40 @@ class Folder
 		return(folder);
 	}
 
+	findFolder(path:string[]) : Folder
+	{
+		while(path[0] == "") path.shift();
+		if (path.length == 0) return(this);
+
+		let next:Folder = null;
+		for(let i = 0; i < this.folders.length; i++)
+		{
+			if (this.folders[i].name == path[0])
+			{
+				next = this.folders[i];
+				break;
+			}
+		}
+
+		if (next == null)
+		{
+			console.log("this: "+this.name+" could not find <"+path[0]+">");
+			return(null);
+		}
+
+		path.shift();
+		return(next.findFolder(path));
+	}
 
 	addForm(name:string, form:FormInstance) : void
 	{
 		this.forms.push({name:name, def:form});
+	}
+
+	print() : void
+	{
+		console.log(this.name);
+		for(let i = 0; i < this.folders.length; i++)
+			this.folders[i].print();
 	}
 }
