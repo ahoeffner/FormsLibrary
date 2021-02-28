@@ -52,6 +52,7 @@ export class Indigo extends defaultTheme
 export class Grey extends defaultTheme
 {
     public name:string = "grey";
+    public link:string = "grey";
     public topbar:string = "grey";
     public foldertree:string = "grey";
 }

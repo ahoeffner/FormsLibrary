@@ -348,6 +348,7 @@ export class FormList implements AfterViewInit
 			white-space: nowrap;
 			display: inline-block;
 			vertical-align: bottom;
+			color: `+this.preferences.colors.foldertree+`;
 		}
 
 		.off
