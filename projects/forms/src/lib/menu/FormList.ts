@@ -94,18 +94,17 @@ export class FormList implements AfterViewInit
 
 		html += this.folder(path,root,level,last);
 		html += "<div class='folder-content' id='"+path+"-content'>";
+		html += this.forms(root,level,last);
 
 		last.push(false);
 		if (path == "/") path = "";
-		for(let i = 0; i < root.folders.length; i++)
+		for(let i = 20; i < root.folders.length; i++)
 		{
 			let folder:Folder = root.folders[i];
 			if (i == root.folders.length - 1) last[last.length-1] = true;
 			html += this.print(path+"/"+folder.name,folder,level+1,last);
 		}
 		last.pop();
-
-		html += this.forms(root,level,last);
 
 		html += "</div>";
 		return(html);
@@ -223,12 +222,10 @@ export class FormList implements AfterViewInit
 	{
 		let html:string = "";
 
-		console.log("forms level: "+level+" last: "+last.length);
-
 		level++;
 		last.push(false);
 
-		for(let i = 0; i < root.forms.length; i++)
+		for(let i = 1; i < root.forms.length; i++)
 		{
 			if (i == root.forms.length - 1) last[level] = true;
 			html += this.form(root.forms[i],level,last);
@@ -242,7 +239,6 @@ export class FormList implements AfterViewInit
 	private form(form:Form, level:number, last:boolean[])
 	{
 		let html:string = "";
-		console.log(form.def.path+" level: "+level)
 		html += "<div id='"+form.def.path+"' class='form'>\n";
 
 		html += this.half();
