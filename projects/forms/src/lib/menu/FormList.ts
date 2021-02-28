@@ -53,7 +53,7 @@ export class FormList implements AfterViewInit
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
 		this.page += "    <div class='folder-tree'>\n";
-		this.page += this.print("/",this.root,0,[]);
+		this.page += this.print("/",this.root,0,[true]);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
 		this.page += "</html>\n";
@@ -105,7 +105,7 @@ export class FormList implements AfterViewInit
 		}
 		last.pop();
 
-		//html += this.forms(root,level);
+		html += this.forms(root,level,last);
 
 		html += "</div>";
 		return(html);
@@ -201,44 +201,16 @@ export class FormList implements AfterViewInit
 	private folder(path:string, root:Folder, level:number, last:boolean[]) : string
 	{
 		let html:string = "";
-
-		if (root.name == "sub1")
-		{
-			console.log(path+" level: "+level);
-			for(let i = 0; i < last.length; i++)
-			{
-				console.log("i: "+i+" last: "+last[i]);
-			}
-		}
-
 		html += "<div id='"+path+"' class='folder'>\n";
 
 		if (level > 0)
 		{
-			html += "<span class='ind'></span>\n";
+			html += this.half();
+			for(let i = 1; i < level; i++)
+				html += this.indent(last[i]);
 		}
 
-		for(let i = 1; i < level; i++)
-		{
-			html += "<span class='lct'>\n";
-			html += " <span class='vln'></span>\n";
-			html += " <span class='vln'></span>\n";
-			html += "</span>\n";
-			html += "<span class='ind'></span>\n";
-		}
-
-		let lc:string = " <span class='vln'></span>\n";
-		if  (last[last.length-1]) lc = " <span class='end'></span>\n";
-
-		if (level > 0)
-		{
-			html += "<span class='lct'>\n";
-			html += " <span class='off'></span>\n";
-			html += " <span class='cnr'></span>\n";
-			html += lc;
-			html += "</span>\n";
-		}
-
+		if (level > 0) html += this.pre(last[level]);
 		html += "<img id='"+path+"-img' src='/assets/open.jpg'>\n";
 		html += "<span id='"+path+"-lnk' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
@@ -247,58 +219,89 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private forms(root:Folder, level:number) : string
+	private forms(root:Folder, level:number, last:boolean[]) : string
 	{
 		let html:string = "";
 
+		console.log("forms level: "+level+" last: "+last.length);
+
+		level++;
+		last.push(false);
+
 		for(let i = 0; i < root.forms.length; i++)
 		{
-			let last:boolean = false;
-			if (i == root.forms.length - 1) last = true;
+			if (i == root.forms.length - 1) last[level] = true;
 			html += this.form(root.forms[i],level,last);
 		}
+
+		last.pop();
+		return(html);
+	}
+
+
+	private form(form:Form, level:number, last:boolean[])
+	{
+		let html:string = "";
+		console.log(form.def.path+" level: "+level)
+		html += "<div id='"+form.def.path+"' class='form'>\n";
+
+		html += this.half();
+		for(let i = 1; i < level; i++)
+			html += this.indent(last[i]);
+
+		if (level > 0) html += this.pre(last[last.length-1]);
+
+		html += "<img id='"+form.def.path+"-img' src='/assets/open.jpg'>\n";
+		html += "<span id='"+form.def.path+"-lnk' class='txt'>"+form.def.name+"</span>\n";
+		html += "</div>\n";
 
 		return(html);
 	}
 
 
-	private form(form:Form, level:number, last:boolean)
+	private pre(last:boolean) : string
 	{
 		let html:string = "";
 
-		let lc:string = " <span class='vln'></span>\n";
-		if  (last) lc = " <span class='end'></span>\n";
+		html += "<span class='lct'>\n";
+		html += " <span class='off'></span>\n";
+		html += " <span class='cnr'></span>\n";
 
-		html += "<div id='"+form.def.path+"' class='form'>\n";
+		if (last) html += "<span class='end'></span>\n";
+		else	  html += "<span class='vln'></span>\n";
 
-		if (level > 0)
+		html += "</span>\n";
+
+		return(html);
+	}
+
+
+	private indent(skip:boolean) : string
+	{
+		let html:string = "";
+		if (skip)
 		{
-			html += "<span class='ind'></span>\n";
+			html += "<span class='lct'>\n";
+			html += "</span>\n";
+			html += " <span class='ind'></span>\n";
 		}
-
-		for(let i = 0; i < level; i++)
+		else
 		{
 			html += "<span class='lct'>\n";
 			html += " <span class='vln'></span>\n";
 			html += " <span class='vln'></span>\n";
+			html += " <span class='vln'></span>\n";
 			html += "</span>\n";
-			html += "<span class='ind'></span>\n";
+			html += " <span class='ind'></span>\n";
 		}
+		return(html);
+	}
 
-		if (level > 0)
-		{
-			html += "<span class='lct'>\n";
-			html += " <span class='off'></span>\n";
-			html += " <span class='cnr'></span>\n";
-			html += lc;
-			html += "</span>\n";
-		}
 
-		html += "<span class='ind'></span>\n";
-		html += "<img id='"+form.def.path+"-img' src='/assets/open.jpg'>\n";
-		html += "<span id='"+form.def.path+"-lnk' class='txt'>"+form.def.name+"</span>\n";
-		html += "</div>\n";
-
+	private half() : string
+	{
+		let html:string = "";
+		html += " <span class='ind'></span>\n";
 		return(html);
 	}
 
@@ -388,16 +391,6 @@ export class FormList implements AfterViewInit
 		.ind
 		{
 			width: 12px;
-			height: 24px;
-			white-space: nowrap;
-			pointer-events:none;
-			display: inline-block;
-			vertical-align: middle;
-		}
-
-		.hind
-		{
-			width: 7px;
 			height: 24px;
 			white-space: nowrap;
 			pointer-events:none;
