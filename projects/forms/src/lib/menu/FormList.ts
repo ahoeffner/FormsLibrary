@@ -53,7 +53,7 @@ export class FormList implements AfterViewInit
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
 		this.page += "    <div class='folder-tree'>\n";
-		this.page += this.print("/",this.root,0,[true]);
+		this.page += this.print("/",this.root,0,[true],true);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
 		this.page += "</html>\n";
@@ -88,29 +88,36 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private print(path:string, root:Folder, level:number, last:boolean[]) : string
+	private print(path:string, root:Folder, level:number, last:boolean[], eol:boolean) : string
 	{
 		let html:string = "";
 
-		html += this.folder(path,root,level,last);
+		html += this.folder(path,root,level,last,eol);
 		html += "<div class='folder-content' id='"+path+"-content'>";
 
+		level++;
 		last.push(false);
+		let neol:boolean = false;
 		if (path == "/") path = "";
+		let subs:number = root.folders.length;
 
-		for(let i = 0; i < root.folders.length; i++)
+		for(let i = 0; i < subs; i++)
 		{
 			let folder:Folder = root.folders[i];
-			if (i == root.folders.length - 1) last[last.length-1] = true;
+			let forms:number = folder.forms.length;
 
-			if (folder.forms.length > 0) last[last.length-1] = false;
-			html += this.print(path+"/"+folder.name,folder,level+1,last);
+			if (i == subs - 1)
+			{
+				neol = eol;
+				if (forms == 0) last[level] = true;
+			}
+
+			html += this.print(path+"/"+folder.name,folder,level,last,neol);
 		}
-		last.pop();
 
-		html += "<div>";
+		last[level] = false;
 		html += this.forms(root,level,last);
-		html += "</div>";
+		last.pop();
 
 		html += "</div>";
 		return(html);
@@ -203,10 +210,12 @@ export class FormList implements AfterViewInit
 	}
 
 
-	private folder(path:string, root:Folder, level:number, last:boolean[]) : string
+	private folder(path:string, root:Folder, level:number, last:boolean[], eol:boolean) : string
 	{
 		let html:string = "";
 		html += "<div id='"+path+"' class='folder'>\n";
+
+		console.log(path+" level: "+level+" eol: "+eol);
 
 		if (level > 0)
 		{
@@ -228,16 +237,12 @@ export class FormList implements AfterViewInit
 	{
 		let html:string = "";
 
-		level++;
-		last.push(false);
-
 		for(let i = 1; i < root.forms.length; i++)
 		{
 			if (i == root.forms.length - 1) last[level] = true;
 			html += this.form(root.forms[i],level,last);
 		}
 
-		last.pop();
 		return(html);
 	}
 
