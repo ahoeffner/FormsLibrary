@@ -53,7 +53,7 @@ export class FormList implements AfterViewInit
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
-		this.page += "    <div id='Tree'>\n";
+		this.page += "    <div id='FolderList'>\n";
 		this.page += this.print("/",this.root,0,true);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
@@ -195,7 +195,7 @@ export class FormList implements AfterViewInit
 		let lc:string = " <span class='vln'></span>\n";
 		if  (last) lc = " <span class='end'></span>\n";
 
-		html += "<div class='tree'>\n";
+		html += "<div class='folder'>\n";
 
 		if (level > 0)
 		{
@@ -220,7 +220,7 @@ export class FormList implements AfterViewInit
 			html += "</span>\n";
 		}
 
-		html += "<span class='folder'></span>\n";
+		html += "<img src='/assets/open.jpg'>\n";
 		html += "<span id='"+path+"' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
@@ -245,20 +245,15 @@ export class FormList implements AfterViewInit
 	{
 		let styles:string =
 		`
-    	.tree
+    	.folder
     	{
 			margin: 0;
 			padding: 0;
 			font-size: 0;
+			cursor: pointer;
+			position: releative;
 			border-collapse: collapse;
     	}
-
-		img
-		{
-			width: 24px;
-			height: 24px;
-			vertical-align: middle;
-		}
 
 		.lct
 		{
@@ -272,7 +267,7 @@ export class FormList implements AfterViewInit
 		.txt
 		{
 			width: 16px;
-			height: 19px;
+			height: 21px;
 			font-size: 16px;
 			white-space: nowrap;
 			display: inline-block;
@@ -311,33 +306,11 @@ export class FormList implements AfterViewInit
 			display: block;
 		}
 
-		.folder
+		img
 		{
 			width: 24px;
 			height: 24px;
-			cursor: pointer;
 			vertical-align: middle;
-			color: `+this.preferences.colors.foldertree+`;
-		}
-
-		.folder::before
-		{
-			width: 24px;
-			height: 24px;
-			content: "";
-			display: inline-block;
-			background-size: 100% 100%;
-			background-image:url('/assets/closed.jpg');
-		}
-
-		.folder-open::before
-		{
-			width:24px;
-			height: 24px;
-			content: "";
-			display: inline-block;
-			background-size: 100% 100%;
-			background-image:url('/assets/open.jpg');
 		}
 
 		.ind
