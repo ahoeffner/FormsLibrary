@@ -253,7 +253,7 @@ export class FormList implements AfterViewInit
 		if (level > 0) html += this.pre(last[last.length-1]);
 
 		//html += "<img id='"+form.def.path+"-img' src='/assets/open.jpg'>\n";
-		html += "<span id='"+form.def.path+"-lnk' class='link'> - "+form.def.name+"</span>\n";
+		html += "<span id='"+form.def.path+"-lnk' class='link'> "+form.def.name+"</span>\n";
 		html += "</div>\n";
 
 		return(html);
