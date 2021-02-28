@@ -249,8 +249,9 @@ export class FormList implements AfterViewInit
     	{
 			margin: 0;
 			padding: 0;
+			width: 100%;
+			height: 100%;
 			font-size: 0;
-			cursor: pointer;
 			position: relative;
 			border-collapse: collapse;
     	}
@@ -259,6 +260,7 @@ export class FormList implements AfterViewInit
 		{
 			width: 16px;
 			height: 24px;
+			pointer-events:none;
 			white-space: nowrap;
 			display: inline-block;
 			vertical-align: middle;
@@ -269,6 +271,7 @@ export class FormList implements AfterViewInit
 			width: 16px;
 			height: 21px;
 			font-size: 16px;
+			cursor: pointer;
 			white-space: nowrap;
 			display: inline-block;
 			vertical-align: bottom;
@@ -279,6 +282,7 @@ export class FormList implements AfterViewInit
 			width: 16px;
 			height: 4px;
 			display: block;
+			pointer-events:none;
 			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
@@ -287,6 +291,7 @@ export class FormList implements AfterViewInit
 			width: 16px;
 			height: 12px;
 			display: block;
+			pointer-events:none;
 			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
@@ -295,6 +300,7 @@ export class FormList implements AfterViewInit
 			width: 16px;
 			height: 8px;
 			display: block;
+			pointer-events:none;
 			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 			border-bottom: 1px solid `+this.preferences.colors.foldertree+`;
 		}
@@ -304,13 +310,7 @@ export class FormList implements AfterViewInit
 			width: 16px;
 			height: 12px;
 			display: block;
-		}
-
-		img
-		{
-			width: 24px;
-			height: 24px;
-			vertical-align: middle;
+			pointer-events:none;
 		}
 
 		.ind
@@ -318,7 +318,16 @@ export class FormList implements AfterViewInit
 			width: 12px;
 			height: 24px;
 			white-space: nowrap;
+			pointer-events:none;
 			display: inline-block;
+			vertical-align: middle;
+		}
+
+		img
+		{
+			width: 24px;
+			height: 24px;
+			cursor: pointer;
 			vertical-align: middle;
 		}
 
@@ -326,6 +335,7 @@ export class FormList implements AfterViewInit
 		{
 			width: 16px;
 			height: 19px;
+			cursor: pointer;
 			font-size: 16px;
 			margin-left: 8px;
 			font-style: italic;
@@ -340,9 +350,8 @@ export class FormList implements AfterViewInit
 			margin: 0;
 			padding: 0;
 			font-size: 0;
-			border-collapse: collapse;
 			display: none;
-			cursor: pointer;
+			border-collapse: collapse;
 		}
 
 		.active
