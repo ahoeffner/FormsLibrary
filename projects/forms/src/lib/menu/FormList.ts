@@ -68,23 +68,18 @@ export class FormList implements AfterViewInit
 			return;
 		}
 
-		let path:string = "";
 		folder = folder.trim();
 		let parts:string[] = folder.split("/");
-/*
-		let elem:Element = this.folders.get("/");
-		if (elem != null && !elem.classList.contains("folder-open"))
-			this.toggle({target: elem});
 
-		for(let p = 1; p < parts.length; p++)
+		let current:Folder = this.root;
+		for(let i = 0; i < parts.length; i++)
 		{
-			path = path + "/" + parts[p];
-			elem = this.folders.get(path);
+			current = current.findFolder([parts[i]]);
+			if (current == null) return;
 
-			if (elem != null && !elem.classList.contains("folder-open"))
-				this.toggle({target: elem});
+			if (!current.content.classList.contains("active"))
+				current.content.classList.toggle("active");
 		}
-*/
 	}
 
 
@@ -180,10 +175,11 @@ export class FormList implements AfterViewInit
 		for(let i = 0; i < forms.length; i++)
 		{
 			let form:Element = forms.item(i);
-			form.addEventListener("click", (event) => this.show(event));
+			let lnk:Element = form.querySelector("[id='"+form.id+"-lnk']");
+			lnk.addEventListener("click", (event) => this.show(event));
 		}
 
-		//this.open("/");
+		this.open("/");
 		this.root.lnk.innerHTML = this.name;
 		this.ready = true;
 	}
@@ -201,8 +197,13 @@ export class FormList implements AfterViewInit
 
 	private show(event:any) : void
 	{
-		let form:HTMLElement = event.target.id;
-		this.app.showform(form,false);
+		let fname:string = event.target.id;
+		fname = fname.substring(0,fname.length-4);
+
+		let pos:number = fname.lastIndexOf("/");
+		if (pos >= 0) fname = fname.substring(pos+1);
+
+		this.app.showform(fname,false);
 	}
 
 
