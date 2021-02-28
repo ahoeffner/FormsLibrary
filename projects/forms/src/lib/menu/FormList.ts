@@ -94,17 +94,23 @@ export class FormList implements AfterViewInit
 
 		html += this.folder(path,root,level,last);
 		html += "<div class='folder-content' id='"+path+"-content'>";
-		html += this.forms(root,level,last);
 
 		last.push(false);
 		if (path == "/") path = "";
-		for(let i = 20; i < root.folders.length; i++)
+
+		for(let i = 0; i < root.folders.length; i++)
 		{
 			let folder:Folder = root.folders[i];
 			if (i == root.folders.length - 1) last[last.length-1] = true;
+
+			if (folder.forms.length > 0) last[last.length-1] = false;
 			html += this.print(path+"/"+folder.name,folder,level+1,last);
 		}
 		last.pop();
+
+		html += "<div>";
+		html += this.forms(root,level,last);
+		html += "</div>";
 
 		html += "</div>";
 		return(html);
@@ -243,11 +249,13 @@ export class FormList implements AfterViewInit
 
 		html += this.half();
 		for(let i = 1; i < level; i++)
-			html += this.indent(last[i]);
+		{
+			html += this.indent(false);
+		}
 
 		if (level > 0) html += this.pre(last[last.length-1]);
 
-		html += "<img id='"+form.def.path+"-img' src='/assets/open.jpg'>\n";
+		//html += "<img id='"+form.def.path+"-img' src='/assets/open.jpg'>\n";
 		html += "<span id='"+form.def.path+"-lnk' class='txt'>"+form.def.name+"</span>\n";
 		html += "</div>\n";
 
@@ -416,12 +424,12 @@ export class FormList implements AfterViewInit
 			color: `+this.preferences.colors.link+`;
 		}
 
-		.forms
+		.form
 		{
 			margin: 0;
 			padding: 0;
 			font-size: 0;
-			display: none;
+			display: block;
 			border-collapse: collapse;
 		}
 
