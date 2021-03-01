@@ -2,6 +2,7 @@ import { WindowOptions } from "../../public-api";
 import { FormDefinitions } from "./FormDefinitions";
 import { FormDefinition } from "../forms/FormsDefinition";
 
+
 export const FORM = (component:any, title:string, path:string, navigable?:boolean, windowopts?:WindowOptions) =>
 {
     function def(_target:any)

@@ -7,6 +7,7 @@ import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
 import { DefaultMenu } from "../menu/DefaultMenu";
+import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { BlockDefinition } from '../annotations/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -93,7 +94,7 @@ export class FormImpl
     }
 
 
-    public setBlockDefinitions() : void
+    public newForm(container:Container) : void
     {
         let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
         if (blocks == null) return;
@@ -109,6 +110,8 @@ export class FormImpl
             if (block == null) window.alert("Cannot create instance of "+blocks[i].alias);
             this.blocks.set(blocks[i].alias,block);
         }
+
+        this.app.newForm(this);
     }
 
 

@@ -156,6 +156,12 @@ export class ApplicationImpl
     }
 
 
+    public newForm(impl:FormImpl) : void
+    {
+        console.log("Newform: "+impl.name);
+    }
+
+
     public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
     {
         console.log("Preform: "+impl.name);
