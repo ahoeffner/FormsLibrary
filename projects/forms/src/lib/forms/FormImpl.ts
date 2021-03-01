@@ -15,10 +15,13 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 
 export class FormImpl
 {
-    private menu:Menu;
-    private name:string;
-    private path:string;
-    private title:string;
+    private static id:number = 0;
+
+    private menu$:Menu;
+    private name$:string;
+    private path$:string;
+    private guid$:number;
+    private title$:string;
     private root:FormImpl;
     private win:ModalWindow;
     private inst:InstanceID;
@@ -33,46 +36,53 @@ export class FormImpl
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
 
-    constructor(private form:Form)
+    constructor(private form$:Form)
     {
+        this.guid$ = FormImpl.id++;
         let utils:Utils = new Utils();
-        this.name = utils.getName(form);
+        this.name$ = utils.getName(form$);
     }
 
 
-    public getForm() : Form
+    public get guid() : number
     {
-        return(this.form);
+        return(this.guid$);
     }
 
 
-    public getName() : string
+    public get form() : Form
     {
-        return(this.name);
+        return(this.form$);
     }
 
 
-    public setPath(path:string) : void
+    public get name() : string
     {
-        this.path = path;
+        return(this.name$);
     }
 
 
-    public getPath() : string
+    public set path(path:string)
     {
-        return(this.path);
+        this.path$ = path;
     }
 
 
-    public setTitle(title:string) : void
+    public get path() : string
     {
-        this.title = title;
+        return(this.path$);
     }
 
 
-    public getTitle() : string
+    public set title(title:string)
     {
-        return(this.title);
+        this.title$ = title;
+    }
+
+
+    public get title() : string
+    {
+        return(this.title$);
     }
 
 
@@ -85,7 +95,7 @@ export class FormImpl
 
     public setBlockDefinitions() : void
     {
-        let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
+        let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name$);
         if (blocks == null) return;
 
         for(let i = 0; i < blocks.length; i++)
@@ -104,14 +114,14 @@ export class FormImpl
 
     public setMenu(menu:Menu) : void
     {
-        this.menu = menu;
+        this.menu$ = menu;
         this.ddmenu = this.app.createmenu(menu);
     }
 
 
     public getMenu() : Menu
     {
-        return(this.menu);
+        return(this.menu$);
     }
 
 
@@ -296,8 +306,9 @@ export class FormImpl
             else
             {
                 //chain, started from form, was cancelled
-                this.parent.stack.delete(this.name);
+                this.parent.stack.delete(this.name$);
                 this.app.closeInstance(this.inst,true);
+                this.app.showTitle(this.root.title);
             }
 
             return;
@@ -320,10 +331,10 @@ export class FormImpl
 
         //child closed
         this.app.closeInstance(this.inst,destroy);
-        if (destroy) this.parent.stack.delete(this.name);
+        if (destroy) this.parent.stack.delete(this.name$);
 
-        let pinst:InstanceID = null;
-        if (this.parent != null) pinst = this.parent.getInstanceID();
+        let pinst:InstanceID = this.parent.getInstanceID();
+        this.app.showTitle(this.parent.title);
 
         if (pinst != null)
         {
@@ -343,7 +354,7 @@ export class FormImpl
 
         this.stack.forEach((id) =>
         {
-            stack.push(id.impl.getForm())
+            stack.push(id.impl.form)
         });
 
         return(stack);

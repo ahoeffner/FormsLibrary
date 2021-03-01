@@ -24,6 +24,7 @@ import { FormDefinitions } from "../annotations/FormDefinitions";
 export class ApplicationImpl
 {
     private title:string = null;
+    private atitle:string = null;
     private marea:MenuArea = null;
     private ready:boolean = false;
     private formlist:FormList = null;
@@ -64,7 +65,7 @@ export class ApplicationImpl
 
     public setTitle(title:string)
     {
-        this.title = title;
+        this.atitle = title;
         this.showTitle(title);
     }
 
@@ -91,8 +92,12 @@ export class ApplicationImpl
 
     public showTitle(title:string) : void
     {
-        if (title == null) title = this.title;
+        if (title == null)
+            title = this.atitle;
+
+        this.title = title;
         document.title = title;
+        this.app["_setTitle"](title);
     }
 
 
@@ -152,14 +157,14 @@ export class ApplicationImpl
     {
         if (!impl.initiated())
         {
-            impl.setPath(formdef.path);
-            impl.setTitle(formdef.title);
+            impl.path = formdef.path;
+            impl.title = formdef.title;
             impl.initiated(true);
         }
 
         impl.setParameters(parameters);
-        this.showTitle(impl.getTitle());
-        if (path) this.showPath(impl.getName(),impl.getPath());
+        this.showTitle(impl.title);
+        if (path) this.showPath(impl.name,impl.path);
     }
 
 
@@ -228,7 +233,7 @@ export class ApplicationImpl
     {
         if (impl == null) return;
         this.postform(impl,destroy);
-        this.formsctl.closeform(impl.getName(),destroy);
+        this.formsctl.closeform(impl.name,destroy);
         DropDownMenu.setForm(this.state.currentmenu,null);
         this.showPath("","");
         this.showTitle(null);

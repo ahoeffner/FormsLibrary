@@ -287,7 +287,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		}
 
 		let impl:FormImpl = Protected.get(this.form.formref.instance);
-		ddmenu.getMenu().getHandler().onFormChange(impl.getForm());
+		ddmenu.getMenu().getHandler().onFormChange(impl.form);
 
 		this.minh = 100;
 		this.minw = this.menu.clientWidth + 50;

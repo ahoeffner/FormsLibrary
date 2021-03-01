@@ -46,8 +46,6 @@ export class InstanceControl
         }
 
         impl.setInstanceID(id);
-        impl.setPath(def.path);
-        impl.setTitle(def.title);
 
         return(id);
     }

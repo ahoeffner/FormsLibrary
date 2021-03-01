@@ -32,7 +32,7 @@ export class Form implements OnInit, AfterViewInit
 
     public setTitle(title:string) : void
     {
-        this.impl.setTitle(title);
+        this.impl.title = title;
     }
 
     public setMenu(menu:Menu)
