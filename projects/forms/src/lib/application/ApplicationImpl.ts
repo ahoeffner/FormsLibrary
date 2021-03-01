@@ -71,7 +71,7 @@ export class ApplicationImpl
 
     public close() : void
     {
-        this.closeform(this.state.form.getForm(),true);
+        this.closeform(this.state.form,true);
     }
 
 
@@ -148,7 +148,7 @@ export class ApplicationImpl
     }
 
 
-    public prepare(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
+    public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
     {
         if (!impl.initiated())
         {
@@ -160,6 +160,12 @@ export class ApplicationImpl
         impl.setParameters(parameters);
         this.showTitle(impl.getTitle());
         if (path) this.showPath(impl.getName(),impl.getPath());
+    }
+
+
+    public postform(impl:FormImpl, destroy:boolean) : void
+    {
+
     }
 
 
@@ -176,19 +182,17 @@ export class ApplicationImpl
             if (this.state.form.getModalWindow() != null)
                 return;
 
-            this.closeform(this.state.form.getForm(),false);
+            this.closeform(this.state.form,false);
         }
 
-        if (destroy)
-            this.closeform(form,true);
-
+        if (destroy) this.formsctl.closeform(form,destroy);
         let formdef:FormInstance = this.getFormInstance(form);
 
         if (formdef == null) return;
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
         this.state.form = impl;
-        this.prepare(impl,parameters,formdef,true);
+        this.preform(impl,parameters,formdef,true);
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
         if (fmenu != null)
@@ -220,10 +224,11 @@ export class ApplicationImpl
     }
 
 
-    public closeform(form:any, destroy:boolean) : void
+    public closeform(impl:FormImpl, destroy:boolean) : void
     {
-        if (form == null) return;
-        this.formsctl.closeform(form,destroy);
+        if (impl == null) return;
+        this.postform(impl,destroy);
+        this.formsctl.closeform(impl.getName(),destroy);
         DropDownMenu.setForm(this.state.currentmenu,null);
         this.showPath("","");
         this.showTitle(null);
@@ -251,6 +256,7 @@ export class ApplicationImpl
 
     public closeInstance(id:InstanceID, destroy:boolean) : void
     {
+        this.postform(id.impl,destroy);
         this.instances.closeInstance(id,destroy);
     }
 

@@ -226,7 +226,7 @@ export class FormImpl
         }
 
         let inst:FormInstance = this.app.getInstance(id);
-        this.app.prepare(id.impl,parameters,inst,false);
+        this.app.preform(id.impl,parameters,inst,false);
 
         if (this.win != null)
         {
@@ -306,14 +306,14 @@ export class FormImpl
         if (!win)
         {
             //Normal behaivior
-            this.app.closeform(this.form,destroy);
+            this.app.closeform(this,destroy);
             return;
         }
 
         if (win && root)
         {
             //Root window
-            this.app.closeform(this.form,destroy);
+            this.app.closeform(this,destroy);
             this.win.close();
             return;
         }
