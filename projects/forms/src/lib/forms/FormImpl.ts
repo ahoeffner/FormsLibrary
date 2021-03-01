@@ -95,7 +95,7 @@ export class FormImpl
 
     public setBlockDefinitions() : void
     {
-        let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name$);
+        let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
         if (blocks == null) return;
 
         for(let i = 0; i < blocks.length; i++)

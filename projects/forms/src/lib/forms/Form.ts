@@ -13,7 +13,7 @@ export interface CallBack
 @Component({template: ''})
 
 
-export class Form implements Container, OnInit, AfterViewInit
+export class Form implements OnInit, AfterViewInit
 {
     private impl:FormImpl;
 
@@ -89,11 +89,12 @@ export class Form implements Container, OnInit, AfterViewInit
 
     public ngOnInit()
     {
-        this.impl.getApplication().setBuild(this);
+        this.impl.getApplication().setContainer();
     }
 
     public ngAfterViewInit(): void
     {
+        let container:Container = this.impl.getApplication().getContainer();
         this.impl.setBlockDefinitions();
    }
 }

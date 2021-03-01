@@ -4,19 +4,20 @@ import { Builder } from "../utils/Builder";
 
 export class ContainerControl
 {
-    private buiding:Container;
+    private container:Container;
 
     constructor(private builder:Builder) {}
 
 
-    public setBuild(form:any) : void
+    public setContainer(container?:Container) : void
     {
-        this.buiding = form;
+        if (container == null) container = new Container();
+        this.container = container;
     }
 
 
-    public getBuild() : any
+    public getContainer() : Container
     {
-        return(this.buiding);
+        return(this.container);
     }
 }

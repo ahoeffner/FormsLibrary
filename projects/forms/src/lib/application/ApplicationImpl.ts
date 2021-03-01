@@ -144,20 +144,21 @@ export class ApplicationImpl
     }
 
 
-    public setBuild(container:Container) : void
+    public setContainer(container?:Container) : void
     {
-        this.contctl.setBuild(container);
+        this.contctl.setContainer(container);
     }
 
 
-    public getBuild() : Container
+    public getContainer() : Container
     {
-        return(this.contctl.getBuild());
+        return(this.contctl.getContainer());
     }
 
 
     public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
     {
+        console.log("Preform: "+impl.name);
         if (!impl.initiated())
         {
             impl.path = formdef.path;
@@ -173,7 +174,7 @@ export class ApplicationImpl
 
     public postform(impl:FormImpl, destroy:boolean) : void
     {
-
+        console.log("Postform: "+impl.name+" destroy: "+destroy);
     }
 
 

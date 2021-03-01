@@ -1,4 +1,3 @@
-export interface Container
+export class Container
 {
-    close(detroy?:boolean) : void;
 }
