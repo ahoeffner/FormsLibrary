@@ -30,6 +30,11 @@ export class Form implements OnInit, AfterViewInit
         return(this.constructor.name);
     }
 
+    public setTitle(title:string) : void
+    {
+        this.impl.setTitle(title);
+    }
+
     public setMenu(menu:Menu)
     {
         this.impl.setMenu(menu);

@@ -123,17 +123,13 @@ export class FormsControl
     }
 
 
-    public display(formdef:FormInstance, parameters:Map<string,any>) : void
+    public display(formdef:FormInstance) : void
     {
         if (formdef == null || formdef.formref == null) return;
         let formsarea:HTMLElement = this.formarea.getFormsArea();
         let element:HTMLElement = (formdef.formref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
         let impl:FormImpl = Protected.get(formdef.formref.instance);
-
-        impl.setPath(formdef.path);
-        impl.setTitle(formdef.title);
-		impl.setParameters(parameters);
 
         if (formdef.windowopts == null)
         {
@@ -158,8 +154,6 @@ export class FormsControl
             win.setForm(formdef);
             win.setApplication(this.app);
         }
-
-        impl.onStart();
     }
 
 

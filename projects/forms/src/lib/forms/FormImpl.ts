@@ -26,6 +26,7 @@ export class FormImpl
     private app:ApplicationImpl;
     private callbackfunc:CallBack;
     private cancelled:boolean = false;
+    private initiated$:boolean = false;
     private ddmenu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
     private blocks:Map<string,Block> = new Map<string,Block>();
@@ -45,9 +46,21 @@ export class FormImpl
     }
 
 
+    public getName() : string
+    {
+        return(this.name);
+    }
+
+
     public setPath(path:string) : void
     {
         this.path = path;
+    }
+
+
+    public getPath() : string
+    {
+        return(this.path);
     }
 
 
@@ -57,12 +70,16 @@ export class FormImpl
     }
 
 
-    public onStart() : void
+    public getTitle() : string
     {
-        this.app.showTitle(this.title);
+        return(this.title);
+    }
 
-        if (this.parent == null)
-            this.app.showPath(this.name,this.path);
+
+    public initiated(done?:boolean) : boolean
+    {
+        if (done != null) this.initiated$ = done;
+        return(this.initiated$);
     }
 
 
@@ -211,11 +228,22 @@ export class FormImpl
 
         let inst:FormInstance = this.app.getInstance(id);
 
+        if (!id.impl.initiated())
+        {
+            id.impl.setPath(inst.path);
+            id.impl.setTitle(inst.title);
+            id.impl.initiated(true);
+        }
+
+        id.impl.setParameters(parameters);
+
         if (this.win != null)
         {
             this.win.newForm(inst);
             id.impl.setRoot(this.root);
-            id.impl.onStart();
+
+            if (this.parent == null)
+                this.app.showPath(id.impl.name,id.impl.title);
         }
         else
         {
@@ -224,8 +252,10 @@ export class FormImpl
             if (inst.windowdef != null) inst.windowopts = inst.windowdef;
             else                        inst.windowopts = {width: "", height: ""};
 
-            this.app.showinstance(inst,parameters);
+            this.app.showinstance(inst);
         }
+
+        this.app.showTitle(id.impl.title);
     }
 
 

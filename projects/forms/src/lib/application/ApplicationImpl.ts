@@ -172,7 +172,18 @@ export class ApplicationImpl
         if (formdef == null) return;
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
+        if (!impl.initiated())
+        {
+            impl.setPath(formdef.path);
+            impl.setTitle(formdef.title);
+            impl.initiated(true);
+        }
+        
+        impl.setParameters(parameters);
+
         this.state.form = impl;
+        this.showTitle(impl.getTitle());
+        this.showPath(impl.getName(),impl.getPath());
 
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
@@ -192,17 +203,17 @@ export class ApplicationImpl
         }
 
 
-        this.formsctl.display(formdef,parameters);
+        this.formsctl.display(formdef);
 
         if (this.formlist != null)
             this.formlist.open(formdef.path);
     }
 
 
-    public showinstance(inst:FormInstance, parameters:Map<string,any>) : void
+    public showinstance(inst:FormInstance) : void
     {
-        if (this.ready) this.formsctl.display(inst,parameters);
-        else setTimeout(() => {this.showinstance(inst,parameters);},10);
+        if (this.ready) this.formsctl.display(inst);
+        else setTimeout(() => {this.showinstance(inst);},10);
     }
 
 

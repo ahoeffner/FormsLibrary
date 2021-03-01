@@ -61,7 +61,7 @@ export class Grey extends defaultTheme
 export class Pink extends defaultTheme
 {
     public name:string = "pink";
-    public link:string = "#464646";
+    public link:string = "#ff4081";
     public topbar:string = "#ff4081";
     public foldertree:string = "#ff4081";
     public disabled:string = "#464646";
