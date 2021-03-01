@@ -60,8 +60,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         {
             this.menus.forEach((mopt) =>
             {
-                mopt.elem.classList.remove("disabled");
-                mopt.options.forEach((opt) => {opt.elem.children[0].classList.remove("disabled")});
+                mopt.elem.classList.remove("ddmenu-disabled");
+                mopt.options.forEach((opt) => {opt.elem.children[0].classList.remove("ddmenu-disabled")});
             });
             return;
         }
@@ -71,8 +71,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         if (mopt != null)
         {
-            mopt.elem.classList.remove("disabled");
-            mopt.options.forEach((opt) => {opt.elem.children[0].classList.remove("disabled")});
+            mopt.elem.classList.remove("ddmenu-disabled");
+            mopt.options.forEach((opt) => {opt.elem.children[0].classList.remove("ddmenu-disabled")});
             return;
         }
 
@@ -84,13 +84,13 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         mopt.options.forEach((opt) =>
         {
             if (opt.elem.id == option)
-                opt.elem.children[0].classList.remove("disabled");
+                opt.elem.children[0].classList.remove("ddmenu-disabled");
 
-            if (!opt.elem.children[0].classList.contains("disabled"))
+            if (!opt.elem.children[0].classList.contains("ddmenu-disabled"))
                 enabled++;
         });
 
-        if (enabled > 0) mopt.elem.classList.remove("disabled");
+        if (enabled > 0) mopt.elem.classList.remove("ddmenu-disabled");
     }
 
 
@@ -100,8 +100,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         {
             this.menus.forEach((mopt) =>
             {
-                mopt.elem.classList.add("disabled");
-                mopt.options.forEach((opt) => {opt.elem.children[0].classList.add("disabled")});
+                mopt.elem.classList.add("ddmenu-disabled");
+                mopt.options.forEach((opt) => {opt.elem.children[0].classList.add("ddmenu-disabled")});
             });
             return;
         }
@@ -111,8 +111,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         if (mopt != null)
         {
-            mopt.elem.classList.add("disabled");
-            mopt.options.forEach((opt) => {opt.elem.children[0].classList.add("disabled")});
+            mopt.elem.classList.add("ddmenu-disabled");
+            mopt.options.forEach((opt) => {opt.elem.children[0].classList.add("ddmenu-disabled")});
             return;
         }
 
@@ -124,13 +124,13 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         mopt.options.forEach((opt) =>
         {
             if (opt.elem.id == option)
-                opt.elem.children[0].classList.add("disabled");
+                opt.elem.children[0].classList.add("ddmenu-disabled");
 
-            if (!opt.elem.children[0].classList.contains("disabled"))
+            if (!opt.elem.children[0].classList.contains("ddmenu-disabled"))
                 enabled++;
         });
 
-        if (enabled == 0) mopt.elem.classList.add("disabled");
+        if (enabled == 0) mopt.elem.classList.add("ddmenu-disabled");
     }
 
 
@@ -153,14 +153,14 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         this.menu = menu;
         this.html.innerHTML = this.menuhtml();
-        let menus:HTMLCollectionOf<Element> = this.html.getElementsByClassName("menu");
-        let options:HTMLCollectionOf<Element> = this.html.getElementsByClassName("option");
+        let menus:HTMLCollectionOf<Element> = this.html.getElementsByClassName("ddmenu-menu");
+        let options:HTMLCollectionOf<Element> = this.html.getElementsByClassName("ddmenu-option");
 
         for(let i = 0; i < menus.length; i++)
         {
             let mopt:MenuOption = new MenuOption(menus[i].children[0]);
             this.menus.set(mopt.elem.id,mopt);
-            mopt.elem.classList.add("disabled");
+            mopt.elem.classList.add("dddmenu-isabled");
 			mopt.elem.addEventListener("click", (event) => {this.toggle(event)});
         }
 
@@ -170,7 +170,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             let menu:string = id.substring(0,id.lastIndexOf("/"));
 
             let opt:Option = this.options.get(id);
-            options[i].children[0].classList.add("disabled");
+            options[i].children[0].classList.add("ddmenu-disabled");
 			options[i].addEventListener("click", (event) => {this.action(event)});
             opt.elem = options[i];
 
@@ -184,7 +184,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
     public onEvent(event:any) : void
     {
-        if (!event.target.matches('.entry'))
+        if (!event.target.matches('.ddmenu-entry'))
         {
             this.closeall();
             Listener.remove(this.instance,"click");
@@ -199,7 +199,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         let link:Element = null;
         let text:Element = event.target;
 
-        if (text.classList.contains("linktext"))
+        if (text.classList.contains("ddmenu-linktext"))
         {
             link = text.parentElement;
         }
@@ -209,7 +209,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             text = text.children[0];
         }
 
-        if (text.classList.contains("disabled"))
+        if (text.classList.contains("ddmenu-disabled"))
             return;
 
         let opt:Option = this.options.get(link.id);
@@ -221,30 +221,30 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 	{
 		let menu:HTMLElement = event.target;
         let container:HTMLDivElement = menu.parentNode.children[1] as HTMLDivElement;
-        if (menu.classList.contains("disabled")) return;
+        if (menu.classList.contains("ddmenu-disabled")) return;
 
-        container.classList.toggle("show");
+        container.classList.toggle("ddmenu-show");
 
-        if (container.classList.contains("show"))
+        if (container.classList.contains("ddmenu-show"))
         {
             this.closeall(container);
             Listener.add(this.instance,this,"click");
         }
         else
         {
-            container.classList.remove("show");
+            container.classList.remove("ddmenu-show");
         }
 	}
 
 
     private closeall(except?:Element) : void
     {
-        let open:HTMLCollectionOf<Element> = this.html.getElementsByClassName("show");
+        let open:HTMLCollectionOf<Element> = this.html.getElementsByClassName("ddmenu-show");
 
         for(let i = 0; i < open.length; i++)
         {
             if (except == null || open[i].id != except.id)
-                open[i].classList.remove("show");
+                open[i].classList.remove("ddmenu-show");
         }
     }
 
@@ -260,7 +260,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 		html += "    </style>\n";
 		html += "  </head>\n";
 		html += "  <body>\n";
-		html += "    <span class='bar'>\n";
+		html += "    <span class='ddmenu-bar'>\n";
 		html += this.entries("","",this.menu.getEntries());
 		html += "    </span>\n";
         html += "  </body>\n";
@@ -278,12 +278,12 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         {
             let id:string = path+"/"+entries[i].name.toLowerCase();
 
-            html += indent+"<div class='menu'>\n";
-            html += indent+"  <button id='"+id+"' class='entry'";
+            html += indent+"<div class='ddmenu-menu'>\n";
+            html += indent+"  <button class='ddmenu-entry' id='"+id+"'";
             html += indent+" style='margin-left: 4px; margin-right: 4px'>\n";
             html += indent+entries[i].name;
             html += indent+"  </button>\n";
-            html += indent+"  <div id='"+id+"-content' class='content'>\n";
+            html += indent+"  <div class='ddmenu-content' id='"+id+"-content'>\n";
 
             if (entries[i].options != null)
             {
@@ -293,8 +293,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                     let oid:string = id+"/"+entry.name.toLowerCase();
                     this.options.set(oid,new Option(entries[i].options[f]));
 
-                    html += indent+"    <a class='option' id='"+oid+"'>\n";
-                    html += indent+"      <span class='linktext'>"+entry.name+"</span>\n";
+                    html += indent+"    <a class='ddmenu-option' id='"+oid+"'>\n";
+                    html += indent+"      <span class='ddmenu-linktext'>"+entry.name+"</span>\n";
                     html += indent+"    </a>\n";
                 }
             }
@@ -313,7 +313,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         let style:string =
         `
-            .bar
+            .ddmenu-bar
             {
                 width: 100%;
                 height: 100%;
@@ -323,7 +323,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 background: transparent;
             }
 
-            .entry
+            .ddmenu-entry
             {
                 border: none;
                 color: `+prefs.colors.buttontext+`;
@@ -333,18 +333,18 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 background: transparent;
             }
 
-            .disabled
+            .ddmenu-disabled
             {
                 color: `+prefs.colors.disabled+`;
             }
 
-            .menu
+            .ddmenu-menu
             {
                 position: relative;
                 display: inline-block;
             }
 
-            .content
+            .ddmenu-content
             {
                 z-index: 1;
                 display: none;
@@ -355,7 +355,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             }
 
-            .option
+            .ddmenu-option
             {
                 border: none;
                 color: black;
@@ -365,7 +365,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 background: transparent;
             }
 
-            .content .option
+            .ddmenu-content .ddmenu-option
             {
                 color: black;
                 display: block;
@@ -373,12 +373,12 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 text-decoration: none;
             }
 
-            .content .option:hover
+            .ddmenu-content .ddmenu-option:hover
             {
                 background-color: #ddd;
             }
 
-            .show
+            .ddmenu-show
             {
                 display: block;
             }
