@@ -222,28 +222,16 @@ export class FormImpl
             if (!replace) id.impl.setParent(this);
             else   id.impl.setParent(this.parent);
 
-            id.impl.setParameters(parameters);
             this.stack.set(name,id);
         }
 
         let inst:FormInstance = this.app.getInstance(id);
-
-        if (!id.impl.initiated())
-        {
-            id.impl.setPath(inst.path);
-            id.impl.setTitle(inst.title);
-            id.impl.initiated(true);
-        }
-
-        id.impl.setParameters(parameters);
+        this.app.prepare(id.impl,parameters,inst,false);
 
         if (this.win != null)
         {
             this.win.newForm(inst);
             id.impl.setRoot(this.root);
-
-            if (this.parent == null)
-                this.app.showPath(id.impl.name,id.impl.title);
         }
         else
         {
@@ -254,8 +242,6 @@ export class FormImpl
 
             this.app.showinstance(inst);
         }
-
-        this.app.showTitle(id.impl.title);
     }
 
 

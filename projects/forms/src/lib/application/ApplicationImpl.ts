@@ -148,6 +148,21 @@ export class ApplicationImpl
     }
 
 
+    public prepare(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
+    {
+        if (!impl.initiated())
+        {
+            impl.setPath(formdef.path);
+            impl.setTitle(formdef.title);
+            impl.initiated(true);
+        }
+
+        impl.setParameters(parameters);
+        this.showTitle(impl.getTitle());
+        if (path) this.showPath(impl.getName(),impl.getPath());
+    }
+
+
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         if (!this.ready)
@@ -172,19 +187,8 @@ export class ApplicationImpl
         if (formdef == null) return;
         let impl:FormImpl = Protected.get(formdef.formref.instance);
 
-        if (!impl.initiated())
-        {
-            impl.setPath(formdef.path);
-            impl.setTitle(formdef.title);
-            impl.initiated(true);
-        }
-        
-        impl.setParameters(parameters);
-
         this.state.form = impl;
-        this.showTitle(impl.getTitle());
-        this.showPath(impl.getName(),impl.getPath());
-
+        this.prepare(impl,parameters,formdef,true);
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
         if (fmenu != null)
@@ -201,7 +205,6 @@ export class ApplicationImpl
                 this.showMenu(this.state.defaultmenu);
             }
         }
-
 
         this.formsctl.display(formdef);
 
