@@ -1,5 +1,4 @@
 import { Menu } from "../menu/Menu";
-import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
 import { FormList } from "../menu/FormList";
@@ -11,6 +10,7 @@ import { Protected } from "../utils/Protected";
 import { InstanceID } from "../forms/InstanceID";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { MenuFactory } from "../menu/MenuFactory";
+import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
@@ -19,6 +19,7 @@ import { WindowOptions } from "../forms/WindowOptions";
 import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
+import { ContainerControl } from "../container/ContainerControl";
 
 
 export class ApplicationImpl
@@ -31,12 +32,14 @@ export class ApplicationImpl
     private mfactory:MenuFactory = null;
     private formsctl:FormsControl = null;
     private state:ApplicationState = null;
+    private contctl:ContainerControl = null;
     private instances:InstanceControl = null;
 
 
     constructor(private app:Application, public builder:Builder)
     {
         this.state = new ApplicationState();
+        this.contctl = new ContainerControl(builder);
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
@@ -141,15 +144,15 @@ export class ApplicationImpl
     }
 
 
-    public setBuild(form:Form) : void
+    public setBuild(container:Container) : void
     {
-        this.formsctl.setBuild(form);
+        this.contctl.setBuild(container);
     }
 
 
-    public getBuild() : Form
+    public getBuild() : Container
     {
-        return(this.formsctl.getBuild());
+        return(this.contctl.getBuild());
     }
 
 

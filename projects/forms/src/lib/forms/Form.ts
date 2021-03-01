@@ -1,6 +1,7 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Container } from "../container/Container";
+import { Component, AfterViewInit, OnInit } from "@angular/core";
 
 
 export interface CallBack
@@ -11,7 +12,8 @@ export interface CallBack
 
 @Component({template: ''})
 
-export class Form implements OnInit, AfterViewInit
+
+export class Form implements Container, OnInit, AfterViewInit
 {
     private impl:FormImpl;
 
