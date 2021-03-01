@@ -1,6 +1,5 @@
+CSS Prefix for uniqueness
 Listen on change-event for input
-setTitle
-parametre flyttes til appl og impl
 
 Library ng-package.json
 

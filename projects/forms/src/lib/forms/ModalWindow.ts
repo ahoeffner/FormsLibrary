@@ -9,26 +9,26 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 
 
 @Component({
-  selector: 'modal',
+  selector: 'modalwindow',
   template:
   `
-    <div class="modal">
-      <div #window class="modal-block" style="top: {{top}}; left: {{left}}">
-        <div class="container" style="width: {{width}}; height: {{height}};">
-		  <div #topbar class="topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		    <span class="center" style="color: {{tcolor}};"><div #menu></div></span>
-			<span class="close">
-				<button style="color: {{btncolor}};" (click)="closeForm()">X</button>
+    <div class="modalwindow">
+      <div #window class="modalwindow-modal-block" style="top: {{top}}; left: {{left}}">
+        <div class="modalwindow-container" style="width: {{width}}; height: {{height}};">
+		  <div #topbar class="modalwindow-topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
+		    <span class="modalwindow-center" style="color: {{tcolor}};"><div #menu></div></span>
+			<span class="modalwindow-close">
+				<button class="modalwindow-button" style="color: {{btncolor}};" (click)="closeForm()">X</button>
 			</span>
 		  </div>
-          <div class="block" style="margin-top: {{tmargin}};"><div #content></div></div>
+          <div class="modalwindow-block" style="margin-top: {{tmargin}};"><div #content></div></div>
         </div>
       </div>
     </div>
   `,
   styles:
   [`
-    .modal
+    .modalwindow
     {
         top: 0;
         left: 0;
@@ -40,19 +40,19 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         position: fixed;
     }
 
-    .modal-block
+    .modalwindow-modal-block
     {
       position: absolute;
       background-color: #fefefe;
     }
 
-    .container
+    .modalwindow-container
     {
         position: relative;
         border: 2px solid black;
     }
 
-    .topbar
+    .modalwindow-topbar
     {
         height: 1.5em;
         margin-left: 0;
@@ -62,7 +62,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         border-bottom: 2px solid black;
     }
 
-	.close
+	.modalwindow-close
 	{
 		top: 0;
 		right: 0;
@@ -72,7 +72,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		border-left: 1px solid black;
 	}
 
-	button
+	.modalwindow-button
 	{
 		top: 50%;
 		width: 100%;
@@ -88,7 +88,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		text-shadow: 0px 0px 0px transparent;
 	}
 
-	.center
+	.modalwindow-center
 	{
 		top: 0;
 		bottom: 0;
@@ -99,7 +99,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		justify-content: center;
 	}
 
-    .block
+    .modalwindow-block
     {
         left: 0;
         top: 3vh;
