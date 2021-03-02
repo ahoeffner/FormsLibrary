@@ -52,7 +52,7 @@ export class FormList implements AfterViewInit
 		this.page += "    </style>\n";
 		this.page += "  </head>\n";
 		this.page += "  <body>\n";
-		this.page += "    <div class='folder-tree'>\n";
+		this.page += "    <div class='formlist'>\n";
 		this.page += this.print("/",this.root,0,[true]);
 		this.page += "    </div>\n";
 		this.page += "  </body>\n";
@@ -216,7 +216,7 @@ export class FormList implements AfterViewInit
 		}
 
 		if (level > 0) html += this.pre(last[level]);
-		html += "<img id='"+path+"-img' src='/assets/open.jpg'>\n";
+		html += "<img class='img' id='"+path+"-img' src='/assets/open.jpg'>\n";
 		html += "<span id='"+path+"-lnk' class='txt'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
@@ -249,7 +249,7 @@ export class FormList implements AfterViewInit
 
 		if (level > 0) html += this.pre(last[last.length-1]);
 
-		//html += "<img id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
+		//html += "<img class='img' id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
 		html += "<span id='"+form.def.name+"-lnk' class='link'> "+form.name+"</span>\n";
 		html += "</div>\n";
 
@@ -308,7 +308,7 @@ export class FormList implements AfterViewInit
 	{
 		let styles:string =
 		`
-		.folder-tree
+		.formlist
 		{
 			position: fixed;
 		}
@@ -397,7 +397,7 @@ export class FormList implements AfterViewInit
 			vertical-align: middle;
 		}
 
-		img
+		.img
 		{
 			width: 24px;
 			height: 24px;
