@@ -77,8 +77,8 @@ export class FormList implements AfterViewInit
 			current = current.findFolder([parts[i]]);
 			if (current == null) return;
 
-			if (!current.content.classList.contains("active"))
-				current.content.classList.toggle("active");
+			if (!current.content.classList.contains("formlist-active"))
+				current.content.classList.toggle("formlist-active");
 		}
 	}
 
@@ -88,7 +88,7 @@ export class FormList implements AfterViewInit
 		let html:string = "";
 
 		html += this.folder(path,root,level,last);
-		html += "<div class='folder-content' id='"+path+"-content'>";
+		html += "<div class='formlist-folder-content' id='"+path+"-content'>";
 
 		level++;
 		last.push(false);
@@ -152,7 +152,7 @@ export class FormList implements AfterViewInit
 		this.html = this.elem?.nativeElement as HTMLDivElement;
 
 		this.html.innerHTML = this.page;
-		let folders:HTMLCollectionOf<Element> = this.html.getElementsByClassName("folder");
+		let folders:HTMLCollectionOf<Element> = this.html.getElementsByClassName("formlist-folder");
 
 		for (let i = 0; i < folders.length; i++)
 		{
@@ -170,7 +170,7 @@ export class FormList implements AfterViewInit
 			folder.lnk.addEventListener("click",(event) => this.toggle(event));
 		}
 
-		let forms:HTMLCollectionOf<Element> = this.html.getElementsByClassName("form");
+		let forms:HTMLCollectionOf<Element> = this.html.getElementsByClassName("formlist-form");
 
 		for(let i = 0; i < forms.length; i++)
 		{
@@ -191,7 +191,7 @@ export class FormList implements AfterViewInit
 		fname = fname.substring(0,fname.length-4);
 
 		let folder:Folder = this.root.findFolder(fname.split("/"));
-		folder.content.classList.toggle("active");
+		folder.content.classList.toggle("formlist-active");
 	}
 
 
@@ -206,7 +206,7 @@ export class FormList implements AfterViewInit
 	private folder(path:string, root:Folder, level:number, last:boolean[]) : string
 	{
 		let html:string = "";
-		html += "<div id='"+path+"' class='folder'>\n";
+		html += "<div id='"+path+"' class='formlist-folder'>\n";
 
 		if (level > 0)
 		{
@@ -216,8 +216,8 @@ export class FormList implements AfterViewInit
 		}
 
 		if (level > 0) html += this.pre(last[level]);
-		html += "<img class='img' id='"+path+"-img' src='/assets/open.jpg'>\n";
-		html += "<span id='"+path+"-lnk' class='txt'>"+root.name+"</span>\n";
+		html += "<img class='formlist-img' id='"+path+"-img' src='/assets/open.jpg'>\n";
+		html += "<span class='formlist-txt' id='"+path+"-lnk'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
 		return(html);
@@ -241,7 +241,7 @@ export class FormList implements AfterViewInit
 	private form(form:Form, level:number, last:boolean[])
 	{
 		let html:string = "";
-		html += "<div id='"+form.def.name+"' class='form'>\n";
+		html += "<div id='"+form.def.name+"' class='formlist-form'>\n";
 
 		html += this.half();
 		for(let i = 1; i < level; i++)
@@ -250,7 +250,7 @@ export class FormList implements AfterViewInit
 		if (level > 0) html += this.pre(last[last.length-1]);
 
 		//html += "<img class='img' id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
-		html += "<span id='"+form.def.name+"-lnk' class='link'> "+form.name+"</span>\n";
+		html += "<span class='formlist-link' id='"+form.def.name+"-lnk'> "+form.name+"</span>\n";
 		html += "</div>\n";
 
 		return(html);
@@ -261,12 +261,12 @@ export class FormList implements AfterViewInit
 	{
 		let html:string = "";
 
-		html += "<span class='lct'>\n";
-		html += " <span class='off'></span>\n";
-		html += " <span class='cnr'></span>\n";
+		html += "<span class='formlist-lct'>\n";
+		html += " <span class='formlist-off'></span>\n";
+		html += " <span class='formlist-cnr'></span>\n";
 
-		if (last) html += "<span class='end'></span>\n";
-		else	  html += "<span class='vln'></span>\n";
+		if (last) html += "<span class='formlist-end'></span>\n";
+		else	  html += "<span class='formlist-vln'></span>\n";
 
 		html += "</span>\n";
 
@@ -279,18 +279,18 @@ export class FormList implements AfterViewInit
 		let html:string = "";
 		if (skip)
 		{
-			html += "<span class='lct'>\n";
+			html += "<span class='formlist-lct'>\n";
 			html += "</span>\n";
-			html += " <span class='ind'></span>\n";
+			html += " <span class='formlist-ind'></span>\n";
 		}
 		else
 		{
-			html += "<span class='lct'>\n";
-			html += " <span class='vln'></span>\n";
-			html += " <span class='vln'></span>\n";
-			html += " <span class='vln'></span>\n";
+			html += "<span class='formlist-lct'>\n";
+			html += " <span class='formlist-vln'></span>\n";
+			html += " <span class='formlist-vln'></span>\n";
+			html += " <span class='formlist-vln'></span>\n";
 			html += "</span>\n";
-			html += " <span class='ind'></span>\n";
+			html += " <span class='formlist-ind'></span>\n";
 		}
 		return(html);
 	}
@@ -299,7 +299,7 @@ export class FormList implements AfterViewInit
 	private half() : string
 	{
 		let html:string = "";
-		html += " <span class='ind'></span>\n";
+		html += " <span class='formlist-ind'></span>\n";
 		return(html);
 	}
 
@@ -313,7 +313,7 @@ export class FormList implements AfterViewInit
 			position: fixed;
 		}
 
-    	.folder
+    	.formlist-folder
     	{
 			margin: 0;
 			padding: 0;
@@ -324,12 +324,12 @@ export class FormList implements AfterViewInit
 			border-collapse: collapse;
     	}
 
-		.folder-content
+		.formlist-folder-content
 		{
 			display: none;
 		}
 
-		.lct
+		.formlist-lct
 		{
 			width: 16px;
 			height: 24px;
@@ -339,7 +339,7 @@ export class FormList implements AfterViewInit
 			vertical-align: middle;
 		}
 
-		.txt
+		.formlist-txt
 		{
 			width: 16px;
 			height: 21px;
@@ -351,7 +351,7 @@ export class FormList implements AfterViewInit
 			color: `+this.preferences.colors.foldertree+`;
 		}
 
-		.off
+		.formlist-off
 		{
 			width: 16px;
 			height: 4px;
@@ -360,7 +360,7 @@ export class FormList implements AfterViewInit
 			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
-		.vln
+		.formlist-vln
 		{
 			width: 16px;
 			height: 12px;
@@ -369,7 +369,7 @@ export class FormList implements AfterViewInit
 			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
-		.cnr
+		.formlist-cnr
 		{
 			width: 16px;
 			height: 8px;
@@ -379,7 +379,7 @@ export class FormList implements AfterViewInit
 			border-bottom: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
-		.end
+		.formlist-end
 		{
 			width: 16px;
 			height: 12px;
@@ -387,7 +387,7 @@ export class FormList implements AfterViewInit
 			pointer-events:none;
 		}
 
-		.ind
+		.formlist-ind
 		{
 			width: 12px;
 			height: 24px;
@@ -397,7 +397,7 @@ export class FormList implements AfterViewInit
 			vertical-align: middle;
 		}
 
-		.img
+		.formlist-img
 		{
 			width: 24px;
 			height: 24px;
@@ -405,7 +405,7 @@ export class FormList implements AfterViewInit
 			vertical-align: middle;
 		}
 
-		.link
+		.formlist-link
 		{
 			width: 16px;
 			height: 22px;
@@ -419,7 +419,7 @@ export class FormList implements AfterViewInit
 			color: `+this.preferences.colors.link+`;
 		}
 
-		.form
+		.formlist-form
 		{
 			margin: 0;
 			padding: 0;
@@ -428,7 +428,7 @@ export class FormList implements AfterViewInit
 			border-collapse: collapse;
 		}
 
-		.active
+		.formlist-active
 		{
 			display: block;
 		}
