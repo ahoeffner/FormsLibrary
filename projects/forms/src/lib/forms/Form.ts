@@ -96,5 +96,5 @@ export class Form implements OnInit, AfterViewInit
     {
         let container:Container = this.impl.getApplication().getContainer();
         this.impl.newForm(container);
-   }
+    }
 }

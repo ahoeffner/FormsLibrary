@@ -97,7 +97,6 @@ export class FormImpl
     public newForm(container:Container) : void
     {
         let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
-        if (blocks == null) return;
 
         for(let i = 0; i < blocks.length; i++)
         {
@@ -110,15 +109,16 @@ export class FormImpl
             if (block == null) window.alert("Cannot create instance of "+blocks[i].alias);
             this.blocks.set(blocks[i].alias,block);
         }
-
-        this.app.newForm(this);
     }
 
 
     public setMenu(menu:Menu) : void
     {
+        this.ddmenu = null;
+        this.app.deletemenu(this.menu$);
+
         this.menu$ = menu;
-        this.ddmenu = this.app.createmenu(menu);
+        if (menu != null) this.ddmenu = this.app.createmenu(menu);
     }
 
 
@@ -149,6 +149,8 @@ export class FormImpl
     public setApplication(app:ApplicationImpl) : void
     {
         this.app = app;
+        this.menu$ = new DefaultMenu();
+        this.ddmenu = app.createmenu(this.menu$);
     }
 
 
@@ -197,8 +199,6 @@ export class FormImpl
 
     public getDropDownMenu() : ComponentRef<DropDownMenu>
     {
-        if (this.ddmenu != null) return(this.ddmenu);
-        this.setMenu(new DefaultMenu());
         return(this.ddmenu);
     }
 

@@ -30,6 +30,13 @@ export class ApplicationState
     }
 
 
+    public dropMenu(menu:Menu) : void
+    {
+        let mhdl:MenuHandler = menu.getHandler();
+        this.menus.delete(mhdl.guid);
+    }
+
+
     public async connect(usr?:string, pwd?:string) : Promise<boolean>
     {
         this.conn = true;

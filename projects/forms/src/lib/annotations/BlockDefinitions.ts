@@ -23,6 +23,8 @@ export class BlockDefinitions
 
     public static getBlocks(form:string) : BlockDefinition[]
     {
-        return(BlockDefinitions.blocks.get(form.toLowerCase()));
+        let blocks:BlockDefinition[] = BlockDefinitions.blocks.get(form.toLowerCase());
+        if (blocks == null) blocks = [];
+        return(blocks);
     }
 }

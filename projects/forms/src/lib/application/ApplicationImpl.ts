@@ -156,25 +156,22 @@ export class ApplicationImpl
     }
 
 
-    public newForm(impl:FormImpl) : void
+    public newForm(impl:FormImpl, formdef:FormInstance) : void
     {
         console.log("Newform: "+impl.name);
-    }
+        impl.path = formdef.path;
+        impl.title = formdef.title;
+        impl.initiated(true);
+
+        let funcs:string[] = FormDefinitions.getOnInit(impl.name);
+        for(let i = 0; i < funcs.length; i++) impl.form[funcs[i]]();
+}
 
 
     public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
     {
+        if (!impl.initiated()) this.newForm(impl,formdef);
         console.log("Preform: "+impl.name);
-        if (!impl.initiated())
-        {
-            impl.path = formdef.path;
-            impl.title = formdef.title;
-            impl.initiated(true);
-
-            let funcs:string[] = FormDefinitions.getOnInit(impl.name);
-            for(let i = 0; i < funcs.length; i++) impl.form[funcs[i]]();
-        }
-
         impl.setParameters(parameters);
         this.showTitle(impl.title);
         if (path) this.showPath(impl.name,impl.path);
@@ -208,9 +205,9 @@ export class ApplicationImpl
 
         if (formdef == null) return;
         let impl:FormImpl = Protected.get(formdef.formref.instance);
+        this.preform(impl,parameters,formdef,true);
 
         this.state.form = impl;
-        this.preform(impl,parameters,formdef,true);
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
         if (fmenu != null)
@@ -283,6 +280,12 @@ export class ApplicationImpl
     {
         if (this.marea != null)
             this.marea.display(menu);
+    }
+
+
+    public deletemenu(menu:Menu) : void
+    {
+        this.state.dropMenu(menu);
     }
 
 

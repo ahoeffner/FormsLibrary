@@ -194,7 +194,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public newForm(form:FormInstance) : void
 	{
-		this.content.removeChild(this.element);
+		let formelem:Element = this.content.firstElementChild;
+		if (formelem != null) this.content.removeChild(formelem);
 		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
 
 		this.menu.removeChild(this.menuelem);
@@ -234,7 +235,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		Listener.remove("modal","mousemove");
 		Listener.remove("modal","mousedown");
 
-		this.content.removeChild(this.element);
+		let formelem:Element = this.content.firstElementChild;
+		if (formelem != null) this.content.removeChild(formelem);
 		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
 
 		let element:HTMLElement = (this.winref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
