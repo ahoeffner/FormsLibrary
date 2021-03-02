@@ -37,9 +37,9 @@ export class defaultTheme implements Theme
     public text:string = "white";
     public title:string = "white";
     public topbar:string = "#303f9f";
-    public foldertree:string = "#303f9f";
     public disabled:string = "silver";
     public buttontext:string = "white";
+    public foldertree:string = "#303f9f";
 }
 
 
@@ -64,7 +64,6 @@ export class Pink extends defaultTheme
     public link:string = "#ff4081";
     public topbar:string = "#ff4081";
     public foldertree:string = "#ff4081";
-    public disabled:string = "#464646";
 }
 
 
@@ -77,6 +76,6 @@ export class Yellow implements Theme
     public title:string = "black";
     public topbar:string = "yellow";
     public foldertree:string = "grey";
-    public disabled:string = "grey";
+    public disabled:string = "silver";
     public buttontext:string = "black";
 }
