@@ -1,4 +1,4 @@
-CSS Prefix for uniqueness
+Drop down enabled color
 Listen on change-event for input
 
 Library ng-package.json
