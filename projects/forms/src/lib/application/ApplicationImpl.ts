@@ -170,6 +170,9 @@ export class ApplicationImpl
             impl.path = formdef.path;
             impl.title = formdef.title;
             impl.initiated(true);
+
+            let funcs:string[] = FormDefinitions.getOnInit(impl.name);
+            for(let i = 0; i < funcs.length; i++) impl.form[funcs[i]]();
         }
 
         impl.setParameters(parameters);
