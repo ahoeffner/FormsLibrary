@@ -206,16 +206,8 @@ export class ApplicationImpl
         this.state.form = impl;
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
-        if (fmenu != null)
-        {
-            this.showMenu(fmenu);
-            DropDownMenu.setForm(fmenu,formdef.formref.instance);
-        }
-        else
-        {
-            if (this.marea != null)
-                this.marea.remove();
-        }
+        this.showMenu(fmenu);
+        DropDownMenu.setForm(fmenu,formdef.formref.instance);
 
         this.formsctl.display(formdef);
 
