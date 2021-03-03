@@ -30,6 +30,19 @@ export class MenuArea implements AfterViewInit
     }
 
 
+    public remove() : void
+    {
+        if (this.element != null)
+        {
+            let menuelem:Element = this.menu.firstElementChild;
+            if (menuelem != null) this.menu.removeChild(menuelem);
+            this.app.builder.getAppRef().detachView(this.menuref.hostView);
+        }
+
+        this.change.detectChanges();
+    }
+
+
     public display(menu:ComponentRef<DropDownMenu>) : void
     {
 		if (this.menu == null)
@@ -40,7 +53,8 @@ export class MenuArea implements AfterViewInit
 
         if (this.element != null)
         {
-            this.menu.removeChild(this.element);
+            let menuelem:Element = this.menu.firstElementChild;
+            if (menuelem != null) this.menu.removeChild(menuelem);
             this.app.builder.getAppRef().detachView(this.menuref.hostView);
         }
 

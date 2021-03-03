@@ -198,8 +198,11 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		if (formelem != null) this.content.removeChild(formelem);
 		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
 
-		this.menu.removeChild(this.menuelem);
-		this.app.builder.getAppRef().detachView(this.menuref.hostView);
+		if (this.menuelem != null)
+		{
+			this.menu.removeChild(this.menuelem);
+			this.app.builder.getAppRef().detachView(this.menuref.hostView);
+		}
 
 		let impl:FormImpl = Protected.get(form.formref.instance);
 		impl.setModalWindow(this);
@@ -269,8 +272,11 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private showmenu() : void
 	{
 		let impl:FormImpl = Protected.get(this.form.formref.instance);
+
+		this.menuelem = null;
 		this.menuref = impl.getDropDownMenu();
 
+		if (this.menuref == null) return;
 		this.menuelem = (this.menuref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		this.app.builder.getAppRef().attachView(this.menuref.hostView);
 		this.menu.appendChild(this.menuelem);

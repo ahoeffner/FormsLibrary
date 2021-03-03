@@ -114,17 +114,9 @@ export class FormImpl
 
     public setMenu(menu:Menu) : void
     {
-        this.ddmenu = null;
-        this.app.deletemenu(this.menu$);
-
         this.menu$ = menu;
-        if (menu != null) this.ddmenu = this.app.createmenu(menu);
-    }
-
-
-    public getMenu() : Menu
-    {
-        return(this.menu$);
+        this.app.deletemenu(this.ddmenu);
+        this.ddmenu = this.app.createmenu(menu);
     }
 
 
