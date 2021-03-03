@@ -6,6 +6,7 @@ import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from "../utils/Listener";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
+import { Form } from "./Form";
 
 
 @Component({
@@ -189,6 +190,12 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		impl.setModalWindow(this);
 
 		this.form = form;
+	}
+
+
+	public getForm() : Form
+	{
+		return(this.form.formref.instance);
 	}
 
 

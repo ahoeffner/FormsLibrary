@@ -20,6 +20,7 @@ import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
 import { ContainerControl } from "../container/ContainerControl";
+import { Form } from "../forms/Form";
 
 
 export class ApplicationImpl
@@ -191,7 +192,12 @@ export class ApplicationImpl
         if (this.state.form != null)
         {
             if (this.state.form.getModalWindow() != null)
+            {
+                let mform:Form = this.state.form.getModalWindow().getForm();
+                let impl:FormImpl = Protected.get(mform);
+                impl.showform(form,destroy,parameters);
                 return;
+            }
 
             this.closeform(this.state.form,false);
         }
