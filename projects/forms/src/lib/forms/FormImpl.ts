@@ -24,6 +24,7 @@ export class FormImpl
     private guid$:number;
     private title$:string;
     private root:FormImpl;
+    private next:FormImpl;
     private win:ModalWindow;
     private inst:InstanceID;
     private parent:FormImpl;
@@ -84,6 +85,13 @@ export class FormImpl
     public get title() : string
     {
         return(this.title$);
+    }
+
+
+    public getChain() : FormImpl
+    {
+        if (this.next == null) return(this);
+        return(this.next.getChain());
     }
 
 
@@ -214,27 +222,30 @@ export class FormImpl
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
 
+        // newform
         if (id != null && destroy)
         {
             id = null;
             this.app.closeform(form,destroy);
         }
 
-        console.log("replace: "+replace+" id: "+id);
-
+        // create
         if (id == null)
         {
             id = this.app.getNewInstance(form);
-
-            if (!replace) id.impl.setParent(this);
-            else   id.impl.setParent(this.parent);
-
             this.stack.set(name,id);
         }
+
+        this.next = id.impl;
+
+        // replace current
+        if (!replace) id.impl.setParent(this);
+        else          id.impl.setParent(this.parent);
 
         let inst:FormInstance = this.app.getInstance(id);
         this.app.preform(id.impl,parameters,inst,false);
 
+        // already in call-chain
         if (this.win != null)
         {
             this.win.newForm(inst);
@@ -267,6 +278,8 @@ export class FormImpl
 
     public onClose(impl:FormImpl,cancelled:boolean) : void
     {
+        this.next = null;
+
         try
         {
             if (this.callbackfunc != null)
@@ -287,6 +300,8 @@ export class FormImpl
         let win:boolean = (this.win != null);
         let menu:boolean = (this.root == null);
         let root:boolean = (this.parent == null);
+
+        this.next = null;
 
         if (this.parent != null)
             this.parent.onClose(this,this.cancelled);

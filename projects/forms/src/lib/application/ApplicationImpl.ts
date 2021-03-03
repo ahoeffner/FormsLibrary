@@ -155,7 +155,6 @@ export class ApplicationImpl
 
     private newForm(impl:FormImpl, formdef:FormInstance) : void
     {
-        console.log("Newform: "+impl.name);
         impl.path = formdef.path;
         impl.title = formdef.title;
         impl.initiated(true);
@@ -168,7 +167,6 @@ export class ApplicationImpl
     public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
     {
         if (!impl.initiated()) this.newForm(impl,formdef);
-        console.log("Preform: "+impl.name);
         impl.setParameters(parameters);
         this.showTitle(impl.title);
         if (path) this.showPath(impl.name,impl.path);
@@ -177,7 +175,6 @@ export class ApplicationImpl
 
     private postform(impl:FormImpl, destroy:boolean) : void
     {
-        console.log("Postform: "+impl.name+" destroy: "+destroy);
     }
 
 
@@ -191,13 +188,18 @@ export class ApplicationImpl
 
         if (this.state.form != null)
         {
-            if (this.state.form.getModalWindow() != null)
+            // if form has called anoother for
+            let curr:FormImpl = this.state.form.getChain();
+
+            if (curr != this.state.form)
             {
-                let mform:Form = this.state.form.getModalWindow().getForm();
-                let impl:FormImpl = Protected.get(mform);
-                impl.showform(form,destroy,parameters);
+                // let form handle the showform
+                curr.showform(form,destroy,parameters);
                 return;
             }
+
+            if (this.state.form.getModalWindow() != null)
+                return;
 
             this.closeform(this.state.form,false);
         }
