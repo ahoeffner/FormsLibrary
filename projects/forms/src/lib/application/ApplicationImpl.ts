@@ -188,7 +188,7 @@ export class ApplicationImpl
 
         if (this.state.form != null)
         {
-            // if form has called anoother for
+            // if form has called anoother form
             let curr:FormImpl = this.state.form.getChain();
 
             if (curr != this.state.form)
