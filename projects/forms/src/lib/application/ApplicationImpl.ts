@@ -38,13 +38,14 @@ export class ApplicationImpl
 
     constructor(private app:Application, public builder:Builder)
     {
-        this.state = new ApplicationState();
+        this.state = new ApplicationState(this);
         this.contctl = new ContainerControl(builder);
         this.mfactory = new MenuFactory(this.builder);
         this.formsctl = new FormsControl(this,builder);
         this.instances = new InstanceControl(this.formsctl);
         this.setFormsDefinitions(FormDefinitions.getForms());
-        this.state.defaultmenu = this.createmenu(new DefaultMenu());
+        this.state.appmenu = this.createmenu(this.state.menu);
+
     }
 
 
@@ -81,16 +82,10 @@ export class ApplicationImpl
 
     public setMenu(menu:Menu) : void
     {
-        this.state.currentmenu = this.createmenu(menu);
-        this.showMenu(this.state.currentmenu);
-    }
-
-
-    public setDefaultMenu(menu:Menu) : void
-    {
-        this.deletemenu(this.state.defaultmenu);
-        this.state.defaultmenu = this.createmenu(menu);
-        this.showMenu(this.state.defaultmenu);
+        this.deletemenu(this.state.menu);
+        this.state.menu = menu;
+        this.state.appmenu = this.createmenu(menu);
+        this.showMenu(this.state.appmenu);
     }
 
 
@@ -134,7 +129,7 @@ export class ApplicationImpl
     public setMenuArea(area:MenuArea) : void
     {
         this.marea = area;
-        this.showMenu(this.state.defaultmenu);
+        this.showMenu(this.state.appmenu);
     }
 
 
@@ -213,20 +208,13 @@ export class ApplicationImpl
 
         if (fmenu != null)
         {
-            this.state.currentmenu = fmenu;
-            DropDownMenu.setForm(this.state.currentmenu,formdef.formref.instance);
-
-            if (formdef.windowdef == null || !formdef.windowdef.modal)
-                this.showMenu(this.state.currentmenu);
-            else
-                this.showMenu(this.state.defaultmenu);
+            this.showMenu(fmenu);
+            DropDownMenu.setForm(fmenu,formdef.formref.instance);
         }
         else
         {
             if (this.marea != null)
-            {
                 this.marea.remove();
-            }
         }
 
         this.formsctl.display(formdef);
@@ -249,12 +237,14 @@ export class ApplicationImpl
         this.postform(impl,destroy);
         this.formsctl.closeform(impl.name,destroy);
 
-        if (this.state.currentmenu != null)
-            DropDownMenu.setForm(this.state.currentmenu,null);
+        if (this.state.appmenu != null)
+            DropDownMenu.setForm(this.state.appmenu,null);
 
         this.showPath("","");
         this.showTitle(null);
         this.state.form = null;
+
+        this.showMenu(this.state.appmenu);
     }
 
 
@@ -290,9 +280,8 @@ export class ApplicationImpl
     }
 
 
-    public deletemenu(menuref:ComponentRef<DropDownMenu>) : void
+    public deletemenu(menu:Menu) : void
     {
-        let menu:Menu = menuref.instance.getMenu();
         this.state.dropMenu(menu);
     }
 

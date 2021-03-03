@@ -1,24 +1,27 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
-import { DropDownMenu } from "../menu/DropDownMenu";
-import { Connection } from "../database/Connection";
 import { MenuHandler } from "../menu/MenuHandler";
+import { DefaultMenu } from "../menu/DefaultMenu";
+import { Connection } from "../database/Connection";
+import { DropDownMenu } from "../menu/DropDownMenu";
+import { ApplicationImpl } from "./ApplicationImpl";
 
 
 export class ApplicationState
 {
+    public menu:Menu = null;
     public form:FormImpl = null;
     public connection:Connection;
-    public currentmenu:ComponentRef<DropDownMenu> = null;
-    public defaultmenu:ComponentRef<DropDownMenu> = null;
+    public appmenu:ComponentRef<DropDownMenu> = null;
     public menus:Map<string,MenuHandler> = new Map<string,MenuHandler>();
 
     private conn:boolean = false;
 
 
-    constructor()
+    constructor(private app:ApplicationImpl)
     {
+        this.menu = new DefaultMenu();
         this.connection = new Connection();
     }
 
