@@ -1,3 +1,4 @@
+import { Menu } from "../menu/Menu";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { Preferences } from "./Preferences";
@@ -30,6 +31,11 @@ export class Application
     public set title(title:string)
     {
         this.impl.setTitle(title);
+    }
+
+    public setMenu(menu:Menu) : void
+    {
+        this.impl.setMenu(menu);
     }
 
     public newform(form:any, parameters?:Map<string,any>)
