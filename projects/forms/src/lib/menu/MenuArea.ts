@@ -45,6 +45,12 @@ export class MenuArea implements AfterViewInit
 
     public display(menu:ComponentRef<DropDownMenu>) : void
     {
+        if (menu == null)
+        {
+            this.remove();
+            return;
+        }
+
 		if (this.menu == null)
 		{
 			setTimeout(() => {this.display(menu);},10);
