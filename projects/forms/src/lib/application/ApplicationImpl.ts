@@ -153,7 +153,7 @@ export class ApplicationImpl
     }
 
 
-    public newForm(impl:FormImpl, formdef:FormInstance) : void
+    private newForm(impl:FormImpl, formdef:FormInstance) : void
     {
         console.log("Newform: "+impl.name);
         impl.path = formdef.path;
@@ -175,7 +175,7 @@ export class ApplicationImpl
     }
 
 
-    public postform(impl:FormImpl, destroy:boolean) : void
+    private postform(impl:FormImpl, destroy:boolean) : void
     {
         console.log("Postform: "+impl.name+" destroy: "+destroy);
     }

@@ -220,6 +220,8 @@ export class FormImpl
             this.app.closeform(form,destroy);
         }
 
+        console.log("replace: "+replace+" id: "+id);
+
         if (id == null)
         {
             id = this.app.getNewInstance(form);
