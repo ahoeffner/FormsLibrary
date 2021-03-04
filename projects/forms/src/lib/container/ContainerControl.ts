@@ -22,4 +22,10 @@ export class ContainerControl
         this.container = null;
         return(cont);
     }
+
+
+    public dropContainer() : void
+    {
+        this.container = null;
+    }
 }

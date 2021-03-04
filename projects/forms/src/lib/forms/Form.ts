@@ -20,11 +20,6 @@ export class Form implements OnInit, AfterViewInit
     constructor()
     {
         this.impl = new FormImpl(this);
-
-        Reflect.defineProperty(this,"_getProtected", {value: () =>
-        {
-            return(this.impl);
-        }});
     }
 
     public get name() : string
@@ -95,6 +90,7 @@ export class Form implements OnInit, AfterViewInit
     public ngAfterViewInit(): void
     {
         let container:Container = this.impl.getApplication().getContainer();
+        this.impl.getApplication().dropContainer();
         this.impl.newForm(container);
     }
 }

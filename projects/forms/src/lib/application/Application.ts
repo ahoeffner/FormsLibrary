@@ -14,13 +14,12 @@ export class Application
 {
     private title$:string;
     private impl:ApplicationImpl;
-    // title is modified by impl behind the scenes
+    // impl is read and title is modified by impl behind the scenes
 
 
     constructor(builder:Builder)
     {
         this.impl = new ApplicationImpl(this,builder);
-        Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.impl)}});
     }
 
     public get title() : string

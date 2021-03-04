@@ -142,6 +142,12 @@ export class ApplicationImpl
     }
 
 
+    public dropContainer() : void
+    {
+        this.contctl.dropContainer();
+    }
+
+
     private newForm(impl:FormImpl, formdef:FormInstance) : void
     {
         impl.path = formdef.path;
@@ -288,6 +294,7 @@ export class ApplicationImpl
 
     private setFormsDefinitions(forms:FormDefinition[]) : void
     {
+        console.log("setFormsDefinitions");
         let formsmap:Map<string,FormInstance> =
             this.formsctl.setFormsDefinitions(forms);
 
@@ -298,6 +305,9 @@ export class ApplicationImpl
         {
             let name:string = this.formsctl.findFormByPath(form);
             if (name == null) return;
+
+            let inst:FormInstance = this.formsctl.getFormsDefinitions().get(name);
+            if (!inst.navigable) return;
 
             let params:Map<string,any> = new Map<string,any>();
             let urlparams = new URLSearchParams(window.location.search);

@@ -10,6 +10,8 @@ export const BLOCK = (alias:string, component?:any) =>
         let utils:Utils = new Utils();
         let fname:string = utils.getName(form);
 
+        console.log("BLOCK "+fname);
+
         let def:BlockDefinition =
         {
             prop:prop,
