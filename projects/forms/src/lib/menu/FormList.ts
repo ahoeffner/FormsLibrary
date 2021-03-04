@@ -1,4 +1,3 @@
-import { Protected } from '../utils/Protected';
 import { FormInstance } from '../forms/FormInstance';
 import { Application } from '../application/Application';
 import { Preferences } from '../application/Preferences';
@@ -37,8 +36,8 @@ export class FormList implements AfterViewInit
 
     constructor(app:Application)
     {
+		this.app = app["impl"];
 		this.root = new Folder(this.name);
-		this.app = Protected.get<ApplicationImpl>(app);
 
 		this.app.setFormList(this);
 

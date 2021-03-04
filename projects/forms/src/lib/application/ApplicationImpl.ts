@@ -6,9 +6,7 @@ import { MenuArea } from "../menu/MenuArea";
 import { FormArea } from "../forms/FormArea";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
-import { Protected } from "../utils/Protected";
 import { InstanceID } from "../forms/InstanceID";
-import { DefaultMenu } from "../menu/DefaultMenu";
 import { MenuFactory } from "../menu/MenuFactory";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
@@ -20,15 +18,13 @@ import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
 import { ContainerControl } from "../container/ContainerControl";
-import { Form } from "../forms/Form";
 
 
 export class ApplicationImpl
 {
-    private title:string = null;
-    private atitle:string = null;
     private marea:MenuArea = null;
     private ready:boolean = false;
+    private apptitle:string = null;
     private formlist:FormList = null;
     private mfactory:MenuFactory = null;
     private formsctl:FormsControl = null;
@@ -62,15 +58,9 @@ export class ApplicationImpl
     }
 
 
-    public getTitle() : string
-    {
-        return(this.title);
-    }
-
-
     public setTitle(title:string)
     {
-        this.atitle = title;
+        this.apptitle = title;
         this.showTitle(title);
     }
 
@@ -93,11 +83,10 @@ export class ApplicationImpl
     public showTitle(title:string) : void
     {
         if (title == null)
-            title = this.atitle;
+            title = this.apptitle;
 
-        this.title = title;
         document.title = title;
-        this.app["_setTitle"](title);
+        this.app["title$"] = title;
     }
 
 
@@ -208,7 +197,7 @@ export class ApplicationImpl
         let formdef:FormInstance = this.getFormInstance(form);
 
         if (formdef == null) return;
-        let impl:FormImpl = Protected.get(formdef.formref.instance);
+        let impl:FormImpl = formdef.formref.instance["impl"];
         this.preform(impl,parameters,formdef,true);
 
         this.state.form = impl;

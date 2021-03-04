@@ -12,20 +12,20 @@ import { ApplicationImpl } from "./ApplicationImpl";
 
 export class Application
 {
-    private _title:string;
+    private title$:string;
     private impl:ApplicationImpl;
+    // title is modified by impl behind the scenes
 
 
     constructor(builder:Builder)
     {
         this.impl = new ApplicationImpl(this,builder);
         Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.impl)}});
-        Reflect.defineProperty(this,"_setTitle", {value: (title:string) => {this._title = title;}});
     }
 
     public get title() : string
     {
-        return(this._title);
+        return(this.title$);
     }
 
     public set title(title:string)
