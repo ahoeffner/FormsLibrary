@@ -1,5 +1,4 @@
 import { DropDownMenu } from './DropDownMenu';
-import { Protected } from '../utils/Protected';
 import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, ComponentRef, EmbeddedViewRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
@@ -26,7 +25,7 @@ export class MenuArea implements AfterViewInit
 
     constructor(app:Application, private change:ChangeDetectorRef)
     {
-        this.app = Protected.get<ApplicationImpl>(app);
+        this.app = app["impl"];
     }
 
 

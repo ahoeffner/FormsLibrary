@@ -8,7 +8,7 @@ export interface setProtected
     _setProtected(args:any,type?:any) : void;
 }
 
-export class ProtectedX
+export class Protected
 {
     public static get<C>(comp:any, type?:any) : C
     {

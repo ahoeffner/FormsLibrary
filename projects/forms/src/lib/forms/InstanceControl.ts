@@ -5,7 +5,6 @@ import { InstanceID } from "./InstanceID";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
 import { FormsControl } from "./FormsControl";
-import { Protected } from '../utils/Protected';
 import { WindowOptions } from "./WindowOptions";
 
 
@@ -35,7 +34,7 @@ export class InstanceControl
         let ref:ComponentRef<any> = this.ctrl.createForm(def.component);
         if (ref == null) return(null);
 
-        let impl:FormImpl = Protected.get(ref.instance);
+        let impl:FormImpl = ref.instance["impl"];
 
         let id:InstanceID =
         {

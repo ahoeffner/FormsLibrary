@@ -7,7 +7,6 @@ import { InstanceID } from "./InstanceID";
 import { Builder } from "../utils/Builder";
 import { ModalWindow } from "./ModalWindow";
 import { FormInstance } from "./FormInstance";
-import { Protected } from '../utils/Protected';
 import { FormDefinition } from "./FormsDefinition";
 import { EmbeddedViewRef, ComponentRef } from '@angular/core';
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -116,7 +115,7 @@ export class FormsControl
         let formsarea:HTMLElement = this.formarea.getFormsArea();
         let element:HTMLElement = (formdef.formref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
-        let impl:FormImpl = Protected.get(formdef.formref.instance);
+        let impl:FormImpl = formdef.formref.instance["impl"];
 
         if (formdef.windowopts == null)
         {
@@ -188,7 +187,7 @@ export class FormsControl
             return;
         }
 
-        let impl:FormImpl = Protected.get<FormImpl>(ref.instance);
+        let impl:FormImpl = ref.instance["impl"];
         impl.setApplication(this.app);
 
         return(ref);
