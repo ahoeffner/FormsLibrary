@@ -14,7 +14,7 @@ export class Application
 {
     private title$:string;
     private impl:ApplicationImpl;
-    // impl is read and title is modified by impl behind the scenes
+    // dont rename impl as it is read behind the scenes
 
 
     constructor(builder:Builder)
@@ -29,7 +29,13 @@ export class Application
 
     public set title(title:string)
     {
+        this.title$ = title;
         this.impl.setTitle(title);
+    }
+
+    public get currenttitle() : string
+    {
+        return(this.impl.getCurrentTitle());
     }
 
     public setMenu(menu:Menu) : void

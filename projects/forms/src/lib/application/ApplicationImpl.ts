@@ -65,6 +65,15 @@ export class ApplicationImpl
     }
 
 
+    public getCurrentTitle() : string
+    {
+        if (this.state.form != null)
+            return(this.state.form.title);
+
+        return(this.apptitle);
+    }
+
+
     public close() : void
     {
         this.closeform(this.state.form,true);
@@ -82,11 +91,8 @@ export class ApplicationImpl
 
     public showTitle(title:string) : void
     {
-        if (title == null)
-            title = this.apptitle;
-
+        if (title == null) title = this.apptitle;
         document.title = title;
-        this.app["title$"] = title;
     }
 
 
@@ -209,7 +215,7 @@ export class ApplicationImpl
         this.state.form = impl;
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
-        this.showMenu(fmenu);
+        if (!formdef.windowopts?.modal) this.showMenu(fmenu);
         DropDownMenu.setForm(fmenu,formdef.formref.instance);
 
         this.formsctl.display(formdef);

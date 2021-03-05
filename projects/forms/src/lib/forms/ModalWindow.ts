@@ -1,12 +1,11 @@
+import { Form } from "./Form";
 import { FormImpl } from "./FormImpl";
 import { FormInstance } from './FormInstance';
-import { Protected } from '../utils/Protected';
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from "../utils/Listener";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
-import { Form } from "./Form";
 
 
 @Component({
@@ -186,7 +185,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			this.height = "99vh";
 		}
 
-		let impl:FormImpl = Protected.get(form.formref.instance);
+		let impl:FormImpl = form.formref.instance["impl"];
 		impl.setModalWindow(this);
 
 		this.form = form;
@@ -207,11 +206,12 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 		if (this.menuelem != null)
 		{
-			this.menu.removeChild(this.menuelem);
+			let menuelem = this.menu.firstElementChild;
+			if (menuelem != null) this.menu.removeChild(this.menuelem);
 			this.app.builder.getAppRef().detachView(this.menuref.hostView);
 		}
 
-		let impl:FormImpl = Protected.get(form.formref.instance);
+		let impl:FormImpl = form.formref.instance["impl"];
 		impl.setModalWindow(this);
 
 		this.form = form;
@@ -233,7 +233,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public closeForm() : void
 	{
-		let impl:FormImpl = Protected.get(this.form.formref.instance);
+		let impl:FormImpl = this.form.formref.instance["impl"];
 		this.close();
 		impl.cancel();
 	}
@@ -278,7 +278,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	private showmenu() : void
 	{
-		let impl:FormImpl = Protected.get(this.form.formref.instance);
+		let impl:FormImpl = this.form.formref.instance["impl"];
 
 		this.menuelem = null;
 		this.menuref = impl.getDropDownMenu();
@@ -301,7 +301,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			return;
 		}
 
-		let impl:FormImpl = Protected.get(this.form.formref.instance);
+		let impl:FormImpl = this.form.formref.instance["impl"];
 		ddmenu.getMenu().getHandler().onFormChange(impl.form);
 
 		this.minh = 100;
