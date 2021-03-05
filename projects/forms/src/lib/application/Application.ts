@@ -22,25 +22,30 @@ export class Application
         this.impl = new ApplicationImpl(this,builder);
     }
 
-    public get title() : string
+    public get Title() : string
     {
         return(this.title$);
     }
 
-    public set title(title:string)
+    public set Title(title:string)
     {
         this.title$ = title;
         this.impl.setTitle(title);
     }
 
-    public get currenttitle() : string
+    public get AppOrFormTitle() : string
     {
         return(this.impl.getCurrentTitle());
     }
 
-    public setMenu(menu:Menu) : void
+    public set Menu(menu:Menu)
     {
         this.impl.setMenu(menu);
+    }
+
+    public get Menu() : Menu
+    {
+        return(this.impl.getMenu());
     }
 
     public newform(form:any, parameters?:Map<string,any>)

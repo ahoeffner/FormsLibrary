@@ -16,7 +16,9 @@ export class FormUtil
             else        return(null);
         }
 
-        if (!options.hasOwnProperty("modal")) options.modal = false;
+        if (!options.hasOwnProperty("wizard")) options.wizard = false;
+        if (!options.hasOwnProperty("inherit")) options.inherit = true;
+
         if (!options.hasOwnProperty("width")) options.width = "500px";
         if (!options.hasOwnProperty("height")) options.height = "300px";
         if (!options.hasOwnProperty("offsetTop")) options.offsetTop = "10vh";

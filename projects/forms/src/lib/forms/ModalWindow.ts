@@ -167,23 +167,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public setForm(form:FormInstance) : void
 	{
-		this.top = form.windowopts.offsetTop;
-		this.left = form.windowopts.offsetLeft;
-
-		this.width = form.windowopts.width;
-		this.height = form.windowopts.height;
-
-		if (form.windowopts.width == "")
-		{
-			this.left = "0";
-			this.width = "99.25vw";
-		}
-
-		if (form.windowopts.height == "")
-		{
-			this.top = "0";
-			this.height = "99vh";
-		}
+		this.resize(form);
 
 		let impl:FormImpl = form.formref.instance["impl"];
 		impl.setModalWindow(this);
@@ -200,6 +184,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public newForm(form:FormInstance) : void
 	{
+		if (!form.windowopts?.inherit) this.resize(form);
+
 		let formelem:Element = this.content.firstElementChild;
 		if (formelem != null) this.content.removeChild(formelem);
 		this.app.builder.getAppRef().detachView(this.form.formref.hostView);
@@ -256,6 +242,28 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.winref.destroy();
 
 		this.winref = null;
+	}
+
+
+	private resize(form:FormInstance) : void
+	{
+		this.top = form.windowopts.offsetTop;
+		this.left = form.windowopts.offsetLeft;
+
+		this.width = form.windowopts.width;
+		this.height = form.windowopts.height;
+
+		if (form.windowopts.width == "")
+		{
+			this.left = "0";
+			this.width = "99.25vw";
+		}
+
+		if (form.windowopts.height == "")
+		{
+			this.top = "0";
+			this.height = "99vh";
+		}
 	}
 
 

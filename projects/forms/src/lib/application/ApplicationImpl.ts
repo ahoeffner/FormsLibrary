@@ -89,6 +89,12 @@ export class ApplicationImpl
     }
 
 
+    public getMenu() : Menu
+    {
+        return(this.state.menu);
+    }
+
+
     public showTitle(title:string) : void
     {
         if (title == null) title = this.apptitle;
@@ -215,7 +221,7 @@ export class ApplicationImpl
         this.state.form = impl;
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();
 
-        if (!formdef.windowopts?.modal) this.showMenu(fmenu);
+        if (!formdef.windowopts?.wizard) this.showMenu(fmenu);
         DropDownMenu.setForm(fmenu,formdef.formref.instance);
 
         this.formsctl.display(formdef);

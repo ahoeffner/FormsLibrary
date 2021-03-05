@@ -1,6 +1,8 @@
 export interface WindowOptions
 {
-    modal?:boolean;
+    wizard?:boolean;
+    inherit?:boolean;
+
     width?:string;
     height?:string;
     offsetTop?:string;

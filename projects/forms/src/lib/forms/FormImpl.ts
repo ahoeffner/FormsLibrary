@@ -128,6 +128,12 @@ export class FormImpl
     }
 
 
+    public getMenu() : Menu
+    {
+        return(this.menu$);
+    }
+
+
     public getApplication() : ApplicationImpl
     {
         return(this.app);
@@ -245,7 +251,9 @@ export class FormImpl
         let inst:FormInstance = this.app.getInstance(id);
         this.app.preform(id.impl,parameters,inst,false);
 
-        // already in call-chain
+        if (inst.windowdef != null) inst.windowopts = inst.windowdef;
+        else                        inst.windowopts = {width: "", height: ""};
+
         if (this.win != null)
         {
             this.win.newForm(inst);
@@ -254,10 +262,6 @@ export class FormImpl
         else
         {
             id.impl.setRoot(this);
-
-            if (inst.windowdef != null) inst.windowopts = inst.windowdef;
-            else                        inst.windowopts = {width: "", height: ""};
-
             this.app.showinstance(inst);
         }
     }

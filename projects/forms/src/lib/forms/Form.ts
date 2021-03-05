@@ -16,6 +16,8 @@ export interface CallBack
 export class Form implements OnInit, AfterViewInit
 {
     private impl:FormImpl;
+    // dont rename impl as it is read behind the scenes
+
 
     constructor()
     {
@@ -27,14 +29,24 @@ export class Form implements OnInit, AfterViewInit
         return(this.constructor.name);
     }
 
-    public setTitle(title:string) : void
+    public set Title(title:string)
     {
         this.impl.title = title;
     }
 
-    public setMenu(menu:Menu)
+    public get Title() : string
+    {
+        return(this.impl.title);
+    }
+
+    public set Menu(menu:Menu)
     {
         this.impl.setMenu(menu);
+    }
+
+    public get Menu()
+    {
+        return(this.impl.getMenu());
     }
 
     public newform(form:any, parameters?:Map<string,any>) : void
@@ -57,12 +69,12 @@ export class Form implements OnInit, AfterViewInit
         return(this.impl.getCallStack());
     }
 
-    public clearStack() : void
+    public clearCallStack() : void
     {
         this.impl.clearStack();
     }
 
-    public getParameters() : Map<string,any>
+    public get Parameters() : Map<string,any>
     {
         return(this.impl.getParameters());
     }
