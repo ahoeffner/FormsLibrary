@@ -228,6 +228,10 @@ export class FormImpl
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
 
+        console.log("lookup "+name+" -> "+id?.name+" "+id?.impl.name);
+        this.stack.forEach((value,key) => {console.log(key+" "+value.name)});
+        console.log("");
+
         // newform
         if (id != null && destroy)
         {
@@ -243,6 +247,12 @@ export class FormImpl
         }
 
         this.next = id.impl;
+
+        if (replace && this.parent != null)
+        {
+            //this.parent.stack.delete(this.name);
+            this.parent.stack.set(name,id);
+        }
 
         // replace current
         if (!replace) id.impl.setParent(this);
