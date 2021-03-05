@@ -251,8 +251,6 @@ export class FormImpl
         let inst:FormInstance = this.app.getInstance(id);
         this.app.preform(id.impl,parameters,inst,false);
 
-        if (inst.windowdef != null) inst.windowopts = inst.windowdef;
-        else                        inst.windowopts = {width: "", height: ""};
 
         if (this.win != null)
         {
