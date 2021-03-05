@@ -217,20 +217,55 @@ export class FormImpl
         }
         else
         {
-            this.callForm(form,destroy,true,parameters);
+            this.replaceform(form,destroy,parameters);
         }
     }
 
 
-    public callForm(form:any, destroy:boolean, replace:boolean, parameters?:Map<string,any>) : void
+    private replaceform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    {
+        let utils:Utils = new Utils();
+        let name:string = utils.getName(form);
+        let id:InstanceID = this.parent.stack.get(name);
+
+        // newform
+        if (id != null && destroy)
+        {
+            id = null;
+            this.app.closeform(this,destroy);
+        }
+
+        // create
+        if (id == null)
+        {
+            id = this.app.getNewInstance(form);
+            this.parent.stack.set(id.name,id);
+        }
+
+        this.parent.next = id.impl;
+        id.impl.setParent(this.parent);
+
+        let inst:FormInstance = this.app.getInstance(id);
+        this.app.preform(id.impl,parameters,inst,false);
+
+        if (this.win != null)
+        {
+            this.win.newForm(inst);
+            id.impl.setRoot(this.root);
+        }
+        else
+        {
+            id.impl.setRoot(this);
+            this.app.showinstance(inst);
+        }
+    }
+
+
+    public callForm(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
-
-        console.log("lookup "+name+" -> "+id?.name+" "+id?.impl.name);
-        this.stack.forEach((value,key) => {console.log(key+" "+value.name)});
-        console.log("");
 
         // newform
         if (id != null && destroy)
@@ -247,16 +282,8 @@ export class FormImpl
         }
 
         this.next = id.impl;
+        id.impl.setParent(this);
 
-        if (replace && this.parent != null)
-        {
-            //this.parent.stack.delete(this.name);
-            this.parent.stack.set(name,id);
-        }
-
-        // replace current
-        if (!replace) id.impl.setParent(this);
-        else          id.impl.setParent(this.parent);
 
         let inst:FormInstance = this.app.getInstance(id);
         this.app.preform(id.impl,parameters,inst,false);
