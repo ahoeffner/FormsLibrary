@@ -166,7 +166,6 @@ export class FormImpl
         usage = DBUsage.merge(blockdef.databaseopts,usage);
         usage = DBUsage.merge(propusage.get(blockdef.prop),usage);
 
-        console.log(block.name+" "+JSON.stringify(usage));
         block.setDatabaseUsage(usage);
     }
 
