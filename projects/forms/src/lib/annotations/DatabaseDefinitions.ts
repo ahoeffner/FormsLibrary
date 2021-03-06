@@ -22,6 +22,8 @@ export class DatabaseDefinitions
             DatabaseDefinitions.usage.set(comp,opts);
         }
 
+        console.log("DATABASE comp:"+comp+" type: "+type+" prop: "+prop);
+
         let dbopts:DBUsage = {type: type, prop: prop, usage: usage};
         opts.unshift(dbopts);
     }

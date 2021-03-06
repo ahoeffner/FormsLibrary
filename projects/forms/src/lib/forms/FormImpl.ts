@@ -12,6 +12,7 @@ import { DropDownMenu } from "../menu/DropDownMenu";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
+import { DatabaseDefinitions, DBUsage } from "../annotations/DatabaseDefinitions";
 
 
 export class FormImpl
@@ -119,8 +120,28 @@ export class FormImpl
             if (blocks[i].prop != null) block = this.form[blocks[i].prop];
             else if (blocks[i].component != null) block = new blocks[i].component();
 
-            if (block == null) window.alert("Cannot create instance of "+blocks[i].alias);
-            else this.blocks.set(blocks[i].alias,block);
+            if (block == null)
+            {
+                window.alert("Cannot create instance of "+blocks[i].alias);
+                continue;
+            }
+
+            block["impl"].alias = blocks[i].alias;
+            this.blocks.set(blocks[i].alias,block);
+
+            let usage:DBUsage[] = DatabaseDefinitions.getUsage(block.name);
+
+            for(let i = 0; i < usage.length; i++)
+            {
+                console.log("OnBlock "+this.name+" "+usage[i].prop);
+            }
+
+            usage = DatabaseDefinitions.getUsage(this.name);
+
+            for(let i = 0; i < usage.length; i++)
+            {
+                console.log("OnForm "+this.name+" "+usage[i].prop);
+            }
 
             //block.setDatabaseUsage();
         }
@@ -362,7 +383,7 @@ export class FormImpl
             else
             {
                 //chain, started from form, was cancelled
-                this.parent.stack.delete(this.name$);
+                this.parent.stack.delete(this.name);
                 this.app.closeInstance(this.inst,true);
                 this.app.showTitle(this.root.title);
             }
@@ -387,7 +408,7 @@ export class FormImpl
 
         //child closed
         this.app.closeInstance(this.inst,destroy);
-        if (destroy) this.parent.stack.delete(this.name$);
+        if (destroy) this.parent.stack.delete(this.name);
 
         let pinst:InstanceID = this.parent.getInstanceID();
         this.app.showTitle(this.parent.title);

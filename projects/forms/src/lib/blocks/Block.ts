@@ -1,5 +1,5 @@
-import { DatabaseUsage } from "../database/DatabaseUsage";
 import { BlockImpl } from "./BlockImpl";
+import { DatabaseUsage } from "../database/DatabaseUsage";
 
 export class Block
 {
@@ -9,6 +9,12 @@ export class Block
     constructor()
     {
         this.impl = new BlockImpl(this);
+    }
+
+
+    public get name() : string
+    {
+        return(this.impl.alias);
     }
 
 
