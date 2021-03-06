@@ -1,6 +1,6 @@
 import { Utils } from "../utils/Utils";
-import { WindowOptions } from "../forms/WindowOptions";
 import { FormDefinitions } from "./FormDefinitions";
+import { WindowOptions } from "../forms/WindowOptions";
 
 
 export const WINDOW = (inherit:boolean, top?:number|string, left?:number|string, width?:number|string, height?:number|string) =>

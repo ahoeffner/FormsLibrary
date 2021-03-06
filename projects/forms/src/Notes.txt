@@ -1,8 +1,4 @@
 Drop down enabled color
-Title and ContextTitle in application
-modal -> wizard
-new window opt, inherit
-Move modaloptions to form or as @WINDOW
 Add query,inser,update,delete as @OPTION on FORM
 Listen on change-event for input
 
