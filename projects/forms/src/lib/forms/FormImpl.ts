@@ -127,6 +127,12 @@ export class FormImpl
                 continue;
             }
 
+            if (blocks[i].alias == null)
+            {
+                console.log("alias is null "+block.constructor.name);
+                continue;
+            }
+
             block["impl"].name = blocks[i].alias;
             this.blocks.set(blocks[i].alias,block);
 

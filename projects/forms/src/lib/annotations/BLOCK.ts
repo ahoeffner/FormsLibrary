@@ -3,7 +3,7 @@ import { BlockDefinitions } from './BlockDefinitions';
 import { BlockDefinition } from '../blocks/BlockDefinition';
 
 
-export const BLOCK = (alias:string, component?:any) =>
+export const BLOCK = (alias?:string, component?:any) =>
 {
     function def(comp:any, prop?:string)
     {
@@ -11,7 +11,7 @@ export const BLOCK = (alias:string, component?:any) =>
         let name:string = utils.getName(comp);
         let type:string = utils.getType(comp);
 
-        if (type != null && type == "Block")
+        if (type == "Block")
         {
             BlockDefinitions.setBlockDefaultAlias(name,alias);
             return;
