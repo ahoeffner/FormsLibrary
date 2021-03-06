@@ -10,7 +10,19 @@ export const DATABASE = (usage:DatabaseUsage) =>
         let comp:string = utils.getName(component);
         let type:string = utils.getType(component);
 
-        DatabaseDefinitions.setUsage(comp,type,prop,usage);
+        if (type != null && type == "Form" && prop == null)
+        {
+            DatabaseDefinitions.setFormDefault(comp,usage);
+            return;
+        }
+
+        if (type != null && type == "Block" && prop == null)
+        {
+            DatabaseDefinitions.setBlockDefault(comp,usage);
+            return;
+        }
+
+        DatabaseDefinitions.setBlockUsage(comp,prop,usage);
     }
     return(def);
 }

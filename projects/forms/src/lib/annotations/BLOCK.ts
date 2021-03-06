@@ -5,10 +5,17 @@ import { BlockDefinition } from '../blocks/BlockDefinition';
 
 export const BLOCK = (alias:string, component?:any) =>
 {
-    function def(form:any, prop?:string)
+    function def(comp:any, prop?:string)
     {
         let utils:Utils = new Utils();
-        let fname:string = utils.getName(form);
+        let name:string = utils.getName(comp);
+        let type:string = utils.getType(comp);
+
+        if (type != null && type == "Block")
+        {
+            BlockDefinitions.setBlockDefaultAlias(name,alias);
+            return;
+        }
 
         let def:BlockDefinition =
         {
@@ -17,10 +24,7 @@ export const BLOCK = (alias:string, component?:any) =>
             component: component
         }
 
-        let cn:string = "";
-        if (component != null) cn = component.name;
-        console.log("BLOCK form: "+fname+" comp: "+cn+" alias: "+alias+" prop: "+prop);
-        BlockDefinitions.setBlock(fname,def);
+        BlockDefinitions.setBlock(name,def);
     }
     return(def);
 }

@@ -13,6 +13,7 @@ import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseDefinitions, DBUsage } from "../annotations/DatabaseDefinitions";
+import { DatabaseUsage } from "../database/DatabaseUsage";
 
 
 export class FormImpl
@@ -129,7 +130,15 @@ export class FormImpl
             block["impl"].name = blocks[i].alias;
             this.blocks.set(blocks[i].alias,block);
 
-            let usage:DBUsage[] = DatabaseDefinitions.getUsage(block.name);
+            console.log("Block alias: "+block.name);
+
+            let bclass:string = BlockDefinitions.getBlockName(blocks[i].alias);
+            let usage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bclass);
+
+            console.log("Defaults for "+block.name+" "+JSON.stringify(usage));
+
+            /*
+            let usage:DBUsage[] = DatabaseDefinitions.getBlockUsage(block.name);
             //console.log("form: "+this.name+" block: "+block.name+" usage: "+usage.length);
 
             for(let i = 0; i < usage.length; i++)
@@ -138,7 +147,7 @@ export class FormImpl
                 //console.log("OnBlock "+this.name+" "+block.name);
             }
 
-            usage = DatabaseDefinitions.getUsage(this.name);
+            usage = DatabaseDefinitions.getBlockUsage(this.name);
 
             for(let i = 0; i < usage.length; i++)
             {
@@ -147,6 +156,7 @@ export class FormImpl
             }
 
             //block.setDatabaseUsage();
+            */
         }
     }
 
