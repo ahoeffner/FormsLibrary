@@ -18,6 +18,7 @@ import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
 import { ContainerControl } from "../container/ContainerControl";
+import { DatabaseDefinitions, DBUsage } from "../annotations/DatabaseDefinitions";
 
 
 export class ApplicationImpl
@@ -310,6 +311,9 @@ export class ApplicationImpl
         {
             let fname:string = forms[i].component.name.toLowerCase();
             forms[i].windowopts = FormDefinitions.getWindowOpts(fname);
+
+            let dbusage:DBUsage[] = DatabaseDefinitions.getUsage(fname);
+            forms[i].databaseusage = dbusage[0].usage;
         }
 
         let formsmap:Map<string,FormInstance> =

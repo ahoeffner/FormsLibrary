@@ -1,4 +1,4 @@
-import { BlockDefinition } from './BlockDefinition';
+import { BlockDefinition } from '../blocks/BlockDefinition';
 
 
 export class BlockDefinitions

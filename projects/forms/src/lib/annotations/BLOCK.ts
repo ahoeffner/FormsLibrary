@@ -1,6 +1,6 @@
 import { Utils } from '../utils/Utils';
-import { BlockDefinition } from './BlockDefinition';
 import { BlockDefinitions } from './BlockDefinitions';
+import { BlockDefinition } from '../blocks/BlockDefinition';
 
 
 export const BLOCK = (alias:string, component?:any) =>
@@ -12,7 +12,7 @@ export const BLOCK = (alias:string, component?:any) =>
 
         let def:BlockDefinition =
         {
-            prop:prop,
+            prop: prop,
             alias: alias,
             component: component
         }

@@ -11,6 +11,7 @@ export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 export {Block} from './lib/blocks/Block';
 
 export {Transaction} from './lib/database/Transaction';
+export {DatabaseUsage} from './lib/database/DatabaseUsage'
 
 export {FORM} from './lib/annotations/FORM';
 export {INIT} from './lib/annotations/INIT';
@@ -18,6 +19,7 @@ export {BLOCK} from './lib/annotations/BLOCK';
 export {WIZARD} from './lib/annotations/WIZARD';
 export {WINDOW} from './lib/annotations/WINDOW';
 export {CONNECT} from './lib/annotations/CONNECT';
+export {DATABASE} from './lib/annotations/DATABASE';
 export {DISCONNECT} from './lib/annotations/DISCONNECT';
 
 export {FormList} from './lib/menu/FormList';

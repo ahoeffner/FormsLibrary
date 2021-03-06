@@ -9,7 +9,7 @@ import { FormInstance } from "./FormInstance";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
-import { BlockDefinition } from '../annotations/BlockDefinition';
+import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 
@@ -109,13 +109,20 @@ export class FormImpl
         for(let i = 0; i < blocks.length; i++)
         {
             let block:Block = this.blocks.get(blocks[i].alias);
-            if (block) window.alert("Block alias "+blocks[i].alias+" defined twice");
+
+            if (block != null)
+            {
+                window.alert("Block alias "+blocks[i].alias+" defined twice");
+                continue;
+            }
 
             if (blocks[i].prop != null) block = this.form[blocks[i].prop];
             else if (blocks[i].component != null) block = new blocks[i].component();
 
             if (block == null) window.alert("Cannot create instance of "+blocks[i].alias);
-            this.blocks.set(blocks[i].alias,block);
+            else this.blocks.set(blocks[i].alias,block);
+
+            //block.setDatabaseUsage();
         }
     }
 
