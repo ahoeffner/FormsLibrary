@@ -35,6 +35,8 @@ export class InstanceControl
         if (ref == null) return(null);
 
         let impl:FormImpl = ref.instance["impl"];
+
+        if (modal == null) modal = def.windowdef;
         modal = this.futil.complete(modal,true);
 
         let id:InstanceID =

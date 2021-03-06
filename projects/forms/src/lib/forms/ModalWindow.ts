@@ -281,6 +281,11 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 		this.showmenu()
 		this.change.detectChanges();
+
+		this.posy = this.window.offsetTop;
+		this.posx = this.window.offsetLeft;
+		this.sizex = this.window.offsetWidth;
+		this.sizey = this.window.offsetHeight;
 	}
 
 
@@ -325,11 +330,6 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.content = this.contentElement?.nativeElement as HTMLDivElement;
 
 		this.display();
-
-		this.posy = this.window.offsetTop;
-		this.posx = this.window.offsetLeft;
-		this.sizex = this.window.offsetWidth;
-		this.sizey = this.window.offsetHeight;
 
 		Listener.add("modal",this,"mouseup");
 		Listener.add("modal",this,"mousemove");

@@ -284,10 +284,8 @@ export class FormImpl
         this.next = id.impl;
         id.impl.setParent(this);
 
-
         let inst:FormInstance = this.app.getInstance(id);
         this.app.preform(id.impl,parameters,inst,false);
-
 
         if (this.win != null)
         {
