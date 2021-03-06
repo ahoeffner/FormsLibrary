@@ -167,7 +167,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public setForm(form:FormInstance) : void
 	{
-		this.resize(form);
+		this.resize(form,true);
 
 		let impl:FormImpl = form.formref.instance["impl"];
 		impl.setModalWindow(this);
@@ -184,7 +184,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public newForm(form:FormInstance) : void
 	{
-		if (!form.windowopts?.inherit) this.resize(form);
+		if (!form.windowopts?.inherit) this.resize(form,false);
 
 		let formelem:Element = this.content.firstElementChild;
 		if (formelem != null) this.content.removeChild(formelem);
@@ -245,10 +245,13 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	}
 
 
-	private resize(form:FormInstance) : void
+	private resize(form:FormInstance, pos:boolean) : void
 	{
-		this.top = form.windowopts.offsetTop;
-		this.left = form.windowopts.offsetLeft;
+		if (pos)
+		{
+			this.top = form.windowopts.offsetTop;
+			this.left = form.windowopts.offsetLeft;
+		}
 
 		this.width = form.windowopts.width;
 		this.height = form.windowopts.height;
@@ -279,6 +282,9 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.app.builder.getAppRef().attachView(this.form.formref.hostView);
 		this.content.appendChild(this.element);
 
+		this.minh = 100;
+		this.minw = 450;
+
 		this.showmenu()
 		this.change.detectChanges();
 
@@ -286,6 +292,24 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		this.posx = this.window.offsetLeft;
 		this.sizex = this.window.offsetWidth;
 		this.sizey = this.window.offsetHeight;
+
+		let resize:boolean = false;
+
+		if (this.sizex < this.minw)
+		{
+			resize = true;
+			this.sizex = this.minw;
+			this.width = this.sizex+"px";
+		}
+
+		if (this.sizey < this.minh)
+		{
+			resize = true;
+			this.sizey = this.minh;
+			this.height = this.sizey+"px";
+		}
+
+		if (resize) this.change.detectChanges();
 	}
 
 
@@ -317,8 +341,14 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		let impl:FormImpl = this.form.formref.instance["impl"];
 		ddmenu.getMenu().getHandler().onFormChange(impl.form);
 
-		this.minh = 100;
 		this.minw = this.menu.clientWidth + 50;
+
+		if (this.sizex < this.minw)
+		{
+			this.sizex = this.minw;
+			this.width = this.sizex+"px";
+			this.change.detectChanges();
+		}
 	}
 
 
