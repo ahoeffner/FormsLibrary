@@ -306,7 +306,12 @@ export class ApplicationImpl
 
     private setFormsDefinitions(forms:FormDefinition[]) : void
     {
-        console.log("setFormsDefinitions");
+        for(let i = 0; i < forms.length; i++)
+        {
+            let fname:string = forms[i].component.name.toLowerCase();
+            forms[i].windowopts = FormDefinitions.getWindowOpts(fname);
+        }
+
         let formsmap:Map<string,FormInstance> =
             this.formsctl.setFormsDefinitions(forms);
 

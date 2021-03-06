@@ -1,3 +1,4 @@
+import { WindowOptions } from '../forms/WindowOptions';
 import { FormDefinition } from '../forms/FormsDefinition';
 
 
@@ -7,6 +8,7 @@ export class FormDefinitions
     private static oninit:Map<string,string[]> = new Map<string,string[]>();
     private static onconn:Map<string,string[]> = new Map<string,string[]>();
     private static ondisc:Map<string,string[]> = new Map<string,string[]>();
+    private static windowopts:Map<string,WindowOptions> = new Map<string,WindowOptions>();
 
 
     public static setForm(def:FormDefinition) : void
@@ -18,6 +20,20 @@ export class FormDefinitions
     public static getForms() : FormDefinition[]
     {
         return(FormDefinitions.forms);
+    }
+
+
+    public static getWindowOpts(form:string) : WindowOptions
+    {
+        let wopts:WindowOptions = FormDefinitions.windowopts.get(form);
+
+        if (wopts == null)
+        {
+            wopts = {};
+            FormDefinitions.windowopts.set(form,wopts);
+        }
+
+        return(wopts);
     }
 
 
