@@ -14,7 +14,7 @@ export class Block
 
     public get name() : string
     {
-        return(this.impl.alias);
+        return(this.impl.name);
     }
 
 

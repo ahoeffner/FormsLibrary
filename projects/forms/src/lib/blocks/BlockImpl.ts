@@ -4,7 +4,7 @@ import { DatabaseUsage } from "../database/DatabaseUsage";
 
 export class BlockImpl
 {
-    private alias$:string;
+    private name$:string;
     private dbusage:DatabaseUsage;
 
 
@@ -14,9 +14,15 @@ export class BlockImpl
     }
 
 
-    public set alias(alias:string)
+    public set name(alias:string)
     {
-        this.alias$ = alias;
+        this.name$ = alias;
+    }
+
+
+    public get name() : string
+    {
+        return(this.name$);
     }
 
 

@@ -313,7 +313,7 @@ export class ApplicationImpl
             forms[i].windowopts = FormDefinitions.getWindowOpts(fname);
 
             let dbusage:DBUsage[] = DatabaseDefinitions.getUsage(fname);
-            forms[i].databaseusage = dbusage[0].usage;
+            if (dbusage.length > 0) forms[i].databaseusage = dbusage[0].usage;
         }
 
         let formsmap:Map<string,FormInstance> =

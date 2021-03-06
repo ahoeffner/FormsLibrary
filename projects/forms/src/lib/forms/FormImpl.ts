@@ -126,21 +126,24 @@ export class FormImpl
                 continue;
             }
 
-            block["impl"].alias = blocks[i].alias;
+            block["impl"].name = blocks[i].alias;
             this.blocks.set(blocks[i].alias,block);
 
             let usage:DBUsage[] = DatabaseDefinitions.getUsage(block.name);
+            //console.log("form: "+this.name+" block: "+block.name+" usage: "+usage.length);
 
             for(let i = 0; i < usage.length; i++)
             {
-                console.log("OnBlock "+this.name+" "+usage[i].prop);
+                if (usage[i].prop != null) continue;
+                //console.log("OnBlock "+this.name+" "+block.name);
             }
 
             usage = DatabaseDefinitions.getUsage(this.name);
 
             for(let i = 0; i < usage.length; i++)
             {
-                console.log("OnForm "+this.name+" "+usage[i].prop);
+                if (usage[i].prop == null) continue;
+                //console.log("OnForm "+this.name+" "+block.name+" "+usage[i].prop);
             }
 
             //block.setDatabaseUsage();

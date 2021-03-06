@@ -26,7 +26,7 @@ export class Utils
             {
                 let pos1:number = code.indexOf("[",pos);
                 let pos2:number = code.indexOf("]",pos1);
-                type = code.substring(pos1+1,pos2);
+                type = code.substring(pos1+2,pos2-1);
             }
         }
 

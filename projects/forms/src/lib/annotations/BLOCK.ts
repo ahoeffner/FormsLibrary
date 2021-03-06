@@ -17,6 +17,9 @@ export const BLOCK = (alias:string, component?:any) =>
             component: component
         }
 
+        let cn:string = "";
+        if (component != null) cn = component.name;
+        console.log("BLOCK form: "+fname+" comp: "+cn+" alias: "+alias+" prop: "+prop);
         BlockDefinitions.setBlock(fname,def);
     }
     return(def);
