@@ -18,7 +18,7 @@ import { FormDefinition } from "../forms/FormsDefinition";
 import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
 import { ContainerControl } from "../container/ContainerControl";
-import { DatabaseDefinitions, DBUsage } from "../annotations/DatabaseDefinitions";
+import { DatabaseDefinitions, PropUsage } from "../annotations/DatabaseDefinitions";
 
 
 export class ApplicationImpl

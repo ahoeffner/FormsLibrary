@@ -12,8 +12,8 @@ import { DropDownMenu } from "../menu/DropDownMenu";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
-import { DatabaseDefinitions, DBUsage } from "../annotations/DatabaseDefinitions";
-import { DatabaseUsage } from "../database/DatabaseUsage";
+import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
+import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 
 export class FormImpl
@@ -106,64 +106,68 @@ export class FormImpl
 
     public newForm(container:Container) : void
     {
-        let blocks:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
+        let propusage:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>()
 
-        for(let i = 0; i < blocks.length; i++)
+        DatabaseDefinitions.getBlockUsage(this.name).forEach((dbusage) =>
+        {if (dbusage.usage != null) propusage.set(dbusage.prop,dbusage.usage);});
+
+        let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
+        for(let i = 0; i < blockdef.length; i++) this.setDatabaseUsage(propusage,blockdef[i]);
+    }
+
+
+    private setDatabaseUsage(propusage:Map<string,DatabaseUsage>, blockdef:BlockDefinition) : void
+    {
+        let block:Block = this.blocks.get(blockdef.alias);
+
+        if (block != null)
         {
-            let block:Block = this.blocks.get(blocks[i].alias);
-
-            if (block != null)
-            {
-                window.alert("Block alias "+blocks[i].alias+" defined twice");
-                continue;
-            }
-
-            if (blocks[i].prop != null) block = this.form[blocks[i].prop];
-            else if (blocks[i].component != null) block = new blocks[i].component();
-
-            if (block == null)
-            {
-                window.alert("Cannot create instance of "+blocks[i].alias);
-                continue;
-            }
-
-            if (blocks[i].alias == null)
-            {
-                console.log("alias is null "+block.constructor.name);
-                continue;
-            }
-
-            block["impl"].name = blocks[i].alias;
-            this.blocks.set(blocks[i].alias,block);
-
-            console.log("Block alias: "+block.name);
-
-            let bclass:string = BlockDefinitions.getBlockName(blocks[i].alias);
-            let usage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bclass);
-
-            console.log("Defaults for "+block.name+" "+JSON.stringify(usage));
-
-            /*
-            let usage:DBUsage[] = DatabaseDefinitions.getBlockUsage(block.name);
-            //console.log("form: "+this.name+" block: "+block.name+" usage: "+usage.length);
-
-            for(let i = 0; i < usage.length; i++)
-            {
-                if (usage[i].prop != null) continue;
-                //console.log("OnBlock "+this.name+" "+block.name);
-            }
-
-            usage = DatabaseDefinitions.getBlockUsage(this.name);
-
-            for(let i = 0; i < usage.length; i++)
-            {
-                if (usage[i].prop == null) continue;
-                //console.log("OnForm "+this.name+" "+block.name+" "+usage[i].prop);
-            }
-
-            //block.setDatabaseUsage();
-            */
+            window.alert("Block alias "+blockdef.alias+" defined twice");
+            return;
         }
+
+        if (blockdef.prop != null)
+        {
+            block = this.form[blockdef.prop];
+
+            if (block == null && blockdef.component != null)
+            {
+                block = new blockdef.component();
+                this.form[blockdef.prop] = block;
+            }
+        }
+        else
+        {
+            if (blockdef.component != null)
+                block = new blockdef.component();
+        }
+
+        if (block == null)
+        {
+            window.alert(this.name+" cannot create instance of "+blockdef.alias);
+            return;
+        }
+
+        let alias:string = blockdef.alias;
+
+        if (alias == null)
+        {
+            alias = block.constructor.name;
+            alias = BlockDefinitions.getBlockDefaultAlias(alias);
+        }
+
+        alias = alias.toLowerCase();
+        block["impl"].name = alias;
+        this.blocks.set(alias,block);
+
+        let bname:string = block.constructor.name;
+        let usage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
+
+        usage = DBUsage.merge(blockdef.databaseopts,usage);
+        usage = DBUsage.merge(propusage.get(blockdef.prop),usage);
+
+        console.log(block.name+" "+JSON.stringify(usage));
+        block.setDatabaseUsage(usage);
     }
 
 

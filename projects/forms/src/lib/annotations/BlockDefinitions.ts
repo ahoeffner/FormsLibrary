@@ -3,23 +3,27 @@ import { BlockDefinition } from '../blocks/BlockDefinition';
 
 export class BlockDefinitions
 {
-    private static bdefault:Map<string,string> = new Map<string,string>();
+    private static dalias:Map<string,string> = new Map<string,string>();
     private static blocks:Map<string,any[]> = new Map<string,BlockDefinition[]>();
 
 
     public static setBlockDefaultAlias(block:string, alias:string) : void
     {
-        BlockDefinitions.bdefault.set(alias.toLowerCase(),block);
+        if (alias == null) alias = block;
+        BlockDefinitions.dalias.set(block,alias);
     }
 
 
-    public static getBlockName(alias:string) : string
+    public static getBlockDefaultAlias(alias:string) : string
     {
-        return(BlockDefinitions.bdefault.get(alias.toLowerCase()));
+        alias = alias.toLowerCase();
+        let bname:string = BlockDefinitions.dalias.get(alias);
+        if (bname == null) bname = alias;
+        return(bname);
     }
 
 
-    public static setBlock(form:string, def:any) : void
+    public static setBlock(form:string, def:BlockDefinition) : void
     {
         let blocks:BlockDefinition[] = BlockDefinitions.blocks.get(form.toLowerCase());
 
@@ -29,7 +33,8 @@ export class BlockDefinitions
             BlockDefinitions.blocks.set(form.toLowerCase(),blocks);
         }
 
-        blocks.unshift(def);
+        if (def.prop != null) blocks.push(def);
+        else                  blocks.unshift(def);
     }
 
 

@@ -1,6 +1,6 @@
-import { DatabaseUsage } from "../database/DatabaseUsage";
+import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 
-export interface DBUsage
+export interface PropUsage
 {
     prop?:string;
     usage?:DatabaseUsage;
@@ -9,7 +9,7 @@ export interface DBUsage
 
 export class DatabaseDefinitions
 {
-    private static usage:Map<string,DBUsage[]> = new Map<string,DBUsage[]>();
+    private static usage:Map<string,PropUsage[]> = new Map<string,PropUsage[]>();
     private static bdefault:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
     private static fdefault:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
 
@@ -33,14 +33,22 @@ export class DatabaseDefinitions
     public static getBlockDefault(block:string) : DatabaseUsage
     {
         let usage:DatabaseUsage = null;
+
+        let base:DatabaseUsage =
+        {
+            query:  false,
+            insert: false,
+            update: false,
+            delete: false
+        };
+
         if (block != null) usage = DatabaseDefinitions.bdefault.get(block.toLowerCase());
-        if (usage == null) usage = {query: true, insert: true, update: true, delete: true};
-        return(usage);
+        return(DBUsage.merge(usage,base));
     }
 
     public static setBlockUsage(form:string, prop:string, usage:DatabaseUsage) : void
     {
-        let opts:DBUsage[] = DatabaseDefinitions.usage.get(form);
+        let opts:PropUsage[] = DatabaseDefinitions.usage.get(form);
 
         if (opts == null)
         {
@@ -48,14 +56,14 @@ export class DatabaseDefinitions
             DatabaseDefinitions.usage.set(form,opts);
         }
 
-        let dbopts:DBUsage = {prop: prop, usage: usage};
+        let dbopts:PropUsage = {prop: prop, usage: usage};
         opts.unshift(dbopts);
     }
 
 
-    public static getBlockUsage(form:string) : DBUsage[]
+    public static getBlockUsage(form:string) : PropUsage[]
     {
-        let usage:DBUsage[] = DatabaseDefinitions.usage.get(form.toLowerCase());
+        let usage:PropUsage[] = DatabaseDefinitions.usage.get(form.toLowerCase());
         if (usage == null) usage = [];
         return(usage);
     }
