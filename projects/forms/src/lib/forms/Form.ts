@@ -18,7 +18,6 @@ export class Form implements OnInit, AfterViewInit
     private impl:FormImpl;
     // dont rename impl as it is read behind the scenes
 
-
     constructor()
     {
         this.impl = new FormImpl(this);
