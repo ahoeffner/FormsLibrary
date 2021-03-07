@@ -19,8 +19,8 @@ export class FormUtil
         if (!options.hasOwnProperty("wizard")) options.wizard = false;
         if (!options.hasOwnProperty("inherit")) options.inherit = true;
 
-        if (!options.hasOwnProperty("width")) options.width = "99.25vw";
-        if (!options.hasOwnProperty("height")) options.height = "99.00vh";
+        if (!options.hasOwnProperty("width")) options.width = "99.65vw";
+        if (!options.hasOwnProperty("height")) options.height = "99.5vh";
         if (!options.hasOwnProperty("offsetTop")) options.offsetTop = "0";
         if (!options.hasOwnProperty("offsetLeft")) options.offsetLeft = "0";
         return(options);

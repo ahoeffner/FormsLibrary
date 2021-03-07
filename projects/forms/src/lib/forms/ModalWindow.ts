@@ -54,7 +54,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 
     .modalwindow-topbar
     {
-        height: 1.5em;
+        height: 1.70em;
         margin-left: 0;
         margin-right: 0;
         cursor:default;
@@ -66,8 +66,8 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 	{
 		top: 0;
 		right: 0;
-		height: 1.5em;
 		width: 1.75em;
+		height: 1.70em;
 		position: absolute;
 		border-left: 1px solid black;
 	}
@@ -259,13 +259,13 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		if (form.windowopts.width == "")
 		{
 			this.left = "0";
-			this.width = "99.25vw";
+			this.width = "100%";
 		}
 
 		if (form.windowopts.height == "")
 		{
 			this.top = "0";
-			this.height = "99vh";
+			this.height = "100%";
 		}
 	}
 

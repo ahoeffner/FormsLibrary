@@ -55,7 +55,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 
     .popupwindow-topbar
     {
-        height: 1.5em;
+        height: 1.70em;
         margin-left: 0;
         margin-right: 0;
         cursor:default;
@@ -75,7 +75,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		top: 0;
 		right: 0;
 		width: 1.75em;
-		height: 1.5em;
+		height: 1.70em;
 		position: absolute;
 		border-left: 1px solid black;
 	}
