@@ -15,11 +15,13 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         <div class="popupwindow-container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="popupwindow-topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
 		    <span class="popupwindow-center" style="color: {{tcolor}};">
-                <div #title></div></span>
+				<span class="popupwindow-corner"></span>
+				<div #title></div>
                 <span class="popupwindow-close">
                     <button class="popupwindow-button" style="color: {{btncolor}};" (click)="close(true)">X</button>
                 </span>
-		  </div>
+			</span>
+		   </div>
           <div class="popupwindow-block" style="margin-top: {{tmargin}};"><div #content></div></div>
         </div>
       </div>
@@ -61,12 +63,19 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
         border-bottom: 2px solid black;
     }
 
+	.popupwindow-corner
+	{
+		width: 1.5em;
+		display: block;
+		position: relative;
+	}
+
 	.popupwindow-close
 	{
 		top: 0;
 		right: 0;
-		height: 1.5em;
 		width: 1.75em;
+		height: 1.5em;
 		position: absolute;
 		border-left: 1px solid black;
 	}
@@ -224,8 +233,8 @@ export class PopupWindow implements onEventListener, AfterViewInit
 		this.app.builder.getAppRef().attachView(this.pinst.popupref.hostView);
 		this.content.appendChild(this.element);
 
-		this.minh = 50;
-		this.minw = 100;
+		this.minh = 150;
+		this.minw = 300;
 
 		this.titlebar.innerHTML = this.title;
 		this.change.detectChanges();
