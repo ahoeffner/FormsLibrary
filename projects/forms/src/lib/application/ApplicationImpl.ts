@@ -54,7 +54,6 @@ export class ApplicationImpl
     {
         let config:Config = new Config(client);
         this.config = await config.getConfig();
-        console.log("conf: "+JSON.stringify(this.config));
     }
 
 
