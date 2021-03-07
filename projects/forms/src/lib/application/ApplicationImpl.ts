@@ -205,7 +205,7 @@ export class ApplicationImpl
     {
         try
         {
-            impl[func]();
+            impl.form[func]();
         }
         catch (error)
         {
@@ -354,7 +354,12 @@ export class ApplicationImpl
             if (name == null) return;
 
             let inst:FormInstance = this.formsctl.getFormsDefinitions().get(name);
-            if (!inst.navigable) return;
+
+            if (!inst.navigable)
+            {
+                this.showPath("","");
+                return;
+            }
 
             let params:Map<string,any> = new Map<string,any>();
             let urlparams = new URLSearchParams(window.location.search);
