@@ -13,15 +13,15 @@ export class DatabaseDefinitions
     private static bdefault:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
     private static fdefault:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
 
-    public static setFormDefault(form:string, usage:DatabaseUsage) : void
+    public static setFormUsage(form:string, usage:DatabaseUsage) : void
     {
         DatabaseDefinitions.fdefault.set(form,usage);
     }
 
-    public static getFormDefault(form:string) : DatabaseUsage
+    public static getFormUsage(form:string) : DatabaseUsage
     {
         let usage:DatabaseUsage = DatabaseDefinitions.fdefault.get(form.toLowerCase());
-        if (usage == null) usage = {query: true, insert: true, update: true, delete: true};
+        if (usage == null) usage = {query: false, insert: false, update: false, delete: false};
         return(usage);
     }
 

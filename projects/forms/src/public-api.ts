@@ -15,10 +15,13 @@ export {DatabaseUsage} from './lib/database/DatabaseUsage'
 
 export {FORM} from './lib/annotations/FORM';
 export {INIT} from './lib/annotations/INIT';
+export {SHOW} from './lib/annotations/SHOW';
+export {HIDE} from './lib/annotations/HIDE';
 export {BLOCK} from './lib/annotations/BLOCK';
 export {WIZARD} from './lib/annotations/WIZARD';
 export {WINDOW} from './lib/annotations/WINDOW';
 export {CONNECT} from './lib/annotations/CONNECT';
+export {DESTROY} from './lib/annotations/DESTROY';
 export {DATABASE} from './lib/annotations/DATABASE';
 export {DISCONNECT} from './lib/annotations/DISCONNECT';
 

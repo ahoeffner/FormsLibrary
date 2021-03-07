@@ -8,13 +8,13 @@ export abstract class MenuHandler
 {
     private static _id:number = 0;
 
-    private guid$:string;
+    private guid$:number;
     private ready$:boolean = false;
     private menu$:MenuInterface = null;
 
     constructor()
     {
-        this.guid$ = "mhdl:"+MenuHandler._id++;
+        this.guid$ = MenuHandler._id++;
         Reflect.defineProperty(this,"_setProtected", {value: (intf:MenuInterface) =>
         {
             this.menu$ = intf;
@@ -22,7 +22,7 @@ export abstract class MenuHandler
         }});
     }
 
-    public get guid() : string
+    public get guid() : number
     {
         return(this.guid$);
     }

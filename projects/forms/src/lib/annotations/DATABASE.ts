@@ -12,7 +12,7 @@ export const DATABASE = (usage:DatabaseUsage) =>
 
         if (type == "Form" && prop == null)
         {
-            DatabaseDefinitions.setFormDefault(comp,usage);
+            DatabaseDefinitions.setFormUsage(comp,usage);
             return;
         }
 

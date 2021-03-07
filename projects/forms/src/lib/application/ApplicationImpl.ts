@@ -165,17 +165,23 @@ export class ApplicationImpl
     {
         impl.path = formdef.path;
         impl.title = formdef.title;
-        impl.initiated(true);
 
+        impl.initiated(true);
+        this.state.addForm(impl);
         let funcs:string[] = FormDefinitions.getOnInit(impl.name);
-        for(let i = 0; i < funcs.length; i++) impl.form[funcs[i]]();
+        for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
 }
 
 
     public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
     {
         if (!impl.initiated()) this.newForm(impl,formdef);
+
         impl.setParameters(parameters);
+
+        let funcs:string[] = FormDefinitions.getOnShow(impl.name);
+        for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
+
         this.showTitle(impl.title);
         if (path) this.showPath(impl.name,impl.path);
     }
@@ -183,6 +189,28 @@ export class ApplicationImpl
 
     private postform(impl:FormImpl, destroy:boolean) : void
     {
+        let funcs:string[] = FormDefinitions.getOnHide(impl.name);
+        for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
+
+        if (destroy)
+        {
+            this.state.dropForm(impl);
+            let funcs:string[] = FormDefinitions.getOnDestroy(impl.name);
+            for(let i = 0; i < funcs.length; i++) this.execfunc(impl,funcs[i]);
+        }
+    }
+
+
+    private execfunc(impl:FormImpl, func:string) : void
+    {
+        try
+        {
+            impl[func]();
+        }
+        catch (error)
+        {
+            console.log(error);
+        }
     }
 
 
@@ -311,7 +339,7 @@ export class ApplicationImpl
         {
             let fname:string = forms[i].component.name.toLowerCase();
             forms[i].windowopts = FormDefinitions.getWindowOpts(fname);
-            forms[i].databaseusage = DatabaseDefinitions.getFormDefault(fname);
+            forms[i].databaseusage = DatabaseDefinitions.getFormUsage(fname);
         }
 
         let formsmap:Map<string,FormInstance> =

@@ -14,7 +14,8 @@ export class ApplicationState
     public form:FormImpl = null;
     public connection:Connection;
     public appmenu:ComponentRef<DropDownMenu> = null;
-    public menus:Map<string,MenuHandler> = new Map<string,MenuHandler>();
+    public forms:Map<number,FormImpl> = new Map<number,FormImpl>();
+    public menus:Map<number,MenuHandler> = new Map<number,MenuHandler>();
 
     private conn:boolean = false;
 
@@ -23,6 +24,18 @@ export class ApplicationState
     {
         this.menu = new DefaultMenu();
         this.connection = new Connection();
+    }
+
+
+    public addForm(form:FormImpl) : void
+    {
+        this.forms.set(form.guid,form);
+    }
+
+
+    public dropForm(form:FormImpl) : void
+    {
+        this.forms.delete(form.guid);
     }
 
 
