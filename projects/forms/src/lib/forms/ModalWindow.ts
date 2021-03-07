@@ -18,7 +18,7 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		  <div #topbar class="modalwindow-topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
 		    <span class="modalwindow-center" style="color: {{tcolor}};"><div #menu></div></span>
 			<span class="modalwindow-close">
-				<button class="modalwindow-button" style="color: {{btncolor}};" (click)="closeForm()">X</button>
+				<button class="modalwindow-button" style="color: {{btncolor}};" (click)="close()">X</button>
 			</span>
 		  </div>
           <div class="modalwindow-block" style="margin-top: {{tmargin}};"><div #content></div></div>
@@ -217,15 +217,15 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	}
 
 
-	public closeForm() : void
+	public close() : void
 	{
 		let impl:FormImpl = this.form.formref.instance["impl"];
-		this.close();
+		this.closeWindow();
 		impl.cancel();
 	}
 
 
-	public close() : void
+	public closeWindow() : void
 	{
 		Listener.remove("modal","mouseup");
 		Listener.remove("modal","mousemove");
