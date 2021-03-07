@@ -1,3 +1,4 @@
+import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
@@ -7,6 +8,7 @@ import { FormArea } from "../forms/FormArea";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
 import { InstanceID } from "../forms/InstanceID";
+import { HttpClient } from "@angular/common/http";
 import { MenuFactory } from "../menu/MenuFactory";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
@@ -23,6 +25,7 @@ import { DatabaseDefinitions, PropUsage } from "../annotations/DatabaseDefinitio
 
 export class ApplicationImpl
 {
+    private config:any = null;
     private marea:MenuArea = null;
     private ready:boolean = false;
     private apptitle:string = null;
@@ -34,8 +37,9 @@ export class ApplicationImpl
     private instances:InstanceControl = null;
 
 
-    constructor(private app:Application, public builder:Builder)
+    constructor(private app:Application, public client:HttpClient, public builder:Builder)
     {
+        this.loadConfig(client);
         this.state = new ApplicationState(this);
         this.contctl = new ContainerControl(builder);
         this.mfactory = new MenuFactory(this.builder);
@@ -43,7 +47,14 @@ export class ApplicationImpl
         this.instances = new InstanceControl(this.formsctl);
         this.setFormsDefinitions(FormDefinitions.getForms());
         this.state.appmenu = this.createmenu(this.state.menu);
+    }
 
+
+    private async loadConfig(client:HttpClient)
+    {
+        let config:Config = new Config(client);
+        this.config = await config.getConfig();
+        console.log("conf: "+JSON.stringify(this.config));
     }
 
 

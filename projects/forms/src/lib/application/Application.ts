@@ -3,6 +3,7 @@ import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { Preferences } from "./Preferences";
 import { FormImpl } from "../forms/FormImpl";
+import { HttpClient } from "@angular/common/http";
 import { ApplicationImpl } from "./ApplicationImpl";
 
 
@@ -17,9 +18,9 @@ export class Application
     // dont rename impl as it is read behind the scenes
 
 
-    constructor(builder:Builder)
+    constructor(client:HttpClient, builder:Builder)
     {
-        this.impl = new ApplicationImpl(this,builder);
+        this.impl = new ApplicationImpl(this,client,builder);
     }
 
     public get Title() : string
