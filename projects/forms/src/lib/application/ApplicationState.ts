@@ -2,10 +2,12 @@ import { Menu } from "../menu/Menu";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
 import { MenuHandler } from "../menu/MenuHandler";
+import { LoginForm } from "../database/LoginForm";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from "./ApplicationImpl";
+import { PopupInstance } from "../popup/PopupInstance";
 
 
 export class ApplicationState
@@ -55,6 +57,9 @@ export class ApplicationState
 
     public async connect(usr?:string, pwd?:string) : Promise<boolean>
     {
+        let pinst:PopupInstance = new PopupInstance();
+        pinst.display(this.app,LoginForm);
+
         this.conn = true;
         this.connection.connect(usr,pwd);
         this.menus.forEach((mhdl) => {mhdl.onConnect()});
