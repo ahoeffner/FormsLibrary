@@ -1,3 +1,6 @@
+import { ApplicationImpl } from "../application/ApplicationImpl";
+import { PopupWindow } from "./PopupWindow";
+
 export interface Popup
 {
     top?:string;
@@ -6,5 +9,8 @@ export interface Popup
     height?:string;
 
     title:string;
+
     close(cancel:boolean) : void;
+    setWin(win:PopupWindow) : void;
+    setApp(app:ApplicationImpl) : void;
 }

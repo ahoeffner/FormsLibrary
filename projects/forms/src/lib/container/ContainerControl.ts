@@ -19,7 +19,6 @@ export class ContainerControl
     public getContainer() : Container
     {
         let cont:Container = this.container;
-        this.container = null;
         return(cont);
     }
 

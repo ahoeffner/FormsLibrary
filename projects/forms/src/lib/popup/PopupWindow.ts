@@ -171,7 +171,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
     {
     }
 
-	
+
 	public get tcolor() : string
 	{
 		return(this.preferences.colors.title);
@@ -201,7 +201,9 @@ export class PopupWindow implements onEventListener, AfterViewInit
         this.pinst = pinst;
 		this.popup = pinst.popupref.instance;
 
+		this.popup.setWin(this);
 		this.title = this.popup.title;
+		
 		if (this.popup.hasOwnProperty("top")) this.top = this.popup.top;
 		if (this.popup.hasOwnProperty("left")) this.left = this.popup.left;
 		if (this.popup.hasOwnProperty("width")) this.width = this.popup.width;

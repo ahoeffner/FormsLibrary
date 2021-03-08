@@ -1,3 +1,5 @@
 {
-    "preferences": "good"
+    "title": "Demo",
+    "theme": "default",
+    "backend" : "http://localhost:8001"
 }

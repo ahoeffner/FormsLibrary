@@ -8,6 +8,7 @@ export {DefaultMenu} from './lib/menu/DefaultMenu';
 export {MenuHandler} from './lib/menu/MenuHandler';
 export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 
+export {Field} from './lib/input/Field';
 export {Block} from './lib/blocks/Block';
 
 export {Transaction} from './lib/database/Transaction';
