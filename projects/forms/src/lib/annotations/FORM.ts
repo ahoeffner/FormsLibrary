@@ -1,4 +1,3 @@
-import { WindowOptions } from "../../public-api";
 import { FormDefinitions } from "./FormDefinitions";
 import { FormDefinition } from "../forms/FormsDefinition";
 
