@@ -12,10 +12,10 @@ import { PopupWindow } from "../popup/PopupWindow";
     `
         <table style='margin-top: 20px'>
           <tr>
-            <td>Username:</td><td><field style='width: 100px' name='usr'></field> </td>
+            <td>Username</td><td>: <field style='width: 100px' name='usr'></field> </td>
           </tr>
           <tr>
-            <td>Password:</td><td><field style='width: 200px' name='pwd'></field> </td>
+            <td>Password</td><td>: <field style='width: 200px' name='pwd'></field> </td>
           </tr>
         </table>
     `

@@ -39,10 +39,30 @@ export class Field implements AfterViewInit
     public set type(type:string)
     {
         this.type$ = type;
+        this.field.innerHTML = null;
         let cname:any = FieldTypes.getClass(type);
 
-        this.clazz = new cname();
-        this.field.innerHTML = this.clazz.html;
+        if (cname != null)
+        {
+            this.clazz = new cname();
+            this.field.innerHTML = this.clazz.html;
+            this.addTriggers();
+        }
+    }
+
+
+    public onEvent(event:any)
+    {
+        //console.log(this.name+" type: "+event.type);
+
+        if (event.type == "keyup")
+        {
+            console.log("key "+event.keyCode);
+            console.log("alt: "+event.altKey);
+            console.log("ctrl: "+event.ctrlKey);
+            console.log("meta: "+event.metaKey);
+            console.log("shift: "+event.shiftKey);
+        }
     }
 
 
@@ -50,5 +70,19 @@ export class Field implements AfterViewInit
     {
 		this.field = this.fieldelem?.nativeElement as HTMLDivElement;
         this.app.getContainer().register(this);
+    }
+
+
+    private addTriggers() : void
+    {
+        let impl:Node = this.field.firstChild;
+
+        if (impl == null) return;
+        impl.addEventListener("blur", (event) => {this.onEvent(event)});
+        impl.addEventListener("focus", (event) => {this.onEvent(event)});
+        impl.addEventListener("keyup", (event) => {this.onEvent(event)});
+        impl.addEventListener("change", (event) => {this.onEvent(event)});
+        impl.addEventListener("onclick", (event) => {this.onEvent(event)});
+        impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});
     }
 }
