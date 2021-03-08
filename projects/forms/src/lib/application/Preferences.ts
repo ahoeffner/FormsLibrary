@@ -2,15 +2,18 @@ import { Themes, Theme, defaultTheme, Yellow, Pink, Grey, Indigo } from "./Theme
 
 export class Preferences
 {
-    public colors:Theme;
-    public environment:Environment;
+    private id:number;
+    private colors$:Theme;
+    private environment$:Environment;
 
+    private static ids:number = 0;
     private static scol:Theme = null;
     private static senv:Environment = null;
+    private static instances:Map<number,Preferences> = new Map<number,Preferences>();
 
     public constructor()
     {
-        let theme:Theme = null;
+        this.id = Preferences.ids++;
 
         if (Preferences.scol == null)
         {
@@ -19,15 +22,28 @@ export class Preferences
             Themes.add(new Grey());
             Themes.add(new Indigo());
             Themes.add(new defaultTheme());
-
-            theme = Themes.get("default");
+            Preferences.scol = new Colors(Themes.get("default"));
         }
 
         if (Preferences.senv == null) Preferences.senv = new Environment();
-        if (Preferences.scol == null) Preferences.scol = new Colors(theme);
 
-        this.colors = Preferences.scol;
-        this.environment = Preferences.senv;
+        this.colors$ = Preferences.scol;
+        this.environment$ = Preferences.senv;
+
+        Preferences.instances.set(this.id,this);
+        console.log("new prefs");
+    }
+
+
+    public get colors() : Theme
+    {
+        return(this.colors$);
+    }
+
+
+    public get environment() : Environment
+    {
+        return(this.environment$);
     }
 
 
@@ -41,7 +57,8 @@ export class Preferences
         if (ttheme != null)
         {
             Preferences.scol = ttheme;
-            this.colors = Preferences.scol;
+            this.colors$ = Preferences.scol;
+            Preferences.instances.forEach((inst) => {inst.colors$ = this.colors$});
         }
     }
 
@@ -49,6 +66,12 @@ export class Preferences
     public addTheme(theme:Theme) : void
     {
         Themes.add(theme);
+    }
+
+
+    public close() : void
+    {
+        Preferences.instances.delete(this.id);
     }
 }
 
