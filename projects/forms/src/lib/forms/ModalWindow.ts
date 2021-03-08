@@ -134,9 +134,6 @@ export class ModalWindow implements onEventListener, AfterViewInit
     public tmargin : string = "1vh";
 
 	public preferences:Preferences = new Preferences();
-    public tcolor  : string = this.preferences.colors.title;
-    public bcolor  : string = this.preferences.colors.topbar;
-    public btncolor : string = this.preferences.colors.buttontext;
 
     @ViewChild("menu", {read: ElementRef}) private menuElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
@@ -163,6 +160,21 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 
 	constructor(private change:ChangeDetectorRef) {}
+
+	public get tcolor() : string
+	{
+		return(this.preferences.colors.title);
+	}
+
+	public get bcolor() : string
+	{
+		return(this.preferences.colors.topbar);
+	}
+
+	public get btncolor() : string
+	{
+		return(this.preferences.colors.buttontext);
+	}
 
 
 	public setForm(form:FormInstance) : void

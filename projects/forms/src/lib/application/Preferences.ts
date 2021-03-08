@@ -2,19 +2,14 @@ import { Themes, Theme, defaultTheme, Yellow, Pink, Grey, Indigo } from "./Theme
 
 export class Preferences
 {
-    private id:number;
     private colors$:Theme;
     private environment$:Environment;
 
-    private static ids:number = 0;
     private static scol:Theme = null;
     private static senv:Environment = null;
-    private static instances:Map<number,Preferences> = new Map<number,Preferences>();
 
     public constructor()
     {
-        this.id = Preferences.ids++;
-
         if (Preferences.scol == null)
         {
             Themes.add(new Yellow());
@@ -29,9 +24,6 @@ export class Preferences
 
         this.colors$ = Preferences.scol;
         this.environment$ = Preferences.senv;
-
-        Preferences.instances.set(this.id,this);
-        console.log("new prefs");
     }
 
 
@@ -58,7 +50,6 @@ export class Preferences
         {
             Preferences.scol = ttheme;
             this.colors$ = Preferences.scol;
-            Preferences.instances.forEach((inst) => {inst.colors$ = this.colors$});
         }
     }
 
@@ -66,12 +57,6 @@ export class Preferences
     public addTheme(theme:Theme) : void
     {
         Themes.add(theme);
-    }
-
-
-    public close() : void
-    {
-        Preferences.instances.delete(this.id);
     }
 }
 
