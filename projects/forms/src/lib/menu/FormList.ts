@@ -77,7 +77,10 @@ export class FormList implements AfterViewInit
 			if (current == null) return;
 
 			if (!current.content.classList.contains("formlist-active"))
+			{
+				current.img.src = "/assets/images/open.jpg";
 				current.content.classList.toggle("formlist-active");
+			}
 		}
 	}
 
@@ -157,8 +160,8 @@ export class FormList implements AfterViewInit
 		{
 			let container:Element = folders.item(i);
 			let content:Element = document.getElementById(container.id+"-content");
-			let img:Element = container.querySelector("[id='"+container.id+"-img']");
 			let lnk:Element = container.querySelector("[id='"+container.id+"-lnk']");
+			let img:HTMLImageElement = container.querySelector("[id='"+container.id+"-img']");
 
 			let folder:Folder = this.root.findFolder(container.id.split("/"));
 
@@ -191,6 +194,15 @@ export class FormList implements AfterViewInit
 
 		let folder:Folder = this.root.findFolder(fname.split("/"));
 		folder.content.classList.toggle("formlist-active");
+
+		if (folder.content.classList.contains("formlist-active"))
+		{
+			folder.img.src = "/assets/images/open.jpg";
+		}
+		else
+		{
+			folder.img.src = "/assets/images/closed.jpg";
+		}
 	}
 
 
@@ -215,7 +227,7 @@ export class FormList implements AfterViewInit
 		}
 
 		if (level > 0) html += this.pre(last[level]);
-		html += "<img class='formlist-img' id='"+path+"-img' src='/assets/open.jpg'>\n";
+		html += "<img class='formlist-img' id='"+path+"-img' src='/assets/images/closed.jpg'>\n";
 		html += "<span class='formlist-txt' id='"+path+"-lnk'>"+root.name+"</span>\n";
 		html += "</div>\n";
 
@@ -444,9 +456,9 @@ class Folder
 	forms:Form[] = [];
 	folders:Folder[] = [];
 
-	img:Element;
 	lnk:Element;
 	content:Element;
+	img:HTMLImageElement;
 
 	constructor(name:string)
 	{
