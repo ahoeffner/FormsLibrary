@@ -29,7 +29,6 @@ export class FormList implements AfterViewInit
 	private html:HTMLDivElement;
 	private ready:boolean = false;
 	private formsdef:FormInstance[];
-	private preferences:Preferences = new Preferences();
 
     @Input('root') name: string = "/";
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
@@ -38,6 +37,7 @@ export class FormList implements AfterViewInit
     {
 		this.app = app["impl"];
 		this.root = new Folder(this.name);
+		Preferences.notify(this,"setColors");
 
 		this.app.setFormList(this);
 
@@ -181,9 +181,40 @@ export class FormList implements AfterViewInit
 			lnk.addEventListener("click", (event) => this.show(event));
 		}
 
+		this.setColors();
+
 		this.open("/");
 		this.root.lnk.innerHTML = this.name;
 		this.ready = true;
+	}
+
+
+	public setColors() : void
+	{
+		let prefs:Preferences = new Preferences();
+
+		let link:string = prefs.colors.link;
+		let tree:string = prefs.colors.foldertree;
+		let list:HTMLCollectionOf<Element> = null;
+
+		list = this.html.getElementsByClassName("formlist-txt");
+		for (let i = 0; i < list.length; i++)(list[i] as HTMLElement).style.color = tree;
+
+		list = this.html.getElementsByClassName("formlist-link");
+		for (let i = 0; i < list.length; i++)(list[i] as HTMLElement).style.color = link;
+
+		list = this.html.getElementsByClassName("formlist-off");
+		for (let i = 0; i < list.length; i++)(list[i] as HTMLElement).style.borderLeft = "1px solid "+tree;
+
+		list = this.html.getElementsByClassName("formlist-vln");
+		for (let i = 0; i < list.length; i++)(list[i] as HTMLElement).style.borderLeft = "1px solid "+tree;
+
+		list = this.html.getElementsByClassName("formlist-cnr");
+		for (let i = 0; i < list.length; i++)
+		{
+			(list[i] as HTMLElement).style.borderLeft = "1px solid "+tree;
+			(list[i] as HTMLElement).style.borderBottom = "1px solid "+tree;
+		}
 	}
 
 
@@ -260,7 +291,6 @@ export class FormList implements AfterViewInit
 
 		if (level > 0) html += this.pre(last[last.length-1]);
 
-		//html += "<img class='img' id='"+form.def.path+"-img' src='/assets/form.jpg'>\n";
 		html += "<span class='formlist-link' id='"+form.def.name+"-lnk'> "+form.name+"</span>\n";
 		html += "</div>\n";
 
@@ -359,7 +389,6 @@ export class FormList implements AfterViewInit
 			white-space: nowrap;
 			display: inline-block;
 			vertical-align: bottom;
-			color: `+this.preferences.colors.foldertree+`;
 		}
 
 		.formlist-off
@@ -368,7 +397,6 @@ export class FormList implements AfterViewInit
 			height: 4px;
 			display: block;
 			pointer-events:none;
-			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
 		.formlist-vln
@@ -377,7 +405,6 @@ export class FormList implements AfterViewInit
 			height: 12px;
 			display: block;
 			pointer-events:none;
-			border-left: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
 		.formlist-cnr
@@ -386,8 +413,6 @@ export class FormList implements AfterViewInit
 			height: 8px;
 			display: block;
 			pointer-events:none;
-			border-left: 1px solid `+this.preferences.colors.foldertree+`;
-			border-bottom: 1px solid `+this.preferences.colors.foldertree+`;
 		}
 
 		.formlist-end
@@ -427,7 +452,6 @@ export class FormList implements AfterViewInit
 			white-space: nowrap;
 			display: inline-block;
 			vertical-align: bottom;
-			color: `+this.preferences.colors.link+`;
 		}
 
 		.formlist-form

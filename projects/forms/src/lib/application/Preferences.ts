@@ -7,6 +7,13 @@ export class Preferences
 
     private static scol:Theme = null;
     private static senv:Environment = null;
+    private static notifications:any[] = [];
+
+    public static notify(instance:any, func:string) : void
+    {
+        Preferences.notifications.push({instance: instance, func: func});
+    }
+
 
     public constructor()
     {
@@ -50,6 +57,7 @@ export class Preferences
         {
             Preferences.scol = ttheme;
             this.colors$ = Preferences.scol;
+            Preferences.notifications.forEach((notify) => {notify.instance[notify.func]()});
         }
     }
 
