@@ -12,7 +12,7 @@ export class Preferences
     {
         let theme:Theme = null;
 
-        (Preferences.scol == null)
+        if (Preferences.scol == null)
         {
             Themes.add(new Yellow());
             Themes.add(new Pink());
