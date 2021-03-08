@@ -16,9 +16,12 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
       <div #window class="modalwindow-modal-block" style="top: {{top}}; left: {{left}}">
         <div class="modalwindow-container" style="width: {{width}}; height: {{height}};">
 		  <div #topbar class="modalwindow-topbar" style="color: {{tcolor}}; background-color: {{bcolor}}">
-		    <span class="modalwindow-center" style="color: {{tcolor}};"><div #menu></div></span>
-			<span class="modalwindow-close">
-				<button class="modalwindow-button" style="color: {{btncolor}};" (click)="close()">X</button>
+		    <span class="modalwindow-center" style="color: {{tcolor}};">
+				<span class="modalwindow-corner"></span>
+				<div #menu></div>
+				<span class="modalwindow-close">
+					<button class="modalwindow-button" style="color: {{btncolor}};" (click)="close()">X</button>
+				</span>
 			</span>
 		  </div>
           <div class="modalwindow-block" style="margin-top: {{tmargin}};"><div #content></div></div>
@@ -61,6 +64,13 @@ import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, Chang
 		justify-content: center;
         border-bottom: 2px solid black;
     }
+
+	.modalwindow-corner
+	{
+		width: 2.5em;
+		display: block;
+		position: relative;
+	}
 
 	.modalwindow-close
 	{
