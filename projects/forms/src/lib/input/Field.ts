@@ -57,11 +57,14 @@ export class Field implements AfterViewInit
 
         if (event.type == "keyup")
         {
-            console.log("key "+event.keyCode);
-            console.log("alt: "+event.altKey);
-            console.log("ctrl: "+event.ctrlKey);
-            console.log("meta: "+event.metaKey);
-            console.log("shift: "+event.shiftKey);
+            if (+event.keyCode < 16 || +event.keyCode > 20)
+            {
+                console.log("key "+event.keyCode);
+                console.log("alt: "+event.altKey);
+                console.log("ctrl: "+event.ctrlKey);
+                console.log("meta: "+event.metaKey);
+                console.log("shift: "+event.shiftKey);
+            }
         }
     }
 
