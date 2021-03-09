@@ -1,7 +1,7 @@
 import { Popup } from "../popup/Popup";
 import { FieldGroup } from "../input/FieldGroup";
 import { PopupWindow } from "../popup/PopupWindow";
-import { Container, Record } from "../container/Container";
+import { Container, ContainerBlock, ContainerRecord } from "../container/Container";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 
@@ -12,10 +12,10 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
     `
         <table style='margin-top: 20px'>
           <tr>
-            <td>Username</td><td>: <field style='width: 100px' name='usr'></field> </td>
+            <td>Username</td><td>: <field row='0' name='usr'></field> </td>
           </tr>
           <tr>
-            <td>Password</td><td>: <field style='width: 200px' name='pwd'></field> </td>
+            <td>Password</td><td>: <field row='0' name='pwd'></field> </td>
           </tr>
         </table>
     `
@@ -57,7 +57,9 @@ export class LoginForm implements Popup, OnInit, AfterViewInit
     public ngAfterViewInit(): void
     {
         let container:Container = this.app.getContainer();
-        let record:Record = container.getRecord(0);
+
+        let block:ContainerBlock = container.getBlock("");
+        let record:ContainerRecord = block.getRecord(0);
 
         this.usr = record.getField("usr");
         this.pwd = record.getFields()[1];

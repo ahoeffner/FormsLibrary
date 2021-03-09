@@ -164,6 +164,8 @@ export class Field implements AfterViewInit
         this.row = +this.rown;
         this.id$ = this.id$.toLowerCase();
         this.name$ = this.name$.toLowerCase();
+        this.block$ = this.block$.toLowerCase();
+        
         this.app.getContainer().register(this);
     }
 
