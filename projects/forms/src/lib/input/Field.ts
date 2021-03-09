@@ -125,7 +125,7 @@ export class Field implements AfterViewInit
                 key.shift   = event.shiftKey;
 
                 if (+event.keyCode < 48 || +event.keyCode > 90)
-                    this.group.onEvent("key",key);
+                    this.group["onEvent"]("key",key);
 
                 let current:any = this.clazz.getValue();
 
@@ -145,7 +145,7 @@ export class Field implements AfterViewInit
                         this.clazz.setValue(this.value$);
                     }
 
-                    this.group.onEvent("ichange");
+                    this.group["onEvent"]("ichange");
                 }
             }
         }
@@ -162,6 +162,7 @@ export class Field implements AfterViewInit
         else if (this.rown == "last")    this.rown = "-3";
 
         this.row = +this.rown;
+        this.id$ = this.id$.toLowerCase();
         this.name$ = this.name$.toLowerCase();
         this.app.getContainer().register(this);
     }

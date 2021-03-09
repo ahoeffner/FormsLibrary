@@ -17,6 +17,16 @@ export class Record
         return(this.row$);
     }
 
+    public getFields() : FieldGroup[]
+    {
+        return(this.fields);
+    }
+
+    public getField(name:string) : FieldGroup
+    {
+        return(this.index.get(name.toLowerCase()));
+    }
+
     public add(field:Field) : void
     {
         let group:FieldGroup = this.index.get(field.name);
@@ -46,7 +56,7 @@ export class Container
         if (rec == null)
         {
             rec = new Record(row);
-            this.records.set(row,rec);
+            this.records.set(+row,rec);
         }
 
         rec.add(field);
@@ -57,7 +67,13 @@ export class Container
     {
         let recs:Record[] = [];
         this.records.forEach((rec) => {recs.push(rec)});
+        let sorted:Record[] = recs.sort((a,b) => {return(a.row - b.row)});
+        return(sorted);
+    }
 
-        return(recs);
+
+    public getRecord(row:number) : Record
+    {
+        return(this.records.get(+row));
     }
 }

@@ -1,7 +1,7 @@
 import { Popup } from "../popup/Popup";
-import { Field } from "../input/Field";
-import { Container } from "../container/Container";
+import { FieldGroup } from "../input/FieldGroup";
 import { PopupWindow } from "../popup/PopupWindow";
+import { Container, Record } from "../container/Container";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 
@@ -24,8 +24,8 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
 
 export class LoginForm implements Popup, OnInit, AfterViewInit
 {
-    private usr:Field;
-    private pwd:Field;
+    private usr:FieldGroup;
+    private pwd:FieldGroup;
     private win:PopupWindow;
     private app:ApplicationImpl;
 
@@ -57,12 +57,13 @@ export class LoginForm implements Popup, OnInit, AfterViewInit
     public ngAfterViewInit(): void
     {
         let container:Container = this.app.getContainer();
+        let record:Record = container.getRecord(0);
 
-        this.usr = container.components[0];
-        this.pwd = container.components[1];
+        this.usr = record.getField("usr");
+        this.pwd = record.getFields()[1];
 
-        this.usr.type = "input";
-        this.pwd.type = "password";
+        this.usr.setFieldType("input");
+        this.pwd.setFieldType("password");
 
         this.usr.enable(true);
         this.pwd.enable(true);
