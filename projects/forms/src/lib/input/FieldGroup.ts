@@ -1,14 +1,44 @@
+import { Key } from "./Key";
 import { Field } from "./Field";
 
 export class FieldGroup
 {
+    private name$:string;
     private last:Field[] = [];
     private first:Field[] = [];
     private fields:Field[] = [];
     private current:Field[] = [];
 
+    constructor(name:string)
+    {
+        this.name$ = name;
+    }
+
+    public get name() : string
+    {
+        return(this.name$);
+    }
+
     public add(field:Field) : void
     {
+        if (field.row == -1)
+        {
+            this.addFirst(field);
+            return;
+        }
+
+        if (field.row == -2)
+        {
+            this.addCurrent(field);
+            return;
+        }
+
+        if (field.row == -3)
+        {
+            this.addLast(field);
+            return;
+        }
+
         this.fields.push(field);
     }
 
@@ -67,7 +97,7 @@ export class FieldGroup
         return(this.current);
     }
 
-    public onEvent(event:any) : void
+    public onEvent(type:string, key?:Key) : void
     {
 
     }

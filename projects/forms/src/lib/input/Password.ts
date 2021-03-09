@@ -4,6 +4,6 @@ export class Password extends Input
 {
     public get html() : string
     {
-        return("<input type='password' disabled></input>");
+        return("<input type='password'></input>");
     }
 }

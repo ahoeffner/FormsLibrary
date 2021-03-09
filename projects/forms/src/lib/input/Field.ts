@@ -19,6 +19,8 @@ export class Field implements AfterViewInit
     private clazz:FieldType;
     private app:ApplicationImpl;
     private field:HTMLSpanElement;
+    private upper:boolean = false;
+    private lower:boolean = false;
 
     public row:number = 0;
     public group:FieldGroup = null;
@@ -61,6 +63,18 @@ export class Field implements AfterViewInit
         return(this.clazz.getValue());
     }
 
+    public setUpperCase() : void
+    {
+        this.upper = true;
+        this.lower = false;
+    }
+
+    public setLowerCase() : void
+    {
+        this.lower = true;
+        this.upper = false;
+    }
+
     public set value(value:any)
     {
         this.clazz.setValue(value);
@@ -82,8 +96,8 @@ export class Field implements AfterViewInit
         if (cname != null)
         {
             this.clazz = new cname();
-            this.clazz.element = this.field;
             this.field.innerHTML = this.clazz.html;
+            this.clazz.element = this.field.children[0] as HTMLElement;
             this.addTriggers();
         }
     }
@@ -91,8 +105,10 @@ export class Field implements AfterViewInit
 
     public onEvent(event:any)
     {
-        //if (this.group == null)
-            //return;
+        if (this.group == null)
+            return;
+
+        event.preventDefault();
 
         if (event.type == "focus")
             this.value$ = this.clazz.getValue();
@@ -108,7 +124,29 @@ export class Field implements AfterViewInit
                 key.meta    = event.metaKey;
                 key.shift   = event.shiftKey;
 
-                console.log(this.value$+" == "+this.clazz.getValue());
+                if (+event.keyCode < 48 || +event.keyCode > 90)
+                    this.group.onEvent("key",key);
+
+                let current:any = this.clazz.getValue();
+
+                if (this.value$ != current)
+                {
+                    this.value$ = current;
+
+                    if (this.lower)
+                    {
+                        this.value$ = (""+this.value$).toLowerCase();
+                        this.clazz.setValue(this.value$);
+                    }
+
+                    if (this.upper)
+                    {
+                        this.value$ = (""+this.value$).toUpperCase();
+                        this.clazz.setValue(this.value$);
+                    }
+
+                    this.group.onEvent("ichange");
+                }
             }
         }
     }
@@ -124,6 +162,7 @@ export class Field implements AfterViewInit
         else if (this.rown == "last")    this.rown = "-3";
 
         this.row = +this.rown;
+        this.name$ = this.name$.toLowerCase();
         this.app.getContainer().register(this);
     }
 
