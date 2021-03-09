@@ -1,11 +1,9 @@
-import { FieldType } from "./FieldType";
+import { Input } from './Input';
 
-export class Password implements FieldType
+export class Password extends Input
 {
-    public html:string;
-
-    constructor()
+    public get html() : string
     {
-        this.html = "<input type='password'></input>";
+        return("<input type='password' disabled></input>");
     }
 }

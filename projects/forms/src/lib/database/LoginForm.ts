@@ -1,9 +1,9 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Container } from "../container/Container";
+import { PopupWindow } from "../popup/PopupWindow";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { PopupWindow } from "../popup/PopupWindow";
 
 
 @Component({
@@ -63,6 +63,9 @@ export class LoginForm implements Popup, OnInit, AfterViewInit
 
         this.usr.type = "input";
         this.pwd.type = "password";
+
+        this.usr.enable(true);
+        this.pwd.enable(true);
 
         this.app.dropContainer();
     }

@@ -1,3 +1,5 @@
+import { Key } from './Key';
+import { FieldGroup } from './FieldGroup';
 import { FieldTypes, FieldType } from './FieldType';
 import { Application } from "../application/Application";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -12,14 +14,19 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 
 export class Field implements AfterViewInit
 {
+    private value$:any;
     private type$:string;
     private clazz:FieldType;
     private app:ApplicationImpl;
     private field:HTMLSpanElement;
 
-    @Input("name")  public name:string = "";
-    @Input("block") public block:string = "";
-    @Input("style") public style:string = "";
+    public row:number = 0;
+    public group:FieldGroup = null;
+
+    @Input("id")    private id$:string = "";
+    @Input("row")   private rown:string = "";
+    @Input("name")  private name$:string = "";
+    @Input("block") private block$:string = "";
 
     @ViewChild("field", {read: ElementRef}) private fieldelem: ElementRef;
 
@@ -29,10 +36,40 @@ export class Field implements AfterViewInit
         this.app = app["impl"];
     }
 
+    public get id() : string
+    {
+        return(this.id$);
+    }
+
+    public get name() : string
+    {
+        return(this.name$);
+    }
 
     public get type() : string
     {
         return(this.type$);
+    }
+
+    public get block() : string
+    {
+        return(this.block$);
+    }
+
+    public get value() : any
+    {
+        return(this.clazz.getValue());
+    }
+
+    public set value(value:any)
+    {
+        this.clazz.setValue(value);
+    }
+
+
+    public enable(flag:boolean) : void
+    {
+        this.clazz.enable(flag);
     }
 
 
@@ -45,6 +82,7 @@ export class Field implements AfterViewInit
         if (cname != null)
         {
             this.clazz = new cname();
+            this.clazz.element = this.field;
             this.field.innerHTML = this.clazz.html;
             this.addTriggers();
         }
@@ -53,17 +91,24 @@ export class Field implements AfterViewInit
 
     public onEvent(event:any)
     {
-        //console.log(this.name+" type: "+event.type);
+        //if (this.group == null)
+            //return;
+
+        if (event.type == "focus")
+            this.value$ = this.clazz.getValue();
 
         if (event.type == "keyup")
         {
             if (+event.keyCode < 16 || +event.keyCode > 20)
             {
-                console.log("key "+event.keyCode);
-                console.log("alt: "+event.altKey);
-                console.log("ctrl: "+event.ctrlKey);
-                console.log("meta: "+event.metaKey);
-                console.log("shift: "+event.shiftKey);
+                let key:Key = new Key();
+                key.code    = event.keyCode;
+                key.alt     = event.altKey;
+                key.ctrl    = event.ctrlKey;
+                key.meta    = event.metaKey;
+                key.shift   = event.shiftKey;
+
+                console.log(this.value$+" == "+this.clazz.getValue());
             }
         }
     }
@@ -72,6 +117,13 @@ export class Field implements AfterViewInit
     public ngAfterViewInit(): void
     {
 		this.field = this.fieldelem?.nativeElement as HTMLDivElement;
+
+        if (this.rown == "") this.rown = "-2";
+        else if (this.rown == "first")   this.rown = "-1";
+        else if (this.rown == "current") this.rown = "-2";
+        else if (this.rown == "last")    this.rown = "-3";
+
+        this.row = +this.rown;
         this.app.getContainer().register(this);
     }
 
