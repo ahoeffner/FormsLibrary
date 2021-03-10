@@ -1,5 +1,5 @@
 import { Popup } from "../popup/Popup";
-import { FieldGroup } from "../input/FieldGroup";
+import { Field } from "../input/Field";
 import { PopupWindow } from "../popup/PopupWindow";
 import { Container, ContainerBlock, ContainerRecord } from "../container/Container";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -24,8 +24,8 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
 
 export class LoginForm implements Popup, OnInit, AfterViewInit
 {
-    private usr:FieldGroup;
-    private pwd:FieldGroup;
+    private usr:Field;
+    private pwd:Field;
     private win:PopupWindow;
     private app:ApplicationImpl;
 

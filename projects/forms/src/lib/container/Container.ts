@@ -1,5 +1,6 @@
 import { Field } from "../input/Field";
-import { FieldGroup } from "../input/FieldGroup";
+import { FieldInstance } from "../input/FieldInstance";
+
 
 export class ContainerBlock
 {
@@ -16,7 +17,7 @@ export class ContainerBlock
         return(this.name$);
     }
 
-    public add(field:Field) : void
+    public add(field:FieldInstance) : void
     {
         let row:number = field.row;
         let rec:ContainerRecord = this.records.get(row);
@@ -38,7 +39,6 @@ export class ContainerBlock
         return(sorted);
     }
 
-
     public getRecord(row:number) : ContainerRecord
     {
         return(this.records.get(+row));
@@ -49,8 +49,8 @@ export class ContainerBlock
 export class ContainerRecord
 {
     private row$:number;
-    private fields:FieldGroup[] = [];
-    private index:Map<string,FieldGroup> = new Map<string,FieldGroup>();
+    private fields:Field[] = [];
+    private index:Map<string,Field> = new Map<string,Field>();
 
     constructor(row:number)
     {
@@ -62,23 +62,23 @@ export class ContainerRecord
         return(this.row$);
     }
 
-    public getFields() : FieldGroup[]
+    public getFields() : Field[]
     {
         return(this.fields);
     }
 
-    public getField(name:string) : FieldGroup
+    public getField(name:string) : Field
     {
         return(this.index.get(name.toLowerCase()));
     }
 
-    public add(field:Field) : void
+    public add(field:FieldInstance) : void
     {
-        let group:FieldGroup = this.index.get(field.name);
+        let group:Field = this.index.get(field.name);
 
         if (group == null)
         {
-            group = new FieldGroup(field.name);
+            group = new Field(field.name);
             this.index.set(field.name,group);
             this.fields.push(group);
         }
@@ -91,11 +91,12 @@ export class ContainerRecord
 
 export class Container
 {
+    private id:number = 0;
     private blocks:Map<string,ContainerBlock> = new Map<string,ContainerBlock>();
 
-
-    public register(field:Field) : void
+    public register(field:FieldInstance) : void
     {
+        field.guid = this.id++;
         let bname:string = field.block;
         let block:ContainerBlock = this.blocks.get(bname);
 

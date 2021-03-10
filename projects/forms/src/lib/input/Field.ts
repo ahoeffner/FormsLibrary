@@ -1,46 +1,18 @@
-import { Key } from './Key';
-import { FieldGroup } from './FieldGroup';
-import { FieldTypes, FieldType } from './FieldType';
-import { Application } from "../application/Application";
-import { ApplicationImpl } from "../application/ApplicationImpl";
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
+import { Key } from "./Key";
+import { FieldInstance } from "./FieldInstance";
 
-
-@Component({
-    selector: 'field',
-    template: '<span #field></span>'
-})
-
-
-export class Field implements AfterViewInit
+export class Field
 {
-    private value$:any;
-    private type$:string;
-    private clazz:FieldType;
-    private app:ApplicationImpl;
-    private field:HTMLSpanElement;
-    private upper:boolean = false;
-    private lower:boolean = false;
+    private name$:string;
+    private last:FieldInstance[] = [];
+    private first:FieldInstance[] = [];
+    private fields:FieldInstance[] = [];
+    private current:FieldInstance[] = [];
+    private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
-    public row:number = 0;
-    public group:FieldGroup = null;
-
-    @Input("id")    private id$:string = "";
-    @Input("row")   private rown:string = "";
-    @Input("name")  private name$:string = "";
-    @Input("block") private block$:string = "";
-
-    @ViewChild("field", {read: ElementRef}) private fieldelem: ElementRef;
-
-
-    constructor(app:Application)
+    constructor(name:string)
     {
-        this.app = app["impl"];
-    }
-
-    public get id() : string
-    {
-        return(this.id$);
+        this.name$ = name;
     }
 
     public get name() : string
@@ -48,138 +20,193 @@ export class Field implements AfterViewInit
         return(this.name$);
     }
 
-    public get type() : string
+    public add(field:FieldInstance) : void
     {
-        return(this.type$);
-    }
-
-    public get block() : string
-    {
-        return(this.block$);
-    }
-
-    public get value() : any
-    {
-        return(this.clazz.getValue());
-    }
-
-    public setUpperCase() : void
-    {
-        this.upper = true;
-        this.lower = false;
-    }
-
-    public setLowerCase() : void
-    {
-        this.lower = true;
-        this.upper = false;
-    }
-
-    public set value(value:any)
-    {
-        this.clazz.setValue(value);
-    }
-
-
-    public enable(flag:boolean) : void
-    {
-        this.clazz.enable(flag);
-    }
-
-
-    public set type(type:string)
-    {
-        this.type$ = type;
-        this.field.innerHTML = null;
-        let cname:any = FieldTypes.getClass(type);
-
-        if (cname != null)
+        if (field.row == -1)
         {
-            this.clazz = new cname();
-            this.field.innerHTML = this.clazz.html;
-            this.clazz.element = this.field.children[0] as HTMLElement;
-            this.addTriggers();
-        }
-    }
-
-
-    public onEvent(event:any)
-    {
-        if (this.group == null)
+            this.addFirst(field);
             return;
+        }
 
-        event.preventDefault();
-
-        if (event.type == "focus")
-            this.value$ = this.clazz.getValue();
-
-        if (event.type == "keyup")
+        if (field.row == -2)
         {
-            if (+event.keyCode < 16 || +event.keyCode > 20)
-            {
-                let key:Key = new Key();
-                key.code    = event.keyCode;
-                key.alt     = event.altKey;
-                key.ctrl    = event.ctrlKey;
-                key.meta    = event.metaKey;
-                key.shift   = event.shiftKey;
+            this.addCurrent(field);
+            return;
+        }
 
-                if (+event.keyCode < 48 || +event.keyCode > 90)
-                    this.group["onEvent"]("key",key);
+        if (field.row == -3)
+        {
+            this.addLast(field);
+            return;
+        }
 
-                let current:any = this.clazz.getValue();
+        this.setindex(field);
+        this.fields.push(field);
+    }
 
-                if (this.value$ != current)
-                {
-                    this.value$ = current;
+    public addLast(field:FieldInstance) : void
+    {
+        this.setindex(field);
+        this.last.push(field);
+    }
 
-                    if (this.lower)
-                    {
-                        this.value$ = (""+this.value$).toLowerCase();
-                        this.clazz.setValue(this.value$);
-                    }
+    public addFirst(field:FieldInstance) : void
+    {
+        this.setindex(field);
+        this.first.push(field);
+    }
 
-                    if (this.upper)
-                    {
-                        this.value$ = (""+this.value$).toUpperCase();
-                        this.clazz.setValue(this.value$);
-                    }
+    public addCurrent(field:FieldInstance) : void
+    {
+        this.setindex(field);
+        this.current.push(field);
+    }
 
-                    this.group["onEvent"]("ichange");
-                }
-            }
+    public removeFields() : void
+    {
+        this.fields = [];
+        this.index.clear();
+    }
+
+    public removeLastFields() : void
+    {
+        for(let i = 0; i < this.last.length; i++)
+            this.remindex(this.last[i]);
+
+        this.last = [];
+    }
+
+    public removeFirstFields() : void
+    {
+        for(let i = 0; i < this.first.length; i++)
+            this.remindex(this.first[i]);
+
+        this.first = [];
+    }
+
+    public removeCurrentFields() : void
+    {
+        for(let i = 0; i < this.current.length; i++)
+            this.remindex(this.current[i]);
+
+        this.current = [];
+    }
+
+    public getFields() : FieldInstance[]
+    {
+        return(this.fields);
+    }
+
+    public getLastFields() : FieldInstance[]
+    {
+        return(this.last);
+    }
+
+    public getFirstFields() : FieldInstance[]
+    {
+        return(this.first);
+    }
+
+    public getCurrentFields() : FieldInstance[]
+    {
+        return(this.current);
+    }
+
+    public setType(type:string, id?:string) : void
+    {
+        if (id != null)
+        {
+            let field:FieldInstance = this.index.get(id.toLowerCase());
+            if (field != null) field.type = type;
+        }
+        else
+        {
+            this.setLastType(type);
+            this.setFieldType(type);
+            this.setFirstType(type);
+            this.setCurrentType(type);
         }
     }
 
-
-    public ngAfterViewInit(): void
+    public setFieldType(type:string) : void
     {
-		this.field = this.fieldelem?.nativeElement as HTMLDivElement;
-
-        if (this.rown == "") this.rown = "-2";
-        else if (this.rown == "first")   this.rown = "-1";
-        else if (this.rown == "current") this.rown = "-2";
-        else if (this.rown == "last")    this.rown = "-3";
-
-        this.row = +this.rown;
-        this.id$ = this.id$.toLowerCase();
-        this.name$ = this.name$.toLowerCase();
-        this.block$ = this.block$.toLowerCase();
-        
-        this.app.getContainer().register(this);
+        for (let i = 0; i < this.fields.length; i++)
+            this.fields[i].type = type;
     }
 
-
-    private addTriggers() : void
+    public setCurrentType(type:string) : void
     {
-        let impl:Node = this.field.firstChild;
+        for (let i = 0; i < this.current.length; i++)
+            this.current[i].type = type;
+    }
 
-        if (impl == null) return;
-        impl.addEventListener("blur", (event) => {this.onEvent(event)});
-        impl.addEventListener("focus", (event) => {this.onEvent(event)});
-        impl.addEventListener("keyup", (event) => {this.onEvent(event)});
-        impl.addEventListener("change", (event) => {this.onEvent(event)});
-        impl.addEventListener("onclick", (event) => {this.onEvent(event)});
-        impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});
+    public setFirstType(type:string) : void
+    {
+        for (let i = 0; i < this.first.length; i++)
+            this.first[i].type = type;
+    }
+
+    public setLastType(type:string) : void
+    {
+        for (let i = 0; i < this.last.length; i++)
+            this.last[i].type = type;
+    }
+
+    public enable(flag:boolean, id?:string) : void
+    {
+        if (id != null)
+        {
+            let field:FieldInstance = this.index.get(id.toLowerCase());
+            if (field != null) field.enable(flag);
+        }
+        else
+        {
+            this.enableLast(flag);
+            this.enableFirst(flag);
+            this.enableFields(flag);
+            this.enableCurrent(flag);
+        }
+    }
+
+    public enableFields(flag:boolean) : void
+    {
+        for (let i = 0; i < this.fields.length; i++)
+            this.fields[i].enable(flag);
+    }
+
+    public enableFirst(flag:boolean) : void
+    {
+        for (let i = 0; i < this.first.length; i++)
+            this.first[i].enable(flag);
+    }
+
+    public enableCurrent(flag:boolean) : void
+    {
+        for (let i = 0; i < this.current.length; i++)
+            this.current[i].enable(flag);
+    }
+
+    public enableLast(flag:boolean) : void
+    {
+        for (let i = 0; i < this.last.length; i++)
+            this.last[i].enable(flag);
+    }
+
+    // this is accessed behind the scenes
+    private onEvent(type:string, key?:Key) : void
+    {
+        console.log("event: "+type);
+    }
+
+    private setindex(field:FieldInstance) : void
+    {
+        if (field.id.length > 0)
+            this.index.set(field.id,field);
+    }
+
+    private remindex(field:FieldInstance) : void
+    {
+        if (field.id.length > 0)
+            this.index.delete(field.id);
     }
 }

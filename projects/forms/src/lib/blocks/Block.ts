@@ -1,13 +1,15 @@
 import { BlockImpl } from "./BlockImpl";
+import { BlockBase } from "./BlockBase";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 
-export class Block
+export class Block extends BlockBase
 {
     private impl:BlockImpl;
     // dont rename impl as it is read behind the scenes
 
     constructor()
     {
+        super();
         this.impl = new BlockImpl(this);
     }
 

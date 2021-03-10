@@ -1,4 +1,4 @@
-import { Field } from './input/Field';
+import { FieldInstance } from './input/FieldInstance';
 import { NgModule } from '@angular/core';
 import { MenuArea } from './menu/MenuArea';
 import { FormList } from './menu/FormList';
@@ -10,8 +10,8 @@ import { LoginForm } from './database/LoginForm';
 
 
 @NgModule({
-    declarations: [FormList, FormArea, ModalWindow, MenuArea, LoginForm, Field],
-    exports     : [FormList, FormArea, MenuArea, Field],
+    declarations: [FormList, FormArea, ModalWindow, MenuArea, LoginForm, FieldInstance],
+    exports     : [FormList, FormArea, MenuArea, FieldInstance],
     imports     : [CommonModule, HttpClientModule]
 })
 

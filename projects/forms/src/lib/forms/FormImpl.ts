@@ -6,6 +6,7 @@ import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
+import { BlockBase } from "../blocks/BlockBase";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
@@ -36,7 +37,7 @@ export class FormImpl
     private initiated$:boolean = false;
     private ddmenu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
-    private blocks:Map<string,Block> = new Map<string,Block>();
+    private blocks:Map<string,BlockBase> = new Map<string,BlockBase>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
 
@@ -118,7 +119,7 @@ export class FormImpl
 
     private setDatabaseUsage(propusage:Map<string,DatabaseUsage>, blockdef:BlockDefinition) : void
     {
-        let block:Block = this.blocks.get(blockdef.alias);
+        let block:BlockBase = this.blocks.get(blockdef.alias);
 
         if (block != null)
         {
@@ -165,8 +166,7 @@ export class FormImpl
 
         usage = DBUsage.merge(blockdef.databaseopts,usage);
         usage = DBUsage.merge(propusage.get(blockdef.prop),usage);
-
-        block.setDatabaseUsage(usage);
+        if (block instanceof Block) block.setDatabaseUsage(usage);
     }
 
 
