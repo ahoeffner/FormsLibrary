@@ -1,9 +1,10 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
+import { BlockBase } from "../blocks/BlockBase";
 import { PopupWindow } from "../popup/PopupWindow";
-import { Container, ContainerBlock, ContainerRecord } from "../container/Container";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { Container, ContainerBlock, ContainerRecord } from "../container/Container";
 
 
 @Component({
@@ -22,7 +23,7 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
 })
 
 
-export class LoginForm implements Popup, OnInit, AfterViewInit
+export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 {
     private usr:Field;
     private pwd:Field;
@@ -34,6 +35,11 @@ export class LoginForm implements Popup, OnInit, AfterViewInit
     public width:string  = "300px";
     public height:string = "150px";
     public title:string  = "Login";
+
+    constructor()
+    {
+        super();
+    }
 
     public setWin(win:PopupWindow): void
     {
@@ -47,6 +53,7 @@ export class LoginForm implements Popup, OnInit, AfterViewInit
 
     public close(cancel:boolean) : void
     {
+        this.win.closeWindow();
     }
 
     public ngOnInit(): void
@@ -62,7 +69,7 @@ export class LoginForm implements Popup, OnInit, AfterViewInit
         let record:ContainerRecord = block.getRecord(0);
 
         this.usr = record.getField("usr");
-        this.pwd = record.getFields()[1];
+        this.pwd = record.getField("pwd");
 
         this.usr.setFieldType("input");
         this.pwd.setFieldType("password");

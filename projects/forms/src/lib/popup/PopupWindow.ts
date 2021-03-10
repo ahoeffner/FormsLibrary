@@ -203,7 +203,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
 
 		this.popup.setWin(this);
 		this.title = this.popup.title;
-		
+
 		if (this.popup.hasOwnProperty("top")) this.top = this.popup.top;
 		if (this.popup.hasOwnProperty("left")) this.left = this.popup.left;
 		if (this.popup.hasOwnProperty("width")) this.width = this.popup.width;
@@ -219,6 +219,15 @@ export class PopupWindow implements onEventListener, AfterViewInit
 
 	public close(cancel:boolean) : void
 	{
+		this.closeWindow();
+		this.popup.close(cancel);
+	}
+
+
+	public closeWindow() : void
+	{
+		if (this.winref == null) return;
+		
 		Listener.remove("modal","mouseup");
 		Listener.remove("modal","mousemove");
 		Listener.remove("modal","mousedown");
@@ -234,7 +243,6 @@ export class PopupWindow implements onEventListener, AfterViewInit
 		this.winref.destroy();
 
 		this.winref = null;
-		this.popup.close(cancel);
 	}
 
 
