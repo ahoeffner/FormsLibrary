@@ -424,7 +424,7 @@ export class FormImpl
         {
             //Root window
             this.app.closeform(this,destroy);
-            this.win.close();
+            this.win.closeWindow();
             return;
         }
 
@@ -443,7 +443,7 @@ export class FormImpl
             return;
         }
 
-        this.win.close();
+        this.win.closeWindow();
     }
 
 
