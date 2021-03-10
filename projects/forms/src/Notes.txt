@@ -1,5 +1,8 @@
 Drop down enabled color
-Add query,inser,update,delete as @OPTION on FORM
+blocks/Base listen for events
+trigger, compare with kbmap (key-next = "12ffff")
+
+@DATABASE (true,....)
 Listen on change-event for input
 
 Library ng-package.json
