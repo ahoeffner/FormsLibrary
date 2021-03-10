@@ -209,7 +209,6 @@ export class ApplicationImpl
 
     private postform(impl:FormImpl, destroy:boolean) : void
     {
-        console.log("postform "+impl.name+" "+destroy);
         let funcs:string[] = FormDefinitions.getOnHide(impl.name);
         for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
 
