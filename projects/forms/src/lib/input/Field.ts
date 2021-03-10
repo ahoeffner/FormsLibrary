@@ -1,9 +1,11 @@
 import { Key } from "./Key";
 import { FieldInstance } from "./FieldInstance";
+import { BlockBase } from "../blocks/BlockBase";
 
 export class Field
 {
     private name$:string;
+    private block$:BlockBase;
     private last:FieldInstance[] = [];
     private first:FieldInstance[] = [];
     private fields:FieldInstance[] = [];
@@ -18,6 +20,11 @@ export class Field
     public get name() : string
     {
         return(this.name$);
+    }
+
+    public set block(block:BlockBase)
+    {
+        this.block$ = block;
     }
 
     public add(field:FieldInstance) : void
@@ -193,9 +200,9 @@ export class Field
     }
 
     // this is accessed behind the scenes
-    private onEvent(type:string, key?:Key) : void
+    private onEvent(field:FieldInstance, type:string, key?:Key) : void
     {
-        console.log("event: "+type);
+        if (this.block$ != null) this.block$["onEvent"](field,type,key);
     }
 
     private setindex(field:FieldInstance) : void

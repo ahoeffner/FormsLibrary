@@ -5,6 +5,7 @@ import { FieldInstance } from "../input/FieldInstance";
 export class ContainerBlock
 {
     private name$:string;
+    private fields:Map<number,FieldInstance> = new Map<number,FieldInstance>();
     private records:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
     constructor(name:string)
@@ -22,6 +23,8 @@ export class ContainerBlock
         let row:number = field.row;
         let rec:ContainerRecord = this.records.get(row);
 
+        this.fields.set(field.guid,field);
+
         if (rec == null)
         {
             rec = new ContainerRecord(row);
@@ -29,6 +32,11 @@ export class ContainerBlock
         }
 
         rec.add(field);
+    }
+
+    public getFields() : Map<number,FieldInstance>
+    {
+        return(this.fields);
     }
 
     public getRecords() : ContainerRecord[]
@@ -48,28 +56,13 @@ export class ContainerBlock
 
 export class ContainerRecord
 {
-    private row$:number;
-    private fields:Field[] = [];
-    private index:Map<string,Field> = new Map<string,Field>();
+    public row:number;
+    public fields:Field[] = [];
+    public index:Map<string,Field> = new Map<string,Field>();
 
     constructor(row:number)
     {
-        this.row$ = row;
-    }
-
-    public get row() : number
-    {
-        return(this.row$);
-    }
-
-    public getFields() : Field[]
-    {
-        return(this.fields);
-    }
-
-    public getField(name:string) : Field
-    {
-        return(this.index.get(name.toLowerCase()));
+        this.row = row;
     }
 
     public add(field:FieldInstance) : void

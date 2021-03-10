@@ -1,5 +1,6 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
+import { Record } from "../blocks/Record";
 import { BlockBase } from "../blocks/BlockBase";
 import { PopupWindow } from "../popup/PopupWindow";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -38,7 +39,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     constructor()
     {
-        super();
+        super("");
     }
 
     public setWin(win:PopupWindow): void
@@ -66,10 +67,13 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
 
         let block:ContainerBlock = container.getBlock("");
-        let record:ContainerRecord = block.getRecord(0);
+        this.fields = block.getFields();
 
-        this.usr = record.getField("usr");
-        this.pwd = record.getField("pwd");
+        let crec:ContainerRecord = block.getRecord(0);
+        this.records.push(new Record(0,crec.fields,crec.index));
+
+        this.usr = this.getField(0,"usr");
+        this.pwd = this.getField(0,"pwd");
 
         this.usr.setFieldType("input");
         this.pwd.setFieldType("password");

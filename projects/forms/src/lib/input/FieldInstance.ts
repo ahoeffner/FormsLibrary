@@ -21,6 +21,7 @@ export class FieldInstance implements AfterViewInit
     private field:HTMLSpanElement;
     private upper:boolean = false;
     private lower:boolean = false;
+    private firstchange:boolean = true;
 
     public guid:number;
     public row:number = 0;
@@ -112,7 +113,14 @@ export class FieldInstance implements AfterViewInit
         event.preventDefault();
 
         if (event.type == "focus")
+        {
+            this.firstchange = true;
             this.value$ = this.clazz.getValue();
+            this.group["onEvent"](this,"focus");
+        }
+
+        if (event.type == "blur")
+            this.group["onEvent"](this,"blur");
 
         if (event.type == "keyup")
         {
@@ -124,9 +132,6 @@ export class FieldInstance implements AfterViewInit
                 key.ctrl    = event.ctrlKey;
                 key.meta    = event.metaKey;
                 key.shift   = event.shiftKey;
-
-                if (+event.keyCode < 48 || +event.keyCode > 90)
-                    this.group["onEvent"]("key",key);
 
                 let current:any = this.clazz.getValue();
 
@@ -146,7 +151,16 @@ export class FieldInstance implements AfterViewInit
                         this.clazz.setValue(this.value$);
                     }
 
-                    this.group["onEvent"]("ichange");
+                    if (this.firstchange)
+                    {
+                        this.firstchange = false;
+                        this.group["onEvent"](this,"fchange",key);
+                    }
+
+                    if (+event.keyCode < 48 || +event.keyCode > 90)
+                        this.group["onEvent"](this,"key",key);
+
+                    this.group["onEvent"](this,"ichange");
                 }
             }
         }
