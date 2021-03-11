@@ -1,8 +1,9 @@
 Drop down enabled color
 Add F1-F12 in KeyCodes
+fieldinstance -1 => unmanaged
+OnFocus boble back to record and set current on all managed fields
 trigger, compare with kbmap (key-next = "12ffff")
 
-@DATABASE (true,....)
 Listen on change-event for input
 
 Library ng-package.json

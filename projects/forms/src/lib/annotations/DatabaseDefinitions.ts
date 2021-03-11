@@ -21,7 +21,7 @@ export class DatabaseDefinitions
     public static getFormUsage(form:string) : DatabaseUsage
     {
         let usage:DatabaseUsage = DatabaseDefinitions.fdefault.get(form.toLowerCase());
-        if (usage == null) usage = {query: false, insert: false, update: false, delete: false};
+        if (usage == null) usage = {query: true, insert: true, update: true, delete: true};
         return(usage);
     }
 
@@ -36,10 +36,10 @@ export class DatabaseDefinitions
 
         let base:DatabaseUsage =
         {
-            query:  false,
-            insert: false,
-            update: false,
-            delete: false
+            query:  true,
+            insert: true,
+            update: true,
+            delete: true
         };
 
         if (block != null) usage = DatabaseDefinitions.bdefault.get(block.toLowerCase());
