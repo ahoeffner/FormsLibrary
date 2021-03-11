@@ -1,5 +1,5 @@
 Drop down enabled color
-Add skip-keys (){}[].,$§*@!"'
+Add F1-F12 in KeyCodes
 trigger, compare with kbmap (key-next = "12ffff")
 
 @DATABASE (true,....)
