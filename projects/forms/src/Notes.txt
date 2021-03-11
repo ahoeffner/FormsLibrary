@@ -1,5 +1,5 @@
 Drop down enabled color
-blocks/Base listen for events
+Add skip-keys (){}[].,$§*@!"'
 trigger, compare with kbmap (key-next = "12ffff")
 
 @DATABASE (true,....)
