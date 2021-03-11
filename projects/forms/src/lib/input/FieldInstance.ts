@@ -126,16 +126,20 @@ export class FieldInstance implements AfterViewInit
         {
             if (+event.keyCode < 16 || +event.keyCode > 20)
             {
-                let key:Key = new Key();
-                key.code    = event.keyCode;
-                key.alt     = event.altKey;
-                key.ctrl    = event.ctrlKey;
-                key.meta    = event.metaKey;
-                key.shift   = event.shiftKey;
-
                 let current:any = this.clazz.getValue();
 
-                if (this.value$ != current)
+                if (this.value$ == current)
+                {
+                    let key:Key = new Key();
+                    key.code    = event.keyCode;
+                    key.alt     = event.altKey;
+                    key.ctrl    = event.ctrlKey;
+                    key.meta    = event.metaKey;
+                    key.shift   = event.shiftKey;
+
+                    this.group["onEvent"](this,"key",key);
+                }
+                else
                 {
                     this.value$ = current;
 
@@ -154,14 +158,11 @@ export class FieldInstance implements AfterViewInit
                     if (this.firstchange)
                     {
                         this.firstchange = false;
-                        this.group["onEvent"](this,"fchange",key);
+                        this.group["onEvent"](this,"fchange");
                     }
 
                     this.group["onEvent"](this,"ichange");
                 }
-
-                if (+event.keyCode < 48 || +event.keyCode > 90)
-                    this.group["onEvent"](this,"key",key);
             }
         }
     }
