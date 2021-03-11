@@ -157,11 +157,11 @@ export class FieldInstance implements AfterViewInit
                         this.group["onEvent"](this,"fchange",key);
                     }
 
-                    if (+event.keyCode < 48 || +event.keyCode > 90)
-                        this.group["onEvent"](this,"key",key);
-
                     this.group["onEvent"](this,"ichange");
                 }
+
+                if (+event.keyCode < 48 || +event.keyCode > 90)
+                    this.group["onEvent"](this,"key",key);
             }
         }
     }
