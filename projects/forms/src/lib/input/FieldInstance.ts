@@ -24,11 +24,10 @@ export class FieldInstance implements AfterViewInit
     private firstchange:boolean = true;
 
     public guid:number;
-    public row:number = 0;
     public group:Field = null;
 
     @Input("id")    private id$:string = "";
-    @Input("row")   private rown:string = "";
+    @Input("row")   private row$:number = -2;
     @Input("name")  private name$:string = "";
     @Input("block") private block$:string = "";
 
@@ -43,6 +42,16 @@ export class FieldInstance implements AfterViewInit
     public get id() : string
     {
         return(this.id$);
+    }
+
+    public get row() : number
+    {
+        return(this.row$);
+    }
+
+    public set row(row:number)
+    {
+        this.row$ = row;
     }
 
     public get name() : string
@@ -172,12 +181,6 @@ export class FieldInstance implements AfterViewInit
     {
 		this.field = this.fieldelem?.nativeElement as HTMLDivElement;
 
-        if (this.rown == "") this.rown = "-2";
-        else if (this.rown == "first")   this.rown = "-1";
-        else if (this.rown == "current") this.rown = "-2";
-        else if (this.rown == "last")    this.rown = "-3";
-
-        this.row = +this.rown;
         this.id$ = this.id$.toLowerCase();
         this.name$ = this.name$.toLowerCase();
         this.block$ = this.block$.toLowerCase();

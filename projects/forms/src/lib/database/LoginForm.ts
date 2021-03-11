@@ -65,6 +65,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
     public ngAfterViewInit(): void
     {
         let container:Container = this.app.getContainer();
+        container.finish();
 
         let block:ContainerBlock = container.getBlock("");
         this.fields = block.getFields();
@@ -75,8 +76,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         this.usr = this.getField(0,"usr");
         this.pwd = this.getField(0,"pwd");
 
-        this.usr.setFieldType("input");
-        this.pwd.setFieldType("password");
+        this.usr.setType("input");
+        this.pwd.setType("password");
 
         this.usr.enable(true);
         this.pwd.enable(true);

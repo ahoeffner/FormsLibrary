@@ -15,6 +15,11 @@ export class Record
         this.fields = fields;
     }
 
+    public set current(flag:boolean)
+    {
+        this.fields.forEach((field) => {field.current = true});
+    }
+
     public getField(name:string) : Field
     {
         return(this.index.get(name.toLowerCase()));

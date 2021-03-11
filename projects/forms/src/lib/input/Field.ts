@@ -1,15 +1,15 @@
 import { Key } from "./Key";
-import { FieldInstance } from "./FieldInstance";
 import { BlockBase } from "../blocks/BlockBase";
+import { FieldInstance } from "./FieldInstance";
 
 export class Field
 {
+    private value$:any;
     private name$:string;
     private block$:BlockBase;
-    private last:FieldInstance[] = [];
-    private first:FieldInstance[] = [];
+    private field:FieldInstance = null;
     private fields:FieldInstance[] = [];
-    private current:FieldInstance[] = [];
+    private current$:FieldInstance[] = [];
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
     constructor(name:string)
@@ -27,23 +27,23 @@ export class Field
         this.block$ = block;
     }
 
+    public set current(flag:boolean)
+    {
+        if (!flag) this.current$.forEach((inst) => {inst.value = null;});
+        else this.current$.forEach((inst) => {inst.value = this.value$;});
+    }
+
+    public set value(value:any)
+    {
+        this.value$ = value;
+        this.fields.forEach((inst) => {inst.value = value;});
+    }
+
     public add(field:FieldInstance) : void
     {
-        if (field.row == -1)
-        {
-            this.addFirst(field);
-            return;
-        }
-
         if (field.row == -2)
         {
             this.addCurrent(field);
-            return;
-        }
-
-        if (field.row == -3)
-        {
-            this.addLast(field);
             return;
         }
 
@@ -51,22 +51,10 @@ export class Field
         this.fields.push(field);
     }
 
-    public addLast(field:FieldInstance) : void
-    {
-        this.setindex(field);
-        this.last.push(field);
-    }
-
-    public addFirst(field:FieldInstance) : void
-    {
-        this.setindex(field);
-        this.first.push(field);
-    }
-
     public addCurrent(field:FieldInstance) : void
     {
         this.setindex(field);
-        this.current.push(field);
+        this.current$.push(field);
     }
 
     public removeFields() : void
@@ -75,28 +63,17 @@ export class Field
         this.index.clear();
     }
 
-    public removeLastFields() : void
-    {
-        for(let i = 0; i < this.last.length; i++)
-            this.remindex(this.last[i]);
-
-        this.last = [];
-    }
-
-    public removeFirstFields() : void
-    {
-        for(let i = 0; i < this.first.length; i++)
-            this.remindex(this.first[i]);
-
-        this.first = [];
-    }
-
     public removeCurrentFields() : void
     {
-        for(let i = 0; i < this.current.length; i++)
-            this.remindex(this.current[i]);
+        for(let i = 0; i < this.current$.length; i++)
+            this.remindex(this.current$[i]);
 
-        this.current = [];
+        this.current$ = [];
+    }
+
+    public getInstance() : FieldInstance
+    {
+        return(this.field);
     }
 
     public getFields() : FieldInstance[]
@@ -104,19 +81,9 @@ export class Field
         return(this.fields);
     }
 
-    public getLastFields() : FieldInstance[]
-    {
-        return(this.last);
-    }
-
-    public getFirstFields() : FieldInstance[]
-    {
-        return(this.first);
-    }
-
     public getCurrentFields() : FieldInstance[]
     {
-        return(this.current);
+        return(this.current$);
     }
 
     public setType(type:string, id?:string) : void
@@ -128,9 +95,7 @@ export class Field
         }
         else
         {
-            this.setLastType(type);
             this.setFieldType(type);
-            this.setFirstType(type);
             this.setCurrentType(type);
         }
     }
@@ -143,20 +108,8 @@ export class Field
 
     public setCurrentType(type:string) : void
     {
-        for (let i = 0; i < this.current.length; i++)
-            this.current[i].type = type;
-    }
-
-    public setFirstType(type:string) : void
-    {
-        for (let i = 0; i < this.first.length; i++)
-            this.first[i].type = type;
-    }
-
-    public setLastType(type:string) : void
-    {
-        for (let i = 0; i < this.last.length; i++)
-            this.last[i].type = type;
+        for (let i = 0; i < this.current$.length; i++)
+            this.current$[i].type = type;
     }
 
     public enable(flag:boolean, id?:string) : void
@@ -168,8 +121,6 @@ export class Field
         }
         else
         {
-            this.enableLast(flag);
-            this.enableFirst(flag);
             this.enableFields(flag);
             this.enableCurrent(flag);
         }
@@ -181,27 +132,17 @@ export class Field
             this.fields[i].enable(flag);
     }
 
-    public enableFirst(flag:boolean) : void
-    {
-        for (let i = 0; i < this.first.length; i++)
-            this.first[i].enable(flag);
-    }
-
     public enableCurrent(flag:boolean) : void
     {
-        for (let i = 0; i < this.current.length; i++)
-            this.current[i].enable(flag);
-    }
-
-    public enableLast(flag:boolean) : void
-    {
-        for (let i = 0; i < this.last.length; i++)
-            this.last[i].enable(flag);
+        for (let i = 0; i < this.current$.length; i++)
+            this.current$[i].enable(flag);
     }
 
     // this is accessed behind the scenes
     private onEvent(field:FieldInstance, type:string, key?:Key) : void
     {
+        if (type == "blur") this.field = null;
+        if (type == "focus") this.field = field;
         if (this.block$ != null) this.block$["onEvent"](field,type,key);
     }
 

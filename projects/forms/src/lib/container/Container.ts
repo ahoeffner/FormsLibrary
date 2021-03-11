@@ -5,6 +5,9 @@ import { FieldInstance } from "../input/FieldInstance";
 export class ContainerBlock
 {
     private name$:string;
+    private rows$:number = 0;
+    private current:FieldInstance[] = [];
+    private unmanaged:Map<string,Field> = new Map<string,Field>();
     private fields:Map<number,FieldInstance> = new Map<number,FieldInstance>();
     private records:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
@@ -18,17 +21,46 @@ export class ContainerBlock
         return(this.name$);
     }
 
+    public get rows() : number
+    {
+        return(this.rows$);
+    }
+
     public add(field:FieldInstance) : void
     {
         let row:number = field.row;
-        let rec:ContainerRecord = this.records.get(row);
-
         this.fields.set(field.guid,field);
+
+        if (field.row == -1)
+        {
+            let group:Field = this.unmanaged.get(field.name);
+
+            if (group == null)
+            {
+                group = new Field(field.name);
+                this.unmanaged.set(field.name,group);
+            }
+
+            field.row = 0;
+            group.add(field);
+            return;
+        }
+
+        if (field.row == -2)
+        {
+            this.current.push(field);
+            return;
+        }
+
+        let rec:ContainerRecord = this.records.get(+row);
 
         if (rec == null)
         {
             rec = new ContainerRecord(row);
             this.records.set(+row,rec);
+
+            if (field.row > this.rows$)
+                this.rows$ = field.row;
         }
 
         rec.add(field);
@@ -37,6 +69,11 @@ export class ContainerBlock
     public getFields() : Map<number,FieldInstance>
     {
         return(this.fields);
+    }
+
+    public getUnmanaged() : Map<string,Field>
+    {
+        return(this.unmanaged);
     }
 
     public getRecords() : ContainerRecord[]
@@ -50,6 +87,39 @@ export class ContainerBlock
     public getRecord(row:number) : ContainerRecord
     {
         return(this.records.get(+row));
+    }
+
+    private finish() : void
+    {
+        if (this.rows$ == 0)
+        {
+            let rec:ContainerRecord = this.getRecord(0);
+
+            if (rec == null)
+            {
+                rec = new ContainerRecord(0);
+                this.records.set(0,rec);
+            }
+
+            this.current.forEach((field) =>
+            {
+                field.row = 0;
+                field.group.add(field);
+            });
+        }
+        else
+        {
+            this.records.forEach((rec) =>
+            {
+                this.current.forEach((inst) =>
+                {
+                    let group:Field = rec.index.get(inst.name);
+
+                    if (group == null) rec.add(inst)
+                    else group.addCurrent(inst);
+                });
+            });
+        }
     }
 }
 
@@ -112,5 +182,10 @@ export class Container
         let blocks:ContainerBlock[] = [];
         this.blocks.forEach((blk) => {blocks.push(blk)});
         return(blocks);
+    }
+
+    public finish() : void
+    {
+        this.blocks.forEach((block) => {block["finish"]();});
     }
 }
