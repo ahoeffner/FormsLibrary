@@ -2,10 +2,10 @@ import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Record } from "../blocks/Record";
 import { BlockBase } from "../blocks/BlockBase";
+import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { Container, ContainerBlock, ContainerRecord } from "../container/Container";
 
 
 @Component({
@@ -14,10 +14,10 @@ import { Container, ContainerBlock, ContainerRecord } from "../container/Contain
     `
         <table style='margin-top: 20px'>
           <tr>
-            <td>Username</td><td>: <field row='0' name='usr'></field> </td>
+            <td>Username</td><td>: <field name='usr'></field> </td>
           </tr>
           <tr>
-            <td>Password</td><td>: <field row='0' name='pwd'></field> </td>
+            <td>Password</td><td>: <field name='pwd'></field> </td>
           </tr>
         </table>
     `
@@ -67,11 +67,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
         container.finish();
 
-        let block:ContainerBlock = container.getBlock("");
-        this.fields = block.getFields();
-
-        let crec:ContainerRecord = block.getRecord(0);
-        this.addRecord(new Record(0,crec.fields,crec.index));
+        container.getBlock("").getRecords().forEach((rec) =>
+        {this.addRecord(new Record(0,rec.fields,rec.index));});
 
         this.usr = this.getField(0,"usr");
         this.pwd = this.getField(0,"pwd");

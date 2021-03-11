@@ -93,18 +93,10 @@ export class ContainerBlock
     {
         if (this.rows$ == 0)
         {
-            let rec:ContainerRecord = this.getRecord(0);
-
-            if (rec == null)
-            {
-                rec = new ContainerRecord(0);
-                this.records.set(0,rec);
-            }
-
             this.current.forEach((field) =>
             {
                 field.row = 0;
-                field.group.add(field);
+                this.add(field);
             });
         }
         else
