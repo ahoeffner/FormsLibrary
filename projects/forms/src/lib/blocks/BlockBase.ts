@@ -5,12 +5,33 @@ import { FieldInstance } from "../input/FieldInstance";
 
 export class BlockBase
 {
-    public records:Record[] = [];
-    public fields:Map<number,FieldInstance> = new Map<number,FieldInstance>();
+    private records:Map<number,Record> = new Map<number,Record>();
+    private fields$:Map<number,FieldInstance> = new Map<number,FieldInstance>();
+
+    public getRecord(row:number) : Record
+    {
+        return(this.records[+row]);
+    }
+
+    public addRecord(record:Record) : void
+    {
+        this.records.set(+record.row,record);
+        record.fields.forEach((field) => {field.block = this});
+    }
+
+    public set fields(fields:Map<number,FieldInstance>)
+    {
+        this.fields$ = fields;
+    }
 
     public getField(row:number, name:string) : Field
     {
         return(this.records[+row].getField(name));
+    }
+
+    public getFieldInstance(id:number) : FieldInstance
+    {
+        return(this.fields$.get(+id));
     }
 
     // this is accessed behind the scenes

@@ -70,7 +70,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         this.fields = block.getFields();
 
         let crec:ContainerRecord = block.getRecord(0);
-        this.records.push(new Record(0,crec.fields,crec.index));
+        this.addRecord(new Record(0,crec.fields,crec.index));
 
         this.usr = this.getField(0,"usr");
         this.pwd = this.getField(0,"pwd");
