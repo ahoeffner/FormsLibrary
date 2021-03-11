@@ -26,7 +26,7 @@ export class BlockBase
 
     public getField(row:number, name:string) : Field
     {
-        return(this.records[+row].getField(name));
+        return(this.records.get(+row)?.getField(name));
     }
 
     public getFieldInstance(id:number) : FieldInstance
