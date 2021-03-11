@@ -37,6 +37,5 @@ export class BlockBase
     // this is accessed behind the scenes
     private onEvent(field:FieldInstance, type:string, key?:Key) : void
     {
-        console.log("event: "+type);
     }
 }
