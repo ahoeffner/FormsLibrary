@@ -39,7 +39,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     constructor()
     {
-        super("");
+        super();
     }
 
     public setWin(win:PopupWindow): void

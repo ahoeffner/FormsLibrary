@@ -5,14 +5,8 @@ import { FieldInstance } from "../input/FieldInstance";
 
 export class BlockBase
 {
-    public name:string;
     public records:Record[] = [];
     public fields:Map<number,FieldInstance> = new Map<number,FieldInstance>();
-
-    constructor(name:string)
-    {
-        this.name = name;
-    }
 
     public getField(row:number, name:string) : Field
     {
