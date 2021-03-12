@@ -4,6 +4,7 @@ import { Record } from "../blocks/Record";
 import { BlockBase } from "../blocks/BlockBase";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
+import { FieldInstance } from "../input/FieldInstance";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 
@@ -42,6 +43,14 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         super();
     }
 
+    private init() : void
+    {
+        let actions:string[] = [];
+        actions.push(this.app.keymap.enter);
+        actions.push(this.app.keymap.escape);
+        this.addListener({types: "key", keys: actions, listener: this.onEvent});
+    }
+
     public setWin(win:PopupWindow): void
     {
         this.win = win;
@@ -50,11 +59,17 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
     public setApp(app:ApplicationImpl) : void
     {
         this.app = app;
+        this.init();
     }
 
     public close(cancel:boolean) : void
     {
         this.win.closeWindow();
+    }
+
+    public onEvent(field:FieldInstance,type:string,key:string) : void
+    {
+        console.log("event, field: "+field.name+" type: "+type+" key: "+key);
     }
 
     public ngOnInit(): void

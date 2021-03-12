@@ -1,5 +1,6 @@
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
+import { KeyMap } from "../keymap/KeyMap";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
 import { Preferences } from "./Preferences";
@@ -8,6 +9,7 @@ import { MenuArea } from "../menu/MenuArea";
 import { FormArea } from "../forms/FormArea";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
+import { MacKeyMap } from "../keymap/MacKeyMap";
 import { InstanceID } from "../forms/InstanceID";
 import { HttpClient } from "@angular/common/http";
 import { MenuFactory } from "../menu/MenuFactory";
@@ -27,6 +29,7 @@ import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 export class ApplicationImpl
 {
     private config:any = null;
+    private keymap$:KeyMap = null;
     private marea:MenuArea = null;
     private ready:boolean = false;
     private apptitle:string = null;
@@ -64,12 +67,20 @@ export class ApplicationImpl
             let prefs:Preferences = new Preferences();
             prefs.setTheme(this.config["theme"]);
         }
+
+        this.keymap$ = new MacKeyMap();
     }
 
 
     public get appstate() : ApplicationState
     {
         return(this.state);
+    }
+
+
+    public get keymap() : KeyMap
+    {
+        return(this.keymap$);
     }
 
 

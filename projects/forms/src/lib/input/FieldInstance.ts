@@ -1,5 +1,5 @@
-import { Key } from './Key';
 import { Field } from './Field';
+import { Key, KeyMapper } from '../keymap/KeyMap';
 import { FieldTypes, FieldType } from './FieldType';
 import { Application } from "../application/Application";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -139,13 +139,16 @@ export class FieldInstance implements AfterViewInit
 
                 if (this.value$ == current)
                 {
-                    let key:Key = new Key();
-                    key.code    = event.keyCode;
-                    key.alt     = event.altKey;
-                    key.ctrl    = event.ctrlKey;
-                    key.meta    = event.metaKey;
-                    key.shift   = event.shiftKey;
+                    let keydef:Key =
+                    {
+                        code  : event.keyCode,
+                        alt   : event.altKey,
+                        ctrl  : event.ctrlKey,
+                        meta  : event.metaKey,
+                        shift : event.shiftKey
+                    }
 
+                    let key:string = KeyMapper.map(keydef);
                     this.group["onEvent"](this,"key",key);
                 }
                 else

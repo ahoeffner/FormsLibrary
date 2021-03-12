@@ -1,4 +1,3 @@
-import { Key } from "./Key";
 import { BlockBase } from "../blocks/BlockBase";
 import { FieldInstance } from "./FieldInstance";
 
@@ -139,11 +138,11 @@ export class Field
     }
 
     // this is accessed behind the scenes
-    private onEvent(field:FieldInstance, type:string, key?:Key) : void
+    private onEvent(field:FieldInstance, type:string, key?:string) : void
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
-        if (this.block$ != null) this.block$["onEvent"](field,type,key);
+        if (this.block$ != null) this.block$["_onEvent"](field,type,key);
     }
 
     private setindex(field:FieldInstance) : void
