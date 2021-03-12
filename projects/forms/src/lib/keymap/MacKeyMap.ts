@@ -8,7 +8,7 @@ export class MacKeyMap implements KeyMap
     undorecord:string = KeyMapper.map({code: KeyCodes.escape, shift:true, ctrl:true});
 
     enter:string = KeyMapper.map({code: KeyCodes.enter});
-    escape:string = KeyMapper.map({code: KeyCodes.enter});
+    escape:string = KeyMapper.map({code: KeyCodes.escape});
 
     insert:string;
     delete:string;

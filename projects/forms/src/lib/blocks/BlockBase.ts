@@ -76,10 +76,10 @@ export class BlockBase
         {
             let keys:string[] = [];
             let array:boolean = false;
-            if (listener.types.constructor.name == "Array") array = true;
+            if (listener.keys.constructor.name == "Array") array = true;
 
-            if (array) keys = listener.types as string[];
-            else       keys.push(listener.types as string);
+            if (array) keys = listener.keys as string[];
+            else       keys.push(listener.keys as string);
 
             keys.forEach((key) =>
             {
@@ -106,9 +106,18 @@ export class BlockBase
         }
 
         let lsnrs:Listener[] = this.listener.types.get(type);
-        if (lsnrs != null) lsnrs.forEach((lsnr) => {lsnr.listener(field,type)});
+        if (lsnrs != null) lsnrs.forEach((lsnr) =>
+        {
+            this[lsnr.listener.name](field,type);
+        });
 
-        lsnrs = this.listener.keys.get(key);
-        if (lsnrs != null) lsnrs.forEach((lsnr) => {lsnr.listener(field,type,key)});
+        if (type == "key")
+        {
+            lsnrs = this.listener.keys.get(key);
+            if (lsnrs != null) lsnrs.forEach((lsnr) =>
+            {
+                this[lsnr.listener.name](field,type,key);
+            });
+        }
     }
 }
