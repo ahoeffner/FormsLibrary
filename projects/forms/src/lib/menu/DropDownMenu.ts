@@ -2,6 +2,7 @@ import { Menu } from './Menu';
 import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
+import { Config } from '../application/Config';
 import { Protected } from '../utils/Protected';
 import { MenuInterface } from './MenuInterface';
 import { Preferences } from '../application/Preferences';
@@ -41,7 +42,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     }
 
 
-    constructor()
+    constructor(private conf:Config)
     {
         this.instance = "DropDownMenu-"+(DropDownMenu.instances++);
         Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.app)}});
@@ -309,7 +310,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
 	private styles() : string
 	{
-        let prefs:Preferences = new Preferences();
+        let prefs:Preferences = this.conf.preferences;
 
         let style:string =
         `

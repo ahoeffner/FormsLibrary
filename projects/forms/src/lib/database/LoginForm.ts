@@ -1,12 +1,14 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Record } from "../blocks/Record";
+import { Config } from "../application/Config";
 import { BlockBase } from "../blocks/BlockBase";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { FieldInstance } from "../input/FieldInstance";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { KeyMap } from "../keymap/KeyMap";
 
 
 @Component({
@@ -29,6 +31,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 {
     private usr:Field;
     private pwd:Field;
+    private keymap:KeyMap;
     private win:PopupWindow;
     private app:ApplicationImpl;
 
@@ -38,17 +41,19 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
     public height:string = "150px";
     public title:string  = "Login";
 
-    constructor()
+    constructor(conf:Config)
     {
         super();
+        this.keymap = conf.keymap;
+        this.init();
     }
 
     private init() : void
     {
         let actions:string[] = [];
-        actions.push(this.app.keymap.enter);
-        actions.push(this.app.keymap.escape);
-        this.addListener({types: "key", keys: actions, listener: this.onEvent});
+        actions.push(this.keymap.enter);
+        actions.push(this.keymap.escape);
+        this.addListener(this.onEvent,"key",actions);
     }
 
     public setWin(win:PopupWindow): void
@@ -59,7 +64,6 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
     public setApp(app:ApplicationImpl) : void
     {
         this.app = app;
-        this.init();
     }
 
     public close(cancel:boolean) : void
@@ -69,8 +73,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     public onEvent(field:FieldInstance,type:string,key:string) : void
     {
-        if (key == this.app.keymap.enter) this.close(false);
-        else if (key == this.app.keymap.escape) this.close(true);
+        if (key == this.keymap.enter) this.close(false);
+        else if (key == this.keymap.escape) this.close(true);
     }
 
     public ngOnInit(): void

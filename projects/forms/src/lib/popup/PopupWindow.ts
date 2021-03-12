@@ -1,4 +1,5 @@
 import { Popup } from './Popup';
+import { Config } from '../application/Config';
 import { PopupInstance } from './PopupInstance';
 import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from "../utils/Listener";
@@ -140,8 +141,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
     public width : string = "40vw";
     public height : string = "30vh";
     public tmargin : string = "1vh";
-
-	public preferences:Preferences = new Preferences();
+	public preferences:Preferences = null;
 
     @ViewChild("title", {read: ElementRef}) private titlebarElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
@@ -167,8 +167,9 @@ export class PopupWindow implements onEventListener, AfterViewInit
 	private resizey:boolean = false;
 
 
-	constructor(private change:ChangeDetectorRef)
+	constructor(conf:Config, private change:ChangeDetectorRef)
     {
+		this.preferences = conf.preferences;
     }
 
 
@@ -227,7 +228,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
 	public closeWindow() : void
 	{
 		if (this.winref == null) return;
-		
+
 		Listener.remove("modal","mouseup");
 		Listener.remove("modal","mousemove");
 		Listener.remove("modal","mousedown");

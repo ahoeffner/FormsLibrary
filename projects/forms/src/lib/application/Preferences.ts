@@ -9,11 +9,6 @@ export class Preferences
     private static senv:Environment = null;
     private static notifications:any[] = [];
 
-    public static notify(instance:any, func:string) : void
-    {
-        Preferences.notifications.push({instance: instance, func: func});
-    }
-
 
     public constructor()
     {
@@ -31,6 +26,12 @@ export class Preferences
 
         this.colors$ = Preferences.scol;
         this.environment$ = Preferences.senv;
+    }
+
+
+    public notify(instance:any, func:string) : void
+    {
+        Preferences.notifications.push({instance: instance, func: func});
     }
 
 

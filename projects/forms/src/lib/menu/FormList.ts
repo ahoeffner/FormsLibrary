@@ -1,3 +1,4 @@
+import { Config } from '../application/Config';
 import { FormInstance } from '../forms/FormInstance';
 import { Application } from '../application/Application';
 import { Preferences } from '../application/Preferences';
@@ -33,11 +34,11 @@ export class FormList implements AfterViewInit
     @Input('root') name: string = "/";
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
-    constructor(app:Application)
+    constructor(private conf:Config, app:Application)
     {
 		this.app = app["impl"];
 		this.root = new Folder(this.name);
-		Preferences.notify(this,"setColors");
+		conf.preferences.notify(this,"setColors");
 
 		this.app.setFormList(this);
 
@@ -191,7 +192,7 @@ export class FormList implements AfterViewInit
 
 	public setColors() : void
 	{
-		let prefs:Preferences = new Preferences();
+		let prefs:Preferences = this.conf.preferences;
 
 		let link:string = prefs.colors.link;
 		let tree:string = prefs.colors.foldertree;

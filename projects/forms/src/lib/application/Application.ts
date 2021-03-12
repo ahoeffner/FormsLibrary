@@ -1,3 +1,4 @@
+import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
@@ -18,9 +19,9 @@ export class Application
     // dont rename impl as it is read behind the scenes
 
 
-    constructor(client:HttpClient, builder:Builder)
+    constructor(private conf:Config, client:HttpClient, builder:Builder)
     {
-        this.impl = new ApplicationImpl(this,client,builder);
+        this.impl = new ApplicationImpl(conf,this,client,builder);
     }
 
     public get Title() : string
@@ -61,7 +62,7 @@ export class Application
 
     public get preferences() : Preferences
     {
-        return(new Preferences());
+        return(this.conf.preferences);
     }
 
     public closeform(destroy?:boolean) : void

@@ -1,6 +1,7 @@
 import { Form } from "./Form";
 import { FormImpl } from "./FormImpl";
 import { FormInstance } from './FormInstance';
+import { Config } from "../application/Config";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from "../utils/Listener";
@@ -142,8 +143,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
-
-	public preferences:Preferences = new Preferences();
+	public preferences:Preferences = null;
 
     @ViewChild("menu", {read: ElementRef}) private menuElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
@@ -169,7 +169,10 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private resizey:boolean = false;
 
 
-	constructor(private change:ChangeDetectorRef) {}
+	constructor(conf:Config, private change:ChangeDetectorRef)
+	{
+		this.preferences = conf.preferences;
+	}
 
 	public get tcolor() : string
 	{

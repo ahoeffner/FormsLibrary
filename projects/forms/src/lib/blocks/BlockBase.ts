@@ -42,22 +42,22 @@ export class BlockBase
         return(this.fields$.get(+id));
     }
 
-    public addListener(listener:Listener) : void
+    public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
-        if (listener.types != null)
+        if (types != null)
         {
-            let types:string[] = [];
+            let typesarr:string[] = [];
             let array:boolean = false;
-            if (listener.types.constructor.name == "Array") array = true;
+            if (types.constructor.name == "Array") array = true;
 
-            if (array) types = listener.types as string[];
-            else       types.push(listener.types as string);
+            if (array) typesarr = types as string[];
+            else       typesarr.push(types as string);
 
-            types.forEach((type) =>
+            typesarr.forEach((type) =>
             {
                 type = type.toLowerCase();
 
-                if (type != "key" || listener.keys == null)
+                if (type != "key" || keys == null)
                 {
                     let lsnrs:Listener[] = this.listener.types.get(type);
 
@@ -72,16 +72,16 @@ export class BlockBase
             });
         }
 
-        if (listener.keys != null)
+        if (keys != null)
         {
-            let keys:string[] = [];
+            let keysarr:string[] = [];
             let array:boolean = false;
-            if (listener.keys.constructor.name == "Array") array = true;
+            if (keys.constructor.name == "Array") array = true;
 
-            if (array) keys = listener.keys as string[];
-            else       keys.push(listener.keys as string);
+            if (array) keysarr = keys as string[];
+            else       keysarr.push(keys as string);
 
-            keys.forEach((key) =>
+            keysarr.forEach((key) =>
             {
                 key = key.toLowerCase();
                 let lsnrs:Listener[] = this.listener.keys.get(key);
@@ -108,7 +108,7 @@ export class BlockBase
         let lsnrs:Listener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((lsnr) =>
         {
-            this[lsnr.listener.name](field,type);
+            this[lsnr.name](field,type);
         });
 
         if (type == "key")
@@ -116,7 +116,7 @@ export class BlockBase
             lsnrs = this.listener.keys.get(key);
             if (lsnrs != null) lsnrs.forEach((lsnr) =>
             {
-                this[lsnr.listener.name](field,type,key);
+                this[lsnr.name](field,type,key);
             });
         }
     }
