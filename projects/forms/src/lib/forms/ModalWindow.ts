@@ -3,7 +3,6 @@ import { FormImpl } from "./FormImpl";
 import { FormInstance } from './FormInstance';
 import { Config } from "../application/Config";
 import { DropDownMenu } from "../menu/DropDownMenu";
-import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from "../utils/Listener";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
@@ -143,7 +142,6 @@ export class ModalWindow implements onEventListener, AfterViewInit
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
-	public preferences:Preferences = null;
 
     @ViewChild("menu", {read: ElementRef}) private menuElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
@@ -169,24 +167,23 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private resizey:boolean = false;
 
 
-	constructor(conf:Config, private change:ChangeDetectorRef)
+	constructor(private conf:Config, private change:ChangeDetectorRef)
 	{
-		this.preferences = conf.preferences;
 	}
 
 	public get tcolor() : string
 	{
-		return(this.preferences.colors.title);
+		return(this.conf.colors.title);
 	}
 
 	public get bcolor() : string
 	{
-		return(this.preferences.colors.topbar);
+		return(this.conf.colors.topbar);
 	}
 
 	public get btncolor() : string
 	{
-		return(this.preferences.colors.buttontext);
+		return(this.conf.colors.menuoption);
 	}
 
 

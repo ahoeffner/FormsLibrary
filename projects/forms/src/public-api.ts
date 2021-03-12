@@ -34,6 +34,5 @@ export {FormDefinition} from './lib/forms/FormsDefinition';
 
 export {Theme} from './lib/application/Themes';
 export {Application} from './lib/application/Application';
-export {Preferences} from "./lib/application/Preferences";
 
 export {FormsLibrary} from './lib/FormsLibrary';

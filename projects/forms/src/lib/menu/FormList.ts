@@ -1,7 +1,6 @@
 import { Config } from '../application/Config';
 import { FormInstance } from '../forms/FormInstance';
 import { Application } from '../application/Application';
-import { Preferences } from '../application/Preferences';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
@@ -38,7 +37,7 @@ export class FormList implements AfterViewInit
     {
 		this.app = app["impl"];
 		this.root = new Folder(this.name);
-		conf.preferences.notify(this,"setColors");
+		this.conf.notify(this,"setColors");
 
 		this.app.setFormList(this);
 
@@ -192,10 +191,8 @@ export class FormList implements AfterViewInit
 
 	public setColors() : void
 	{
-		let prefs:Preferences = this.conf.preferences;
-
-		let link:string = prefs.colors.link;
-		let tree:string = prefs.colors.foldertree;
+		let link:string = this.conf.colors.link;
+		let tree:string = this.conf.colors.foldertree;
 		let list:HTMLCollectionOf<Element> = null;
 
 		list = this.html.getElementsByClassName("formlist-txt");

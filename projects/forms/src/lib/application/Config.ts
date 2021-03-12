@@ -2,7 +2,7 @@ import { KeyMap } from "../keymap/KeyMap";
 import { Injectable } from "@angular/core";
 import { MacKeyMap } from "../keymap/MacKeyMap";
 import { HttpClient } from "@angular/common/http";
-import { Preferences } from "./Preferences";
+import { Theme, Pink, Grey, Yellow, Indigo, defaultTheme } from "./Themes";
 
 
 @Injectable({
@@ -12,21 +12,29 @@ import { Preferences } from "./Preferences";
 
 export class Config
 {
+    private colors$:Theme;
     private config:any = null;
     private keymap$:KeyMap = null;
+    private notifications:any[] = [];
     private invoker:Promise<any> = null;
-    private prefs$:Preferences = new Preferences();
+    private themes:Map<string,Theme> = new Map<string,Theme>();
 
 
     constructor(private client:HttpClient)
     {
         this.load();
         this.keymap$ = new MacKeyMap();
+        this.themes.set("pink",new Pink());
+        this.themes.set("grey",new Grey());
+        this.themes.set("indigo",new Indigo());
+        this.themes.set("yellow",new Yellow());
+        this.themes.set("default",new defaultTheme());
+        this.colors$ = this.themes.get("default");
     }
 
     private async load()
     {
-        this.invoker = this.client.get<any>("/assets/config.json").toPromise();
+        this.invoker = this.client.get<any>("/assets/config/config.json").toPromise();
         this.invoker.then(data => {this.config = data;}, error => {this.config = {}; console.log("Loading config failed: "+error)});
     }
 
@@ -39,19 +47,38 @@ export class Config
         }
     }
 
-    public async getConfig() : Promise<any>
+    public get keymap() : KeyMap
+    {
+        return(this.keymap$);
+    }
+
+    public get colors() : Theme
+    {
+        return(this.colors$);
+    }
+
+    public async others() : Promise<any>
     {
         await this.ready();
         return(this.config);
     }
 
-    public get preferences() : Preferences
+    public notify(instance:any, func:string) : void
     {
-        return(this.prefs$);
+        this.notifications.push({instance: instance, func: func});
     }
 
-    public get keymap() : KeyMap
+    public setTheme(theme:string|Theme) : void
     {
-        return(this.keymap$);
+        let ttheme:Theme = null;
+
+        if (typeof theme == 'object') ttheme = theme as Theme;
+        else                          ttheme = this.themes.get(theme);
+
+        if (ttheme != null)
+        {
+            this.colors$ = ttheme;
+            this.notifications.forEach((notify) => {notify.instance[notify.func]()});
+        }
     }
 }

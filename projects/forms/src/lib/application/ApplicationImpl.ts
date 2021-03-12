@@ -2,7 +2,6 @@ import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
-import { Preferences } from "./Preferences";
 import { FormList } from "../menu/FormList";
 import { MenuArea } from "../menu/MenuArea";
 import { FormArea } from "../forms/FormArea";
@@ -53,16 +52,13 @@ export class ApplicationImpl
 
     private async loadConfig()
     {
-        this.config = await this.conf.getConfig();
+        this.config = await this.conf.others();
 
         if (this.config.hasOwnProperty("title"))
             this.setTitle(this.config["title"]);
 
         if (this.config.hasOwnProperty("theme"))
-        {
-            let prefs:Preferences = this.conf.preferences;
-            prefs.setTheme(this.config["theme"]);
-        }
+            this.conf.setTheme(this.config["theme"]);
     }
 
 

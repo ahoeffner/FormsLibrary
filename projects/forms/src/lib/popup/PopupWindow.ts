@@ -1,7 +1,6 @@
 import { Popup } from './Popup';
 import { Config } from '../application/Config';
 import { PopupInstance } from './PopupInstance';
-import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from "../utils/Listener";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
@@ -141,7 +140,6 @@ export class PopupWindow implements onEventListener, AfterViewInit
     public width : string = "40vw";
     public height : string = "30vh";
     public tmargin : string = "1vh";
-	public preferences:Preferences = null;
 
     @ViewChild("title", {read: ElementRef}) private titlebarElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
@@ -167,27 +165,26 @@ export class PopupWindow implements onEventListener, AfterViewInit
 	private resizey:boolean = false;
 
 
-	constructor(conf:Config, private change:ChangeDetectorRef)
+	constructor(private conf:Config, private change:ChangeDetectorRef)
     {
-		this.preferences = conf.preferences;
     }
 
 
 	public get tcolor() : string
 	{
-		return(this.preferences.colors.title);
+		return(this.conf.colors.title);
 	}
 
 
 	public get bcolor() : string
 	{
-		return(this.preferences.colors.topbar);
+		return(this.conf.colors.topbar);
 	}
 
 
 	public get btncolor() : string
 	{
-		return(this.preferences.colors.buttontext);
+		return(this.conf.colors.menuoption);
 	}
 
 

@@ -1,8 +1,8 @@
+import { Theme } from "./Themes";
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
-import { Preferences } from "./Preferences";
 import { FormImpl } from "../forms/FormImpl";
 import { HttpClient } from "@angular/common/http";
 import { ApplicationImpl } from "./ApplicationImpl";
@@ -60,9 +60,9 @@ export class Application
         this.impl.showform(form,false,parameters);
     }
 
-    public get preferences() : Preferences
+    public get colors() : Theme
     {
-        return(this.conf.preferences);
+        return(this.conf.colors);
     }
 
     public closeform(destroy?:boolean) : void

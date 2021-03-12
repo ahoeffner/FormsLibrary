@@ -5,7 +5,6 @@ import { DefaultMenu } from './DefaultMenu';
 import { Config } from '../application/Config';
 import { Protected } from '../utils/Protected';
 import { MenuInterface } from './MenuInterface';
-import { Preferences } from '../application/Preferences';
 import { Listener, onEventListener } from '../utils/Listener';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
@@ -310,8 +309,6 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
 	private styles() : string
 	{
-        let prefs:Preferences = this.conf.preferences;
-
         let style:string =
         `
             .ddmenu-bar
@@ -327,7 +324,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             .ddmenu-entry
             {
                 border: none;
-                color: `+prefs.colors.buttontext+`;
+                color: `+this.conf.colors.menuoption+`;
                 outline:none;
                 cursor: pointer;
                 font-size: 16px;
@@ -336,7 +333,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
             .ddmenu-disabled
             {
-                color: `+prefs.colors.disabled+`;
+                color: `+this.conf.colors.disabled+`;
             }
 
             .ddmenu-menu

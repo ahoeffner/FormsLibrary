@@ -7,38 +7,19 @@ export interface Theme
     topbar:string;
     disabled:string;
     foldertree:string;
-    buttontext:string;
+    menuoption:string;
 }
-
-
-export class Themes
-{
-    private static themes:Map<string,Theme> = new Map<string,Theme>();
-
-
-    public static add(theme:Theme)
-    {
-        Themes.themes.set(theme.name.toLowerCase(),theme);
-    }
-
-
-    public static get(name:string) : Theme
-    {
-        return(Themes.themes.get(name.toLowerCase()));
-    }
-}
-
 
 export class defaultTheme implements Theme
 {
     public name:string = "default";
 
     public link:string = "blue";
-    public text:string = "white";
+    public text:string = "black";
     public title:string = "white";
     public topbar:string = "#303f9f";
     public disabled:string = "silver";
-    public buttontext:string = "white";
+    public menuoption:string = "white";
     public foldertree:string = "#303f9f";
 }
 
@@ -72,10 +53,10 @@ export class Yellow implements Theme
     public name:string = "yellow";
 
     public link:string = "grey";
-    public text:string = "white";
+    public text:string = "black";
     public title:string = "black";
     public topbar:string = "yellow";
     public foldertree:string = "grey";
     public disabled:string = "silver";
-    public buttontext:string = "black";
+    public menuoption:string = "black";
 }
