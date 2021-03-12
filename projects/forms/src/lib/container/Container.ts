@@ -8,7 +8,6 @@ export class ContainerBlock
     private rows$:number = 0;
     private current:FieldInstance[] = [];
     private unmanaged:Map<string,Field> = new Map<string,Field>();
-    private fields:Map<number,FieldInstance> = new Map<number,FieldInstance>();
     private records:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
     constructor(name:string)
@@ -29,7 +28,6 @@ export class ContainerBlock
     public add(field:FieldInstance) : void
     {
         let row:number = field.row;
-        this.fields.set(field.guid,field);
 
         if (field.row == -1)
         {
@@ -64,11 +62,6 @@ export class ContainerBlock
         }
 
         rec.add(field);
-    }
-
-    public getFields() : Map<number,FieldInstance>
-    {
-        return(this.fields);
     }
 
     public getUnmanaged() : Map<string,Field>
@@ -146,12 +139,10 @@ export class ContainerRecord
 
 export class Container
 {
-    private id:number = 0;
     private blocks:Map<string,ContainerBlock> = new Map<string,ContainerBlock>();
 
     public register(field:FieldInstance) : void
     {
-        field.guid = this.id++;
         let bname:string = field.block;
         let block:ContainerBlock = this.blocks.get(bname);
 

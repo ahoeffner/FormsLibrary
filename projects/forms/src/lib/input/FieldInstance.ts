@@ -23,7 +23,6 @@ export class FieldInstance implements AfterViewInit
     private lower:boolean = false;
     private firstchange:boolean = true;
 
-    public guid:number;
     public group:Field = null;
 
     @Input("id")    private id$:string = "";
