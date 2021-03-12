@@ -21,6 +21,7 @@ export class FieldInstance implements AfterViewInit
     private field:HTMLSpanElement;
     private upper:boolean = false;
     private lower:boolean = false;
+    private enabled$:boolean = false;
     private firstchange:boolean = true;
 
     public group:Field = null;
@@ -29,6 +30,8 @@ export class FieldInstance implements AfterViewInit
     @Input("row")   private row$:number = -2;
     @Input("name")  private name$:string = "";
     @Input("block") private block$:string = "";
+    @Input("class") private class$:string = "";
+    @Input("style") private style$:string = "";
 
     @ViewChild("field", {read: ElementRef}) private fieldelem: ElementRef;
 
@@ -73,6 +76,11 @@ export class FieldInstance implements AfterViewInit
         return(this.clazz.getValue());
     }
 
+    public focus() : void
+    {
+        setTimeout(() => {this.clazz.element.focus()},0);
+    }
+
     public setUpperCase() : void
     {
         this.upper = true;
@@ -91,8 +99,15 @@ export class FieldInstance implements AfterViewInit
     }
 
 
-    public enable(flag:boolean) : void
+    public get enabled() : boolean
     {
+        return(this.enabled$);
+    }
+
+
+    public set enable(flag:boolean)
+    {
+        this.enabled$ = flag;
         this.clazz.enable(flag);
     }
 
@@ -108,6 +123,8 @@ export class FieldInstance implements AfterViewInit
             this.clazz = new cname();
             this.field.innerHTML = this.clazz.html;
             this.clazz.element = this.field.children[0] as HTMLElement;
+            this.clazz.element.classList.add(this.class$);
+            this.clazz.element.style.cssText = this.style$;
             this.addTriggers();
         }
     }
@@ -181,7 +198,7 @@ export class FieldInstance implements AfterViewInit
 
     public ngAfterViewInit(): void
     {
-		this.field = this.fieldelem?.nativeElement as HTMLDivElement;
+		this.field = this.fieldelem?.nativeElement as HTMLSpanElement;
 
         this.id$ = this.id$.toLowerCase();
         this.name$ = this.name$.toLowerCase();

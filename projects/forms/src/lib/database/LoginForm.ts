@@ -99,6 +99,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         this.usr.enable(true);
         this.pwd.enable(true);
 
+        this.usr.focus();
         this.app.dropContainer();
     }
 }

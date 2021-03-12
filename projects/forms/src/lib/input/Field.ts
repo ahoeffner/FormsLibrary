@@ -38,6 +38,34 @@ export class Field
         this.fields.forEach((inst) => {inst.value = value;});
     }
 
+    public focus() : void
+    {
+        if (this.field != null)
+        {
+            this.field.focus();
+        }
+        else
+        {
+            for (let i = 0; i < this.fields.length; i++)
+            {
+                if (this.fields[i].enabled)
+                {
+                    this.fields[i].focus();
+                    return;
+                }
+            }
+
+            for (let i = 0; i < this.current$.length; i++)
+            {
+                if (this.current$[i].enabled)
+                {
+                    this.current$[i].focus();
+                    return;
+                }
+            }
+        }
+    }
+
     public add(field:FieldInstance) : void
     {
         if (field.row == -2)
@@ -116,7 +144,7 @@ export class Field
         if (id != null)
         {
             let field:FieldInstance = this.index.get(id.toLowerCase());
-            if (field != null) field.enable(flag);
+            if (field != null) field.enable =flag;
         }
         else
         {
@@ -128,13 +156,13 @@ export class Field
     public enableFields(flag:boolean) : void
     {
         for (let i = 0; i < this.fields.length; i++)
-            this.fields[i].enable(flag);
+            this.fields[i].enable = flag;
     }
 
     public enableCurrent(flag:boolean) : void
     {
         for (let i = 0; i < this.current$.length; i++)
-            this.current$[i].enable(flag);
+            this.current$[i].enable = flag;
     }
 
     // this is accessed behind the scenes

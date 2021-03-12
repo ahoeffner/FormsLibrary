@@ -11,6 +11,11 @@ export class Input implements FieldType
         return("<input></input>");
     }
 
+    public get element() : HTMLElement
+    {
+        return(this.element$);
+    }
+
     public set element(element:HTMLElement)
     {
         this.element$ = element as HTMLInputElement;
