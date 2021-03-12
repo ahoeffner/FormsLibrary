@@ -5,10 +5,17 @@ import { Listener } from "../events/Listener";
 import { FieldInstance } from "../input/FieldInstance";
 
 
+interface InstListener
+{
+    inst:any;
+    lsnr:Listener;
+}
+
+
 class EventListener
 {
-    keys:Map<string,Listener[]> = new Map<string,Listener[]>();
-    types:Map<string,Listener[]> = new Map<string,Listener[]>();
+    keys:Map<string,InstListener[]> = new Map<string,InstListener[]>();
+    types:Map<string,InstListener[]> = new Map<string,InstListener[]>();
 }
 
 
@@ -46,7 +53,7 @@ export class BlockBaseImpl
         return(this.fields$.get(+id));
     }
 
-    public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
+    public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
         if (types != null)
         {
@@ -63,7 +70,7 @@ export class BlockBaseImpl
 
                 if (type != "key" || keys == null)
                 {
-                    let lsnrs:Listener[] = this.listener.types.get(type);
+                    let lsnrs:InstListener[] = this.listener.types.get(type);
 
                     if (lsnrs == null)
                     {
@@ -71,7 +78,7 @@ export class BlockBaseImpl
                         this.listener.types.set(type,lsnrs);
                     }
 
-                    lsnrs.push(listener);
+                    lsnrs.push({inst: instance, lsnr: listener});
                 }
             });
         }
@@ -88,7 +95,7 @@ export class BlockBaseImpl
             keysarr.forEach((key) =>
             {
                 key = key.toLowerCase();
-                let lsnrs:Listener[] = this.listener.keys.get(key);
+                let lsnrs:InstListener[] = this.listener.keys.get(key);
 
                 if (lsnrs == null)
                 {
@@ -96,7 +103,7 @@ export class BlockBaseImpl
                     this.listener.keys.set(key,lsnrs);
                 }
 
-                lsnrs.push(listener);
+                lsnrs.push({inst: instance, lsnr: listener});
             });
         }
     }
@@ -108,18 +115,18 @@ export class BlockBaseImpl
             this.records.get(+field.row).current = true;
         }
 
-        let lsnrs:Listener[] = this.listener.types.get(type);
-        if (lsnrs != null) lsnrs.forEach((lsnr) =>
+        let lsnrs:InstListener[] = this.listener.types.get(type);
+        if (lsnrs != null) lsnrs.forEach((ilsnr) =>
         {
-            this.block[lsnr.name](field,type);
+            ilsnr.inst[ilsnr.lsnr.name](field,type);
         });
 
         if (type == "key")
         {
             lsnrs = this.listener.keys.get(key);
-            if (lsnrs != null) lsnrs.forEach((lsnr) =>
+            if (lsnrs != null) lsnrs.forEach((ilsnr) =>
             {
-                this.block[lsnr.name](field,type,key);
+                ilsnr.inst[ilsnr.lsnr.name](field,type,key);
             });
         }
     }

@@ -23,6 +23,6 @@ export class BlockBase
 
     public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
-        this.base.addListener(listener,types,keys);
+        this.base.addListener(this,listener,types,keys);
     }
 }
