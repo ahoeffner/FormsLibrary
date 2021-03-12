@@ -13,11 +13,6 @@ export class Block extends BlockBase
         this.impl = new BlockImpl(this);
     }
 
-    public get name() : string
-    {
-        return(this.impl.name);
-    }
-
     public setDatabaseUsage(usage:DatabaseUsage) : void
     {
         this.impl.setDatabaseUsage(usage);

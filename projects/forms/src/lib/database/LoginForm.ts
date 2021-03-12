@@ -1,6 +1,7 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Record } from "../blocks/Record";
+import { KeyMap } from "../keymap/KeyMap";
 import { Config } from "../application/Config";
 import { BlockBase } from "../blocks/BlockBase";
 import { Container} from "../container/Container";
@@ -8,7 +9,6 @@ import { PopupWindow } from "../popup/PopupWindow";
 import { FieldInstance } from "../input/FieldInstance";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { KeyMap } from "../keymap/KeyMap";
 
 
 @Component({
@@ -88,10 +88,10 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         container.finish();
 
         container.getBlock("").getRecords().forEach((rec) =>
-        {this.addRecord(new Record(0,rec.fields,rec.index));});
+        {this["base"].addRecord(new Record(0,rec.fields,rec.index));});
 
-        this.usr = this.getField(0,"usr");
-        this.pwd = this.getField(0,"pwd");
+        this.usr = this["base"].getField(0,"usr");
+        this.pwd = this["base"].getField(0,"pwd");
 
         this.usr.setType("input");
         this.pwd.setType("password");

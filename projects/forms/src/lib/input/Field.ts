@@ -1,11 +1,11 @@
-import { BlockBase } from "../blocks/BlockBase";
 import { FieldInstance } from "./FieldInstance";
+import { BlockBaseImpl } from "../blocks/BlockBaseImpl";
 
 export class Field
 {
     private value$:any;
     private name$:string;
-    private block$:BlockBase;
+    private block$:BlockBaseImpl;
     private field:FieldInstance = null;
     private fields:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
@@ -21,7 +21,7 @@ export class Field
         return(this.name$);
     }
 
-    public set block(block:BlockBase)
+    public set block(block:BlockBaseImpl)
     {
         this.block$ = block;
     }
@@ -142,7 +142,7 @@ export class Field
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
-        if (this.block$ != null) this.block$["_onEvent"](field,type,key);
+        if (this.block$ != null) this.block$.onEvent(field,type,key);
     }
 
     private setindex(field:FieldInstance) : void

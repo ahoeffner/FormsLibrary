@@ -158,7 +158,8 @@ export class FormImpl
         }
 
         alias = alias.toLowerCase();
-        block["impl"].name = alias;
+
+        block.name = alias;
         this.blocks.set(alias,block);
 
         let bname:string = block.constructor.name;
