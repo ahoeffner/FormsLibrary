@@ -70,20 +70,24 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     public close(cancel:boolean) : void
     {
+        console.log("usr: "+this.usr.value+" pwd: "+this.pwd.value);
         this.win.closeWindow();
     }
 
-    public onEvent(field:FieldInstance,type:string,key:string) : void
+    public onEvent(event:any, field:FieldInstance,type:string,key:string) : void
     {
         if (key == this.keymap.enter) this.close(false);
         if (key == this.keymap.escape) this.close(true);
 
         if (key == this.keymap.nextfield && field.name == "pwd")
         {
+            event.preventDefault();
             this.usr.focus();
         }
+
         if (key == this.keymap.prevfield && field.name == "usr")
         {
+            event.preventDefault();
             this.pwd.focus();
         }
     }

@@ -32,6 +32,11 @@ export class Field
         else this.current$.forEach((inst) => {inst.value = this.value$;});
     }
 
+    public get value() : any
+    {
+        return(this.fields[0].value);
+    }
+
     public set value(value:any)
     {
         this.value$ = value;
@@ -166,11 +171,11 @@ export class Field
     }
 
     // this is accessed behind the scenes
-    private onEvent(field:FieldInstance, type:string, key?:string) : void
+    private onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
-        if (this.block$ != null) this.block$.onEvent(field,type,key);
+        if (this.block$ != null) this.block$.onEvent(event,field,type,key);
     }
 
     private setindex(field:FieldInstance) : void

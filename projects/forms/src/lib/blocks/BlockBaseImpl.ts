@@ -108,7 +108,7 @@ export class BlockBaseImpl
         }
     }
 
-    public onEvent(field:FieldInstance, type:string, key?:string) : void
+    public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
     {
         if (type == "focus")
         {
@@ -118,7 +118,7 @@ export class BlockBaseImpl
         let lsnrs:InstListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
         {
-            ilsnr.inst[ilsnr.lsnr.name](field,type);
+            ilsnr.inst[ilsnr.lsnr.name](event,field,type);
         });
 
         if (type == "key")
@@ -126,7 +126,7 @@ export class BlockBaseImpl
             lsnrs = this.listener.keys.get(key);
             if (lsnrs != null) lsnrs.forEach((ilsnr) =>
             {
-                ilsnr.inst[ilsnr.lsnr.name](field,type,key);
+                ilsnr.inst[ilsnr.lsnr.name](event,field,type,key);
             });
         }
     }

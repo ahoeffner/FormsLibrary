@@ -83,8 +83,7 @@ export class FieldInstance implements AfterViewInit
 
     public focus() : void
     {
-        console.log("focus "+this.name);
-        setTimeout(() => {this.clazz.element.focus()},100);
+        setTimeout(() => {this.clazz.element.focus()},0);
     }
 
     public setUpperCase() : void
@@ -141,17 +140,17 @@ export class FieldInstance implements AfterViewInit
         if (this.group$ == null)
             return;
 
-
         if (event.type == "focus")
         {
             this.firstchange = true;
-            this.group$["onEvent"](this,"focus");
+            this.group$["onEvent"](event,this,"focus");
         }
 
         if (event.type == "blur")
-        {
-            this.group$["onEvent"](this,"blur");
-        }
+            this.group$["onEvent"](event,this,"blur");
+
+        if (event.type == "change")
+            this.group$["onEvent"](event,this,"change");
 
         if (event.type == "keydown")
         {
@@ -172,7 +171,7 @@ export class FieldInstance implements AfterViewInit
 
                 let key:string = KeyMapper.map(keydef);
                 let mapped:string = this.conf.mapkey(key);
-                if (mapped != null) this.group$["onEvent"](this,"key",key);
+                if (mapped != null) this.group$["onEvent"](event,this,"key",key);
             }
         }
 
@@ -193,10 +192,10 @@ export class FieldInstance implements AfterViewInit
             if (this.firstchange)
             {
                 this.firstchange = false;
-                this.group$["onEvent"](this,"fchange");
+                this.group$["onEvent"](event,this,"fchange");
             }
 
-            this.group$["onEvent"](this,"ichange");
+            this.group$["onEvent"](event,this,"ichange");
         }
     }
 
