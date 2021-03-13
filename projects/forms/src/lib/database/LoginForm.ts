@@ -79,8 +79,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         if (key == this.keymap.enter) this.close(false);
         if (key == this.keymap.escape) this.close(true);
 
-        //if (key == this.keymap.nextfield && field.name == "pwd") this.usr.focus();
-        //if (key == this.keymap.prevfield && field.name == "usr") this.pwd.focus();
+        if (key == this.keymap.nextfield && field.name == "pwd") this.usr.focus();
+        if (key == this.keymap.prevfield && field.name == "usr") this.pwd.focus();
     }
 
     public ngOnInit(): void
