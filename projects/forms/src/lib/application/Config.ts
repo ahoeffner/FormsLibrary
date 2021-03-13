@@ -18,6 +18,7 @@ export class Config
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
     private themes:Map<string,Theme> = new Map<string,Theme>();
+    private mapkey$:Map<string,string> = new Map<string,string>();
 
 
     constructor(private client:HttpClient)
@@ -30,6 +31,15 @@ export class Config
         this.themes.set("yellow",new Yellow());
         this.themes.set("default",new defaultTheme());
         this.colors$ = this.themes.get("default");
+
+        Object.entries(this.keymap$).forEach((prop) =>
+        {
+            let entry:string = ""+prop;
+            let pos:number = entry.indexOf(",");
+            let key:string = entry.substring(0,pos);
+            let val:string = entry.substring(pos+1);
+            this.mapkey$.set(val,key);
+        });
     }
 
     private async load()
@@ -50,6 +60,11 @@ export class Config
     public get keymap() : KeyMap
     {
         return(this.keymap$);
+    }
+
+    public mapkey(key:string) : string
+    {
+        return(this.mapkey$.get(key));
     }
 
     public get colors() : Theme

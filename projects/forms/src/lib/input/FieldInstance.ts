@@ -140,64 +140,61 @@ export class FieldInstance implements AfterViewInit
         if (this.group$ == null)
             return;
 
+
         if (event.type == "focus")
         {
             this.firstchange = true;
-            this.value$ = this.clazz.getValue();
             this.group$["onEvent"](this,"focus");
         }
 
         if (event.type == "blur")
         {
-            this.value$ = this.clazz.getValue();
             this.group$["onEvent"](this,"blur");
         }
 
         if (event.type == "keydown")
         {
-            if (+event.keyCode < 16 || +event.keyCode > 20)
+            let skip:boolean = false;
+            if (+event.keyCode >= 48 && +event.keyCode <= 90) skip = true;
+            if (+event.keyCode >= 16 && +event.keyCode <= 20) skip = true;
+
+            if (!skip)
             {
-                let current:any = this.clazz.getValue();
-
-                if (this.value$ == current)
+                let keydef:Key =
                 {
-                    let keydef:Key =
-                    {
-                        code  : event.keyCode,
-                        alt   : event.altKey,
-                        ctrl  : event.ctrlKey,
-                        meta  : event.metaKey,
-                        shift : event.shiftKey
-                    }
-
-                    let key:string = KeyMapper.map(keydef);
-                    this.group$["onEvent"](this,"key",key);
+                    code  : event.keyCode,
+                    alt   : event.altKey,
+                    ctrl  : event.ctrlKey,
+                    meta  : event.metaKey,
+                    shift : event.shiftKey
                 }
-                else
-                {
-                    this.value$ = current;
 
-                    if (this.lower)
-                    {
-                        this.value$ = (""+this.value$).toLowerCase();
-                        this.clazz.setValue(this.value$);
-                    }
-
-                    if (this.upper)
-                    {
-                        this.value$ = (""+this.value$).toUpperCase();
-                        this.clazz.setValue(this.value$);
-                    }
-
-                    if (this.firstchange)
-                    {
-                        this.firstchange = false;
-                        this.group$["onEvent"](this,"fchange");
-                    }
-
-                    this.group$["onEvent"](this,"ichange");
-                }
+                let key:string = KeyMapper.map(keydef);
+                this.group$["onEvent"](this,"key",key);
             }
+        }
+
+        if (event.type == "keypress")
+        {
+            if (this.lower)
+            {
+                this.value$ = (""+this.value$).toLowerCase();
+                this.clazz.setValue(this.value$);
+            }
+
+            if (this.upper)
+            {
+                this.value$ = (""+this.value$).toUpperCase();
+                this.clazz.setValue(this.value$);
+            }
+
+            if (this.firstchange)
+            {
+                this.firstchange = false;
+                this.group$["onEvent"](this,"fchange");
+            }
+
+            this.group$["onEvent"](this,"ichange");
         }
     }
 
@@ -222,6 +219,7 @@ export class FieldInstance implements AfterViewInit
         impl.addEventListener("blur", (event) => {this.onEvent(event)});
         impl.addEventListener("focus", (event) => {this.onEvent(event)});
         impl.addEventListener("keydown", (event) => {this.onEvent(event)});
+        impl.addEventListener("keypress", (event) => {this.onEvent(event)});
         impl.addEventListener("change", (event) => {this.onEvent(event)});
         impl.addEventListener("onclick", (event) => {this.onEvent(event)});
         impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});

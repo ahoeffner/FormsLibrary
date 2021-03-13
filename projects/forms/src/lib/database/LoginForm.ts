@@ -80,12 +80,10 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
         if (key == this.keymap.nextfield && field.name == "pwd")
         {
-            window.event.preventDefault;
             this.usr.focus();
         }
         if (key == this.keymap.prevfield && field.name == "usr")
         {
-            window.event.preventDefault;
             this.pwd.focus();
         }
     }
