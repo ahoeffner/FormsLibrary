@@ -5,10 +5,12 @@ import { FieldInstance } from "../input/FieldInstance";
 export class ContainerBlock
 {
     private name$:string;
+    private seq:number = 0;
     private rows$:number = 0;
-    private current:FieldInstance[] = [];
-    private unmanaged:Map<string,Field> = new Map<string,Field>();
-    private records:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
+    private fields$:FieldInstance[] = [];
+    private current$:FieldInstance[] = [];
+    private unmanaged$:Map<string,Field> = new Map<string,Field>();
+    private records$:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
     constructor(name:string)
     {
@@ -25,18 +27,24 @@ export class ContainerBlock
         return(this.rows$);
     }
 
-    public add(field:FieldInstance) : void
+    public add(field:FieldInstance, first:boolean) : void
     {
+        if (first)
+        {
+            field.seq = this.seq++;
+            this.fields$.push(field);
+        }
+
         let row:number = field.row;
 
         if (field.row == -1)
         {
-            let group:Field = this.unmanaged.get(field.name);
+            let group:Field = this.unmanaged$.get(field.name);
 
             if (group == null)
             {
                 group = new Field(field.name);
-                this.unmanaged.set(field.name,group);
+                this.unmanaged$.set(field.name,group);
             }
 
             field.row = 0;
@@ -46,16 +54,16 @@ export class ContainerBlock
 
         if (field.row == -2)
         {
-            this.current.push(field);
+            this.current$.push(field);
             return;
         }
 
-        let rec:ContainerRecord = this.records.get(+row);
+        let rec:ContainerRecord = this.records$.get(+row);
 
         if (rec == null)
         {
             rec = new ContainerRecord(row);
-            this.records.set(+row,rec);
+            this.records$.set(+row,rec);
 
             if (field.row > this.rows$)
                 this.rows$ = field.row;
@@ -64,39 +72,44 @@ export class ContainerBlock
         rec.add(field);
     }
 
-    public getUnmanaged() : Map<string,Field>
+    public get fields() : FieldInstance[]
     {
-        return(this.unmanaged);
+        return(this.fields$);
     }
 
-    public getRecords() : ContainerRecord[]
+    public get unmanaged() : Map<string,Field>
+    {
+        return(this.unmanaged$);
+    }
+
+    public get records() : ContainerRecord[]
     {
         let recs:ContainerRecord[] = [];
-        this.records.forEach((rec) => {recs.push(rec)});
+        this.records$.forEach((rec) => {recs.push(rec)});
         let sorted:ContainerRecord[] = recs.sort((a,b) => {return(a.row - b.row)});
         return(sorted);
     }
 
     public getRecord(row:number) : ContainerRecord
     {
-        return(this.records.get(+row));
+        return(this.records$.get(+row));
     }
 
     private finish() : void
     {
         if (this.rows$ == 0)
         {
-            this.current.forEach((field) =>
+            this.current$.forEach((field) =>
             {
                 field.row = 0;
-                this.add(field);
+                this.add(field,false);
             });
         }
         else
         {
-            this.records.forEach((rec) =>
+            this.records$.forEach((rec) =>
             {
-                this.current.forEach((inst) =>
+                this.current$.forEach((inst) =>
                 {
                     let group:Field = rec.index.get(inst.name);
 
@@ -152,7 +165,7 @@ export class Container
             this.blocks.set(bname,block);
         }
 
-        block.add(field);
+        block.add(field,true);
     }
 
     public getBlock(block:string) : ContainerBlock

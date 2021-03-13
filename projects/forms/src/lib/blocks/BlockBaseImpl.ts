@@ -1,7 +1,9 @@
 import { Field } from "../input/Field";
 import { BlockBase } from "./BlockBase";
 import { Record } from "../blocks/Record";
+import { KeyMap } from "../keymap/KeyMap";
 import { Listener } from "../events/Listener";
+import { Config } from "../application/Config";
 import { FieldInstance } from "../input/FieldInstance";
 
 
@@ -21,11 +23,15 @@ class EventListener
 
 export class BlockBaseImpl
 {
+    private keymap:KeyMap;
+    private fields$:FieldInstance[] = [];
     private listener:EventListener = new EventListener();
     private records:Map<number,Record> = new Map<number,Record>();
-    private fields$:Map<number,FieldInstance> = new Map<number,FieldInstance>();
 
-    constructor(private block:BlockBase) {}
+    constructor(private conf:Config, private block:BlockBase)
+    {
+        this.keymap = conf.keymap;
+    }
 
     public getRecord(row:number) : Record
     {
@@ -38,7 +44,7 @@ export class BlockBaseImpl
         record.fields.forEach((field) => {field.block = this});
     }
 
-    public set fields(fields:Map<number,FieldInstance>)
+    public set fields(fields:FieldInstance[])
     {
         this.fields$ = fields;
     }
@@ -46,11 +52,6 @@ export class BlockBaseImpl
     public getField(row:number, name:string) : Field
     {
         return(this.records.get(+row)?.getField(name));
-    }
-
-    public getFieldInstance(id:number) : FieldInstance
-    {
-        return(this.fields$.get(+id));
     }
 
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
@@ -111,14 +112,19 @@ export class BlockBaseImpl
     public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
     {
         if (type == "focus")
-        {
             this.records.get(+field.row).current = true;
-        }
+
+        if (type == "key" && key == this.keymap.prevfield)
+            if (field.seq == 0) event.preventDefault();
+
+        if (type == "key" && key == this.keymap.nextfield)
+            if (field.seq == this.fields$.length - 1) event.preventDefault();
+
 
         let lsnrs:InstListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
         {
-            ilsnr.inst[ilsnr.lsnr.name](event,field,type);
+            ilsnr.inst[ilsnr.lsnr.name](field,type);
         });
 
         if (type == "key")
@@ -126,7 +132,7 @@ export class BlockBaseImpl
             lsnrs = this.listener.keys.get(key);
             if (lsnrs != null) lsnrs.forEach((ilsnr) =>
             {
-                ilsnr.inst[ilsnr.lsnr.name](event,field,type,key);
+                ilsnr.inst[ilsnr.lsnr.name](field,type,key);
             });
         }
     }

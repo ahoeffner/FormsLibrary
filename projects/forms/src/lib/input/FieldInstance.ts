@@ -16,6 +16,7 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 export class FieldInstance implements AfterViewInit
 {
     private value$:any;
+    private seq$:number;
     private type$:string;
     private clazz:FieldType;
     private app:ApplicationImpl;
@@ -23,7 +24,6 @@ export class FieldInstance implements AfterViewInit
     private field:HTMLSpanElement;
     private upper:boolean = false;
     private lower:boolean = false;
-    private enabled$:boolean = false;
     private firstchange:boolean = true;
 
     @Input("id")    private id$:string = "";
@@ -54,6 +54,16 @@ export class FieldInstance implements AfterViewInit
     public set row(row:number)
     {
         this.row$ = row;
+    }
+
+    public set seq(seq:number)
+    {
+        this.seq$ = seq;
+    }
+
+    public get seq() : number
+    {
+        return(this.seq$);
     }
 
     public get name() : string
@@ -106,13 +116,12 @@ export class FieldInstance implements AfterViewInit
 
     public get enabled() : boolean
     {
-        return(this.enabled$);
+        return(this.clazz.enabled);
     }
 
 
     public set enable(flag:boolean)
     {
-        this.enabled$ = flag;
         this.clazz.enable(flag);
     }
 

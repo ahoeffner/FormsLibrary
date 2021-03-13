@@ -43,7 +43,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     constructor(conf:Config)
     {
-        super();
+        super(conf);
         this.keymap = conf.keymap;
         this.init();
     }
@@ -74,22 +74,13 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         this.win.closeWindow();
     }
 
-    public onEvent(event:any, field:FieldInstance,type:string,key:string) : void
+    public onEvent(field:FieldInstance,type:string,key:string) : void
     {
         if (key == this.keymap.enter) this.close(false);
         if (key == this.keymap.escape) this.close(true);
 
-        if (key == this.keymap.nextfield && field.name == "pwd")
-        {
-            event.preventDefault();
-            this.usr.focus();
-        }
-
-        if (key == this.keymap.prevfield && field.name == "usr")
-        {
-            event.preventDefault();
-            this.pwd.focus();
-        }
+        //if (key == this.keymap.nextfield && field.name == "pwd") this.usr.focus();
+        //if (key == this.keymap.prevfield && field.name == "usr") this.pwd.focus();
     }
 
     public ngOnInit(): void
@@ -102,7 +93,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
         container.finish();
 
-        container.getBlock("").getRecords().forEach((rec) =>
+        this["base"].fields = container.getBlock("").fields;
+        container.getBlock("").records.forEach((rec) =>
         {this["base"].addRecord(new Record(0,rec.fields,rec.index));});
 
         this.usr = this["base"].getField(0,"usr");

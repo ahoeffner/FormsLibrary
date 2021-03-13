@@ -1,3 +1,4 @@
+import { Config } from "../application/Config";
 import { Listener } from "../events/Listener";
 import { BlockBaseImpl } from "./BlockBaseImpl";
 
@@ -6,9 +7,9 @@ export class BlockBase
     private name$:string;
     private base:BlockBaseImpl;
 
-    constructor()
+    constructor(conf:Config)
     {
-        this.base = new BlockBaseImpl(this);
+        this.base = new BlockBaseImpl(conf,this);
     }
 
     public set name(alias:string)

@@ -26,6 +26,7 @@ export class FieldTypes
 export interface FieldType
 {
     html:string;
+    enabled:boolean;
     element:HTMLElement;
 
     getValue() : any;

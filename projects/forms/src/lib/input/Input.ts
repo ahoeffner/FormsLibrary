@@ -3,6 +3,7 @@ import { FieldType } from "./FieldType";
 
 export class Input implements FieldType
 {
+    private enabled$:boolean;
     public element$:HTMLInputElement;
 
 
@@ -24,8 +25,14 @@ export class Input implements FieldType
 
     public enable(flag:boolean) : void
     {
+        this.enabled$ = flag;
         if (!flag) this.element$.disabled = true;
         else       this.element$.disabled = false;
+    }
+
+    public get enabled() : boolean
+    {
+        return(this.enabled$);
     }
 
     public getValue() : string
