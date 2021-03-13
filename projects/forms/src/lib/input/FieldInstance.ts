@@ -1,4 +1,5 @@
 import { Field } from './Field';
+import { Config } from '../application/Config';
 import { Key, KeyMapper } from '../keymap/KeyMap';
 import { FieldTypes, FieldType } from './FieldType';
 import { Application } from "../application/Application";
@@ -35,7 +36,7 @@ export class FieldInstance implements AfterViewInit
     @ViewChild("field", {read: ElementRef}) private fieldelem: ElementRef;
 
 
-    constructor(app:Application)
+    constructor(private conf:Config, app:Application)
     {
         this.app = app["impl"];
     }
@@ -170,7 +171,8 @@ export class FieldInstance implements AfterViewInit
                 }
 
                 let key:string = KeyMapper.map(keydef);
-                this.group$["onEvent"](this,"key",key);
+                let mapped:string = this.conf.mapkey(key);
+                if (mapped != null) this.group$["onEvent"](this,"key",key);
             }
         }
 
