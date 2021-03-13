@@ -18,13 +18,12 @@ export class FieldInstance implements AfterViewInit
     private type$:string;
     private clazz:FieldType;
     private app:ApplicationImpl;
+    private group$:Field = null;
     private field:HTMLSpanElement;
     private upper:boolean = false;
     private lower:boolean = false;
     private enabled$:boolean = false;
     private firstchange:boolean = true;
-
-    public group:Field = null;
 
     @Input("id")    private id$:string = "";
     @Input("row")   private row$:number = -2;
@@ -76,9 +75,15 @@ export class FieldInstance implements AfterViewInit
         return(this.clazz.getValue());
     }
 
+    public set group(group:Field)
+    {
+        this.group$ = group;
+    }
+
     public focus() : void
     {
-        setTimeout(() => {this.clazz.element.focus()},0);
+        console.log("focus "+this.name);
+        setTimeout(() => {this.clazz.element.focus()},100);
     }
 
     public setUpperCase() : void
@@ -123,8 +128,8 @@ export class FieldInstance implements AfterViewInit
             this.clazz = new cname();
             this.field.innerHTML = this.clazz.html;
             this.clazz.element = this.field.children[0] as HTMLElement;
-            this.clazz.element.classList.add(this.class$);
-            this.clazz.element.style.cssText = this.style$;
+            if (this.class$ != "") this.clazz.element.classList.add(this.class$);
+            if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
             this.addTriggers();
         }
     }
@@ -132,22 +137,23 @@ export class FieldInstance implements AfterViewInit
 
     public onEvent(event:any)
     {
-        if (this.group == null)
+        if (this.group$ == null)
             return;
-
-        event.preventDefault();
 
         if (event.type == "focus")
         {
             this.firstchange = true;
             this.value$ = this.clazz.getValue();
-            this.group["onEvent"](this,"focus");
+            this.group$["onEvent"](this,"focus");
         }
 
         if (event.type == "blur")
-            this.group["onEvent"](this,"blur");
+        {
+            this.value$ = this.clazz.getValue();
+            this.group$["onEvent"](this,"blur");
+        }
 
-        if (event.type == "keyup")
+        if (event.type == "keydown")
         {
             if (+event.keyCode < 16 || +event.keyCode > 20)
             {
@@ -165,7 +171,7 @@ export class FieldInstance implements AfterViewInit
                     }
 
                     let key:string = KeyMapper.map(keydef);
-                    this.group["onEvent"](this,"key",key);
+                    this.group$["onEvent"](this,"key",key);
                 }
                 else
                 {
@@ -186,10 +192,10 @@ export class FieldInstance implements AfterViewInit
                     if (this.firstchange)
                     {
                         this.firstchange = false;
-                        this.group["onEvent"](this,"fchange");
+                        this.group$["onEvent"](this,"fchange");
                     }
 
-                    this.group["onEvent"](this,"ichange");
+                    this.group$["onEvent"](this,"ichange");
                 }
             }
         }
@@ -215,7 +221,7 @@ export class FieldInstance implements AfterViewInit
         if (impl == null) return;
         impl.addEventListener("blur", (event) => {this.onEvent(event)});
         impl.addEventListener("focus", (event) => {this.onEvent(event)});
-        impl.addEventListener("keyup", (event) => {this.onEvent(event)});
+        impl.addEventListener("keydown", (event) => {this.onEvent(event)});
         impl.addEventListener("change", (event) => {this.onEvent(event)});
         impl.addEventListener("onclick", (event) => {this.onEvent(event)});
         impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});

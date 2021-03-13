@@ -53,6 +53,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         let actions:string[] = [];
         actions.push(this.keymap.enter);
         actions.push(this.keymap.escape);
+        actions.push(this.keymap.nextfield);
+        actions.push(this.keymap.prevfield);
         this.addListener(this.onEvent,"key",actions);
     }
 
@@ -74,7 +76,18 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
     public onEvent(field:FieldInstance,type:string,key:string) : void
     {
         if (key == this.keymap.enter) this.close(false);
-        else if (key == this.keymap.escape) this.close(true);
+        if (key == this.keymap.escape) this.close(true);
+
+        if (key == this.keymap.nextfield && field.name == "pwd")
+        {
+            window.event.preventDefault;
+            this.usr.focus();
+        }
+        if (key == this.keymap.prevfield && field.name == "usr")
+        {
+            window.event.preventDefault;
+            this.pwd.focus();
+        }
     }
 
     public ngOnInit(): void
