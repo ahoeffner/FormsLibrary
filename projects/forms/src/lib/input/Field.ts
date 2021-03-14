@@ -48,6 +48,7 @@ export class Field
     {
         this.value$ = value;
         this.fields$.forEach((inst) => {inst.value = value;});
+        if (this.current) this.current$.forEach((inst) => {inst.value = value;});
     }
 
     public focus() : void
@@ -81,7 +82,7 @@ export class Field
     public add(field:FieldInstance) : void
     {
         field.field = this;
-        
+
         if (field.row == -2)
         {
             this.current$.push(field);
@@ -99,7 +100,7 @@ export class Field
         return(this.fields$);
     }
 
-    public get currfields() : FieldInstance[]
+    public get currxfields() : FieldInstance[]
     {
         return(this.current$);
     }
@@ -175,23 +176,34 @@ export class Field
     }
 
 
-    // this is accessed behind the scenes
-    private onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
+    public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
+        if (type == "ichange" || type == "change") this.copy(field);
         if (this.block$ != null) this.block$.onEvent(event,field,type,key);
     }
+
+
+    private copy(field:FieldInstance)
+    {
+        setTimeout(() =>
+        {
+            let value:any = field.value;
+
+            this.fields$.forEach((inst) =>
+            {if (inst != field) inst.value = value;});
+
+            this.current$.forEach((inst) =>
+            {if (inst != field) inst.value = value;});
+
+        },0);
+    }
+
 
     private setindex(field:FieldInstance) : void
     {
         if (field.id.length > 0)
             this.index.set(field.id,field);
-    }
-
-    private remindex(field:FieldInstance) : void
-    {
-        if (field.id.length > 0)
-            this.index.delete(field.id);
     }
 }
