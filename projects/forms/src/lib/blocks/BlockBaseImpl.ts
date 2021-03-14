@@ -23,12 +23,34 @@ class EventListener
 
 export class BlockBaseImpl
 {
+    private name$:string;
+    private class$:string;
     private keymap:KeyMap;
     private fields$:FieldInstance[] = [];
     private listener:EventListener = new EventListener();
     private records:Map<number,Record> = new Map<number,Record>();
 
     constructor(private block:BlockBase) {}
+
+    public set name(alias:string)
+    {
+        this.name$ = alias;
+    }
+
+    public get name() : string
+    {
+        return(this.name$);
+    }
+
+    public set clazz(cname:string)
+    {
+        this.class$ = cname.toLowerCase();
+    }
+
+    public get clazz() : string
+    {
+        return(this.class$);
+    }
 
     public setConfig(conf:Config) : void
     {
@@ -49,6 +71,11 @@ export class BlockBaseImpl
     public set fields(fields:FieldInstance[])
     {
         this.fields$ = fields;
+    }
+
+    public get fields() : FieldInstance[]
+    {
+        return(this.fields$);
     }
 
     public getField(row:number, name:string) : Field
@@ -115,7 +142,7 @@ export class BlockBaseImpl
     {
         if (this.keymap == null)
             return;
-            
+
         if (type == "focus")
             this.records.get(+field.row).current = true;
 

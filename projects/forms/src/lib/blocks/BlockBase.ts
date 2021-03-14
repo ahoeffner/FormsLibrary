@@ -4,7 +4,6 @@ import { BlockBaseImpl } from "./BlockBaseImpl";
 
 export class BlockBase
 {
-    private name$:string;
     private base:BlockBaseImpl;
 
     constructor()
@@ -14,12 +13,12 @@ export class BlockBase
 
     public set name(alias:string)
     {
-        this.name$ = alias;
+        this.base.name = alias;
     }
 
     public get name() : string
     {
-        return(this.name$);
+        return(this.base.name);
     }
 
     public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void

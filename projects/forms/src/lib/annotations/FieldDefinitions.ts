@@ -19,10 +19,11 @@ export class FieldDefinitions
     }
 
 
-    public static get(block:string) : FieldDefinition[]
+    public static get(block:string) : Map<string,FieldDefinition>
     {
+        let index:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
         let fields:FieldDefinition[] =  FieldDefinitions.fields.get(block);
-        if (fields == null) fields = [];
-        return(fields);
+        if (fields != null) fields.forEach((field) => {index.set(field.name,field)});
+        return(index);
     }
 }

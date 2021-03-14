@@ -2,6 +2,7 @@ import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
+import { Record } from "../blocks/Record";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
@@ -10,12 +11,13 @@ import { BlockBase } from "../blocks/BlockBase";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
+import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
-import { Record } from "../blocks/Record";
 
 
 export class FormImpl
@@ -140,7 +142,21 @@ export class FormImpl
             block["base"].fields = cb.fields;
 
             cb.records.forEach((rec) =>
-            {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index));});
+            {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
+
+            let fdef:Map<string,FieldDefinition> = FieldDefinitions.get(block["base"].clazz);
+            block["base"].fields.forEach((inst) =>
+            {
+                let def:FieldDefinition = fdef.get(inst.name);
+
+                if (def == null)
+                {
+                    window.alert("Field "+inst.name+" has no correponding definition");
+                    return;
+                }
+
+                inst.type = def.type;
+            });
         });
     }
 
@@ -190,6 +206,7 @@ export class FormImpl
         block.name = alias;
         blockdef.alias = alias;
         this.blocks.set(alias,block);
+        block["base"].clazz = block.constructor.name;
     }
 
 
