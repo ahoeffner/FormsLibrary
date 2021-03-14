@@ -7,6 +7,7 @@ import { BlockBase } from "../blocks/BlockBase";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { FieldInstance } from "../input/FieldInstance";
+import { EventListener } from "../events/EventListener";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 
@@ -27,7 +28,7 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
 })
 
 
-export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
+export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit, EventListener
 {
     private usr:Field;
     private pwd:Field;
@@ -46,13 +47,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         super();
         this.keymap = conf.keymap;
         this["base"].config = conf;
-
-        let actions:string[] = [];
-        actions.push(this.keymap.enter);
-        actions.push(this.keymap.escape);
-        actions.push(this.keymap.nextfield);
-        actions.push(this.keymap.prevfield);
-        this.addListener(this.onEvent,"key",actions);
+        this["base"].parent = this;
     }
 
     public setWin(win:PopupWindow): void
@@ -71,13 +66,22 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         if (!cancel) this.app.appstate.connection.connect(this.usr.value,this.pwd.value);
     }
 
-    public onEvent(field:FieldInstance,type:string,key:string) : void
+    public onEvent(event:any, field:FieldInstance,type:string,key:string) : void
     {
         if (key == this.keymap.enter) this.close(false);
         if (key == this.keymap.escape) this.close(true);
 
-        if (key == this.keymap.nextfield && field.name == "pwd") this.usr.focus();
-        if (key == this.keymap.prevfield && field.name == "usr") this.pwd.focus();
+        if (key == this.keymap.nextfield && field.name == "pwd")
+        {
+            event.preventDefault();
+            this.usr.focus();
+        }
+        
+        if (key == this.keymap.prevfield && field.name == "usr")
+        {
+            event.preventDefault();
+            this.pwd.focus();
+        }
     }
 
     public ngOnInit(): void

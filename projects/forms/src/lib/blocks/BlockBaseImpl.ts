@@ -2,24 +2,12 @@ import { Field } from "../input/Field";
 import { BlockBase } from "./BlockBase";
 import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
-import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
 import { Config } from "../application/Config";
 import { FieldInstance } from "../input/FieldInstance";
-
-
-interface InstListener
-{
-    inst:any;
-    lsnr:Listener;
-}
-
-
-class EventListener
-{
-    keys:Map<string,InstListener[]> = new Map<string,InstListener[]>();
-    types:Map<string,InstListener[]> = new Map<string,InstListener[]>();
-}
+import { EventListener } from "../events/EventListener";
+import { InstanceEvents } from "../events/InstanceEvents";
+import { InstanceListener } from "../events/InstanceListener";
 
 
 export class BlockBaseImpl
@@ -27,9 +15,9 @@ export class BlockBaseImpl
     private name$:string;
     private class$:string;
     private keymap:KeyMap;
-    private form$:FormImpl;
+    private parent$:EventListener;
     private fields$:FieldInstance[] = [];
-    private listener:EventListener = new EventListener();
+    private listener:InstanceEvents = new InstanceEvents();
     private records:Map<number,Record> = new Map<number,Record>();
 
     constructor(private block:BlockBase) {}
@@ -37,16 +25,6 @@ export class BlockBaseImpl
     public set name(alias:string)
     {
         this.name$ = alias;
-    }
-
-    public get form() : FormImpl
-    {
-        return(this.form$);
-    }
-
-    public set form(form:FormImpl)
-    {
-        this.form$ = form;
     }
 
     public get name() : string
@@ -67,6 +45,11 @@ export class BlockBaseImpl
     public set config(conf:Config)
     {
         this.keymap = conf.keymap;
+    }
+
+    public set parent(parent:EventListener)
+    {
+        this.parent$ = parent;
     }
 
     public getRecord(row:number) : Record
@@ -112,7 +95,7 @@ export class BlockBaseImpl
 
                 if (type != "key" || keys == null)
                 {
-                    let lsnrs:InstListener[] = this.listener.types.get(type);
+                    let lsnrs:InstanceListener[] = this.listener.types.get(type);
 
                     if (lsnrs == null)
                     {
@@ -137,7 +120,7 @@ export class BlockBaseImpl
             keysarr.forEach((key) =>
             {
                 key = key.toLowerCase();
-                let lsnrs:InstListener[] = this.listener.keys.get(key);
+                let lsnrs:InstanceListener[] = this.listener.keys.get(key);
 
                 if (lsnrs == null)
                 {
@@ -158,10 +141,10 @@ export class BlockBaseImpl
         if (type == "focus")
             this.records.get(+field.row).current = true;
 
-        if (this.form$ != null)
-            this.form$.onEvent(event,field,type,key);
+        if (this.parent$ != null)
+            this.parent$.onEvent(event,field,type,key);
 
-        let lsnrs:InstListener[] = this.listener.types.get(type);
+        let lsnrs:InstanceListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
         {
             ilsnr.inst[ilsnr.lsnr.name](field,type);

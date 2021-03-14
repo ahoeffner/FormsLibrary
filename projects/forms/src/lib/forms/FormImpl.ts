@@ -13,6 +13,7 @@ import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
+import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -22,7 +23,7 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 
-export class FormImpl
+export class FormImpl implements EventListener
 {
     private static id:number = 0;
 
@@ -526,7 +527,7 @@ export class FormImpl
         blockdef.alias = alias;
         this.blocks.set(alias,block);
 
-        block["base"].form = this;
+        block["base"].parent = this;
         block["base"].clazz = block.constructor.name;
     }
 

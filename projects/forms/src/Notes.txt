@@ -1,5 +1,3 @@
-next/prev move to form
-
 Drop down colors
 Add F1-F12 in KeyCodes
 Listen on change-event for input
