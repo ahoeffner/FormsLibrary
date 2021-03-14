@@ -141,6 +141,7 @@ export class FormImpl
 
             block["base"].fields = cb.fields;
             console.log("container, records: "+cb.records.length);
+            cb.records.forEach((rec) => {console.log("row: "+rec.row)});
 
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});

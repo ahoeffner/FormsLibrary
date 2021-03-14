@@ -59,7 +59,7 @@ export class BlockBaseImpl
 
     public getRecord(row:number) : Record
     {
-        return(this.records[+row]);
+        return(this.records.get(+row));
     }
 
     public addRecord(record:Record) : void
