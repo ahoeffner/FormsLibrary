@@ -1,12 +1,7 @@
-next/prev check enabled
-set tabindex
+next/prev move to form
 
-BlockBaseImpl set (enables,readonly)
-Make readonly by disableDefaults ??
-
-Drop down enabled color
+Drop down colors
 Add F1-F12 in KeyCodes
-OnFocus boble back to record and set current on all managed fields
 Listen on change-event for input
 
 Library ng-package.json
