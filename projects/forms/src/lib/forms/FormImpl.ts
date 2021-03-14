@@ -150,13 +150,8 @@ export class FormImpl
             {
                 let def:FieldDefinition = this.fielddef.get(inst.name);
 
-                if (def == null)
-                {
-                    window.alert("Field "+inst.name+" has no correponding definition");
-                    return;
-                }
-
-                inst.type = def.type;
+                if (def != null) inst.type = def.type;
+                else window.alert("Field "+inst.name+" has no correponding definition");
             });
         });
 

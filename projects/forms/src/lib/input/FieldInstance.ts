@@ -57,12 +57,14 @@ export class FieldInstance implements AfterViewInit
 
     public set seq(seq:number)
     {
+        if (this.clazz != null)
         this.clazz.tabindex = seq;
     }
 
     public get seq() : number
     {
-        return(this.clazz.tabindex);
+        if (this.clazz == null) return(0);
+        else return(this.clazz.tabindex);
     }
 
     public get name() : string
@@ -87,7 +89,8 @@ export class FieldInstance implements AfterViewInit
 
     public get value() : any
     {
-        return(this.clazz.value);
+        if (this.clazz == null) return("");
+        else return(this.clazz.value);
     }
 
     public set field(field:Field)
@@ -97,6 +100,7 @@ export class FieldInstance implements AfterViewInit
 
     public focus() : void
     {
+        if (this.clazz != null)
         setTimeout(() => {this.clazz.element.focus()},0);
     }
 
@@ -114,24 +118,28 @@ export class FieldInstance implements AfterViewInit
 
     public set value(value:any)
     {
+        if (this.clazz != null)
         this.clazz.value = value;
     }
 
 
     public get enabled() : boolean
     {
-        return(this.clazz.enable);
+        if (this.clazz == null) return(false);
+        else return(this.clazz.enable);
     }
 
 
     public set enable(flag:boolean)
     {
+        if (this.clazz != null)
         this.clazz.enable = flag;
     }
 
 
     public set readonly(flag:boolean)
     {
+        if (this.clazz != null)
         this.clazz.rdonly = flag;
     }
 
