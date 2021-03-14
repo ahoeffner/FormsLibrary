@@ -13,6 +13,12 @@ interface InstListener
     lsnr:Listener;
 }
 
+interface FieldGroup
+{
+    name:string;
+    fields:FieldInstance[];
+}
+
 
 class EventListener
 {
@@ -83,6 +89,50 @@ export class BlockBaseImpl
         return(this.records.get(+row)?.getField(name));
     }
 
+    public hash() : void
+    {
+        this.rehash();
+    }
+
+    public rehash(groups?:string[]) : void
+    {
+        let seq:number = 1;
+        if (groups == null) groups = [];
+
+        let index:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
+
+        this.fields$.forEach((field) =>
+        {
+            let group:FieldInstance[] = index.get(field.group);
+
+            if (group == null)
+            {
+                group = [];
+                index.set(field.group,group);
+
+                let exists:boolean = false;
+                for(let i = 0; i < groups.length; i++)
+                {
+                    if (groups[i] == field.group)
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) groups.push(field.group);
+            }
+
+            group.push(field);
+        });
+
+        groups.forEach((name) =>
+        {
+            let group:FieldInstance[] = index.get(name);
+            if (group != null) {group.forEach((field) => {field.seq = seq++});}
+        });
+    }
+
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
         if (types != null)
@@ -147,10 +197,10 @@ export class BlockBaseImpl
             this.records.get(+field.row).current = true;
 
         if (type == "key" && key == this.keymap.prevfield)
-            if (field.seq == 0) event.preventDefault();
+            if (field.seq == 1) event.preventDefault();
 
         if (type == "key" && key == this.keymap.nextfield)
-            if (field.seq == this.fields$.length - 1) event.preventDefault();
+            if (field.seq == this.fields$.length) event.preventDefault();
 
         let lsnrs:InstListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>

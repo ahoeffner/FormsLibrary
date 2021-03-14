@@ -1,15 +1,23 @@
+import { ApplicationImpl } from "../application/ApplicationImpl";
+
 export class Connection
 {
-    public async connect(usr:string, pwd:string) : Promise<boolean>
+    public connected:boolean = false;
+    public constructor(private app:ApplicationImpl) {}
+
+
+    public async connect(usr:string, pwd:string) : Promise<void>
     {
         //let promise:Promise<any> = this.sleep(2000);
         //promise.then((arg) => {console.log("promise done "+arg)}, () => {console.log("error")});
-        return(true);
+        this.connected = true;
+        this.app.appstate.onConnect();
     }
 
 
-    public async disconnect() : Promise<boolean>
+    public async disconnect() : Promise<void>
     {
-        return(true);
+        this.connected = false;
+        this.app.appstate.onDisconnect();
     }
 }

@@ -9,7 +9,6 @@ export class ContainerBlock
     private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
     private unmanaged$:Map<string,Field> = new Map<string,Field>();
-    private groups$:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
     private records$:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
     constructor(name:string)
@@ -27,23 +26,8 @@ export class ContainerBlock
         return(this.rows$);
     }
 
-    public add(field:FieldInstance, first:boolean) : void
+    public add(field:FieldInstance) : void
     {
-        if (first)
-        {
-            this.fields$.push(field);
-
-            let tabgrp:FieldInstance[] = this.groups$.get(field.group);
-
-            if (tabgrp == null)
-            {
-                tabgrp = [];
-                this.groups$.set(field.group,tabgrp);
-            }
-
-            tabgrp.push(field);
-        }
-
         let row:number = field.row;
 
         if (field.row == -1)
@@ -111,7 +95,7 @@ export class ContainerBlock
             this.current$.forEach((field) =>
             {
                 field.row = 0;
-                this.add(field,false);
+                this.add(field);
             });
         }
         else
@@ -174,7 +158,8 @@ export class Container
             this.blocks.set(bname,block);
         }
 
-        block.add(field,true);
+        block.add(field);
+        block.fields.push(field);
     }
 
     public getBlock(block:string) : ContainerBlock

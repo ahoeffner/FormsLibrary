@@ -5,7 +5,9 @@ import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { FormImpl } from "../forms/FormImpl";
 import { HttpClient } from "@angular/common/http";
+import { LoginForm } from "../database/LoginForm";
 import { ApplicationImpl } from "./ApplicationImpl";
+import { PopupInstance } from "../popup/PopupInstance";
 
 
 @Injectable({
@@ -72,13 +74,18 @@ export class Application
         if (form != null) form.close(destroy);
     }
 
-    public connect(usr?:string, pwd?:string) : void
+    public connect() : void
     {
-        this.impl.appstate.connect(usr,pwd);
+        if (!this.impl.appstate.connected)
+        {
+            let pinst:PopupInstance = new PopupInstance();
+            pinst.display(this.impl,LoginForm);
+        }
     }
 
     public disconnect() : void
     {
-        this.impl.appstate.disconnect();
+        if (this.impl.appstate.connected)
+            this.impl.appstate.connection.disconnect();
     }
 }

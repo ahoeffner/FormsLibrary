@@ -140,7 +140,7 @@ export class FormImpl
             }
 
             block["base"].fields = cb.fields;
-            //block["base"].setConfig(this.co)
+            block["base"].config = this.app.conf;
 
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
@@ -162,6 +162,7 @@ export class FormImpl
 
         this.blocks.forEach((block) =>
         {
+            block["base"].hash();
             let rec:Record = block["base"].getRecord(0);
             if (rec != null) rec.enable(true);
         });

@@ -22,7 +22,7 @@ export class MenuInterface
 
     public isConnected() : boolean
     {
-        return(this.impl$.appstate.connected());
+        return(this.impl$.appstate.connected);
     }
 
     public enable(menu?:string)

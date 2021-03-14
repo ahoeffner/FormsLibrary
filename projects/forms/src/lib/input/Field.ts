@@ -7,7 +7,7 @@ export class Field
     private name$:string;
     private block$:BlockBaseImpl;
     private field:FieldInstance = null;
-    private fields:FieldInstance[] = [];
+    private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
@@ -34,13 +34,13 @@ export class Field
 
     public get value() : any
     {
-        return(this.fields[0].value);
+        return(this.fields$[0].value);
     }
 
     public set value(value:any)
     {
         this.value$ = value;
-        this.fields.forEach((inst) => {inst.value = value;});
+        this.fields$.forEach((inst) => {inst.value = value;});
     }
 
     public focus() : void
@@ -51,11 +51,11 @@ export class Field
         }
         else
         {
-            for (let i = 0; i < this.fields.length; i++)
+            for (let i = 0; i < this.fields$.length; i++)
             {
-                if (this.fields[i].enabled)
+                if (this.fields$[i].enabled)
                 {
-                    this.fields[i].focus();
+                    this.fields$[i].focus();
                     return;
                 }
             }
@@ -79,15 +79,15 @@ export class Field
         }
         else
         {
-            this.fields.push(field);
+            this.fields$.push(field);
         }
 
         this.setindex(field);
     }
 
-    public getFields() : FieldInstance[]
+    public get fields() : FieldInstance[]
     {
-        return(this.fields);
+        return(this.fields$);
     }
 
     public getCurrentFields() : FieldInstance[]
@@ -104,8 +104,8 @@ export class Field
         }
         else
         {
-            for (let i = 0; i < this.fields.length; i++)
-                this.fields[i].type = type;
+            for (let i = 0; i < this.fields$.length; i++)
+                this.fields$[i].type = type;
 
             for (let i = 0; i < this.current$.length; i++)
                 this.current$[i].type = type;
@@ -125,10 +125,10 @@ export class Field
         }
         else
         {
-            for (let i = 0; i < this.fields.length; i++)
+            for (let i = 0; i < this.fields$.length; i++)
             {
-                this.fields[i].enable = true;
-                this.fields[i].readonly = readonly;
+                this.fields$[i].enable = true;
+                this.fields$[i].readonly = readonly;
             }
 
             if (this.current$)
@@ -151,8 +151,8 @@ export class Field
         }
         else
         {
-            for (let i = 0; i < this.fields.length; i++)
-                this.fields[i].enable = false;
+            for (let i = 0; i < this.fields$.length; i++)
+                this.fields$[i].enable = false;
 
             if (this.current$)
             {

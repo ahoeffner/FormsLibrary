@@ -16,7 +16,6 @@ export const FIELD = (name:string, type:string) =>
             return;
         }
 
-        console.log("Adding field to "+cname);
         let def:FieldDefinition = {name: name, type: type};
         FieldDefinitions.add(cname,def);
     }

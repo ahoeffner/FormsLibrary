@@ -1,4 +1,3 @@
-import { Config } from "../application/Config";
 import { Listener } from "../events/Listener";
 import { BlockBaseImpl } from "./BlockBaseImpl";
 

@@ -37,7 +37,7 @@ export class ApplicationImpl
     private instances:InstanceControl = null;
 
 
-    constructor(private conf:Config, private app:Application, public client:HttpClient, public builder:Builder)
+    constructor(public conf:Config, private app:Application, public client:HttpClient, public builder:Builder)
     {
         this.loadConfig();
         this.state = new ApplicationState(this);
@@ -216,7 +216,7 @@ export class ApplicationImpl
     }
 
 
-    private execfunc(impl:FormImpl, func:string) : void
+    public execfunc(impl:FormImpl, func:string) : void
     {
         try
         {

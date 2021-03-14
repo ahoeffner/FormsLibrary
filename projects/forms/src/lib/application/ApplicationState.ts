@@ -2,12 +2,11 @@ import { Menu } from "../menu/Menu";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
 import { MenuHandler } from "../menu/MenuHandler";
-import { LoginForm } from "../database/LoginForm";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from "./ApplicationImpl";
-import { PopupInstance } from "../popup/PopupInstance";
+import { FormDefinitions } from "../annotations/FormDefinitions";
 
 
 export class ApplicationState
@@ -19,13 +18,11 @@ export class ApplicationState
     public forms:Map<number,FormImpl> = new Map<number,FormImpl>();
     public menus:Map<number,MenuHandler> = new Map<number,MenuHandler>();
 
-    private conn:boolean = false;
-
 
     constructor(private app:ApplicationImpl)
     {
         this.menu = new DefaultMenu();
-        this.connection = new Connection();
+        this.connection = new Connection(app);
     }
 
 
@@ -55,28 +52,36 @@ export class ApplicationState
     }
 
 
-    public async connect(usr?:string, pwd?:string) : Promise<boolean>
+    public async onConnect() : Promise<boolean>
     {
-        let pinst:PopupInstance = new PopupInstance();
-        pinst.display(this.app,LoginForm);
-
-        this.conn = true;
-        this.connection.connect(usr,pwd);
         this.menus.forEach((mhdl) => {mhdl.onConnect()});
+
+        this.forms.forEach((form) =>
+        {
+            let funcs:string[] = FormDefinitions.getOnConnect(form.name);
+            for(let i = 0; i < funcs.length; i++) this.app.execfunc(form,funcs[i]);
+        });
+
         return(true);
     }
 
 
-    public async disconnect() : Promise<boolean>
+    public async onDisconnect() : Promise<boolean>
     {
-        this.conn = false;
         this.menus.forEach((mhdl) => {mhdl.onDisconnect()});
+
+        this.forms.forEach((form) =>
+        {
+            let funcs:string[] = FormDefinitions.getOnDisconnect(form.name);
+            for(let i = 0; i < funcs.length; i++) this.app.execfunc(form,funcs[i]);
+        });
+
         return(true);
     }
 
 
-    public connected() : boolean
+    public get connected() : boolean
     {
-        return(this.conn);
+        return(this.connection.connected);
     }
 }

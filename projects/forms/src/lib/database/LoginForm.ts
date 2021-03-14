@@ -67,8 +67,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     public close(cancel:boolean) : void
     {
-        console.log("usr: "+this.usr.value+" pwd: "+this.pwd.value);
         this.win.closeWindow();
+        if (!cancel) this.app.appstate.connection.connect(this.usr.value,this.pwd.value);
     }
 
     public onEvent(field:FieldInstance,type:string,key:string) : void
@@ -100,8 +100,10 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         this.usr.setType("input");
         this.pwd.setType("password");
 
-        this.usr.enable(true);
-        this.pwd.enable(true);
+        this["base"].rehash();
+
+        this.usr.enable(false);
+        this.pwd.enable(false);
 
         this.usr.focus();
         this.app.dropContainer();
