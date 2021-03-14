@@ -9,31 +9,30 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 
 @Component({
     selector: 'field',
-    template: '<span #field></span>'
+    template: '<span #container></span>'
 })
 
 
 export class FieldInstance implements AfterViewInit
 {
-    private value$:any;
-    private seq$:number;
     private type$:string;
     private clazz:FieldType;
     private app:ApplicationImpl;
-    private group$:Field = null;
-    private field:HTMLSpanElement;
+    private fgroup$:Field = null;
     private upper:boolean = false;
     private lower:boolean = false;
+    private container:HTMLSpanElement;
     private firstchange:boolean = true;
 
     @Input("id")    private id$:string = "";
     @Input("row")   private row$:number = -2;
     @Input("name")  private name$:string = "";
     @Input("block") private block$:string = "";
+    @Input("group") private group$:string = "";
     @Input("class") private class$:string = "";
     @Input("style") private style$:string = "";
 
-    @ViewChild("field", {read: ElementRef}) private fieldelem: ElementRef;
+    @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
 
 
     constructor(private conf:Config, app:Application)
@@ -58,12 +57,12 @@ export class FieldInstance implements AfterViewInit
 
     public set seq(seq:number)
     {
-        this.seq$ = seq;
+        this.clazz.tabindex = seq;
     }
 
     public get seq() : number
     {
-        return(this.seq$);
+        return(this.clazz.tabindex);
     }
 
     public get name() : string
@@ -81,14 +80,19 @@ export class FieldInstance implements AfterViewInit
         return(this.block$);
     }
 
-    public get value() : any
+    public get group() : string
     {
-        return(this.clazz.getValue());
+        return(this.group$);
     }
 
-    public set group(group:Field)
+    public get value() : any
     {
-        this.group$ = group;
+        return(this.clazz.value);
+    }
+
+    public set field(field:Field)
+    {
+        this.fgroup$ = field;
     }
 
     public focus() : void
@@ -110,33 +114,33 @@ export class FieldInstance implements AfterViewInit
 
     public set value(value:any)
     {
-        this.clazz.setValue(value);
+        this.clazz.value = value;
     }
 
 
     public get enabled() : boolean
     {
-        return(this.clazz.enabled);
+        return(this.clazz.enable);
     }
 
 
     public set enable(flag:boolean)
     {
-        this.clazz.enable(flag);
+        this.clazz.enable = flag;
     }
 
 
     public set type(type:string)
     {
         this.type$ = type;
-        this.field.innerHTML = null;
+        this.container.innerHTML = null;
         let cname:any = FieldTypes.getClass(type);
 
         if (cname != null)
         {
             this.clazz = new cname();
-            this.field.innerHTML = this.clazz.html;
-            this.clazz.element = this.field.children[0] as HTMLElement;
+            this.container.innerHTML = this.clazz.html;
+            this.clazz.element = this.container.children[0] as HTMLElement;
             if (this.class$ != "") this.clazz.element.classList.add(this.class$);
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
             this.addTriggers();
@@ -146,20 +150,20 @@ export class FieldInstance implements AfterViewInit
 
     public onEvent(event:any)
     {
-        if (this.group$ == null)
+        if (this.fgroup$ == null)
             return;
 
         if (event.type == "focus")
         {
             this.firstchange = true;
-            this.group$["onEvent"](event,this,"focus");
+            this.fgroup$["onEvent"](event,this,"focus");
         }
 
         if (event.type == "blur")
-            this.group$["onEvent"](event,this,"blur");
+            this.fgroup$["onEvent"](event,this,"blur");
 
         if (event.type == "change")
-            this.group$["onEvent"](event,this,"change");
+            this.fgroup$["onEvent"](event,this,"change");
 
         if (event.type == "keydown")
         {
@@ -180,38 +184,32 @@ export class FieldInstance implements AfterViewInit
 
                 let key:string = KeyMapper.map(keydef);
                 let mapped:string = this.conf.mapkey(key);
-                if (mapped != null) this.group$["onEvent"](event,this,"key",key);
+                if (mapped != null) this.fgroup$["onEvent"](event,this,"key",key);
             }
         }
 
         if (event.type == "keypress")
         {
             if (this.lower)
-            {
-                this.value$ = (""+this.value$).toLowerCase();
-                this.clazz.setValue(this.value$);
-            }
+                this.value = (""+this.value).toLowerCase();
 
             if (this.upper)
-            {
-                this.value$ = (""+this.value$).toUpperCase();
-                this.clazz.setValue(this.value$);
-            }
+                this.value = (""+this.value).toUpperCase();
 
             if (this.firstchange)
             {
                 this.firstchange = false;
-                this.group$["onEvent"](event,this,"fchange");
+                this.fgroup$["onEvent"](event,this,"fchange");
             }
 
-            this.group$["onEvent"](event,this,"ichange");
+            this.fgroup$["onEvent"](event,this,"ichange");
         }
     }
 
 
     public ngAfterViewInit(): void
     {
-		this.field = this.fieldelem?.nativeElement as HTMLSpanElement;
+		this.container = this.containerelem?.nativeElement as HTMLSpanElement;
 
         this.id$ = this.id$.toLowerCase();
         this.name$ = this.name$.toLowerCase();
@@ -223,15 +221,15 @@ export class FieldInstance implements AfterViewInit
 
     private addTriggers() : void
     {
-        let impl:Node = this.field.firstChild;
+        let impl:Node = this.container.firstChild;
 
         if (impl == null) return;
         impl.addEventListener("blur", (event) => {this.onEvent(event)});
         impl.addEventListener("focus", (event) => {this.onEvent(event)});
-        impl.addEventListener("keydown", (event) => {this.onEvent(event)});
-        impl.addEventListener("keypress", (event) => {this.onEvent(event)});
         impl.addEventListener("change", (event) => {this.onEvent(event)});
         impl.addEventListener("onclick", (event) => {this.onEvent(event)});
+        impl.addEventListener("keydown", (event) => {this.onEvent(event)});
+        impl.addEventListener("keypress", (event) => {this.onEvent(event)});
         impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});
     }
 }

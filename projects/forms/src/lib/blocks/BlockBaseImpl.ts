@@ -28,7 +28,9 @@ export class BlockBaseImpl
     private listener:EventListener = new EventListener();
     private records:Map<number,Record> = new Map<number,Record>();
 
-    constructor(private conf:Config, private block:BlockBase)
+    constructor(private block:BlockBase) {}
+
+    public setConfig(conf:Config) : void
     {
         this.keymap = conf.keymap;
     }
@@ -111,6 +113,9 @@ export class BlockBaseImpl
 
     public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
     {
+        if (this.keymap == null)
+            return;
+            
         if (type == "focus")
             this.records.get(+field.row).current = true;
 

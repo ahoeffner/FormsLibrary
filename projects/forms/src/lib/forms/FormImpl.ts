@@ -107,17 +107,35 @@ export class FormImpl
 
     public newForm(container:Container) : void
     {
-        let propusage:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>()
-
-        DatabaseDefinitions.getBlockUsage(this.name).forEach((dbusage) =>
-        {if (dbusage.usage != null) propusage.set(dbusage.prop,dbusage.usage);});
-
+        // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
-        for(let i = 0; i < blockdef.length; i++) this.setDatabaseUsage(propusage,blockdef[i]);
+        blockdef.forEach((bdef) => {this.createBlock(bdef)});
+
+        // DatabaseUsage for this form
+        let fusage:DatabaseUsage = DatabaseDefinitions.getFormUsage(this.name);
+
+        // DatabaseUsage for DATABASE anotated form properties
+        let propusage:Map<string,DatabaseUsage> = DatabaseDefinitions.getBlockUsage(this.name);
+
+        blockdef.forEach((bdef) =>
+        {
+            // Merge block usage with prop usage
+            let usage:DatabaseUsage = propusage.get(bdef.prop);
+            this.setBlockUsage(fusage,usage,bdef);
+        });
+
+        blockdef = BlockDefinitions.getBlocks(this.name);
+
+        container.finish();
+
+        container.getBlocks().forEach((cb) =>
+        {
+            console.log("block: <"+cb.name+"> "+this.blocks.get(cb.name));
+        });
     }
 
 
-    private setDatabaseUsage(propusage:Map<string,DatabaseUsage>, blockdef:BlockDefinition) : void
+    private createBlock(blockdef:BlockDefinition) : void
     {
         let block:BlockBase = this.blocks.get(blockdef.alias);
 
@@ -160,14 +178,37 @@ export class FormImpl
         alias = alias.toLowerCase();
 
         block.name = alias;
+        blockdef.alias = alias;
         this.blocks.set(alias,block);
+        console.log("created block "+block.constructor.name+" under alias "+block.name);
+    }
 
+
+    private setBlockUsage(formusage:DatabaseUsage, propusage:DatabaseUsage, blockdef:BlockDefinition) : void
+    {
+        let block:BlockBase = this.blocks.get(blockdef.alias);
         let bname:string = block.constructor.name;
-        let usage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
 
-        usage = DBUsage.merge(blockdef.databaseopts,usage);
-        usage = DBUsage.merge(propusage.get(blockdef.prop),usage);
-        if (block instanceof Block) block.setDatabaseUsage(usage);
+        if (!(block instanceof Block)) return;
+
+        let usage1:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
+        let usage2:DatabaseUsage = blockdef.databaseopts;
+        let usage3:DatabaseUsage = propusage;
+        let usage4:DatabaseUsage = formusage;
+        let usage5:DatabaseUsage = {};
+
+        if (usage1 == null) usage1 = {};
+        if (usage2 == null) usage2 = {};
+        if (usage3 == null) usage3 = {};
+        if (usage4 == null) usage4 = {};
+
+        usage5 = DBUsage.merge(usage2,usage1);
+        usage5 = DBUsage.merge(usage3,usage5);
+        usage5 = DBUsage.override(usage4,usage5);
+        usage5 = DBUsage.complete(usage5);
+
+        console.log(blockdef.alias+" total: "+JSON.stringify(usage5));
+        block.setDatabaseUsage(usage5);
     }
 
 

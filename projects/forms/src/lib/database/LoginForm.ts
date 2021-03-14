@@ -43,13 +43,10 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
 
     constructor(conf:Config)
     {
-        super(conf);
+        super();
         this.keymap = conf.keymap;
-        this.init();
-    }
+        this["base"].setConfig(conf);
 
-    private init() : void
-    {
         let actions:string[] = [];
         actions.push(this.keymap.enter);
         actions.push(this.keymap.escape);

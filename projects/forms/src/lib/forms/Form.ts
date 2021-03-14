@@ -100,6 +100,7 @@ export class Form implements OnInit, AfterViewInit
 
     public ngAfterViewInit(): void
     {
+
         let container:Container = this.impl.getApplication().getContainer();
         this.impl.getApplication().dropContainer();
         this.impl.newForm(container);

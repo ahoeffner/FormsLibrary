@@ -22,6 +22,12 @@ export const DATABASE = (usage:DatabaseUsage) =>
             return;
         }
 
+        if (prop == null)
+        {
+            window.alert("@DATABASE can only be used in conjunction with Form or Block");
+            return;
+        }
+
         DatabaseDefinitions.setBlockUsage(comp,prop,usage);
     }
     return(def);

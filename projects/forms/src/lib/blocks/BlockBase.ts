@@ -7,9 +7,9 @@ export class BlockBase
     private name$:string;
     private base:BlockBaseImpl;
 
-    constructor(conf:Config)
+    constructor()
     {
-        this.base = new BlockBaseImpl(conf,this);
+        this.base = new BlockBaseImpl(this);
     }
 
     public set name(alias:string)

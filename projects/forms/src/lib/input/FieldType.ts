@@ -25,11 +25,9 @@ export class FieldTypes
 
 export interface FieldType
 {
+    value:any;
     html:string;
-    enabled:boolean;
+    enable:boolean;
+    tabindex:number;
     element:HTMLElement;
-
-    getValue() : any;
-    setValue(value:any) : void;
-    enable(flag:boolean) : void;
 }

@@ -5,11 +5,11 @@ import { FieldInstance } from "../input/FieldInstance";
 export class ContainerBlock
 {
     private name$:string;
-    private seq:number = 0;
     private rows$:number = 0;
     private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
     private unmanaged$:Map<string,Field> = new Map<string,Field>();
+    private groups$:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
     private records$:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
     constructor(name:string)
@@ -31,24 +31,33 @@ export class ContainerBlock
     {
         if (first)
         {
-            field.seq = this.seq++;
             this.fields$.push(field);
+
+            let tabgrp:FieldInstance[] = this.groups$.get(field.group);
+
+            if (tabgrp == null)
+            {
+                tabgrp = [];
+                this.groups$.set(field.group,tabgrp);
+            }
+
+            tabgrp.push(field);
         }
 
         let row:number = field.row;
 
         if (field.row == -1)
         {
-            let group:Field = this.unmanaged$.get(field.name);
+            let fgroup:Field = this.unmanaged$.get(field.name);
 
-            if (group == null)
+            if (fgroup == null)
             {
-                group = new Field(field.name);
-                this.unmanaged$.set(field.name,group);
+                fgroup = new Field(field.name);
+                this.unmanaged$.set(field.name,fgroup);
             }
 
             field.row = 0;
-            group.add(field);
+            fgroup.add(field);
             return;
         }
 
@@ -145,7 +154,7 @@ export class ContainerRecord
         }
 
         group.add(field);
-        field.group = group;
+        field.field = group;
     }
 }
 

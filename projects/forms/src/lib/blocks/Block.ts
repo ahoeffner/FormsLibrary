@@ -8,9 +8,9 @@ export class Block extends BlockBase
     private impl:BlockImpl;
     // dont rename impl as it is read behind the scenes
 
-    constructor(conf:Config)
+    constructor()
     {
-        super(conf);
+        super();
         this.impl = new BlockImpl(this);
     }
 

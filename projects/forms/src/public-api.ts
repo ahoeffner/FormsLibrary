@@ -1,6 +1,19 @@
 /*
  * Public API Surface of forms
  */
+export {FORM} from './lib/annotations/FORM';
+export {INIT} from './lib/annotations/INIT';
+export {SHOW} from './lib/annotations/SHOW';
+export {HIDE} from './lib/annotations/HIDE';
+export {BLOCK} from './lib/annotations/BLOCK';
+export {FIELD} from './lib/annotations/FIELD';
+export {WIZARD} from './lib/annotations/WIZARD';
+export {WINDOW} from './lib/annotations/WINDOW';
+export {CONNECT} from './lib/annotations/CONNECT';
+export {DESTROY} from './lib/annotations/DESTROY';
+export {DATABASE} from './lib/annotations/DATABASE';
+export {DISCONNECT} from './lib/annotations/DISCONNECT';
+
 export {Menu} from './lib/menu/Menu';
 export {MenuArea} from './lib/menu/MenuArea';
 export {MenuEntry} from './lib/menu/MenuEntry';
@@ -8,23 +21,11 @@ export {DefaultMenu} from './lib/menu/DefaultMenu';
 export {MenuHandler} from './lib/menu/MenuHandler';
 export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 
-export {FieldInstance as Field} from './lib/input/FieldInstance';
 export {Block} from './lib/blocks/Block';
+export {FieldInstance} from './lib/input/FieldInstance';
 
 export {Transaction} from './lib/database/Transaction';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'
-
-export {FORM} from './lib/annotations/FORM';
-export {INIT} from './lib/annotations/INIT';
-export {SHOW} from './lib/annotations/SHOW';
-export {HIDE} from './lib/annotations/HIDE';
-export {BLOCK} from './lib/annotations/BLOCK';
-export {WIZARD} from './lib/annotations/WIZARD';
-export {WINDOW} from './lib/annotations/WINDOW';
-export {CONNECT} from './lib/annotations/CONNECT';
-export {DESTROY} from './lib/annotations/DESTROY';
-export {DATABASE} from './lib/annotations/DATABASE';
-export {DISCONNECT} from './lib/annotations/DISCONNECT';
 
 export {FormList} from './lib/menu/FormList';
 export {FormArea} from './lib/forms/FormArea';

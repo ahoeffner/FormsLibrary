@@ -21,7 +21,6 @@ export class DatabaseDefinitions
     public static getFormUsage(form:string) : DatabaseUsage
     {
         let usage:DatabaseUsage = DatabaseDefinitions.fdefault.get(form.toLowerCase());
-        if (usage == null) usage = {query: true, insert: true, update: true, delete: true};
         return(usage);
     }
 
@@ -61,10 +60,17 @@ export class DatabaseDefinitions
     }
 
 
-    public static getBlockUsage(form:string) : PropUsage[]
+    public static getBlockUsage(form:string) : Map<string,DatabaseUsage>
     {
+        let index:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
         let usage:PropUsage[] = DatabaseDefinitions.usage.get(form.toLowerCase());
-        if (usage == null) usage = [];
-        return(usage);
+
+        if (usage != null)
+        {
+            usage.forEach((pusage) =>
+            {index.set(pusage.prop,pusage.usage);});
+        }
+
+        return(index);
     }
 }
