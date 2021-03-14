@@ -100,8 +100,6 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         this.usr.setType("input");
         this.pwd.setType("password");
 
-        this["base"].rehash();
-
         this.usr.enable(false);
         this.pwd.enable(false);
 

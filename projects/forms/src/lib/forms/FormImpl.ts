@@ -3,6 +3,7 @@ import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
 import { Record } from "../blocks/Record";
+import { KeyMap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
@@ -11,6 +12,7 @@ import { BlockBase } from "../blocks/BlockBase";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { FieldInstance } from "../input/FieldInstance";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -38,6 +40,7 @@ export class FormImpl
     private callbackfunc:CallBack;
     private cancelled:boolean = false;
     private initiated$:boolean = false;
+    private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
     private fielddef:Map<string,FieldDefinition>;
     private parameters:Map<string,any> = new Map<string,any>();
@@ -157,7 +160,6 @@ export class FormImpl
 
         this.blocks.forEach((block) =>
         {
-            block["base"].hash();
             let rec:Record = block["base"].getRecord(0);
             if (rec != null)
             {
@@ -167,82 +169,10 @@ export class FormImpl
             rec = block["base"].getRecord(1);
             if (rec != null) rec.enable(false);
         });
-    }
 
-
-    private createBlock(blockdef:BlockDefinition) : void
-    {
-        let block:BlockBase = this.blocks.get(blockdef.alias);
-
-        if (block != null)
-        {
-            window.alert("Block alias "+blockdef.alias+" defined twice");
-            return;
-        }
-
-        if (blockdef.prop != null)
-        {
-            block = this.form[blockdef.prop];
-
-            if (block == null && blockdef.component != null)
-            {
-                block = new blockdef.component();
-                this.form[blockdef.prop] = block;
-            }
-        }
-        else
-        {
-            if (blockdef.component != null)
-                block = new blockdef.component();
-        }
-
-        if (block == null)
-        {
-            window.alert(this.name+" cannot create instance of "+blockdef.alias);
-            return;
-        }
-
-        let alias:string = blockdef.alias;
-
-        if (alias == null)
-        {
-            alias = block.constructor.name;
-            alias = BlockDefinitions.getBlockDefaultAlias(alias);
-        }
-
-        alias = alias.toLowerCase();
-
-        block.name = alias;
-        blockdef.alias = alias;
-        this.blocks.set(alias,block);
-        block["base"].clazz = block.constructor.name;
-    }
-
-
-    private setBlockUsage(formusage:DatabaseUsage, propusage:DatabaseUsage, blockdef:BlockDefinition) : void
-    {
-        let block:BlockBase = this.blocks.get(blockdef.alias);
-        let bname:string = block.constructor.name;
-
-        if (!(block instanceof Block)) return;
-
-        let usage1:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
-        let usage2:DatabaseUsage = blockdef.databaseopts;
-        let usage3:DatabaseUsage = propusage;
-        let usage4:DatabaseUsage = formusage;
-        let usage5:DatabaseUsage = {};
-
-        if (usage1 == null) usage1 = {};
-        if (usage2 == null) usage2 = {};
-        if (usage3 == null) usage3 = {};
-        if (usage4 == null) usage4 = {};
-
-        usage5 = DBUsage.merge(usage2,usage1);
-        usage5 = DBUsage.merge(usage3,usage5);
-        usage5 = DBUsage.override(usage4,usage5);
-        usage5 = DBUsage.complete(usage5);
-
-        block.setDatabaseUsage(usage5);
+        // All fields on form
+        this.fields$ = container.fields;
+        this.hash();
     }
 
 
@@ -550,8 +480,171 @@ export class FormImpl
     }
 
 
-    public setBlock(vname:string, alias:string) : void
+    private createBlock(blockdef:BlockDefinition) : void
     {
-        console.log("use "+alias+" for "+vname);
+        let block:BlockBase = this.blocks.get(blockdef.alias);
+
+        if (block != null)
+        {
+            window.alert("Block alias "+blockdef.alias+" defined twice");
+            return;
+        }
+
+        if (blockdef.prop != null)
+        {
+            block = this.form[blockdef.prop];
+
+            if (block == null && blockdef.component != null)
+            {
+                block = new blockdef.component();
+                this.form[blockdef.prop] = block;
+            }
+        }
+        else
+        {
+            if (blockdef.component != null)
+                block = new blockdef.component();
+        }
+
+        if (block == null)
+        {
+            window.alert(this.name+" cannot create instance of "+blockdef.alias);
+            return;
+        }
+
+        let alias:string = blockdef.alias;
+
+        if (alias == null)
+        {
+            alias = block.constructor.name;
+            alias = BlockDefinitions.getBlockDefaultAlias(alias);
+        }
+
+        alias = alias.toLowerCase();
+
+        block.name = alias;
+        blockdef.alias = alias;
+        this.blocks.set(alias,block);
+
+        block["base"].form = this;
+        block["base"].clazz = block.constructor.name;
     }
-}
+
+
+    private setBlockUsage(formusage:DatabaseUsage, propusage:DatabaseUsage, blockdef:BlockDefinition) : void
+    {
+        let block:BlockBase = this.blocks.get(blockdef.alias);
+        let bname:string = block.constructor.name;
+
+        if (!(block instanceof Block)) return;
+
+        let usage1:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
+        let usage2:DatabaseUsage = blockdef.databaseopts;
+        let usage3:DatabaseUsage = propusage;
+        let usage4:DatabaseUsage = formusage;
+        let usage5:DatabaseUsage = {};
+
+        if (usage1 == null) usage1 = {};
+        if (usage2 == null) usage2 = {};
+        if (usage3 == null) usage3 = {};
+        if (usage4 == null) usage4 = {};
+
+        usage5 = DBUsage.merge(usage2,usage1);
+        usage5 = DBUsage.merge(usage3,usage5);
+        usage5 = DBUsage.override(usage4,usage5);
+        usage5 = DBUsage.complete(usage5);
+
+        block.setDatabaseUsage(usage5);
+    }
+
+
+    public hash() : void
+    {
+        this.rehash();
+    }
+
+
+    public rehash(groups?:string[]) : void
+    {
+        let seq:number = 1;
+        if (groups == null) groups = [];
+
+        let index:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
+
+        this.fields$.forEach((field) =>
+        {
+            let group:FieldInstance[] = index.get(field.group);
+
+            if (group == null)
+            {
+                group = [];
+                index.set(field.group,group);
+
+                let exists:boolean = false;
+                for(let i = 0; i < groups.length; i++)
+                {
+                    if (groups[i] == field.group)
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+
+                if (!exists) groups.push(field.group);
+            }
+
+            group.push(field);
+        });
+
+        groups.forEach((name) =>
+        {
+            let group:FieldInstance[] = index.get(name);
+            if (group != null) {group.forEach((field) => {field.seq = seq++});}
+        });
+
+        this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
+    }
+
+
+    public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
+    {
+        if (this.app == null)
+            return;
+
+        let keymap:KeyMap = this.app.conf.keymap;
+
+        if (type == "key" && key == keymap.prevfield)
+        {
+            let prev:boolean = false;
+
+            // seq 1 -> fields.length
+            for(let i = field.seq - 1; i > 0; i--)
+            {
+                if (this.fields$[i-1].enabled)
+                {
+                    prev = true;
+                    break;
+                }
+            }
+
+            if (!prev) event.preventDefault();
+        }
+
+        if (type == "key" && key == keymap.nextfield)
+        {
+            let next:boolean = false;
+
+            // seq 1 -> fields.length
+            for(let i = field.seq; i < this.fields$.length; i++)
+            {
+                if (this.fields$[i].enabled)
+                {
+                    next = true;
+                    break;
+                }
+            }
+
+            if (!next) event.preventDefault();
+        }
+    }
+ }

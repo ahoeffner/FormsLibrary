@@ -143,6 +143,7 @@ export class ContainerRecord
 
 export class Container
 {
+    private fields$:FieldInstance[] = [];
     private blocks:Map<string,ContainerBlock> = new Map<string,ContainerBlock>();
 
     public register(field:FieldInstance) : void
@@ -158,6 +159,12 @@ export class Container
 
         block.add(field);
         block.fields.push(field);
+        this.fields$.push(field);
+    }
+
+    public get fields() : FieldInstance[]
+    {
+        return(this.fields$);
     }
 
     public getBlock(block:string) : ContainerBlock

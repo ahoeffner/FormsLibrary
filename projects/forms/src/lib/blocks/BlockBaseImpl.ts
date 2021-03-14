@@ -2,6 +2,7 @@ import { Field } from "../input/Field";
 import { BlockBase } from "./BlockBase";
 import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
+import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
 import { Config } from "../application/Config";
 import { FieldInstance } from "../input/FieldInstance";
@@ -26,6 +27,7 @@ export class BlockBaseImpl
     private name$:string;
     private class$:string;
     private keymap:KeyMap;
+    private form$:FormImpl;
     private fields$:FieldInstance[] = [];
     private listener:EventListener = new EventListener();
     private records:Map<number,Record> = new Map<number,Record>();
@@ -35,6 +37,16 @@ export class BlockBaseImpl
     public set name(alias:string)
     {
         this.name$ = alias;
+    }
+
+    public get form() : FormImpl
+    {
+        return(this.form$);
+    }
+
+    public set form(form:FormImpl)
+    {
+        this.form$ = form;
     }
 
     public get name() : string
@@ -81,52 +93,6 @@ export class BlockBaseImpl
     public getField(row:number, name:string) : Field
     {
         return(this.records.get(+row)?.getField(name));
-    }
-
-    public hash() : void
-    {
-        this.rehash();
-    }
-
-    public rehash(groups?:string[]) : void
-    {
-        let seq:number = 1;
-        if (groups == null) groups = [];
-
-        let index:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
-
-        this.fields$.forEach((field) =>
-        {
-            let group:FieldInstance[] = index.get(field.group);
-
-            if (group == null)
-            {
-                group = [];
-                index.set(field.group,group);
-
-                let exists:boolean = false;
-                for(let i = 0; i < groups.length; i++)
-                {
-                    if (groups[i] == field.group)
-                    {
-                        exists = true;
-                        break;
-                    }
-                }
-
-                if (!exists) groups.push(field.group);
-            }
-
-            group.push(field);
-        });
-
-        groups.forEach((name) =>
-        {
-            let group:FieldInstance[] = index.get(name);
-            if (group != null) {group.forEach((field) => {field.seq = seq++});}
-        });
-
-        this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
     }
 
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
@@ -192,39 +158,8 @@ export class BlockBaseImpl
         if (type == "focus")
             this.records.get(+field.row).current = true;
 
-        if (type == "key" && key == this.keymap.prevfield)
-        {
-            let prev:boolean = false;
-
-            // seq 1 -> fields.length
-            for(let i = field.seq - 1; i > 0; i--)
-            {
-                if (this.fields$[i-1].enabled)
-                {
-                    prev = true;
-                    break;
-                }
-            }
-
-            if (!prev) event.preventDefault();
-        }
-
-        if (type == "key" && key == this.keymap.nextfield)
-        {
-            let next:boolean = false;
-
-            // seq 1 -> fields.length
-            for(let i = field.seq; i < this.fields$.length; i++)
-            {
-                if (this.fields$[i].enabled)
-                {
-                    next = true;
-                    break;
-                }
-            }
-
-            if (!next) event.preventDefault();
-        }
+        if (this.form$ != null)
+            this.form$.onEvent(event,field,type,key);
 
         let lsnrs:InstListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
