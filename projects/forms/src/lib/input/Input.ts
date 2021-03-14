@@ -36,8 +36,13 @@ export class Input implements FieldType
     public set enable(flag:boolean)
     {
         this.enabled$ = flag;
-        if (!flag) this.element$.disabled = true;
-        else       this.element$.disabled = false;
+        this.element$.disabled = !flag;
+        if (!flag) this.element$.readOnly = true;
+    }
+
+    public set rdonly(flag:boolean)
+    {
+        this.element$.readOnly = flag;
     }
 
     public get enable() : boolean

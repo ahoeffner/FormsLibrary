@@ -75,37 +75,14 @@ export class Field
     {
         if (field.row == -2)
         {
-            this.addCurrent(field);
-            return;
+            this.current$.push(field);
+        }
+        else
+        {
+            this.fields.push(field);
         }
 
         this.setindex(field);
-        this.fields.push(field);
-    }
-
-    public addCurrent(field:FieldInstance) : void
-    {
-        this.setindex(field);
-        this.current$.push(field);
-    }
-
-    public removeFields() : void
-    {
-        this.fields = [];
-        this.index.clear();
-    }
-
-    public removeCurrentFields() : void
-    {
-        for(let i = 0; i < this.current$.length; i++)
-            this.remindex(this.current$[i]);
-
-        this.current$ = [];
-    }
-
-    public getInstance() : FieldInstance
-    {
-        return(this.field);
     }
 
     public getFields() : FieldInstance[]
@@ -127,47 +104,62 @@ export class Field
         }
         else
         {
-            this.setFieldType(type);
-            this.setCurrentType(type);
+            for (let i = 0; i < this.fields.length; i++)
+                this.fields[i].type = type;
+
+            for (let i = 0; i < this.current$.length; i++)
+                this.current$[i].type = type;
         }
     }
 
-    public setFieldType(type:string) : void
-    {
-        for (let i = 0; i < this.fields.length; i++)
-            this.fields[i].type = type;
-    }
-
-    public setCurrentType(type:string) : void
-    {
-        for (let i = 0; i < this.current$.length; i++)
-            this.current$[i].type = type;
-    }
-
-    public enable(flag:boolean, id?:string) : void
+    public enable(readonly:boolean, id?:string) : void
     {
         if (id != null)
         {
             let field:FieldInstance = this.index.get(id.toLowerCase());
-            if (field != null) field.enable =flag;
+            if (field != null)
+            {
+                field.enable = true;
+                field.readonly = readonly;
+            }
         }
         else
         {
-            this.enableFields(flag);
-            this.enableCurrent(flag);
+            for (let i = 0; i < this.fields.length; i++)
+            {
+                this.fields[i].enable = true;
+                this.fields[i].readonly = readonly;
+            }
+
+            if (this.current$)
+            {
+                for (let i = 0; i < this.current$.length; i++)
+                {
+                    this.current$[i].enable = true;
+                    this.current$[i].readonly = readonly;
+                }
+            }
         }
     }
 
-    public enableFields(flag:boolean) : void
+    public disable(id?:string) : void
     {
-        for (let i = 0; i < this.fields.length; i++)
-            this.fields[i].enable = flag;
-    }
+        if (id != null)
+        {
+            let field:FieldInstance = this.index.get(id.toLowerCase());
+            if (field != null) field.enable = false;
+        }
+        else
+        {
+            for (let i = 0; i < this.fields.length; i++)
+                this.fields[i].enable = false;
 
-    public enableCurrent(flag:boolean) : void
-    {
-        for (let i = 0; i < this.current$.length; i++)
-            this.current$[i].enable = flag;
+            if (this.current$)
+            {
+                for (let i = 0; i < this.current$.length; i++)
+                    this.current$[i].enable = false;
+            }
+        }
     }
 
     // this is accessed behind the scenes

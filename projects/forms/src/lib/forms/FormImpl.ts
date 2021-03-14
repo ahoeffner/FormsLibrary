@@ -39,6 +39,7 @@ export class FormImpl
     private cancelled:boolean = false;
     private initiated$:boolean = false;
     private ddmenu:ComponentRef<DropDownMenu>;
+    private fielddef:Map<string,FieldDefinition>;
     private parameters:Map<string,any> = new Map<string,any>();
     private blocks:Map<string,BlockBase> = new Map<string,BlockBase>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
@@ -128,7 +129,6 @@ export class FormImpl
         });
 
         container.finish();
-
         container.getBlocks().forEach((cb) =>
         {
             let block:BlockBase = this.blocks.get(cb.name);
@@ -140,14 +140,15 @@ export class FormImpl
             }
 
             block["base"].fields = cb.fields;
+            console.log("container, records: "+cb.records.length);
 
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            let fdef:Map<string,FieldDefinition> = FieldDefinitions.get(block["base"].clazz);
+            this.fielddef = FieldDefinitions.get(block["base"].clazz);
             block["base"].fields.forEach((inst) =>
             {
-                let def:FieldDefinition = fdef.get(inst.name);
+                let def:FieldDefinition = this.fielddef.get(inst.name);
 
                 if (def == null)
                 {
@@ -157,6 +158,13 @@ export class FormImpl
 
                 inst.type = def.type;
             });
+        });
+
+        this.blocks.forEach((block) =>
+        {
+            let rec:Record = block["base"].getRecord(0);
+            console.log("enable "+block.name+" rec: "+rec);
+            if (rec != null) rec.enable(true);
         });
     }
 

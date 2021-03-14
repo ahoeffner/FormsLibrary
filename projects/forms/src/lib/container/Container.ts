@@ -123,7 +123,7 @@ export class ContainerBlock
                     let group:Field = rec.index.get(inst.name);
 
                     if (group == null) rec.add(inst)
-                    else group.addCurrent(inst);
+                    else group.add(inst);
                 });
             });
         }

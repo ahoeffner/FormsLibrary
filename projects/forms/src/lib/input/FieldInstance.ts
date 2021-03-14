@@ -130,6 +130,12 @@ export class FieldInstance implements AfterViewInit
     }
 
 
+    public set readonly(flag:boolean)
+    {
+        this.clazz.rdonly = flag;
+    }
+
+
     public set type(type:string)
     {
         this.type$ = type;

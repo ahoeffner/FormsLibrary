@@ -17,7 +17,17 @@ export class Record
 
     public set current(flag:boolean)
     {
-        this.fields.forEach((field) => {field.current = true});
+        this.fields.forEach((field) => {field.current = flag});
+    }
+
+    public disable() : void
+    {
+        this.fields.forEach((field) => {field.disable()});
+    }
+
+    public enable(readonly?:boolean) : void
+    {
+        this.fields.forEach((field) => {field.enable(readonly)});
     }
 
     public getField(name:string) : Field

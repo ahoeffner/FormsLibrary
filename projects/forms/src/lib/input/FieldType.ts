@@ -28,6 +28,7 @@ export interface FieldType
     value:any;
     html:string;
     enable:boolean;
+    rdonly:boolean;
     tabindex:number;
     element:HTMLElement;
 }
