@@ -36,7 +36,7 @@ export class ContainerBlock
 
             if (fgroup == null)
             {
-                fgroup = new Field(field.name);
+                fgroup = new Field(field.name,0);
                 this.unmanaged$.set(field.name,fgroup);
             }
 
@@ -105,9 +105,8 @@ export class ContainerBlock
                 this.current$.forEach((inst) =>
                 {
                     let group:Field = rec.index.get(inst.name);
-
-                    if (group == null) rec.add(inst)
-                    else group.add(inst);
+                    if (group != null) group.add(inst)
+                    else rec.add(inst);
                 });
             });
         }
@@ -132,13 +131,12 @@ export class ContainerRecord
 
         if (group == null)
         {
-            group = new Field(field.name);
+            group = new Field(field.name,this.row);
             this.index.set(field.name,group);
             this.fields.push(group);
         }
 
         group.add(field);
-        field.field = group;
     }
 }
 

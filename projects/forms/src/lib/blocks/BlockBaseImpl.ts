@@ -13,12 +13,6 @@ interface InstListener
     lsnr:Listener;
 }
 
-interface FieldGroup
-{
-    name:string;
-    fields:FieldInstance[];
-}
-
 
 class EventListener
 {
@@ -131,6 +125,8 @@ export class BlockBaseImpl
             let group:FieldInstance[] = index.get(name);
             if (group != null) {group.forEach((field) => {field.seq = seq++});}
         });
+
+        this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
     }
 
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
@@ -197,10 +193,38 @@ export class BlockBaseImpl
             this.records.get(+field.row).current = true;
 
         if (type == "key" && key == this.keymap.prevfield)
-            if (field.seq == 1) event.preventDefault();
+        {
+            let prev:boolean = false;
+
+            // seq 1 -> fields.length
+            for(let i = field.seq - 1; i > 0; i--)
+            {
+                if (this.fields$[i-1].enabled)
+                {
+                    prev = true;
+                    break;
+                }
+            }
+
+            if (!prev) event.preventDefault();
+        }
 
         if (type == "key" && key == this.keymap.nextfield)
-            if (field.seq == this.fields$.length) event.preventDefault();
+        {
+            let next:boolean = false;
+
+            // seq 1 -> fields.length
+            for(let i = field.seq; i < this.fields$.length; i++)
+            {
+                if (this.fields$[i].enabled)
+                {
+                    next = true;
+                    break;
+                }
+            }
+
+            if (!next) event.preventDefault();
+        }
 
         let lsnrs:InstListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>

@@ -3,22 +3,29 @@ import { BlockBaseImpl } from "../blocks/BlockBaseImpl";
 
 export class Field
 {
-    private value$:any;
+    private row$:number;
     private name$:string;
+    private value$:any = "";
     private block$:BlockBaseImpl;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
-    constructor(name:string)
+    constructor(name:string, row:number)
     {
+        this.row$ = row;
         this.name$ = name;
     }
 
     public get name() : string
     {
         return(this.name$);
+    }
+
+    public get row() : number
+    {
+        return(this.row$);
     }
 
     public set block(block:BlockBaseImpl)
@@ -29,7 +36,7 @@ export class Field
     public set current(flag:boolean)
     {
         if (!flag) this.current$.forEach((inst) => {inst.value = null;});
-        else this.current$.forEach((inst) => {inst.value = this.value$;});
+        else this.current$.forEach((inst) => {inst.row = this.row, inst.value = this.value$;});
     }
 
     public get value() : any
@@ -73,6 +80,8 @@ export class Field
 
     public add(field:FieldInstance) : void
     {
+        field.field = this;
+        
         if (field.row == -2)
         {
             this.current$.push(field);
@@ -90,10 +99,11 @@ export class Field
         return(this.fields$);
     }
 
-    public getCurrentFields() : FieldInstance[]
+    public get currfields() : FieldInstance[]
     {
         return(this.current$);
     }
+
 
     public setType(type:string, id?:string) : void
     {
@@ -111,6 +121,7 @@ export class Field
                 this.current$[i].type = type;
         }
     }
+
 
     public enable(readonly:boolean, id?:string) : void
     {
@@ -142,6 +153,7 @@ export class Field
         }
     }
 
+
     public disable(id?:string) : void
     {
         if (id != null)
@@ -161,6 +173,7 @@ export class Field
             }
         }
     }
+
 
     // this is accessed behind the scenes
     private onEvent(event:any, field:FieldInstance, type:string, key?:string) : void

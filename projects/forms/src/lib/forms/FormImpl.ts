@@ -159,7 +159,13 @@ export class FormImpl
         {
             block["base"].hash();
             let rec:Record = block["base"].getRecord(0);
-            if (rec != null) rec.enable(true);
+            if (rec != null)
+            {
+                rec.enable(false);
+                rec.current = true;
+            }
+            rec = block["base"].getRecord(1);
+            if (rec != null) rec.enable(false);
         });
     }
 
