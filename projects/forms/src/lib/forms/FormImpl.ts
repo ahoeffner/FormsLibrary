@@ -15,6 +15,7 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { Record } from "../blocks/Record";
 
 
 export class FormImpl
@@ -117,20 +118,29 @@ export class FormImpl
         // DatabaseUsage for DATABASE anotated form properties
         let propusage:Map<string,DatabaseUsage> = DatabaseDefinitions.getBlockUsage(this.name);
 
+        // Merge default, block-spec and prop usage. Form usage overides
         blockdef.forEach((bdef) =>
         {
-            // Merge block usage with prop usage
             let usage:DatabaseUsage = propusage.get(bdef.prop);
             this.setBlockUsage(fusage,usage,bdef);
         });
-
-        blockdef = BlockDefinitions.getBlocks(this.name);
 
         container.finish();
 
         container.getBlocks().forEach((cb) =>
         {
-            console.log("block: <"+cb.name+"> "+this.blocks.get(cb.name));
+            let block:BlockBase = this.blocks.get(cb.name);
+
+            if (block == null)
+            {
+                window.alert("Form has fields bound to "+cb.name+" that doesn't exist");
+                return;
+            }
+
+            block["base"].fields = cb.fields;
+
+            cb.records.forEach((rec) =>
+            {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index));});
         });
     }
 
@@ -180,7 +190,6 @@ export class FormImpl
         block.name = alias;
         blockdef.alias = alias;
         this.blocks.set(alias,block);
-        console.log("created block "+block.constructor.name+" under alias "+block.name);
     }
 
 
@@ -207,7 +216,6 @@ export class FormImpl
         usage5 = DBUsage.override(usage4,usage5);
         usage5 = DBUsage.complete(usage5);
 
-        console.log(blockdef.alias+" total: "+JSON.stringify(usage5));
         block.setDatabaseUsage(usage5);
     }
 
