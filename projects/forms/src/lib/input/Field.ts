@@ -35,13 +35,16 @@ export class Field
 
     public set current(flag:boolean)
     {
-        if (!flag) this.current$.forEach((inst) => {inst.value = null;});
-        else this.current$.forEach((inst) => {inst.row = this.row, inst.value = this.value$;});
+        setTimeout(() =>
+        {
+            if (!flag) this.current$.forEach((inst) => {inst.value = null;});
+            else this.current$.forEach((inst) => {inst.row = this.row, inst.value = this.value$;});
+        },1);
     }
 
     public get value() : any
     {
-        return(this.fields$[0].value);
+        return(this.value$);
     }
 
     public set value(value:any)
@@ -189,13 +192,13 @@ export class Field
     {
         setTimeout(() =>
         {
-            let value:any = field.value;
+            this.value$ = field.value;
 
             this.fields$.forEach((inst) =>
-            {if (inst != field) inst.value = value;});
+            {if (inst != field) inst.value = this.value$;});
 
             this.current$.forEach((inst) =>
-            {if (inst != field) inst.value = value;});
+            {if (inst != field) inst.value = this.value$;});
 
         },0);
     }
