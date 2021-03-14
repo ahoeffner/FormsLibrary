@@ -52,7 +52,7 @@ export class BlockBaseImpl
         return(this.class$);
     }
 
-    public setConfig(conf:Config) : void
+    public set config(conf:Config)
     {
         this.keymap = conf.keymap;
     }
@@ -151,7 +151,6 @@ export class BlockBaseImpl
 
         if (type == "key" && key == this.keymap.nextfield)
             if (field.seq == this.fields$.length - 1) event.preventDefault();
-
 
         let lsnrs:InstListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>

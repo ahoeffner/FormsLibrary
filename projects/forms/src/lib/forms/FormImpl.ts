@@ -140,8 +140,7 @@ export class FormImpl
             }
 
             block["base"].fields = cb.fields;
-            console.log("container, records: "+cb.records.length);
-            cb.records.forEach((rec) => {console.log("row: "+rec.row)});
+            //block["base"].setConfig(this.co)
 
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
@@ -164,7 +163,6 @@ export class FormImpl
         this.blocks.forEach((block) =>
         {
             let rec:Record = block["base"].getRecord(0);
-            console.log("enable "+block.name+" rec: "+rec);
             if (rec != null) rec.enable(true);
         });
     }
