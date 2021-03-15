@@ -173,6 +173,8 @@ export class FormImpl implements EventListener
                 fielddef.forEach((col) => {columns.push(col.name)});
                 block["base"].table = new TableData(columns);
                 columns.forEach((col) => {console.log(col)});
+                block["base"].table.append(["Røsevangen 26","Høffner","Alex","Alex Høffner","2344"]);
+                block["base"].display(0);
             }
         });
 

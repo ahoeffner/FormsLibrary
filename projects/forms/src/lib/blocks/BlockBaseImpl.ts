@@ -43,6 +43,11 @@ export class BlockBaseImpl
         return(this.block.constructor.name.toLowerCase());
     }
 
+    public get table() : TableData
+    {
+        return(this.table$);
+    }
+
     public set table(table:TableData)
     {
         this.table$ = table;
@@ -73,6 +78,26 @@ export class BlockBaseImpl
     public getField(row:number, name:string) : Field
     {
         return(this.records.get(+row)?.getField(name));
+    }
+
+    public async display(start:number)
+    {
+        if (this.table$ != null)
+        {
+            let columns:string[] = this.table$.columns;
+            let rows:any[][] = this.table$.get(start,this.rows$);
+
+            for(let r = 0; r < rows.length; r++)
+            {
+                let rec:Record = this.getRecord(r);
+                for(let c = 0; c < rows[r].length; c++)
+                {
+                    let field:Field = rec.getField(columns[c]);
+                    field.value = rows[r][c];
+                    rec.enable(false);
+                }
+            }
+        }
     }
 
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
@@ -143,26 +168,22 @@ export class BlockBaseImpl
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
-            let rec:Record = this.getRecord(field.row+1);
-            if (rec == null)
+            let rec:Record = this.getRecord(+field.row+1);
+            if (rec == null || !rec.enabled)
             {
                 console.log("last-record");
             }
             else
             {
                 let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-                if (inst == null) rec.current = true;
-                else
-                {
-                    rec.current = true;
-                    inst.focus();
-                }
+                if (inst != null) inst.focus();
+                rec.current = true;
             }
         }
 
         if (type == "key" && key == this.keymap.prevrecord)
         {
-            let rec:Record = this.getRecord(field.row-1);
+            let rec:Record = this.getRecord(+field.row-1);
             if (rec == null)
             {
                 console.log("first-record");
@@ -170,12 +191,8 @@ export class BlockBaseImpl
             else
             {
                 let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-                if (inst == null) rec.current = true;
-                else
-                {
-                    rec.current = true;
-                    inst.focus();
-                }
+                if (inst != null) inst.focus();
+                rec.current = true;
             }
         }
 

@@ -7,6 +7,7 @@ export class Record
     public row:number = 0;
     public rec:number = 0;
     public fields:Field[] = [];
+    public enabled:boolean = false;
     public index:Map<string,Field> = new Map<string,Field>();
 
 
@@ -35,11 +36,13 @@ export class Record
 
     public disable() : void
     {
+        this.enabled = false;
         this.fields.forEach((field) => {field.disable()});
     }
 
     public enable(readonly?:boolean) : void
     {
+        this.enabled = true;
         this.fields.forEach((field) => {field.enable(readonly)});
     }
 

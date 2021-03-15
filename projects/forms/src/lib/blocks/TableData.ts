@@ -37,6 +37,13 @@ class Row
                 this.columns.push(new Column(scn,""));
         }
     }
+
+    public get values() : any[]
+    {
+        let values:any[] = [];
+        this.columns.forEach((col) => {values.push(col.value$)});
+        return(values);
+    }
 }
 
 
@@ -44,14 +51,16 @@ export class TableData
 {
     private scn:number = 0;
     private data:Row[] = [];
-    private deleted:Row[] = [];
-    private columns:number = 0;
+    private cols$:number = 0;
+    private columns$:string[];
+    private deleted$:Row[] = [];
     private index:Map<string,number> = new Map<string,number>();
 
 
     public constructor(columns:string[])
     {
-        this.columns = columns.length;
+        this.columns$ = columns;
+        this.cols$ = columns.length;
 
         for(let i = 0; i < columns.length; i++)
             this.index.set(columns[i].toLowerCase(),i);
@@ -65,7 +74,7 @@ export class TableData
         if (before > 0)
             data = this.data.slice(0,before);
 
-        data[before] = new Row(++this.scn,this.columns);
+        data[before] = new Row(++this.scn,this.cols$);
 
         if (before < this.data.length)
             data = data.concat(this.data.slice(before,this.data.length));
@@ -84,7 +93,7 @@ export class TableData
             return(false);
 
         this.data[row].scn = ++this.scn;
-        this.deleted.push(this.data[row]);
+        this.deleted$.push(this.data[row]);
 
         if (row > 0)
             data = this.data.slice(0,row);
@@ -119,12 +128,28 @@ export class TableData
 
     public append(values:any[]) : boolean
     {
-        if (values.length > this.columns)
+        if (values.length > this.cols$)
             return(false);
 
         let row:Row = new Row(++this.scn,values);
         this.data.push(row);
 
         return(true);
+    }
+
+    public get columns() : string[]
+    {
+        return(this.columns$);
+    }
+
+    public get(start:number, rows:number) : any[][]
+    {
+        let values:any[][] = [];
+        let end:number = +start + rows;
+
+        for(let i = start; i < end; i++)
+            values.push(this.data[i].values);
+
+        return(values);
     }
 }
