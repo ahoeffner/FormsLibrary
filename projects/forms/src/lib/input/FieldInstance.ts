@@ -16,6 +16,7 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 export class FieldInstance implements AfterViewInit
 {
     private type$:string;
+    private guid$:string;
     private clazz:FieldType;
     private app:ApplicationImpl;
     private fgroup$:Field = null;
@@ -77,6 +78,16 @@ export class FieldInstance implements AfterViewInit
         return(this.type$);
     }
 
+    public set guid(guid:string)
+    {
+        this.guid$ = guid;
+    }
+
+    public get guid() : string
+    {
+        return(this.guid$);
+    }
+
     public get block() : string
     {
         return(this.block$);
@@ -91,6 +102,11 @@ export class FieldInstance implements AfterViewInit
     {
         if (this.clazz == null) return("");
         else return(this.clazz.value);
+    }
+
+    public get field() : Field
+    {
+        return(this.fgroup$);
     }
 
     public set field(field:Field)

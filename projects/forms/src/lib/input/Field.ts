@@ -5,11 +5,13 @@ export class Field
 {
     private row$:number;
     private name$:string;
+    private seq:number = 0;;
     private value$:any = "";
     private block$:BlockBaseImpl;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
+    private ids:Map<string,FieldInstance> = new Map<string,FieldInstance>();
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
     constructor(name:string, row:number)
@@ -31,6 +33,16 @@ export class Field
     public set block(block:BlockBaseImpl)
     {
         this.block$ = block;
+    }
+
+    public get block() : BlockBaseImpl
+    {
+        return(this.block$);
+    }
+
+    public getInstance(guid:string)
+    {
+        return(this.index.get(guid));
     }
 
     public set current(flag:boolean)
@@ -89,14 +101,17 @@ export class Field
         if (field.row == -2)
         {
             this.current$.push(field);
+            if (field.guid == null) field.guid = "c:"+(this.seq++);
         }
         else
         {
             this.fields$.push(field);
+            field.guid = "r:"+(this.seq++);
         }
 
-        this.setindex(field);
-    }
+        this.index.set(field.guid,field);
+        if (field.id.length > 0) this.ids.set(field.id,field);
+ }
 
     public get fields() : FieldInstance[]
     {
@@ -113,7 +128,7 @@ export class Field
     {
         if (id != null)
         {
-            let field:FieldInstance = this.index.get(id.toLowerCase());
+            let field:FieldInstance = this.ids.get(id.toLowerCase());
             if (field != null) field.type = type;
         }
         else
@@ -131,7 +146,7 @@ export class Field
     {
         if (id != null)
         {
-            let field:FieldInstance = this.index.get(id.toLowerCase());
+            let field:FieldInstance = this.ids.get(id.toLowerCase());
             if (field != null)
             {
                 field.enable = true;
@@ -162,7 +177,7 @@ export class Field
     {
         if (id != null)
         {
-            let field:FieldInstance = this.index.get(id.toLowerCase());
+            let field:FieldInstance = this.ids.get(id.toLowerCase());
             if (field != null) field.enable = false;
         }
         else
@@ -201,12 +216,5 @@ export class Field
             {if (inst != field) inst.value = this.value$;});
 
         },0);
-    }
-
-
-    private setindex(field:FieldInstance) : void
-    {
-        if (field.id.length > 0)
-            this.index.set(field.id,field);
     }
 }

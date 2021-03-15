@@ -1,4 +1,5 @@
 import { Field } from "../input/Field";
+import { FieldInstance } from "../input/FieldInstance";
 
 
 export class Record
@@ -33,5 +34,12 @@ export class Record
     public getField(name:string) : Field
     {
         return(this.index.get(name.toLowerCase()));
+    }
+
+    public getFieldByGuid(name:string, guid:string) : FieldInstance
+    {
+        let field:Field = this.index.get(name.toLowerCase());
+        if (field != null) return(field.getInstance(guid));
+        return(null);
     }
 }

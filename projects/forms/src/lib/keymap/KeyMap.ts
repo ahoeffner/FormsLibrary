@@ -30,6 +30,8 @@ export interface KeyMap
     prevfield:string;
     nextblock:string;
     prevblock:string;
+    nextrecord:string;
+    prevrecord:string;
 
     clearform:string;
     clearblock:string;

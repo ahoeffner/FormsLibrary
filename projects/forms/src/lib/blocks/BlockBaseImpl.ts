@@ -15,6 +15,7 @@ export class BlockBaseImpl
     private name$:string;
     private class$:string;
     private keymap:KeyMap;
+    private rows$:number = 0;
     private parent$:EventListener;
     private listener:InstanceEvents = new InstanceEvents();
     private records:Map<number,Record> = new Map<number,Record>();
@@ -29,6 +30,11 @@ export class BlockBaseImpl
     public get name() : string
     {
         return(this.name$);
+    }
+
+    public get rows() : number
+    {
+        return(this.rows$);
     }
 
     public set clazz(cname:string)
@@ -59,6 +65,7 @@ export class BlockBaseImpl
     public addRecord(record:Record) : void
     {
         this.records.set(+record.row,record);
+        if (+record.row > this.rows$) this.rows$ = +record.row;
         record.fields.forEach((field) => {field.block = this});
     }
 
@@ -132,6 +139,45 @@ export class BlockBaseImpl
 
         if (this.parent$ != null)
             this.parent$.onEvent(event,field,type,key);
+
+        if (type == "key" && key == this.keymap.nextrecord)
+        {
+            let rec:Record = this.getRecord(field.row+1);
+            if (rec == null)
+            {
+                console.log("last-record");
+            }
+            else
+            {
+                let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+                if (inst == null) rec.current = true;
+                else
+                {
+                    rec.current = true;
+                    inst.focus();
+                }
+            }
+        }
+
+        if (type == "key" && key == this.keymap.prevrecord)
+        {
+            let rec:Record = this.getRecord(field.row-1);
+            if (rec == null)
+            {
+                console.log("first-record");
+            }
+            else
+            {
+                let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+                if (inst == null) rec.current = true;
+                else
+                {
+                    rec.current = true;
+                    inst.focus();
+                }
+            }
+        }
+
 
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>

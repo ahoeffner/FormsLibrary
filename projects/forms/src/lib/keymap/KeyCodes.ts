@@ -8,7 +8,7 @@ export class KeyCodes
     static pagedown     = 34;
     static end          = 35;
     static home         = 36;
-    static up           = 33;
+    static up           = 38;
     static down         = 40;
     static left         = 37;
     static right        = 39;
