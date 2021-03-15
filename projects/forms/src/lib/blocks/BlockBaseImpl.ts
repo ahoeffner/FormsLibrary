@@ -85,6 +85,7 @@ export class BlockBaseImpl
     public addRecord(record:Record)
     {
         this.records$.push(record);
+        record.fields.forEach((inst) => {inst.block = this});
     }
 
     public async display(start:number)
@@ -177,7 +178,6 @@ export class BlockBaseImpl
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
-            console.log("next, row: "+field.row+" rows: "+this.rows);
             let rec:Record = this.getRecord(+field.row+1);
             if (rec == null || !rec.enabled)
             {
@@ -185,6 +185,7 @@ export class BlockBaseImpl
                 {
                     let fetched:number = this.table$.fetch(1);
                     if (fetched > 0) this.display(this.offset+1);
+                    this.records$[this.records$.length-1].current = true;
                 }
             }
             else
@@ -197,11 +198,13 @@ export class BlockBaseImpl
 
         if (type == "key" && key == this.keymap.prevrecord)
         {
-            console.log("prev, row: "+field.row+" rows: "+this.rows);
             if (+field.row == 0)
             {
                 if (this.table$ != null && this.offset > 0)
+                {
                     this.display(this.offset-1);
+                    this.records$[0].current = true;
+                }
             }
             else
             {
