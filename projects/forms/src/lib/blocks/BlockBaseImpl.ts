@@ -15,11 +15,11 @@ export class BlockBaseImpl
 {
     private name$:string;
     private keymap:KeyMap;
-    private rows$:number = 0;
     private table$:TableData;
+    private offset:number = 0;
     private parent$:EventListener;
+    private records$:Record[] = [];
     private listener:InstanceEvents = new InstanceEvents();
-    private records:Map<number,Record> = new Map<number,Record>();
 
     constructor(private block:BlockBase) {}
 
@@ -35,7 +35,7 @@ export class BlockBaseImpl
 
     public get rows() : number
     {
-        return(this.rows$);
+        return(this.records$.length);
     }
 
     public get clazz() : string
@@ -65,27 +65,36 @@ export class BlockBaseImpl
 
     public getRecord(row:number) : Record
     {
-        return(this.records.get(+row));
-    }
+        if (row < this.records$.length)
+            return(this.records$[+row]);
 
-    public addRecord(record:Record) : void
-    {
-        this.records.set(+record.row,record);
-        if (+record.row > this.rows$) this.rows$ = +record.row;
-        record.fields.forEach((field) => {field.block = this});
+        return(null);
     }
 
     public getField(row:number, name:string) : Field
     {
-        return(this.records.get(+row)?.getField(name));
+        return(this.records$[+row]?.getField(name));
+    }
+
+    public setValue(row:number, col:string, value:any, change:boolean) : void
+    {
+        if (this.table$ != null)
+            this.table$.set(+row+this.offset,col,value);
+    }
+
+    public addRecord(record:Record)
+    {
+        this.records$.push(record);
     }
 
     public async display(start:number)
     {
+        this.offset = start;
+
         if (this.table$ != null)
         {
             let columns:string[] = this.table$.columns;
-            let rows:any[][] = this.table$.get(start,this.rows$);
+            let rows:any[][] = this.table$.get(start,this.rows);
 
             for(let r = 0; r < rows.length; r++)
             {
@@ -161,17 +170,22 @@ export class BlockBaseImpl
             return;
 
         if (type == "focus")
-            this.records.get(+field.row).current = true;
+            this.records$[+field.row].current = true;
 
-        if (this.parent$ != null)
-            this.parent$.onEvent(event,field,type,key);
+        if (type == "change")
+            this.setValue(field.row,field.name,field.value,true);
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
+            console.log("next, row: "+field.row+" rows: "+this.rows);
             let rec:Record = this.getRecord(+field.row+1);
             if (rec == null || !rec.enabled)
             {
-                console.log("last-record");
+                if (this.table$ != null)
+                {
+                    let fetched:number = this.table$.fetch(1);
+                    if (fetched > 0) this.display(this.offset+1);
+                }
             }
             else
             {
@@ -183,19 +197,23 @@ export class BlockBaseImpl
 
         if (type == "key" && key == this.keymap.prevrecord)
         {
-            let rec:Record = this.getRecord(+field.row-1);
-            if (rec == null)
+            console.log("prev, row: "+field.row+" rows: "+this.rows);
+            if (+field.row == 0)
             {
-                console.log("first-record");
+                if (this.table$ != null && this.offset > 0)
+                    this.display(this.offset-1);
             }
             else
             {
+                let rec:Record = this.getRecord(+field.row-1);
                 let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
                 if (inst != null) inst.focus();
                 rec.current = true;
             }
         }
 
+        if (this.parent$ != null)
+            this.parent$.onEvent(event,field,type,key);
 
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>

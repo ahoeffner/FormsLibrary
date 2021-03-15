@@ -149,7 +149,7 @@ export class FormImpl implements EventListener
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.get(block["base"].clazz);
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block["base"].clazz);
             cb.fields.forEach((inst) =>
             {
                 let def:FieldDefinition = fielddef.get(inst.name);
@@ -169,11 +169,13 @@ export class FormImpl implements EventListener
                 rec.current = true;
 
                 let columns:string[] = [];
-                let fielddef:Map<string,FieldDefinition> = FieldDefinitions.get(block["base"].clazz);
+                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block["base"].clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
                 block["base"].table = new TableData(columns);
-                columns.forEach((col) => {console.log(col)});
-                block["base"].table.append(["Røsevangen 26","Høffner","Alex","Alex Høffner","2344"]);
+
+                block["base"].table.append(["2344","Alex Høffner","Alex","Høffner","Røsevangen 26"]);
+                block["base"].table.append(["2345","Henrik Olesen","Henrik","Olesen","Bringebakken 52"]);
+
                 block["base"].display(0);
             }
         });

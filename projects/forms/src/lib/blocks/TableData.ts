@@ -137,6 +137,13 @@ export class TableData
         return(true);
     }
 
+
+    public fetch(rows:number) : number
+    {
+        this.insert(this.data.length);
+        return(1);
+    }
+
     public get columns() : string[]
     {
         return(this.columns$);
@@ -146,6 +153,7 @@ export class TableData
     {
         let values:any[][] = [];
         let end:number = +start + rows;
+        if (end > this.data.length) end = this.data.length;
 
         for(let i = start; i < end; i++)
             values.push(this.data[i].values);
