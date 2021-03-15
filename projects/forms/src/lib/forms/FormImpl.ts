@@ -21,6 +21,7 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { TableData } from "../blocks/TableData";
 
 
 export class FormImpl implements EventListener
@@ -44,7 +45,6 @@ export class FormImpl implements EventListener
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
-    private fielddef:Map<string,FieldDefinition>;
     private parameters:Map<string,any> = new Map<string,any>();
     private blocks:Map<string,BlockBase> = new Map<string,BlockBase>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
@@ -149,10 +149,10 @@ export class FormImpl implements EventListener
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            this.fielddef = FieldDefinitions.get(block["base"].clazz);
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.get(block["base"].clazz);
             cb.fields.forEach((inst) =>
             {
-                let def:FieldDefinition = this.fielddef.get(inst.name);
+                let def:FieldDefinition = fielddef.get(inst.name);
 
                 if (def != null) inst.type = def.type;
                 else window.alert("Field "+inst.name+" has no correponding definition");
@@ -162,13 +162,18 @@ export class FormImpl implements EventListener
         this.blocks.forEach((block) =>
         {
             let rec:Record = block["base"].getRecord(0);
+
             if (rec != null)
             {
-                rec.enable(false);
+                rec.enable(true);
                 rec.current = true;
+
+                let columns:string[] = [];
+                let fielddef:Map<string,FieldDefinition> = FieldDefinitions.get(block["base"].clazz);
+                fielddef.forEach((col) => {columns.push(col.name)});
+                block["base"].table = new TableData(columns);
+                columns.forEach((col) => {console.log(col)});
             }
-            rec = block["base"].getRecord(1);
-            if (rec != null) rec.enable(false);
         });
 
         // All fields on form
@@ -289,11 +294,8 @@ export class FormImpl implements EventListener
         let id:InstanceID = this.parent.stack.get(name);
 
         // newform
-        if (id != null && destroy)
-        {
-            id = null;
+        if (destroy)
             this.app.closeform(this,destroy);
-        }
 
         // create
         if (id == null)
@@ -321,23 +323,17 @@ export class FormImpl implements EventListener
     }
 
 
-    public callForm(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    public callform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
 
-        if (!this.validate())
-        {
-            window.alert("not validated");
-            return;
-        }
-
         // newform
         if (id != null && destroy)
         {
+            this.app.closeform(id.impl,destroy);
             id = null;
-            this.app.closeform(form,destroy);
         }
 
         // create
@@ -405,10 +401,7 @@ export class FormImpl implements EventListener
         let root:boolean = (this.parent == null);
 
         if (!this.cancelled && !destroy && !this.validate())
-        {
-            window.alert("not validated");
             return;
-        }
 
         this.next = null;
 
@@ -623,8 +616,7 @@ export class FormImpl implements EventListener
 
     public validate() : boolean
     {
-        console.log("validate record");
-        return(false);
+        return(true);
     }
 
 
@@ -646,11 +638,6 @@ export class FormImpl implements EventListener
             }
 
             this.field = field;
-        }
-
-        if (type == "ichange")
-        {
-
         }
 
         if (type == "key" && key == keymap.prevfield)

@@ -50,7 +50,7 @@ export class Field
         setTimeout(() =>
         {
             if (!flag) this.current$.forEach((inst) => {inst.value = null;});
-            else this.current$.forEach((inst) => {inst.row = this.row, inst.value = this.value$;});
+            else this.current$.forEach((inst) => {inst.field = this; inst.row = this.row; inst.value = this.value$;});
         },1);
     }
 

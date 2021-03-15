@@ -5,6 +5,7 @@ import { FieldInstance } from "../input/FieldInstance";
 export class Record
 {
     public row:number = 0;
+    public rec:number = 0;
     public fields:Field[] = [];
     public index:Map<string,Field> = new Map<string,Field>();
 
@@ -12,8 +13,19 @@ export class Record
     constructor(row:number, fields:Field[], index:Map<string,Field>)
     {
         this.row = row;
+        this.rec = row;
         this.index = index;
         this.fields = fields;
+    }
+
+    public set record(rec:number)
+    {
+        this.rec = rec;
+    }
+
+    public get record() : number
+    {
+        return(this.rec);
     }
 
     public set current(flag:boolean)

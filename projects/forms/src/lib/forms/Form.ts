@@ -60,7 +60,7 @@ export class Form implements OnInit, AfterViewInit
 
     public callform(form:any, parameters?:Map<string,any>) : void
     {
-        this.impl.callForm(form,false,parameters);
+        this.impl.callform(form,false,parameters);
     }
 
     public getCallStack() : Form[]

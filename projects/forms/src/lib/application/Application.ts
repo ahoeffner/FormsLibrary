@@ -62,6 +62,11 @@ export class Application
         this.impl.showform(form,false,parameters);
     }
 
+    public callform(form:any, parameters?:Map<string,any>)
+    {
+        this.impl.callform(form,false,parameters);
+    }
+
     public get colors() : Theme
     {
         return(this.conf.colors);

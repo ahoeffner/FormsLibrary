@@ -229,6 +229,28 @@ export class ApplicationImpl
     }
 
 
+    public callform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    {
+        if (!this.ready)
+        {
+            setTimeout(() => {this.callform(form,destroy,parameters);},10);
+            return;
+        }
+
+        if (this.state.form != null)
+        {
+            // Make sure changes has been validated
+            if (!this.state.form.validate()) return;
+
+            // get current form in chain
+            let curr:FormImpl = this.state.form.getChain();
+
+            // let form handle the showform
+            curr.callform(form,destroy,parameters);
+        }
+    }
+
+
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
         if (!this.ready)

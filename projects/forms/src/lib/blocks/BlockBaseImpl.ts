@@ -1,4 +1,5 @@
 import { Field } from "../input/Field";
+import { TableData } from "./TableData";
 import { BlockBase } from "./BlockBase";
 import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
@@ -15,6 +16,7 @@ export class BlockBaseImpl
     private name$:string;
     private keymap:KeyMap;
     private rows$:number = 0;
+    private table$:TableData;
     private parent$:EventListener;
     private listener:InstanceEvents = new InstanceEvents();
     private records:Map<number,Record> = new Map<number,Record>();
@@ -39,6 +41,11 @@ export class BlockBaseImpl
     public get clazz() : string
     {
         return(this.block.constructor.name.toLowerCase());
+    }
+
+    public set table(table:TableData)
+    {
+        this.table$ = table;
     }
 
     public set config(conf:Config)
