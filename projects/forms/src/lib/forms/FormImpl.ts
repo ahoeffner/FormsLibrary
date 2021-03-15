@@ -41,6 +41,7 @@ export class FormImpl implements EventListener
     private callbackfunc:CallBack;
     private cancelled:boolean = false;
     private initiated$:boolean = false;
+    private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
     private fielddef:Map<string,FieldDefinition>;
@@ -267,6 +268,9 @@ export class FormImpl implements EventListener
 
     public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
     {
+        if (!this.validate())
+            return;
+
         if (this.win == null)
         {
             this.app.showform(form,destroy,parameters);
@@ -322,6 +326,12 @@ export class FormImpl implements EventListener
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
+
+        if (!this.validate())
+        {
+            window.alert("not validated");
+            return;
+        }
 
         // newform
         if (id != null && destroy)
@@ -393,6 +403,12 @@ export class FormImpl implements EventListener
         let win:boolean = (this.win != null);
         let menu:boolean = (this.root == null);
         let root:boolean = (this.parent == null);
+
+        if (!this.cancelled && !destroy && !this.validate())
+        {
+            window.alert("not validated");
+            return;
+        }
 
         this.next = null;
 
@@ -527,7 +543,6 @@ export class FormImpl implements EventListener
         this.blocks.set(alias,block);
 
         block["base"].parent = this;
-        block["base"].clazz = block.constructor.name;
     }
 
 
@@ -606,12 +621,37 @@ export class FormImpl implements EventListener
     }
 
 
+    public validate() : boolean
+    {
+        console.log("validate record");
+        return(false);
+    }
+
+
     public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
     {
         if (this.app == null)
             return;
 
         let keymap:KeyMap = this.app.conf.keymap;
+
+        if (type == "focus")
+        {
+            if (this.field != null)
+            {
+                if (this.field.row != field.row)
+                {
+                    this.validate();
+                }
+            }
+
+            this.field = field;
+        }
+
+        if (type == "ichange")
+        {
+
+        }
 
         if (type == "key" && key == keymap.prevfield)
         {

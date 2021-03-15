@@ -13,7 +13,6 @@ import { InstanceListener } from "../events/InstanceListener";
 export class BlockBaseImpl
 {
     private name$:string;
-    private class$:string;
     private keymap:KeyMap;
     private rows$:number = 0;
     private parent$:EventListener;
@@ -37,14 +36,9 @@ export class BlockBaseImpl
         return(this.rows$);
     }
 
-    public set clazz(cname:string)
-    {
-        this.class$ = cname.toLowerCase();
-    }
-
     public get clazz() : string
     {
-        return(this.class$);
+        return(this.block.constructor.name.toLowerCase());
     }
 
     public set config(conf:Config)

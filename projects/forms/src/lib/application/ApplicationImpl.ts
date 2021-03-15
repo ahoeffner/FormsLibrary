@@ -239,6 +239,9 @@ export class ApplicationImpl
 
         if (this.state.form != null)
         {
+            // Make sure changes has been validated
+            if (!this.state.form.validate()) return;
+
             // if form has called anoother form
             let curr:FormImpl = this.state.form.getChain();
 
