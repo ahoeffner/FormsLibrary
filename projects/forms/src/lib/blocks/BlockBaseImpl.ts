@@ -16,7 +16,6 @@ export class BlockBaseImpl
     private class$:string;
     private keymap:KeyMap;
     private parent$:EventListener;
-    private fields$:FieldInstance[] = [];
     private listener:InstanceEvents = new InstanceEvents();
     private records:Map<number,Record> = new Map<number,Record>();
 
@@ -61,16 +60,6 @@ export class BlockBaseImpl
     {
         this.records.set(+record.row,record);
         record.fields.forEach((field) => {field.block = this});
-    }
-
-    public set fields(fields:FieldInstance[])
-    {
-        this.fields$ = fields;
-    }
-
-    public get fields() : FieldInstance[]
-    {
-        return(this.fields$);
     }
 
     public getField(row:number, name:string) : Field

@@ -76,7 +76,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
             event.preventDefault();
             this.usr.focus();
         }
-        
+
         if (key == this.keymap.prevfield && field.name == "usr")
         {
             event.preventDefault();
@@ -94,7 +94,6 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
         container.finish();
 
-        this["base"].fields = container.getBlock("").fields;
         container.getBlock("").records.forEach((rec) =>
         {this["base"].addRecord(new Record(0,rec.fields,rec.index));});
 

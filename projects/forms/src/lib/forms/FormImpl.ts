@@ -143,14 +143,13 @@ export class FormImpl implements EventListener
                 return;
             }
 
-            block["base"].fields = cb.fields;
             block["base"].config = this.app.conf;
 
             cb.records.forEach((rec) =>
             {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
 
             this.fielddef = FieldDefinitions.get(block["base"].clazz);
-            block["base"].fields.forEach((inst) =>
+            cb.fields.forEach((inst) =>
             {
                 let def:FieldDefinition = this.fielddef.get(inst.name);
 
