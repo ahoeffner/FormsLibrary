@@ -327,7 +327,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 color: `+this.conf.colors.menuoption+`;
                 outline:none;
                 cursor: pointer;
-                font-size: 12px;
+                font-size: 15px;
                 margin-top: 1px;
                 margin-left: 4px;
                 margin-right: 4px;
@@ -363,7 +363,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 color: black;
                 outline:none;
                 cursor: pointer;
-                font-size: 12px;
+                font-size: 15px;
                 background: transparent;
             }
 
