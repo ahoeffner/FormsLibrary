@@ -44,18 +44,12 @@ export class FormList implements AfterViewInit
 		this.formsdef = this.app.getFormsList();
 		this.parse();
 
-		this.page += "<html>\n";
-		this.page += "  <head>\n";
-		this.page += "    <style>\n";
+		this.page += "<style>\n";
 		this.page += this.styles()+ "\n";
-		this.page += "    </style>\n";
-		this.page += "  </head>\n";
-		this.page += "  <body>\n";
-		this.page += "    <div class='formlist'>\n";
+		this.page += "</style>\n";
+		this.page += "<div class='formlist'>\n";
 		this.page += this.print("/",this.root,0,[true]);
-		this.page += "    </div>\n";
-		this.page += "  </body>\n";
-		this.page += "</html>\n";
+		this.page += "</div>\n";
 	}
 
 
@@ -349,7 +343,8 @@ export class FormList implements AfterViewInit
 		`
 		.formlist
 		{
-			position: fixed;
+			width: 1px;
+			position: relative;
 		}
 
     	.formlist-folder

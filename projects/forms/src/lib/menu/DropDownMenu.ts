@@ -259,18 +259,12 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     {
         let html:string = "";
 
-        html += "<html>\n";
-		html += "  <head>\n";
-		html += "    <style>\n";
+		html += "<style>\n";
 		html += this.styles()+ "\n";
-		html += "    </style>\n";
-		html += "  </head>\n";
-		html += "  <body>\n";
-		html += "    <span class='ddmenu-bar'>\n";
+		html += "</style>\n";
+		html += "<span class='ddmenu-bar'>\n";
 		html += this.entries("","",this.menu.getEntries());
-		html += "    </span>\n";
-        html += "  </body>\n";
-		html += "</html>\n";
+		html += "</span>\n";
 
         return(html);
     }
@@ -285,8 +279,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             let id:string = path+"/"+entries[i].name.toLowerCase();
 
             html += indent+"<div class='ddmenu-menu'>\n";
-            html += indent+"  <button class='ddmenu-entry' id='"+id+"'";
-            html += indent+" style='margin-left: 4px; margin-right: 4px'>\n";
+            html += indent+"  <button class='ddmenu-entry' id='"+id+"'>\n";
             html += indent+entries[i].name;
             html += indent+"  </button>\n";
             html += indent+"  <div class='ddmenu-content' id='"+id+"-content'>\n";
@@ -329,11 +322,16 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
             .ddmenu-entry
             {
+                padding: 0;
                 border: none;
                 color: `+this.conf.colors.menuoption+`;
                 outline:none;
                 cursor: pointer;
-                font-size: 16px;
+                font-size: 12px;
+                margin-top: 1px;
+                margin-left: 4px;
+                margin-right: 4px;
+                margin-bottom: 1px;
                 background: transparent;
             }
 
@@ -365,7 +363,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 color: black;
                 outline:none;
                 cursor: pointer;
-                font-size: 16px;
+                font-size: 12px;
                 background: transparent;
             }
 
