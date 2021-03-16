@@ -115,7 +115,7 @@ export class FormsControl
         let formsarea:HTMLElement = this.formarea.getFormsArea();
         let element:HTMLElement = (formdef.formref.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 
-        let impl:FormImpl = formdef.formref.instance["impl"];
+        let impl:FormImpl = formdef.formref.instance["_impl_"];
 
         if (formdef.windowopts == null)
         {
@@ -187,7 +187,7 @@ export class FormsControl
             return;
         }
 
-        let impl:FormImpl = ref.instance["impl"];
+        let impl:FormImpl = ref.instance["_impl_"];
         impl.setApplication(this.app);
 
         return(ref);

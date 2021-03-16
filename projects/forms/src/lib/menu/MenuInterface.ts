@@ -1,37 +1,36 @@
 import { DropDownMenu } from "./DropDownMenu";
-import { Protected } from "../utils/Protected";
 import { Application } from "../application/Application";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 export class MenuInterface
 {
-    private menu:DropDownMenu;
-    private impl$:ApplicationImpl;
+    private menu$:DropDownMenu;
+    private app$:ApplicationImpl;
 
 
     constructor(menu:DropDownMenu)
     {
-        this.menu = menu;
-        this.impl$ = Protected.get<ApplicationImpl>(this.menu);
+        this.menu$ = menu;
+        this.app$ = this.menu$.getApplication()["_impl_"];
     }
 
     public get app() : Application
     {
-        return(this.impl$.getApplication());
+        return(this.app$.getApplication());
     }
 
     public isConnected() : boolean
     {
-        return(this.impl$.appstate.connected);
+        return(this.app$.appstate.connected);
     }
 
     public enable(menu?:string)
     {
-        this.menu.enable(menu);
+        this.menu$.enable(menu);
     }
 
     public disable(menu?:string)
     {
-        this.menu.disable(menu);
+        this.menu$.disable(menu);
     }
 }

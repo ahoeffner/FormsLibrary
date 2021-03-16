@@ -5,6 +5,7 @@ import { DefaultMenu } from './DefaultMenu';
 import { Config } from '../application/Config';
 import { Protected } from '../utils/Protected';
 import { MenuInterface } from './MenuInterface';
+import { Application } from '../application/Application';
 import { Listener, onEventListener } from '../utils/Listener';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
@@ -19,7 +20,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 {
     private menu:Menu;
     private instance:string;
-    private app:ApplicationImpl;
+    private app$:ApplicationImpl;
     private html:HTMLDivElement;
     private static instances:number = 0;
     private options:Map<string,Option> = new Map<string,Option>();
@@ -44,13 +45,18 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     constructor(private conf:Config)
     {
         this.instance = "DropDownMenu-"+(DropDownMenu.instances++);
-        Reflect.defineProperty(this,"_getProtected", {value: () => {return(this.app)}});
     }
 
 
     public getMenu() : Menu
     {
         return(this.menu);
+    }
+
+
+    public getApplication() : Application
+    {
+        return(this.app$.getApplication());
     }
 
 
@@ -142,7 +148,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             return;
         }
 
-        this.app = app;
+        this.app$ = app;
 
         if (menu == null)
             menu = new DefaultMenu();

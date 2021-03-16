@@ -119,10 +119,13 @@ export class TableData
 
         let rec:Row = this.data[+row];
 
-        let scn:number = ++this.scn;;
+        if (rec.columns[+colno].value$ != value)
+        {
+            let scn:number = ++this.scn;
 
-        rec.scn = scn;
-        rec.columns[+colno].setValue(scn,value);
+            rec.scn = scn;
+            rec.columns[+colno].setValue(scn,value);
+        }
     }
 
 

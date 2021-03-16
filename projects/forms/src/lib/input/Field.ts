@@ -1,5 +1,5 @@
 import { FieldInstance } from "./FieldInstance";
-import { BlockBaseImpl } from "../blocks/BlockBaseImpl";
+import { BlockImpl } from "../blocks/BlockImpl";
 
 export class Field
 {
@@ -7,7 +7,7 @@ export class Field
     private name$:string;
     private seq:number = 0;;
     private value$:any = "";
-    private block$:BlockBaseImpl;
+    private block$:BlockImpl;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
@@ -30,12 +30,12 @@ export class Field
         return(this.row$);
     }
 
-    public set block(block:BlockBaseImpl)
+    public set block(block:BlockImpl)
     {
         this.block$ = block;
     }
 
-    public get block() : BlockBaseImpl
+    public get block() : BlockImpl
     {
         return(this.block$);
     }

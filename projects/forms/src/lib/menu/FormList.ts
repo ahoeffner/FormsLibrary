@@ -35,7 +35,7 @@ export class FormList implements AfterViewInit
 
     constructor(private conf:Config, app:Application)
     {
-		this.app = app["impl"];
+		this.app = app["_impl_"];
 		this.root = new Folder(this.name);
 		this.conf.notify(this,"setColors");
 

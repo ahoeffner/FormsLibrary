@@ -15,12 +15,12 @@ export interface CallBack
 
 export class Form implements OnInit, AfterViewInit
 {
-    private impl:FormImpl;
+    private _impl_:FormImpl;
     // dont rename impl as it is read behind the scenes
 
     constructor()
     {
-        this.impl = new FormImpl(this);
+        this._impl_ = new FormImpl(this);
     }
 
     public get name() : string
@@ -30,79 +30,79 @@ export class Form implements OnInit, AfterViewInit
 
     public set Title(title:string)
     {
-        this.impl.title = title;
+        this._impl_.title = title;
     }
 
     public get Title() : string
     {
-        return(this.impl.title);
+        return(this._impl_.title);
     }
 
     public set Menu(menu:Menu)
     {
-        this.impl.setMenu(menu);
+        this._impl_.setMenu(menu);
     }
 
     public get Menu()
     {
-        return(this.impl.getMenu());
+        return(this._impl_.getMenu());
     }
 
     public newform(form:any, parameters?:Map<string,any>) : void
     {
-        this.impl.showform(form,true,parameters);
+        this._impl_.showform(form,true,parameters);
     }
 
     public showform(form:any, parameters?:Map<string,any>) : void
     {
-        this.impl.showform(form,false,parameters);
+        this._impl_.showform(form,false,parameters);
     }
 
     public callform(form:any, parameters?:Map<string,any>) : void
     {
-        this.impl.callform(form,false,parameters);
+        this._impl_.callform(form,false,parameters);
     }
 
     public getCallStack() : Form[]
     {
-        return(this.impl.getCallStack());
+        return(this._impl_.getCallStack());
     }
 
     public clearCallStack() : void
     {
-        this.impl.clearStack();
+        this._impl_.clearStack();
     }
 
     public get Parameters() : Map<string,any>
     {
-        return(this.impl.getParameters());
+        return(this._impl_.getParameters());
     }
 
     public wasCancelled() : boolean
     {
-        return(this.impl.wasCancelled());
+        return(this._impl_.wasCancelled());
     }
 
     public close(dismiss?:boolean) : void
     {
-        this.impl.close(dismiss);
+        this._impl_.close(dismiss);
     }
 
     public setCallback(func:CallBack) : void
     {
-        this.impl.setCallback(func);
+        this._impl_.setCallback(func);
     }
 
     public ngOnInit()
     {
-        this.impl.getApplication().setContainer();
+        this._impl_.getApplication().setContainer();
     }
 
     public ngAfterViewInit(): void
     {
 
-        let container:Container = this.impl.getApplication().getContainer();
-        this.impl.getApplication().dropContainer();
-        this.impl.newForm(container);
+        let container:Container = this._impl_.getApplication().getContainer();
+        this._impl_.getApplication().dropContainer();
+        this._impl_.newForm(container);
     }
 }

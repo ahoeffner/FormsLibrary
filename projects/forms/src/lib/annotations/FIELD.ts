@@ -10,7 +10,7 @@ export const FIELD = (name:string, type:string) =>
         let cname:string = utils.getName(comp);
         let ctype:string = utils.getType(comp);
 
-        if (ctype != "Block" && ctype != "ControlBlock")
+        if (ctype != "Block")
         {
             window.alert("@FIELD("+name+","+type+") can only be used on blocks");
             return;

@@ -13,7 +13,7 @@ export const BLOCK = (alias?:string, component?:any, usage?:DatabaseUsage) =>
         let type:string = utils.getType(comp);
         if (alias != null) alias = alias.toLowerCase();
 
-        if (type == "Block" || type == "ControlBlock")
+        if (type == "Block")
         {
             BlockDefinitions.setBlockDefaultAlias(name,alias);
             return;

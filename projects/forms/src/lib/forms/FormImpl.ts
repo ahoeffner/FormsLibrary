@@ -8,7 +8,8 @@ import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
-import { BlockBase } from "../blocks/BlockBase";
+import { BlockImpl } from "../blocks/BlockImpl";
+import { TableData } from "../blocks/TableData";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
@@ -21,7 +22,6 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
-import { TableData } from "../blocks/TableData";
 
 
 export class FormImpl implements EventListener
@@ -46,7 +46,7 @@ export class FormImpl implements EventListener
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
-    private blocks:Map<string,BlockBase> = new Map<string,BlockBase>();
+    private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
 
 
@@ -136,7 +136,7 @@ export class FormImpl implements EventListener
         container.finish();
         container.getBlocks().forEach((cb) =>
         {
-            let block:BlockBase = this.blocks.get(cb.name);
+            let block:BlockImpl = this.blocks.get(cb.name);
 
             if (block == null)
             {
@@ -144,12 +144,12 @@ export class FormImpl implements EventListener
                 return;
             }
 
-            block["base"].config = this.app.conf;
+            block["_impl_"].config = this.app.conf;
 
             cb.records.forEach((rec) =>
-            {block["base"].addRecord(new Record(rec.row,rec.fields,rec.index))});
+            {block["_impl_"].addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block["base"].clazz);
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block["_impl_"].clazz);
             cb.fields.forEach((inst) =>
             {
                 let def:FieldDefinition = fielddef.get(inst.name);
@@ -161,7 +161,7 @@ export class FormImpl implements EventListener
 
         this.blocks.forEach((block) =>
         {
-            let rec:Record = block["base"].getRecord(0);
+            let rec:Record = block["_impl_"].getRecord(0);
 
             if (rec != null)
             {
@@ -169,14 +169,14 @@ export class FormImpl implements EventListener
                 rec.current = true;
 
                 let columns:string[] = [];
-                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block["base"].clazz);
+                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block["_impl_"].clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
-                block["base"].table = new TableData(columns);
+                block["_impl_"].table = new TableData(columns);
 
-                block["base"].table.append(["2344","Alex Høffner","Alex","Høffner","Røsevangen 26"]);
-                block["base"].table.append(["2345","Henrik Olesen","Henrik","Olesen","Bringebakken 52"]);
+                block["_impl_"].table.append(["2344","Alex Høffner","Alex","Høffner","Røsevangen 26"]);
+                block["_impl_"].table.append(["2345","Henrik Olesen","Henrik","Olesen","Bringebakken 52"]);
 
-                block["base"].display(0);
+                block["_impl_"].display(0);
             }
         });
 
@@ -495,7 +495,7 @@ export class FormImpl implements EventListener
 
     private createBlock(blockdef:BlockDefinition) : void
     {
-        let block:BlockBase = this.blocks.get(blockdef.alias);
+        let block:BlockImpl = this.blocks.get(blockdef.alias);
 
         if (block != null)
         {
@@ -539,13 +539,13 @@ export class FormImpl implements EventListener
         blockdef.alias = alias;
         this.blocks.set(alias,block);
 
-        block["base"].parent = this;
+        block["_impl_"].parent = this;
     }
 
 
     private setBlockUsage(formusage:DatabaseUsage, propusage:DatabaseUsage, blockdef:BlockDefinition) : void
     {
-        let block:BlockBase = this.blocks.get(blockdef.alias);
+        let block:BlockImpl = this.blocks.get(blockdef.alias);
         let bname:string = block.constructor.name;
 
         if (!(block instanceof Block)) return;
@@ -566,7 +566,7 @@ export class FormImpl implements EventListener
         usage5 = DBUsage.override(usage4,usage5);
         usage5 = DBUsage.complete(usage5);
 
-        block.setDatabaseUsage(usage5);
+        block["_impl_"].setDatabaseUsage(usage5);
     }
 
 

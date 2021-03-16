@@ -191,7 +191,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	{
 		this.resize(form,true);
 
-		let impl:FormImpl = form.formref.instance["impl"];
+		let impl:FormImpl = form.formref.instance["_impl_"];
 		impl.setModalWindow(this);
 
 		this.form = form;
@@ -219,7 +219,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			this.app.builder.getAppRef().detachView(this.menuref.hostView);
 		}
 
-		let impl:FormImpl = form.formref.instance["impl"];
+		let impl:FormImpl = form.formref.instance["_impl_"];
 		impl.setModalWindow(this);
 
 		this.form = form;
@@ -241,7 +241,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public close() : void
 	{
-		let impl:FormImpl = this.form.formref.instance["impl"];
+		let impl:FormImpl = this.form.formref.instance["_impl_"];
 		this.closeWindow();
 		impl.cancel();
 	}
@@ -337,7 +337,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	private showmenu() : void
 	{
-		let impl:FormImpl = this.form.formref.instance["impl"];
+		let impl:FormImpl = this.form.formref.instance["_impl_"];
 
 		this.menuelem = null;
 		this.menuref = impl.getDropDownMenu();
@@ -360,7 +360,7 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			return;
 		}
 
-		let impl:FormImpl = this.form.formref.instance["impl"];
+		let impl:FormImpl = this.form.formref.instance["_impl_"];
 		ddmenu.getMenu().getHandler().onFormChange(impl.form);
 
 		this.minw = this.menu.clientWidth + 50;

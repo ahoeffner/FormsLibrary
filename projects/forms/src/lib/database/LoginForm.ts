@@ -1,9 +1,9 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
+import { Block } from "../blocks/Block";
 import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
 import { Config } from "../application/Config";
-import { BlockBase } from "../blocks/BlockBase";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { FieldInstance } from "../input/FieldInstance";
@@ -28,7 +28,7 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
 })
 
 
-export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit, EventListener
+export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, EventListener
 {
     private usr:Field;
     private pwd:Field;
@@ -46,8 +46,8 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
     {
         super();
         this.keymap = conf.keymap;
-        this["base"].config = conf;
-        this["base"].parent = this;
+        this["_impl_"].config = conf;
+        this["_impl_"].parent = this;
     }
 
     public setWin(win:PopupWindow): void
@@ -66,7 +66,7 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         if (!cancel) this.app.appstate.connection.connect(this.usr.value,this.pwd.value);
     }
 
-    public onEvent(event:any, field:FieldInstance,type:string,key:string) : void
+    public onEvent(event:any, field:FieldInstance,_type:string,key:string) : void
     {
         if (key == this.keymap.enter) this.close(false);
         if (key == this.keymap.escape) this.close(true);
@@ -95,10 +95,10 @@ export class LoginForm extends BlockBase implements Popup, OnInit, AfterViewInit
         container.finish();
 
         container.getBlock("").records.forEach((rec) =>
-        {this["base"].addRecord(new Record(0,rec.fields,rec.index));});
+        {this["_impl_"].addRecord(new Record(0,rec.fields,rec.index));});
 
-        this.usr = this["base"].getField(0,"usr");
-        this.pwd = this["base"].getField(0,"pwd");
+        this.usr = this["_impl_"].getField(0,"usr");
+        this.pwd = this["_impl_"].getField(0,"pwd");
 
         this.usr.setType("input");
         this.pwd.setType("password");

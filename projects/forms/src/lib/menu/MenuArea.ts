@@ -25,7 +25,7 @@ export class MenuArea implements AfterViewInit
 
     constructor(app:Application, private change:ChangeDetectorRef)
     {
-        this.app = app["impl"];
+        this.app = app["_impl_"];
     }
 
 

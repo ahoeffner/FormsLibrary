@@ -38,7 +38,7 @@ export class FieldInstance implements AfterViewInit
 
     constructor(private conf:Config, app:Application)
     {
-        this.app = app["impl"];
+        this.app = app["_impl_"];
     }
 
     public get id() : string
@@ -76,6 +76,11 @@ export class FieldInstance implements AfterViewInit
     public get type() : string
     {
         return(this.type$);
+    }
+
+    public get dirty() : boolean
+    {
+        return(this.dirty);
     }
 
     public set guid(guid:string)
@@ -118,6 +123,12 @@ export class FieldInstance implements AfterViewInit
     {
         if (this.clazz != null)
         setTimeout(() => {this.clazz.element.focus()},0);
+    }
+
+    public blur() : void
+    {
+        if (this.clazz != null)
+        setTimeout(() => {this.clazz.element.blur()},0);
     }
 
     public setUpperCase() : void
@@ -213,8 +224,14 @@ export class FieldInstance implements AfterViewInit
                 }
 
                 let key:string = KeyMapper.map(keydef);
+
                 let mapped:string = this.conf.mapkey(key);
-                if (mapped != null) this.fgroup$["onEvent"](event,this,"key",key);
+
+                if (mapped != null)
+                {
+                    this.fgroup$["onEvent"](event,this,"change");
+                    this.fgroup$["onEvent"](event,this,"key",key);
+                }
             }
         }
 

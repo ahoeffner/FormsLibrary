@@ -34,7 +34,7 @@ export class InstanceControl
         let ref:ComponentRef<any> = this.ctrl.createForm(def.component);
         if (ref == null) return(null);
 
-        let impl:FormImpl = ref.instance["impl"];
+        let impl:FormImpl = ref.instance["_impl_"];
 
         if (modal == null) modal = def.windowdef;
         modal = this.futil.complete(modal,true);

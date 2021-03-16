@@ -1,21 +1,19 @@
 import { BlockImpl } from "./BlockImpl";
-import { BlockBase } from "./BlockBase";
-import { Config } from "../application/Config";
-import { DatabaseUsage } from "../database/DatabaseUsage";
+import { Listener } from "../events/Listener";
 
-export class Block extends BlockBase
+
+export class Block
 {
-    private impl:BlockImpl;
+    private _impl_:BlockImpl;
     // dont rename impl as it is read behind the scenes
 
     constructor()
     {
-        super();
-        this.impl = new BlockImpl(this);
+        this._impl_ = new BlockImpl(this);
     }
 
-    public setDatabaseUsage(usage:DatabaseUsage) : void
+    public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
-        this.impl.setDatabaseUsage(usage);
+        this._impl_.addListener(this,listener,types,keys);
     }
 }

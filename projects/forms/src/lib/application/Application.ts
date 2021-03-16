@@ -17,13 +17,13 @@ import { PopupInstance } from "../popup/PopupInstance";
 export class Application
 {
     private title$:string;
-    private impl:ApplicationImpl;
+    private _impl_:ApplicationImpl;
     // dont rename impl as it is read behind the scenes
 
 
     constructor(private conf:Config, client:HttpClient, builder:Builder)
     {
-        this.impl = new ApplicationImpl(conf,this,client,builder);
+        this._impl_ = new ApplicationImpl(conf,this,client,builder);
     }
 
     public get Title() : string
@@ -34,37 +34,37 @@ export class Application
     public set Title(title:string)
     {
         this.title$ = title;
-        this.impl.setTitle(title);
+        this._impl_.setTitle(title);
     }
 
     public get AppOrFormTitle() : string
     {
-        return(this.impl.getCurrentTitle());
+        return(this._impl_.getCurrentTitle());
     }
 
     public set Menu(menu:Menu)
     {
-        this.impl.setMenu(menu);
+        this._impl_.setMenu(menu);
     }
 
     public get Menu() : Menu
     {
-        return(this.impl.getMenu());
+        return(this._impl_.getMenu());
     }
 
     public newform(form:any, parameters?:Map<string,any>)
     {
-        this.impl.showform(form,true,parameters);
+        this._impl_.showform(form,true,parameters);
     }
 
     public showform(form:any, parameters?:Map<string,any>)
     {
-        this.impl.showform(form,false,parameters);
+        this._impl_.showform(form,false,parameters);
     }
 
     public callform(form:any, parameters?:Map<string,any>)
     {
-        this.impl.callform(form,false,parameters);
+        this._impl_.callform(form,false,parameters);
     }
 
     public get colors() : Theme
@@ -75,22 +75,22 @@ export class Application
     public closeform(destroy?:boolean) : void
     {
         if (destroy == undefined) destroy = false;
-        let form:FormImpl = this.impl.appstate.form;
+        let form:FormImpl = this._impl_.appstate.form;
         if (form != null) form.close(destroy);
     }
 
     public connect() : void
     {
-        if (!this.impl.appstate.connected)
+        if (!this._impl_.appstate.connected)
         {
             let pinst:PopupInstance = new PopupInstance();
-            pinst.display(this.impl,LoginForm);
+            pinst.display(this._impl_,LoginForm);
         }
     }
 
     public disconnect() : void
     {
-        if (this.impl.appstate.connected)
-            this.impl.appstate.connection.disconnect();
+        if (this._impl_.appstate.connected)
+            this._impl_.appstate.connection.disconnect();
     }
 }

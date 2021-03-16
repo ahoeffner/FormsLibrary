@@ -25,7 +25,7 @@ export class FormArea implements AfterViewInit
 
 	public ngAfterViewInit(): void
 	{
-		let impl:ApplicationImpl = this.app["impl"];
+		let impl:ApplicationImpl = this.app["_impl_"];
 		impl.setFormArea(this);
 	}
 }
