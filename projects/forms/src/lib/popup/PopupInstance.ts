@@ -1,7 +1,5 @@
 import { Popup } from './Popup';
-import { Builder } from '../utils/Builder';
 import { PopupWindow } from './PopupWindow';
-import { Application } from '../application/Application';
 import { ComponentRef, EmbeddedViewRef } from "@angular/core";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 
@@ -9,7 +7,7 @@ export class PopupInstance
 {
     public popupref:ComponentRef<Popup>;
 
-    public display(app:ApplicationImpl, popup:any)
+    public display(app:ApplicationImpl, popup:any) : Popup
     {
         this.popupref = app.builder.createComponent(popup);
         this.popupref.instance.setApp(app);
@@ -25,5 +23,6 @@ export class PopupInstance
         app.builder.getAppRef().attachView(winref.hostView);
 
         document.body.appendChild(element);
+        return(this.popupref.instance);
     }
 }

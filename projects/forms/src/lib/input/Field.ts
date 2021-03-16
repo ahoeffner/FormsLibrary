@@ -195,7 +195,7 @@ export class Field
     }
 
 
-    public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
+    public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;

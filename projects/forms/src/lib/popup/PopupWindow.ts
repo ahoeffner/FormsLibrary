@@ -125,7 +125,7 @@ changeDetection: ChangeDetectionStrategy.OnPush
 export class PopupWindow implements onEventListener, AfterViewInit
 {
 	private popup:Popup;
-	private title:string;
+	private title$:string;
     private pinst:PopupInstance;
     private app:ApplicationImpl;
 	private element:HTMLElement;
@@ -184,7 +184,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
 
 	public get btncolor() : string
 	{
-		return(this.conf.colors.menuoption);
+		return(this.conf.colors.buttontext);
 	}
 
 
@@ -194,13 +194,19 @@ export class PopupWindow implements onEventListener, AfterViewInit
     }
 
 
+	public set title(title:string)
+	{
+		this.title$ = title;
+	}
+
+
     public setPopup(pinst:PopupInstance) : void
     {
         this.pinst = pinst;
 		this.popup = pinst.popupref.instance;
 
 		this.popup.setWin(this);
-		this.title = this.popup.title;
+		this.title$ = this.popup.title;
 
 		if (this.popup.hasOwnProperty("top")) this.top = this.popup.top;
 		if (this.popup.hasOwnProperty("left")) this.left = this.popup.left;
@@ -259,7 +265,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
 		this.minh = 150;
 		this.minw = 300;
 
-		this.titlebar.innerHTML = this.title;
+		this.titlebar.innerHTML = this.title$;
 		this.change.detectChanges();
 
 		this.posy = this.window.offsetTop;

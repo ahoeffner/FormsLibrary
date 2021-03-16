@@ -377,7 +377,7 @@ export class FormList implements AfterViewInit
 		{
 			width: 16px;
 			height: 21px;
-			font-size: 16px;
+			font-size: 15px;
 			cursor: pointer;
 			white-space: nowrap;
 			display: inline-block;
@@ -439,7 +439,7 @@ export class FormList implements AfterViewInit
 			width: 16px;
 			height: 22px;
 			cursor: pointer;
-			font-size: 16px;
+			font-size: 15px;
 			margin-left: 8px;
 			font-style: italic;
 			white-space: nowrap;

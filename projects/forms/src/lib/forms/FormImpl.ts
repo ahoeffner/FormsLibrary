@@ -114,78 +114,6 @@ export class FormImpl implements EventListener
     }
 
 
-    public newForm(container:Container) : void
-    {
-        // Create blocks
-        let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
-        blockdef.forEach((bdef) => {this.createBlock(bdef)});
-
-        // DatabaseUsage for this form
-        let fusage:DatabaseUsage = DatabaseDefinitions.getFormUsage(this.name);
-
-        // DatabaseUsage for DATABASE anotated form properties
-        let propusage:Map<string,DatabaseUsage> = DatabaseDefinitions.getBlockUsage(this.name);
-
-        // Merge default, block-spec and prop usage. Form usage overides
-        blockdef.forEach((bdef) =>
-        {
-            let usage:DatabaseUsage = propusage.get(bdef.prop);
-            this.setBlockUsage(fusage,usage,bdef);
-        });
-
-        container.finish();
-        container.getBlocks().forEach((cb) =>
-        {
-            let block:BlockImpl = this.blocks.get(cb.name);
-
-            if (block == null)
-            {
-                window.alert("Form has fields bound to "+cb.name+" that doesn't exist");
-                return;
-            }
-
-            block["_impl_"].config = this.app.conf;
-
-            cb.records.forEach((rec) =>
-            {block["_impl_"].addRecord(new Record(rec.row,rec.fields,rec.index))});
-
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block["_impl_"].clazz);
-            cb.fields.forEach((inst) =>
-            {
-                let def:FieldDefinition = fielddef.get(inst.name);
-
-                if (def != null) inst.type = def.type;
-                else window.alert("Field "+inst.name+" has no correponding definition");
-            });
-        });
-
-        this.blocks.forEach((block) =>
-        {
-            let rec:Record = block["_impl_"].getRecord(0);
-
-            if (rec != null)
-            {
-                rec.enable(true);
-                rec.current = true;
-
-                let columns:string[] = [];
-                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block["_impl_"].clazz);
-                fielddef.forEach((col) => {columns.push(col.name)});
-                block["_impl_"].table = new TableData(columns);
-
-                block["_impl_"].table.append(["2344","Alex Høffner","Alex","Høffner","Røsevangen 26"]);
-                block["_impl_"].table.append(["2345","Henrik Olesen","Henrik","Olesen","Bringebakken 52"]);
-
-                block["_impl_"].display(0);
-            }
-        });
-
-        // All fields on form
-        this.fields$ = container.fields;
-        this.hash();
-    }
-
-
     public setMenu(menu:Menu) : void
     {
         this.app.deletemenu(this.menu$);
@@ -272,6 +200,75 @@ export class FormImpl implements EventListener
     public getDropDownMenu() : ComponentRef<DropDownMenu>
     {
         return(this.ddmenu);
+    }
+
+
+    public newForm(container:Container) : void
+    {
+        // Create blocks
+        let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
+        blockdef.forEach((bdef) => {this.createBlock(bdef)});
+
+        // DatabaseUsage for this form
+        let fusage:DatabaseUsage = DatabaseDefinitions.getFormUsage(this.name);
+
+        // DatabaseUsage for DATABASE anotated form properties
+        let propusage:Map<string,DatabaseUsage> = DatabaseDefinitions.getBlockUsage(this.name);
+
+        // Merge default, block-spec and prop usage. Form usage overides
+        blockdef.forEach((bdef) =>
+        {
+            let usage:DatabaseUsage = propusage.get(bdef.prop);
+            this.setBlockUsage(fusage,usage,bdef);
+        });
+
+        container.finish();
+        container.getBlocks().forEach((cb) =>
+        {
+            let block:BlockImpl = this.blocks.get(cb.name);
+
+            if (block == null)
+            {
+                window.alert("Form has fields bound to "+cb.name+" that doesn't exist");
+                return;
+            }
+
+            block["_impl_"].config = this.app.conf;
+
+            cb.records.forEach((rec) =>
+            {block["_impl_"].addRecord(new Record(rec.row,rec.fields,rec.index))});
+
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block["_impl_"].clazz);
+            cb.fields.forEach((inst) =>
+            {
+                let def:FieldDefinition = fielddef.get(inst.name);
+
+                if (def != null) inst.type = def.type;
+                else window.alert("Field "+inst.name+" has no correponding definition");
+            });
+        });
+
+        this.blocks.forEach((block) =>
+        {
+            let rec:Record = block["_impl_"].getRecord(0);
+
+            if (rec != null)
+            {
+                rec.enable(true);
+                rec.current = true;
+
+                let columns:string[] = [];
+                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block["_impl_"].clazz);
+                fielddef.forEach((col) => {columns.push(col.name)});
+
+                block["_impl_"].table = new TableData(null,block["_impl_"].getDatabaseUsage(),columns);
+                block["_impl_"].display(0);
+            }
+        });
+
+        // All fields on form
+        this.fields$ = container.fields;
+        this.hash();
     }
 
 
@@ -540,6 +537,7 @@ export class FormImpl implements EventListener
         this.blocks.set(alias,block);
 
         block["_impl_"].parent = this;
+        block["_impl_"].setApplication(this.app);
     }
 
 
@@ -624,7 +622,7 @@ export class FormImpl implements EventListener
     }
 
 
-    public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
+    public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
     {
         if (this.app == null)
             return;

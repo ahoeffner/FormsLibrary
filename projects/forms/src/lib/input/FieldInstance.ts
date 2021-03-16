@@ -189,7 +189,7 @@ export class FieldInstance implements AfterViewInit
     }
 
 
-    public onEvent(event:any)
+    public async onEvent(event:any)
     {
         if (this.fgroup$ == null)
             return;

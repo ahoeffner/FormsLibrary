@@ -5,11 +5,13 @@ import { TableData } from "./TableData";
 import { KeyMap } from "../keymap/KeyMap";
 import { Listener } from "../events/Listener";
 import { Config } from "../application/Config";
+import { MessageBox } from "../popup/MessageBox";
 import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
 import { InstanceEvents } from "../events/InstanceEvents";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { InstanceListener } from "../events/InstanceListener";
+import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
 export class BlockImpl
@@ -18,6 +20,7 @@ export class BlockImpl
     private keymap:KeyMap;
     private table$:TableData;
     private offset:number = 0;
+    private app:ApplicationImpl;
     private parent$:EventListener;
     private dbusage:DatabaseUsage;
     private records$:Record[] = [];
@@ -81,7 +84,7 @@ export class BlockImpl
     public setValue(row:number, col:string, value:any, change:boolean) : void
     {
         if (this.table$ != null)
-            this.table$.set(+row+this.offset,col,value);
+            this.table$.update(+row+this.offset,col,value);
     }
 
     public addRecord(record:Record)
@@ -93,6 +96,16 @@ export class BlockImpl
     public setDatabaseUsage(usage:DatabaseUsage) : void
     {
         this.dbusage = usage;
+    }
+
+    public getDatabaseUsage() : DatabaseUsage
+    {
+        return(this.dbusage);
+    }
+
+    public setApplication(app:ApplicationImpl) : void
+    {
+        this.app = app;
     }
 
     public async display(start:number)
@@ -172,7 +185,7 @@ export class BlockImpl
         }
     }
 
-    public onEvent(event:any, field:FieldInstance, type:string, key?:string) : void
+    public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
     {
         if (this.keymap == null)
             return;
@@ -190,7 +203,7 @@ export class BlockImpl
             {
                 if (this.table$ != null)
                 {
-                    let fetched:number = this.table$.fetch(1);
+                    let fetched:number = await this.table$.fetch(this.offset,1);
                     if (fetched > 0)
                     {
                         this.display(this.offset+1);

@@ -7,6 +7,7 @@ export interface Theme
     topbar:string;
     disabled:string;
     foldertree:string;
+    buttontext:string;
     menuoption:string;
 }
 
@@ -20,6 +21,7 @@ export class defaultTheme implements Theme
     public topbar:string = "#303f9f";
     public disabled:string = "silver";
     public menuoption:string = "white";
+    public buttontext:string = "white";
     public foldertree:string = "#303f9f";
 }
 
@@ -59,4 +61,5 @@ export class Yellow implements Theme
     public foldertree:string = "grey";
     public disabled:string = "silver";
     public menuoption:string = "black";
+    public buttontext:string = "black";
 }
