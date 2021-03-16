@@ -220,7 +220,10 @@ export class BlockImpl
             {
                 let rec:Record = this.getRecord(+field.row-1);
                 let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+
                 if (inst != null) inst.focus();
+                else rec.fields[0].focus();
+
                 rec.current = true;
             }
         }

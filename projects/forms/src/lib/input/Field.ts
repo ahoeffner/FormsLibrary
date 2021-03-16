@@ -1,5 +1,6 @@
-import { FieldInstance } from "./FieldInstance";
+import { Record } from "../blocks/Record";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { FieldInstance } from "./FieldInstance";
 
 export class Field
 {
@@ -198,14 +199,28 @@ export class Field
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
-        if (type == "ichange" || type == "change") this.copy(field);
+        if (type == "ichange") this.copy(field,true);
+        if (type == "change") this.copy(field,false);
         if (this.block$ != null) this.block$.onEvent(event,field,type,key);
     }
 
 
-    private copy(field:FieldInstance)
+    private copy(field:FieldInstance, wait:boolean)
     {
-        setTimeout(() =>
+        if (wait)
+        {
+            setTimeout(() =>
+            {
+                this.value$ = field.value;
+
+                this.fields$.forEach((inst) =>
+                {if (inst != field) inst.value = this.value$;});
+
+                this.current$.forEach((inst) =>
+                {if (inst != field) inst.value = this.value$;});
+            },0);
+        }
+        else
         {
             this.value$ = field.value;
 
@@ -214,7 +229,6 @@ export class Field
 
             this.current$.forEach((inst) =>
             {if (inst != field) inst.value = this.value$;});
-
-        },0);
+        }
     }
 }
