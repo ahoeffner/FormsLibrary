@@ -10,6 +10,7 @@ import { ComponentRef } from "@angular/core";
 import { InstanceID } from "../forms/InstanceID";
 import { HttpClient } from "@angular/common/http";
 import { MenuFactory } from "../menu/MenuFactory";
+import { Key, KeyMapper } from "../keymap/KeyMap";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FormInstance } from '../forms/FormInstance';
@@ -17,6 +18,7 @@ import { FormsControl } from "../forms/FormsControl";
 import { ApplicationState } from "./ApplicationState";
 import { WindowOptions } from "../forms/WindowOptions";
 import { FormDefinition } from "../forms/FormsDefinition";
+import { WindowListener } from "../events/WindowListener";
 import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
 import { ContainerControl } from "../container/ContainerControl";
@@ -59,6 +61,8 @@ export class ApplicationImpl
 
         if (this.config.hasOwnProperty("theme"))
             this.conf.setTheme(this.config["theme"]);
+
+        WindowListener.add("app",this,"keydown");
     }
 
 
@@ -199,11 +203,15 @@ export class ApplicationImpl
 
         this.showTitle(impl.title);
         if (path) this.showPath(impl.name,impl.path);
+
+        impl.onShow();
     }
 
 
     private postform(impl:FormImpl, destroy:boolean) : void
     {
+        impl.onHide();
+
         let funcs:string[] = FormDefinitions.getOnHide(impl.name);
         for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
 
@@ -248,6 +256,21 @@ export class ApplicationImpl
             // let form handle the showform
             curr.callform(form,destroy,parameters);
         }
+    }
+
+
+    public getCurrentForm() : FormImpl
+    {
+        if (!this.ready)
+            return(null);
+
+        if (this.state.form == null)
+            return(null);
+
+        if (!this.state.form.validate())
+            return(null);
+
+        return(this.state.form.getChain());
     }
 
 
@@ -406,5 +429,23 @@ export class ApplicationImpl
             urlparams.forEach((value,key) => {params.set(key,value)});
             this.showform(name,false,params);
         }
+    }
+
+
+    public async onEvent(event:any)
+    {
+        let keydef:Key =
+        {
+            code  : event.keyCode,
+            alt   : event.altKey,
+            ctrl  : event.ctrlKey,
+            meta  : event.metaKey,
+            shift : event.shiftKey
+        }
+
+        let key:string = KeyMapper.map(keydef);
+        if (key == this.conf.keymap.insert) console.log("insert");
+        if (key == this.conf.keymap.enterquery) console.log("enterquery");
+        if (key == this.conf.keymap.executequery) console.log("executequery");
     }
 }

@@ -294,6 +294,8 @@ export class FormImpl implements EventListener
         let name:string = utils.getName(form);
         let id:InstanceID = this.parent.stack.get(name);
 
+        this.onHide();
+
         // newform
         if (destroy)
             this.app.closeform(this,destroy);
@@ -329,6 +331,8 @@ export class FormImpl implements EventListener
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
         let id:InstanceID = this.stack.get(name);
+
+        this.onHide();
 
         // newform
         if (id != null && destroy)
@@ -407,10 +411,7 @@ export class FormImpl implements EventListener
         this.next = null;
 
         if (this.parent != null)
-        {
-            console.log("return to "+this.parent.name);
             this.parent.onClose(this,this.cancelled);
-        }
 
         if (this.cancelled)
         {
@@ -429,6 +430,9 @@ export class FormImpl implements EventListener
                 this.app.showTitle(this.root.title);
             }
 
+            if (!menu)
+                this.root.onShow();
+
             return;
         }
 
@@ -436,6 +440,7 @@ export class FormImpl implements EventListener
         {
             //Normal behaivior
             this.app.closeform(this,destroy);
+            if (!root) this.parent.onShow();
             return;
         }
 
@@ -443,6 +448,7 @@ export class FormImpl implements EventListener
         {
             //Root window
             this.app.closeform(this,destroy);
+            if (!root) this.parent.onShow();
             this.win.closeWindow();
             return;
         }
@@ -459,10 +465,10 @@ export class FormImpl implements EventListener
             //Parent is modal
             let inst:FormInstance = this.app.getInstance(pinst);
             this.win.newForm(inst);
-            return;
         }
+        else this.win.closeWindow();
 
-        this.win.closeWindow();
+        this.parent.onShow();
     }
 
 
@@ -622,6 +628,18 @@ export class FormImpl implements EventListener
     public validate() : boolean
     {
         return(true);
+    }
+
+
+    public onShow() : void
+    {
+        console.log("show "+this.name);
+    }
+
+
+    public onHide() : void
+    {
+        console.log("hide "+this.name);
     }
 
 

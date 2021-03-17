@@ -75,7 +75,7 @@ export class Application
     public closeform(destroy?:boolean) : void
     {
         if (destroy == undefined) destroy = false;
-        let form:FormImpl = this._impl_.appstate.form;
+        let form:FormImpl = this._impl_.getCurrentForm();
         if (form != null) form.close(destroy);
     }
 
