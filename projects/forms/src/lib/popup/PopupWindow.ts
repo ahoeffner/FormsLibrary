@@ -1,8 +1,8 @@
 import { Popup } from './Popup';
 import { Config } from '../application/Config';
 import { PopupInstance } from './PopupInstance';
-import { Listener, onEventListener } from "../utils/Listener";
 import { ApplicationImpl } from '../application/ApplicationImpl';
+import { WindowListener, onEventListener } from "../events/WindowListener";
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
 
 
@@ -232,9 +232,9 @@ export class PopupWindow implements onEventListener, AfterViewInit
 	{
 		if (this.winref == null) return;
 
-		Listener.remove("modal","mouseup");
-		Listener.remove("modal","mousemove");
-		Listener.remove("modal","mousedown");
+		WindowListener.remove("modal","mouseup");
+		WindowListener.remove("modal","mousemove");
+		WindowListener.remove("modal","mousedown");
 
 		let formelem:Element = this.content.firstElementChild;
 		if (formelem != null) this.content.removeChild(formelem);
@@ -302,9 +302,9 @@ export class PopupWindow implements onEventListener, AfterViewInit
 
 		this.display();
 
-		Listener.add("modal",this,"mouseup");
-		Listener.add("modal",this,"mousemove");
-		Listener.add("modal",this,"mousedown");
+		WindowListener.add("modal",this,"mouseup");
+		WindowListener.add("modal",this,"mousemove");
+		WindowListener.add("modal",this,"mousedown");
 
 		this.topbar.addEventListener("mousedown", (event) => {this.startmove(event);});
 	}

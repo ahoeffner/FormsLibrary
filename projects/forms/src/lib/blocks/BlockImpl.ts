@@ -203,7 +203,9 @@ export class BlockImpl
             {
                 if (this.table$ != null)
                 {
-                    let fetched:number = await this.table$.fetch(this.offset,1);
+                    let offset:number = +this.offset + +field.row;
+                    let fetched:number = await this.table$.fetch(offset,1);
+
                     if (fetched > 0)
                     {
                         this.display(this.offset+1);
@@ -247,7 +249,7 @@ export class BlockImpl
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
         {
-            ilsnr.inst[ilsnr.lsnr.name](field,type);
+            ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
         });
 
         if (type == "key")
@@ -255,7 +257,7 @@ export class BlockImpl
             lsnrs = this.listener.keys.get(key);
             if (lsnrs != null) lsnrs.forEach((ilsnr) =>
             {
-                ilsnr.inst[ilsnr.lsnr.name](field,type,key);
+                ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
             });
         }
     }

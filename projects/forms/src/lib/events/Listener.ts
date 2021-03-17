@@ -1,6 +1,4 @@
-import { FieldInstance } from "../input/FieldInstance";
-
 export interface Listener
 {
-    (field:FieldInstance, type:string, key?:string) : void;
+    (field:string, row:number, type:string, value:any, key?:string) : void;
 }

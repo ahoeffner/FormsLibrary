@@ -78,6 +78,10 @@ export class TableData
         {
             let row:Row = new Row(++this.scn,this);
             this.data.push(row);
+            row = new Row(++this.scn,this);
+            this.data.push(row);
+            row = new Row(++this.scn,this);
+            this.data.push(row);
         }
     }
 
@@ -163,10 +167,10 @@ export class TableData
     {
         if (this.data.length <= +offset + rows && this.table != null)
         {
-            console.log("has "+this.data.length+" wants "+(+offset + rows));
+            //fetch
         }
 
-        let avail:number = this.data.length - offset;
+        let avail:number = this.data.length - offset - 1;
         if (avail < 0) avail = 0;
 
         return(avail);
@@ -180,11 +184,7 @@ export class TableData
         if (end > this.data.length) end = this.data.length;
 
         for(let i = start; i < end; i++)
-        {
-            console.log("row "+i);
-            this.data[i].values.forEach((val) => {console.log(val)});
             values.push(this.data[i].values);
-        }
 
         return(values);
     }

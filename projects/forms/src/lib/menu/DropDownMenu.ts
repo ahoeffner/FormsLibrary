@@ -6,8 +6,8 @@ import { Config } from '../application/Config';
 import { Protected } from '../utils/Protected';
 import { MenuInterface } from './MenuInterface';
 import { Application } from '../application/Application';
-import { Listener, onEventListener } from '../utils/Listener';
 import { ApplicationImpl } from '../application/ApplicationImpl';
+import { WindowListener, onEventListener } from '../events/WindowListener';
 import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 @Component({
@@ -193,7 +193,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (!event.target.matches('.ddmenu-entry'))
         {
             this.closeall();
-            Listener.remove(this.instance,"click");
+            WindowListener.remove(this.instance,"click");
         }
     }
 
@@ -234,7 +234,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         if (container.classList.contains("ddmenu-show"))
         {
             this.closeall(container);
-            Listener.add(this.instance,this,"click");
+            WindowListener.add(this.instance,this,"click");
         }
         else
         {

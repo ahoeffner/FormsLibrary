@@ -407,7 +407,10 @@ export class FormImpl implements EventListener
         this.next = null;
 
         if (this.parent != null)
+        {
+            console.log("return to "+this.parent.name);
             this.parent.onClose(this,this.cancelled);
+        }
 
         if (this.cancelled)
         {
@@ -415,7 +418,7 @@ export class FormImpl implements EventListener
 
             if (menu)
             {
-                //chain, started from menu, was cancelled
+                //chain, started from "menu", was cancelled
                 this.app.closeform(this,true);
             }
             else

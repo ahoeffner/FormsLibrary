@@ -199,36 +199,19 @@ export class Field
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
-        if (type == "ichange") this.copy(field,true);
-        if (type == "change") this.copy(field,false);
+        if (type == "ichange" || type == "change") this.copy(field);
         if (this.block$ != null) this.block$.onEvent(event,field,type,key);
     }
 
 
-    private copy(field:FieldInstance, wait:boolean)
+    private copy(field:FieldInstance)
     {
-        if (wait)
-        {
-            setTimeout(() =>
-            {
-                this.value$ = field.value;
+        this.value$ = field.value;
 
-                this.fields$.forEach((inst) =>
-                {if (inst != field) inst.value = this.value$;});
+        this.fields$.forEach((inst) =>
+        {if (inst != field) inst.value = this.value$;});
 
-                this.current$.forEach((inst) =>
-                {if (inst != field) inst.value = this.value$;});
-            },0);
-        }
-        else
-        {
-            this.value$ = field.value;
-
-            this.fields$.forEach((inst) =>
-            {if (inst != field) inst.value = this.value$;});
-
-            this.current$.forEach((inst) =>
-            {if (inst != field) inst.value = this.value$;});
-        }
+        this.current$.forEach((inst) =>
+        {if (inst != field) inst.value = this.value$;});
     }
 }

@@ -249,7 +249,7 @@ export class FieldInstance implements AfterViewInit
                 this.fgroup$["onEvent"](event,this,"fchange");
             }
 
-            this.fgroup$.onEvent(event,this,"ichange");
+            setTimeout(() => {this.fgroup$.onEvent(event,this,"ichange");},0);
         }
     }
 

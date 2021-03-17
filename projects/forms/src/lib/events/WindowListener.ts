@@ -4,7 +4,7 @@ export interface onEventListener
 }
 
 
-export class Listener
+export class WindowListener
 {
     private static events:Map<string,Map<string,onEventListener>> =
         new Map<string,Map<string,onEventListener>>();
@@ -12,14 +12,14 @@ export class Listener
 
     public static add(id:string, clazz:onEventListener, event:string) : void
     {
-        let events:Map<string,onEventListener> = Listener.events.get(event);
+        let events:Map<string,onEventListener> = WindowListener.events.get(event);
 
         if (events == null)
         {
             events = new Map<string,onEventListener>();
-            Listener.events.set(event,events);
+            WindowListener.events.set(event,events);
 
-            let listener:Listener = new Listener();
+            let listener:WindowListener = new WindowListener();
             listener.start(event);
         }
 
@@ -29,7 +29,7 @@ export class Listener
 
     public static remove(id:string, event:string) : void
     {
-        let events:Map<string,onEventListener> = Listener.events.get(event);
+        let events:Map<string,onEventListener> = WindowListener.events.get(event);
         events.delete(id);
     }
 
@@ -44,7 +44,7 @@ export class Listener
 
     private onEvent(event:any) : void
     {
-        let events:Map<string,onEventListener> = Listener.events.get(event.type);
+        let events:Map<string,onEventListener> = WindowListener.events.get(event.type);
         events.forEach((clazz) => {clazz.onEvent(event)});
     }
 }
