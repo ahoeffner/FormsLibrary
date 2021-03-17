@@ -633,13 +633,11 @@ export class FormImpl implements EventListener
 
     public onShow() : void
     {
-        console.log("show "+this.name);
     }
 
 
     public onHide() : void
     {
-        console.log("hide "+this.name);
     }
 
 

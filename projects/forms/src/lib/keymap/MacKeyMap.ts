@@ -10,8 +10,8 @@ export class MacKeyMap implements KeyMap
     enter:string = KeyMapper.map({code: KeyCodes.enter});
     escape:string = KeyMapper.map({code: KeyCodes.escape});
 
-    insert:string;
-    delete:string;
+    insert:string = KeyMapper.map({code: 73, ctrl: true});
+    delete:string = KeyMapper.map({code: 68, ctrl: true});
     dublicate:string;
 
     commit:string = KeyMapper.map({code: KeyCodes.enter, ctrl: true});
@@ -30,6 +30,6 @@ export class MacKeyMap implements KeyMap
     clearform:string;
     clearblock:string;
 
-    enterquery:string;
-    executequery:string;
+    enterquery:string = KeyMapper.map({code: 69, meta: true});
+    executequery:string = KeyMapper.map({code: 69, shift: true, meta: true});
 }
