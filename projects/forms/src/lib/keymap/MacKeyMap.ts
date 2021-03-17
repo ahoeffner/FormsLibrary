@@ -3,22 +3,21 @@ import { KeyMap, KeyMapper } from "./KeyMap";
 
 export class MacKeyMap implements KeyMap
 {
-    undoform:string = KeyMapper.map({code: KeyCodes.escape, alt: true, shift:true, ctrl:true});
-    undoblock:string = KeyMapper.map({code: KeyCodes.escape, shift:true, ctrl:true});
-    undorecord:string = KeyMapper.map({code: KeyCodes.escape, shift:true, ctrl:true});
-
     enter:string = KeyMapper.map({code: KeyCodes.enter});
     escape:string = KeyMapper.map({code: KeyCodes.escape});
 
+    clearblock:string = KeyMapper.map({code: KeyCodes.escape, ctrl: true});;
+    clearform:string = KeyMapper.map({code: KeyCodes.escape, shift: true, ctrl: true});
+
     insert:string = KeyMapper.map({code: 73, ctrl: true});
     delete:string = KeyMapper.map({code: 68, ctrl: true});
-    dublicate:string;
+    dublicate:string = KeyMapper.map({code: 86, ctrl: true});
 
     commit:string = KeyMapper.map({code: KeyCodes.enter, ctrl: true});
     rollback:string = KeyMapper.map({code: KeyCodes.escape, ctrl: true});
 
-    connect:string;
-    disconnect:string;
+    connect:string = KeyMapper.map({code: 67, ctrl: true});
+    disconnect:string = KeyMapper.map({code: 67, shift:true, ctrl: true});
 
     nextfield:string = KeyMapper.map({code: KeyCodes.tab});
     prevfield:string = KeyMapper.map({code: KeyCodes.tab, shift: true});
@@ -27,9 +26,6 @@ export class MacKeyMap implements KeyMap
     nextblock:string = KeyMapper.map({code: KeyCodes.down, shift: true});
     prevblock:string = KeyMapper.map({code: KeyCodes.up, shift: true});
 
-    clearform:string;
-    clearblock:string;
-
-    enterquery:string = KeyMapper.map({code: 69, meta: true});
-    executequery:string = KeyMapper.map({code: 69, shift: true, meta: true});
+    enterquery:string = KeyMapper.map({code: 81, ctrl: true});
+    executequery:string = KeyMapper.map({code: 81, shift: true, ctrl: true});
 }

@@ -9,10 +9,6 @@ export interface Key
 
 export interface KeyMap
 {
-    undoform:string;
-    undoblock:string;
-    undorecord:string;
-
     enter:string;
     escape:string;
 
