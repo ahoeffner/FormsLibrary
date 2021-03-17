@@ -9,17 +9,12 @@ export abstract class MenuHandler
     private static _id:number = 0;
 
     private guid$:number;
-    private ready$:boolean = false;
-    private menu$:MenuInterface = null;
+    private __menu__:MenuInterface = null;
+    // dont rename __menu__ as it is set behind the scenes
 
     constructor()
     {
         this.guid$ = MenuHandler._id++;
-        Reflect.defineProperty(this,"_setProtected", {value: (intf:MenuInterface) =>
-        {
-            this.menu$ = intf;
-            this.ready$ = true;
-        }});
     }
 
     public get guid() : number
@@ -29,30 +24,29 @@ export abstract class MenuHandler
 
     public get ready() : boolean
     {
-        return(this.ready$);
+        return(this.__menu__ != null);
     }
-
 
     public get app() : Application
     {
-        return(this.menu$.app);
+        return(this.__menu__.app);
     }
 
 
     public enable(menu?:string) : void
     {
-        this.menu$.enable(menu);
+        this.__menu__.enable(menu);
     }
 
 
     public disable(menu?:string) : void
     {
-        this.menu$.disable(menu);
+        this.__menu__.disable(menu);
     }
 
     public get connected() : boolean
     {
-        return(this.menu$.isConnected());
+        return(this.__menu__.isConnected());
     }
 
 

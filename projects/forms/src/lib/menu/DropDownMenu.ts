@@ -3,7 +3,6 @@ import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
 import { Config } from '../application/Config';
-import { Protected } from '../utils/Protected';
 import { MenuInterface } from './MenuInterface';
 import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
@@ -155,7 +154,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
 
         this.menu = menu;
         let intf:MenuInterface = new MenuInterface(this);
-        Protected.set(menu.getHandler(),intf);
+        menu.getHandler()["__menu__"] = intf;
 
         this.menu = menu;
         this.html.innerHTML = this.menuhtml();
