@@ -9,7 +9,9 @@ export class MacKeyMap implements KeyMap
     clearblock:string = KeyMapper.map({code: KeyCodes.escape, ctrl: true});;
     clearform:string = KeyMapper.map({code: KeyCodes.escape, shift: true, ctrl: true});
 
-    insert:string = KeyMapper.map({code: 73, ctrl: true});
+    insertafter:string = KeyMapper.map({code: 73, ctrl: true});
+    insertbefore:string = KeyMapper.map({code: 73, shift:true, ctrl: true});
+
     delete:string = KeyMapper.map({code: 68, ctrl: true});
     dublicate:string = KeyMapper.map({code: 86, ctrl: true});
 

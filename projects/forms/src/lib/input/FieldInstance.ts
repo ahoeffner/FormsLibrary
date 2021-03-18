@@ -224,12 +224,22 @@ export class FieldInstance implements AfterViewInit
                 }
 
                 let key:string = KeyMapper.map(keydef);
-
                 let mapped:string = this.conf.mapkey(key);
 
                 if (mapped != null)
                 {
                     this.fgroup$["onEvent"](event,this,"change");
+
+                    // handled by application
+                    if
+                    (
+                        key == this.conf.keymap.insertafter     ||
+                        key == this.conf.keymap.insertbefore    ||
+                        key == this.conf.keymap.enterquery      ||
+                        key == this.conf.keymap.executequery
+                    )
+                    return;
+
                     this.fgroup$["onEvent"](event,this,"key",key);
                 }
             }

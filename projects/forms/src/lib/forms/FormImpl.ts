@@ -38,16 +38,17 @@ export class FormImpl implements EventListener
     private win:ModalWindow;
     private inst:InstanceID;
     private parent:FormImpl;
+    private block$:BlockImpl;
     private app:ApplicationImpl;
     private callbackfunc:CallBack;
+    private blocks:BlockImpl[] = [];
     private cancelled:boolean = false;
     private initiated$:boolean = false;
-    private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
     private parameters:Map<string,any> = new Map<string,any>();
-    private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
+    private blkindex:Map<string,BlockImpl> = new Map<string,BlockImpl>();
 
 
     constructor(private form$:Form)
@@ -97,6 +98,20 @@ export class FormImpl implements EventListener
     public get title() : string
     {
         return(this.title$);
+    }
+
+
+    public get block() : BlockImpl
+    {
+        return(this.block$);
+    }
+
+
+    public set block(block:BlockImpl)
+    {
+        if (this.block != null && this.block != block)
+            if (!this.block.validate()) return;
+        this.block$ = block;
     }
 
 
@@ -225,7 +240,7 @@ export class FormImpl implements EventListener
         container.finish();
         container.getBlocks().forEach((cb) =>
         {
-            let block:BlockImpl = this.blocks.get(cb.name);
+            let block:BlockImpl = this.blkindex.get(cb.name);
 
             if (block == null)
             {
@@ -233,12 +248,12 @@ export class FormImpl implements EventListener
                 return;
             }
 
-            block["_impl_"].config = this.app.conf;
+            block.config = this.app.conf;
 
             cb.records.forEach((rec) =>
-            {block["_impl_"].addRecord(new Record(rec.row,rec.fields,rec.index))});
+            {block.addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block["_impl_"].clazz);
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
             cb.fields.forEach((inst) =>
             {
                 let def:FieldDefinition = fielddef.get(inst.name);
@@ -248,9 +263,9 @@ export class FormImpl implements EventListener
             });
         });
 
-        this.blocks.forEach((block) =>
+        this.blkindex.forEach((block) =>
         {
-            let rec:Record = block["_impl_"].getRecord(0);
+            let rec:Record = block.getRecord(0);
 
             if (rec != null)
             {
@@ -258,17 +273,17 @@ export class FormImpl implements EventListener
                 rec.current = true;
 
                 let columns:string[] = [];
-                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block["_impl_"].clazz);
+                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
 
-                block["_impl_"].table = new TableData(null,block["_impl_"].getDatabaseUsage(),columns);
-                block["_impl_"].display(0);
+                block.table = new TableData(null,block.getDatabaseUsage(),columns);
+                block.display(0);
             }
         });
 
         // All fields on form
         this.fields$ = container.fields;
-        this.hash();
+        this.rehash();
     }
 
 
@@ -501,13 +516,15 @@ export class FormImpl implements EventListener
 
     private createBlock(blockdef:BlockDefinition) : void
     {
-        let block:BlockImpl = this.blocks.get(blockdef.alias);
+        let impl:BlockImpl = this.blkindex.get(blockdef.alias);
 
-        if (block != null)
+        if (impl != null)
         {
             window.alert("Block alias "+blockdef.alias+" defined twice");
             return;
         }
+
+        let block:Block = null;
 
         if (blockdef.prop != null)
         {
@@ -525,7 +542,10 @@ export class FormImpl implements EventListener
                 block = new blockdef.component();
         }
 
-        if (block == null)
+        if (block != null)
+            impl = block["_impl_"];
+
+        if (impl == null)
         {
             window.alert(this.name+" cannot create instance of "+blockdef.alias);
             return;
@@ -541,21 +561,26 @@ export class FormImpl implements EventListener
 
         alias = alias.toLowerCase();
 
-        block.name = alias;
+        impl.name = alias;
         blockdef.alias = alias;
-        this.blocks.set(alias,block);
+        this.blocks.push(impl);
+        this.blkindex.set(alias,impl);
 
-        block["_impl_"].parent = this;
-        block["_impl_"].setApplication(this.app);
+        impl.parent = this;
+        impl.setApplication(this.app);
     }
 
 
     private setBlockUsage(formusage:DatabaseUsage, propusage:DatabaseUsage, blockdef:BlockDefinition) : void
     {
-        let block:BlockImpl = this.blocks.get(blockdef.alias);
-        let bname:string = block.constructor.name;
+        let block:BlockImpl = this.blkindex.get(blockdef.alias);
+        let bname:string = block.clazz;
 
-        if (!(block instanceof Block)) return;
+        if (!(block instanceof BlockImpl))
+        {
+            window.alert(bname+" is not a block");
+            return;
+        }
 
         let usage1:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
         let usage2:DatabaseUsage = blockdef.databaseopts;
@@ -573,13 +598,7 @@ export class FormImpl implements EventListener
         usage5 = DBUsage.override(usage4,usage5);
         usage5 = DBUsage.complete(usage5);
 
-        block["_impl_"].setDatabaseUsage(usage5);
-    }
-
-
-    public hash() : void
-    {
-        this.rehash();
+        block.setDatabaseUsage(usage5);
     }
 
 
@@ -622,12 +641,14 @@ export class FormImpl implements EventListener
         });
 
         this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
+        this.fields$[0].focus();
     }
 
 
     public validate() : boolean
     {
-        return(true);
+        if (this.block == null) return(true);
+        else return(this.block.validate());
     }
 
 
@@ -641,6 +662,12 @@ export class FormImpl implements EventListener
     }
 
 
+    public sendkey(event:any,key:string) : void
+    {
+        this.block.sendkey(event,key);
+    }
+
+
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
     {
         if (this.app == null)
@@ -649,17 +676,7 @@ export class FormImpl implements EventListener
         let keymap:KeyMap = this.app.conf.keymap;
 
         if (type == "focus")
-        {
-            if (this.field != null)
-            {
-                if (this.field.row != field.row)
-                {
-                    this.validate();
-                }
-            }
-
-            this.field = field;
-        }
+            this.block = this.blkindex.get(field.block);
 
         if (type == "key" && key == keymap.prevfield)
         {
@@ -676,6 +693,7 @@ export class FormImpl implements EventListener
             }
 
             if (!prev) event.preventDefault();
+            return;
         }
 
         if (type == "key" && key == keymap.nextfield)
@@ -693,6 +711,7 @@ export class FormImpl implements EventListener
             }
 
             if (!next) event.preventDefault();
+            return;
         }
     }
  }

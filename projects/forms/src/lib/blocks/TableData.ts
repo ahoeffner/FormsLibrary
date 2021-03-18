@@ -78,10 +78,6 @@ export class TableData
         {
             let row:Row = new Row(++this.scn,this);
             this.data.push(row);
-            row = new Row(++this.scn,this);
-            this.data.push(row);
-            row = new Row(++this.scn,this);
-            this.data.push(row);
         }
     }
 
@@ -92,20 +88,22 @@ export class TableData
     }
 
 
-    public insert(before:number) : boolean
+    public insert(row:number) : boolean
     {
+        console.log("insert "+this.usage.insert);
+        
         if (!this.usage.insert)
             return(false);
 
         let data:Row[] = [];
 
-        if (before > 0)
-            data = this.data.slice(0,before);
+        if (row > 0)
+            data = this.data.slice(0,row);
 
-        data[before] = new Row(++this.scn,this);
+        data[row] = new Row(++this.scn,this);
 
-        if (before < this.data.length)
-            data = data.concat(this.data.slice(before,this.data.length));
+        if (row < this.data.length)
+            data = data.concat(this.data.slice(row,this.data.length));
 
         this.data = data;
 

@@ -12,9 +12,10 @@ export interface KeyMap
     enter:string;
     escape:string;
 
-    insert:string;
     delete:string;
     dublicate:string;
+    insertafter:string;
+    insertbefore:string;
 
     commit:string;
     rollback:string;

@@ -444,8 +444,17 @@ export class ApplicationImpl
         }
 
         let key:string = KeyMapper.map(keydef);
-        if (key == this.conf.keymap.insert) console.log("insert");
-        if (key == this.conf.keymap.enterquery) console.log("enterquery");
-        if (key == this.conf.keymap.executequery) console.log("executequery");
+
+        if
+        (
+            key == this.conf.keymap.insertafter     ||
+            key == this.conf.keymap.insertbefore    ||
+            key == this.conf.keymap.enterquery      ||
+            key == this.conf.keymap.executequery
+        )
+        {
+            let form:FormImpl = this.getCurrentForm();
+            if (form != null) form.sendkey(event,key);
+        }
     }
 }

@@ -12,61 +12,97 @@ import { InstanceEvents } from "../events/InstanceEvents";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { InstanceListener } from "../events/InstanceListener";
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { FormImpl } from "../forms/FormImpl";
 
 
 export class BlockImpl
 {
     private name$:string;
     private keymap:KeyMap;
+    private row$:number = 0;
     private table$:TableData;
     private offset:number = 0;
     private app:ApplicationImpl;
+    private field$:FieldInstance;
     private parent$:EventListener;
     private dbusage:DatabaseUsage;
     private records$:Record[] = [];
     private listener:InstanceEvents = new InstanceEvents();
 
-    constructor(private block:Block) {}
+    constructor(public block:Block) {}
+
 
     public set name(alias:string)
     {
         this.name$ = alias;
     }
 
+
     public get name() : string
     {
         return(this.name$);
     }
+
+
+    public get row() : number
+    {
+        return(this.row$);
+    }
+
 
     public get rows() : number
     {
         return(this.records$.length);
     }
 
+
+    public get field() : FieldInstance
+    {
+        return(this.field$);
+    }
+
+
     public get clazz() : string
     {
         return(this.block.constructor.name.toLowerCase());
     }
+
 
     public get table() : TableData
     {
         return(this.table$);
     }
 
+
     public set table(table:TableData)
     {
         this.table$ = table;
     }
+
 
     public set config(conf:Config)
     {
         this.keymap = conf.keymap;
     }
 
+
+    public get parent() : EventListener
+    {
+        return(this.parent$);
+    }
+
+
     public set parent(parent:EventListener)
     {
         this.parent$ = parent;
     }
+
+
+    public get records() : Record[]
+    {
+        return(this.records$);
+    }
+
 
     public getRecord(row:number) : Record
     {
@@ -76,45 +112,90 @@ export class BlockImpl
         return(null);
     }
 
+
     public getField(row:number, name:string) : Field
     {
-        return(this.records$[+row]?.getField(name));
+        return(this.records[+row]?.getField(name));
     }
+
 
     public setValue(row:number, col:string, value:any, change:boolean) : void
     {
-        if (this.table$ != null)
-            this.table$.update(+row+this.offset,col,value);
+        if (this.table != null)
+            this.table.update(+row+this.offset,col,value);
     }
+
 
     public addRecord(record:Record)
     {
-        this.records$.push(record);
+        this.records.push(record);
         record.fields.forEach((inst) => {inst.block = this});
     }
+
 
     public setDatabaseUsage(usage:DatabaseUsage) : void
     {
         this.dbusage = usage;
     }
 
+
     public getDatabaseUsage() : DatabaseUsage
     {
         return(this.dbusage);
     }
+
 
     public setApplication(app:ApplicationImpl) : void
     {
         this.app = app;
     }
 
+
+    public sendkey(event:any,key:string) : void
+    {
+        this.onEvent(event,this.field,"key",key);
+    }
+
+
+    private insert(after:boolean) : boolean
+    {
+        let off:number = after ? 1 : 0;
+        if (!this.validate()) return(false);
+        return(this.table.insert(+this.row + +off));
+    }
+
+
+    public validate() : boolean
+    {
+        if (!this.validatefield())
+            return(false);
+
+        return(this.validaterecord());
+    }
+
+
+    private validatefield() : boolean
+    {
+        if (this.field == null) return(true);
+        console.log("validate "+this.field.name);
+        return(true);
+    }
+
+
+    private validaterecord() : boolean
+    {
+        console.log("validate record "+this.row);
+        return(true);
+    }
+
+
     public async display(start:number)
     {
         this.offset = start;
 
-        if (this.table$ != null)
+        if (this.table != null)
         {
-            let columns:string[] = this.table$.columns;
+            let columns:string[] = this.table.columns;
             let rows:any[][] = this.table$.get(start,this.rows);
 
             for(let r = 0; r < rows.length; r++)
@@ -129,6 +210,7 @@ export class BlockImpl
             }
         }
     }
+
 
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
@@ -185,16 +267,40 @@ export class BlockImpl
         }
     }
 
+
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
     {
         if (this.keymap == null)
             return;
 
         if (type == "focus")
+        {
+            if (this.row != field.row)
+            {
+                if (!this.validaterecord())
+                {
+                    this.records[+this.row].current = true;
+                    this.field.focus();
+                    return;
+                }
+            }
+
+            this.field$ = field;
+            this.row$ = field.row;
             this.records$[+field.row].current = true;
+        }
 
         if (type == "change")
+        {
+            if (!this.validatefield()) return;
             this.setValue(field.row,field.name,field.value,true);
+        }
+
+        if (type == "key" && key == this.keymap.insertafter)
+            this.insert(true);
+
+        if (type == "key" && key == this.keymap.insertbefore)
+            this.insert(false);
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
@@ -225,7 +331,7 @@ export class BlockImpl
         {
             if (+field.row == 0)
             {
-                if (this.table$ != null && this.offset > 0)
+                if (this.table != null && this.offset > 0)
                 {
                     this.display(this.offset-1);
                     this.records$[0].current = true;
@@ -243,8 +349,8 @@ export class BlockImpl
             }
         }
 
-        if (this.parent$ != null)
-            this.parent$.onEvent(event,field,type,key);
+        if (this.parent != null)
+            this.parent.onEvent(event,field,type,key);
 
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
