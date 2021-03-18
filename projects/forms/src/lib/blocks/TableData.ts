@@ -41,7 +41,6 @@ export class TableData
     public delete(row:number) : boolean
     {
         let data:Row[] = [];
-        console.log("delete row: "+row+" data: "+this.data.length);
 
         if (row < 0 || row >= this.data.length)
             return(false);

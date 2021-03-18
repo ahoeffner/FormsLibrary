@@ -217,21 +217,21 @@ export class BlockImpl
 
         this.clear();
 
-        // no records left in current view
-        if (+this.table.rows > +this.offset)
+        // current view is not full
+        if (+this.table.rows - this.offset < this.rows)
         {
-            this.offset -= this.rows;
+            this.offset--;
             if (this.offset < 0) this.offset = 0;
         }
 
         this.display(this.offset);
 
         // no records at current position
-        if (+this.row + +this.offset >= this.table.rows)
+        if ((+this.row) + (+this.offset) >= this.table.rows)
             this.row = this.table.rows - this.offset - 1;
 
-        let rec:Record = this.records[this.row];
-        rec.current = true;
+        if (this.table.rows == 0) this.records[0].clear(true);
+        else this.goField(this.row,this.field);
     }
 
 
@@ -273,15 +273,13 @@ export class BlockImpl
 
         rec.current = true;
 
+        let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+        if (inst != null) inst.focus();
+        else rec.fields[0].focus();
+
         if (field.name == this.field.name && row == this.field.row)
         {
             this.onEvent(null,this.field,"focus");
-        }
-        else
-        {
-            let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-            if (inst != null) inst.focus();
-            else rec.fields[0].focus();
         }
     }
 
@@ -373,7 +371,6 @@ export class BlockImpl
 
         if (type == "focus")
         {
-            console.log("focus "+field.name+"["+field.row+"]");
             if (this.row != field.row)
             {
                 if (!this.validaterecord())
@@ -391,7 +388,6 @@ export class BlockImpl
 
         if (type == "change")
         {
-            console.log("change "+field.name+"["+field.row+"] = "+field.value);
             if (!this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
         }
