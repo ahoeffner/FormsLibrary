@@ -205,20 +205,20 @@ export class BlockImpl
         let rec:Record = this.records[this.row];
         if (!rec.enabled) return(true);
 
-        if (!this.validatefield())
+        if (!await this.validatefield())
             return(false);
 
-        return(this.validaterecord());
+        return(await this.validaterecord());
     }
 
 
-    private validatefield() : boolean
+    private async validatefield() : Promise<boolean>
     {
         return(true);
     }
 
 
-    private validaterecord() : boolean
+    private async validaterecord() : Promise<boolean>
     {
         return(true);
     }

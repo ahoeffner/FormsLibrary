@@ -237,7 +237,7 @@ export class ApplicationImpl
     }
 
 
-    public callform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    public async callform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
         if (!this.ready)
         {
@@ -248,7 +248,7 @@ export class ApplicationImpl
         if (this.state.form != null)
         {
             // Make sure changes has been validated
-            if (!this.state.form.validate()) return;
+            if (!await this.state.form.validate()) return;
 
             // get current form in chain
             let curr:FormImpl = this.state.form.getChain();
@@ -266,12 +266,12 @@ export class ApplicationImpl
 
         if (this.state.form == null)
             return(null);
-            
+
         return(this.state.form.getChain());
     }
 
 
-    public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    public async showform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
         if (!this.ready)
         {
@@ -282,7 +282,7 @@ export class ApplicationImpl
         if (this.state.form != null)
         {
             // Make sure changes has been validated
-            if (!this.state.form.validate()) return;
+            if (!await this.state.form.validate()) return;
 
             // if form has called anoother form
             let curr:FormImpl = this.state.form.getChain();

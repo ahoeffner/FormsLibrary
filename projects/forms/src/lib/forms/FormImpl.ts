@@ -287,7 +287,7 @@ export class FormImpl implements EventListener
     }
 
 
-    public showform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    public async showform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
         if (!this.validate())
             return;
@@ -414,7 +414,7 @@ export class FormImpl implements EventListener
     }
 
 
-    public close(destroy?:boolean) : void
+    public async close(destroy?:boolean)
     {
         let win:boolean = (this.win != null);
         let menu:boolean = (this.root == null);
