@@ -200,9 +200,11 @@ export class BlockImpl
     }
 
 
-    public validate() : boolean
+    public async validate() : Promise<boolean>
     {
-        console.log("validate "+this.field.name+" row: "+this.row);
+        let rec:Record = this.records[this.row];
+        if (!rec.enabled) return(true);
+
         if (!this.validatefield())
             return(false);
 
@@ -212,15 +214,12 @@ export class BlockImpl
 
     private validatefield() : boolean
     {
-        console.log("validatefield "+this.field.name+" row: "+this.row+" value: "+this.field.value);
-        if (this.field == null) return(true);
         return(true);
     }
 
 
     private validaterecord() : boolean
     {
-        console.log("validaterecord "+this.field.name+" row: "+this.row);
         return(true);
     }
 

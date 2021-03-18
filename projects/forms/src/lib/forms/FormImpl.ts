@@ -645,10 +645,10 @@ export class FormImpl implements EventListener
     }
 
 
-    public validate() : boolean
+    public async validate() : Promise<boolean>
     {
         if (this.block == null) return(true);
-        else return(this.block.validate());
+        else return(await this.block.validate());
     }
 
 
