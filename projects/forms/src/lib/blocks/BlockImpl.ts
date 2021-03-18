@@ -215,7 +215,23 @@ export class BlockImpl
         if (!this.table.delete(+this.row + +this.offset))
             return(false);
 
+        this.clear();
+
+        // no records left in current view
+        if (+this.table.rows > +this.offset)
+        {
+            this.offset -= this.rows;
+            if (this.offset < 0) this.offset = 0;
+        }
+
         this.display(this.offset);
+
+        // no records at current position
+        if (+this.row + +this.offset >= this.table.rows)
+            this.row = this.table.rows - this.offset - 1;
+
+        let rec:Record = this.records[this.row];
+        rec.current = true;
     }
 
 
@@ -240,6 +256,33 @@ export class BlockImpl
     private async validaterecord() : Promise<boolean>
     {
         return(true);
+    }
+
+
+    public async clear()
+    {
+        for(let r = 0; r < this.rows; r++)
+            this.records[r].clear();
+    }
+
+
+    private async goField(row:number, field:FieldInstance) : Promise<boolean>
+    {
+        let rec:Record = this.getRecord(row);
+        if (rec == null || !rec.enabled) return;
+
+        rec.current = true;
+
+        if (field.name == this.field.name && row == this.field.row)
+        {
+            this.onEvent(null,this.field,"focus");
+        }
+        else
+        {
+            let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+            if (inst != null) inst.focus();
+            else rec.fields[0].focus();
+        }
     }
 
 
@@ -330,6 +373,7 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            console.log("focus "+field.name+"["+field.row+"]");
             if (this.row != field.row)
             {
                 if (!this.validaterecord())
@@ -347,6 +391,7 @@ export class BlockImpl
 
         if (type == "change")
         {
+            console.log("change "+field.name+"["+field.row+"] = "+field.value);
             if (!this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
         }
@@ -374,72 +419,52 @@ export class BlockImpl
         // Next record
         if (type == "key" && key == this.keymap.nextrecord)
         {
-            let rec:Record = this.getRecord(+field.row+1);
-            if (rec == null || !rec.enabled)
-            {
-                if (this.table$ != null)
-                {
-                    let offset:number = +this.offset + +field.row;
-                    let fetched:number = await this.table$.fetch(offset,1);
+            let row:number = +field.row + 1;
 
-                    if (fetched > 0)
-                    {
-                        this.display(this.offset+1);
-                        this.records$[this.records$.length-1].current = true;
-                    }
-                }
+            if (+row >= +this.rows)
+            {
+                row = +this.rows - 1;
+                if (this.table == null) return(false);
+
+                let offset:number = +this.offset + +field.row;
+                let fetched:number = await this.table$.fetch(offset,1);
+
+                if (fetched == 0) return(false);
+                if (!this.onEvent(null,this.field,"change")) return(false);
+
+                this.display(this.offset+1);
             }
             else
             {
-                if (this.field.current)
-                {
-                    if (!await this.onEvent(event,this.field,"change"))
-                        return(false);
-
-                    rec.current = true;
-                    this.onEvent(event,this.field,"focus");
-                }
-                else
-                {
-                    rec.current = true;
-                    let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-                    if (inst != null) inst.focus();
-                    else rec.fields[0].focus();
-                }
+                if (field.current)
+                if (!this.onEvent(null,this.field,"change")) return(false);
             }
+
+            this.goField(row,this.field);
         }
 
         // Previous record
         if (type == "key" && key == this.keymap.prevrecord)
         {
-            if (+field.row == 0)
+            let row:number = +field.row - 1;
+
+            if (+row < 0)
             {
-                if (this.table != null && this.offset > 0)
-                {
-                    this.display(this.offset-1);
-                    this.records$[0].current = true;
-                }
+                row = 0;
+                if (this.table == null) return(false);
+
+                if (!this.onEvent(null,this.field,"change"))
+                    return(false);
+
+                this.display(this.offset-1);
             }
             else
             {
-                let rec:Record = this.getRecord(+field.row-1);
-
-                if (this.field.current)
-                {
-                    if (!await this.onEvent(event,this.field,"change"))
-                        return(false);
-
-                    rec.current = true;
-                    this.onEvent(event,this.field,"focus");
-                }
-                else
-                {
-                    rec.current = true;
-                    let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-                    if (inst != null) inst.focus();
-                    else rec.fields[0].focus();
-                }
+                if (field.current)
+                if (!this.onEvent(null,this.field,"change")) return(false);
             }
+
+            this.goField(row,this.field);
         }
 
         // Pass event on to parent (form)
