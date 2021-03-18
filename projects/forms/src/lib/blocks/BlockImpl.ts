@@ -305,21 +305,20 @@ export class BlockImpl
     }
 
 
-    public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
+    public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
         if (this.keymap == null)
-            return;
+            return(false);
 
         if (type == "focus")
         {
-            console.log("focus row: "+this.field?.row+" "+this.field?.value);
             if (this.row != field.row)
             {
                 if (!this.validaterecord())
                 {
                     this.records[+this.row].current = true;
                     this.field.focus();
-                    return;
+                    return(true);
                 }
             }
 
@@ -331,29 +330,26 @@ export class BlockImpl
         if (type == "change")
         {
             console.log("change");
-            if (!this.validatefield()) return;
+            if (!this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
         }
 
         if (type == "key" && key == this.keymap.insertafter)
         {
-            if (!this.validate()) return;
+            if (!this.validate()) return(false);
             this.setValue(field.row,field.name,field.value,true);
             this.keyinsert(true);
         }
 
         if (type == "key" && key == this.keymap.insertbefore)
         {
-            if (!this.validate()) return;
+            if (!this.validate()) return(false);
             this.setValue(field.row,field.name,field.value,true);
             this.keyinsert(false);
         }
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
-            if (this.field.current)
-                this.onEvent(event,this.field,"focus");
-
             let rec:Record = this.getRecord(+field.row+1);
             if (rec == null || !rec.enabled)
             {
@@ -371,16 +367,26 @@ export class BlockImpl
             }
             else
             {
-                let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-                rec.current = true; if (inst != null) inst.focus();
+                if (this.field.current)
+                {
+                    if (!await this.onEvent(event,this.field,"change"))
+                        return(false);
+
+                    rec.current = true;
+                    this.onEvent(event,this.field,"focus");
+                }
+                else
+                {
+                    rec.current = true;
+                    let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+                    if (inst != null) inst.focus();
+                    else rec.fields[0].focus();
+                }
             }
         }
 
         if (type == "key" && key == this.keymap.prevrecord)
         {
-            if (this.field.current)
-                this.onEvent(event,this.field,"focus");
-
             if (+field.row == 0)
             {
                 if (this.table != null && this.offset > 0)
@@ -392,12 +398,22 @@ export class BlockImpl
             else
             {
                 let rec:Record = this.getRecord(+field.row-1);
-                let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
 
-                if (inst != null) inst.focus();
-                else rec.fields[0].focus();
+                if (this.field.current)
+                {
+                    if (!await this.onEvent(event,this.field,"change"))
+                        return(false);
 
-                rec.current = true;
+                    rec.current = true;
+                    this.onEvent(event,this.field,"focus");
+                }
+                else
+                {
+                    rec.current = true;
+                    let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
+                    if (inst != null) inst.focus();
+                    else rec.fields[0].focus();
+                }
             }
         }
 
@@ -418,5 +434,7 @@ export class BlockImpl
                 ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
             });
         }
+
+        return(true);
     }
 }

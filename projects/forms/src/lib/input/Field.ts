@@ -48,11 +48,8 @@ export class Field
 
     public set current(flag:boolean)
     {
-        setTimeout(() =>
-        {
-            if (!flag) this.current$.forEach((inst) => {inst.value = null;});
-            else this.current$.forEach((inst) => {inst.field = this; inst.row = this.row; inst.value = this.value$;});
-        },1);
+        if (!flag) this.current$.forEach((inst) => {inst.value = null;});
+        else this.current$.forEach((inst) => {inst.field = this; inst.row = this.row; inst.value = this.value$;});
     }
 
     public get value() : any
