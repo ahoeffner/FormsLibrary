@@ -297,10 +297,16 @@ export class BlockImpl
         }
 
         if (type == "key" && key == this.keymap.insertafter)
+        {
             this.insert(true);
+            this.display(+this.offset + 1);
+        }
 
         if (type == "key" && key == this.keymap.insertbefore)
+        {
             this.insert(false);
+            this.display(+this.offset - 1);
+        }
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
