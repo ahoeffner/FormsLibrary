@@ -26,7 +26,6 @@ export class TableData
 
     public insert(row:number) : boolean
     {
-        console.log("insert after row: "+row);
         let data:Row[] = [];
         if (row > this.data.length) row = this.data.length;
 
@@ -42,6 +41,7 @@ export class TableData
     public delete(row:number) : boolean
     {
         let data:Row[] = [];
+        console.log("delete row: "+row+" data: "+this.data.length);
 
         if (row < 0 || row >= this.data.length)
             return(false);
@@ -50,7 +50,7 @@ export class TableData
         this.deleted$.push(this.data[row]);
 
         data = this.data.slice(0,row);
-        data = data.concat(this.data.slice(row,this.data.length));
+        data = data.concat(this.data.slice(+row+1,this.data.length));
 
         this.data = data;
         return(true);
@@ -69,13 +69,15 @@ export class TableData
 
         let rec:Row = this.data[+row];
 
-        if (rec.columns[+colno].value$ != value)
-        {
-            let scn:number = ++this.scn;
+        if (rec.columns[+colno].value$ == value)
+            return(false);
 
-            rec.scn = scn;
-            rec.columns[+colno].setValue(scn,value);
-        }
+        let scn:number = ++this.scn;
+
+        rec.scn = scn;
+        rec.columns[+colno].setValue(scn,value);
+
+        return(true);
     }
 
 

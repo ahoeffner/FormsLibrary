@@ -196,6 +196,8 @@ export class FieldInstance implements AfterViewInit
 
     public async onEvent(event:any)
     {
+        let keypress:boolean = false;
+
         if (this.fgroup$ == null)
             return;
 
@@ -211,50 +213,50 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "change")
             this.fgroup$["onEvent"](event,this,"change");
 
-        if (event.type == "keydown")
+        if (event.type == "keydown" && event.keyCode == 8)
+            keypress = true;
+
+        if (event.type == "keydown" && !keypress)
         {
-            let skip:boolean = false;
-            if (+event.keyCode >= 48 && +event.keyCode <= 90) skip = true;
-            if (+event.keyCode >= 16 && +event.keyCode <= 20) skip = true;
+            if (+event.keyCode >= 16 && +event.keyCode <= 20)
+                return;
 
-            if (!skip)
+            let keydef:Key =
             {
-                let keydef:Key =
-                {
-                    code  : event.keyCode,
-                    alt   : event.altKey,
-                    ctrl  : event.ctrlKey,
-                    meta  : event.metaKey,
-                    shift : event.shiftKey
-                }
+                code  : event.keyCode,
+                alt   : event.altKey,
+                ctrl  : event.ctrlKey,
+                meta  : event.metaKey,
+                shift : event.shiftKey
+            }
 
-                let key:string = KeyMapper.map(keydef);
-                let mapped:string = this.conf.mapkey(key);
+            let key:string = KeyMapper.map(keydef);
+            let mapped:string = this.conf.mapkey(key);
 
-                if (mapped != null)
-                {
-                    // handled by application
-                    if
-                    (
-                        key == this.conf.keymap.insertafter     ||
-                        key == this.conf.keymap.insertbefore    ||
-                        key == this.conf.keymap.enterquery      ||
-                        key == this.conf.keymap.executequery
-                    )
-                    return;
+            if (mapped != null)
+            {
+                // handled by application
+                if
+                (
+                    key == this.conf.keymap.delete          ||
+                    key == this.conf.keymap.insertafter     ||
+                    key == this.conf.keymap.insertbefore    ||
+                    key == this.conf.keymap.enterquery      ||
+                    key == this.conf.keymap.executequery
+                )
+                return;
 
-                    this.fgroup$["onEvent"](event,this,"key",key);
-                }
+                this.fgroup$["onEvent"](event,this,"key",key);
             }
         }
 
-        if (event.type == "keypress")
+        if (event.type == "keypress" || keypress)
         {
             if (this.lower)
-                this.value = (""+this.value).toLowerCase();
+                setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
 
             if (this.upper)
-                this.value = (""+this.value).toUpperCase();
+                setTimeout(() => {this.value = (""+this.value).toUpperCase();},0);
 
             if (this.firstchange)
             {
@@ -262,7 +264,7 @@ export class FieldInstance implements AfterViewInit
                 this.fgroup$["onEvent"](event,this,"fchange");
             }
 
-            setTimeout(() => {this.fgroup$.onEvent(event,this,"ichange");},0);
+            setTimeout(() => {this.fgroup$.onEvent(event,this,"ichange");},1);
         }
     }
 

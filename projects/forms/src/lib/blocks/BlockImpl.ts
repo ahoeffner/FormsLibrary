@@ -5,7 +5,6 @@ import { TableData } from "./TableData";
 import { KeyMap } from "../keymap/KeyMap";
 import { Listener } from "../events/Listener";
 import { Config } from "../application/Config";
-import { MessageBox } from "../popup/MessageBox";
 import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
 import { InstanceEvents } from "../events/InstanceEvents";
@@ -30,7 +29,6 @@ export class BlockImpl
 
     constructor(public block:Block) {}
 
-
     public set name(alias:string)
     {
         this.name$ = alias;
@@ -40,6 +38,12 @@ export class BlockImpl
     public get name() : string
     {
         return(this.name$);
+    }
+
+
+    public set row(row:number)
+    {
+        this.row$ = row;
     }
 
 
@@ -159,44 +163,59 @@ export class BlockImpl
     private keyinsert(after:boolean) : boolean
     {
         if (!this.dbusage.insert) return(false);
-        let ok:boolean = this.insert(after);
-
-        if (ok)
-        {
-            // Is first row
-            if (this.table.rows == 1)
-            {
-                this.display(this.offset);
-                return;
-            }
-
-            let scroll:number = 0;
-
-            if (after && this.row == this.rows - 1)
-                scroll = 1;
-
-            if (!after && this.row == 0)
-                scroll = -1;
-
-            let move:number = 0;
-            if (scroll == 0) move = after ? 1 : 0;
-
-            this.display(+this.offset + scroll);
-
-            this.row$ = +this.row$ + +move;
-            let rec:Record = this.records[+this.row];
-            rec.current = true;
-
-            let field:FieldInstance = rec.getFieldByGuid(this.field.name,this.field.guid);
-            if (field != null) field.focus();
-        }
+        return(this.insert(after));
     }
 
 
-    private insert(after:boolean) : boolean
+    public insert(after:boolean) : boolean
     {
         let off:number = after ? 1 : 0;
-        return(this.table.insert(+this.row + +this.offset + +off));
+
+        if (!this.table.insert(+this.row + +this.offset + +off))
+            return(false);
+
+        // Is first row
+        if (this.table.rows == 1)
+        {
+            this.display(this.offset);
+            return;
+        }
+
+        let scroll:number = 0;
+
+        if (after && this.row == this.rows - 1)
+            scroll = 1;
+
+        if (!after && this.row == 0)
+            scroll = -1;
+
+        let move:number = 0;
+        if (scroll == 0) move = after ? 1 : 0;
+
+        this.display(+this.offset + scroll);
+
+        this.row = +this.row + +move;
+        let rec:Record = this.records[+this.row];
+        rec.current = true;
+
+        let field:FieldInstance = rec.getFieldByGuid(this.field.name,this.field.guid);
+        if (field != null) field.focus();
+    }
+
+
+    private keydelete() : boolean
+    {
+        if (!this.dbusage.delete) return(false);
+        return(this.delete());
+    }
+
+
+    public delete() : boolean
+    {
+        if (!this.table.delete(+this.row + +this.offset))
+            return(false);
+
+        this.display(this.offset);
     }
 
 
@@ -322,17 +341,21 @@ export class BlockImpl
             }
 
             this.field$ = field;
-            this.row$ = field.row;
+            this.row = field.row;
             this.records$[+field.row].current = true;
         }
 
         if (type == "change")
         {
-            console.log("change");
             if (!this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
         }
 
+        // Delete
+        if (type == "key" && key == this.keymap.delete)
+            this.keydelete();
+
+        // Insert after
         if (type == "key" && key == this.keymap.insertafter)
         {
             if (!this.validate()) return(false);
@@ -340,6 +363,7 @@ export class BlockImpl
             this.keyinsert(true);
         }
 
+        // Insert before
         if (type == "key" && key == this.keymap.insertbefore)
         {
             if (!this.validate()) return(false);
@@ -347,6 +371,7 @@ export class BlockImpl
             this.keyinsert(false);
         }
 
+        // Next record
         if (type == "key" && key == this.keymap.nextrecord)
         {
             let rec:Record = this.getRecord(+field.row+1);
@@ -384,6 +409,7 @@ export class BlockImpl
             }
         }
 
+        // Previous record
         if (type == "key" && key == this.keymap.prevrecord)
         {
             if (+field.row == 0)
@@ -416,9 +442,11 @@ export class BlockImpl
             }
         }
 
+        // Pass event on to parent (form)
         if (this.parent != null)
             this.parent.onEvent(event,field,type,key);
 
+        // Pass event to subscribers
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
         if (lsnrs != null) lsnrs.forEach((ilsnr) =>
         {

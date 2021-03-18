@@ -444,6 +444,7 @@ export class ApplicationImpl
 
         if
         (
+            key == this.conf.keymap.delete          ||
             key == this.conf.keymap.insertafter     ||
             key == this.conf.keymap.insertbefore    ||
             key == this.conf.keymap.enterquery      ||
