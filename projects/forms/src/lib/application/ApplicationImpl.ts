@@ -266,10 +266,7 @@ export class ApplicationImpl
 
         if (this.state.form == null)
             return(null);
-
-        if (!this.state.form.validate())
-            return(null);
-
+            
         return(this.state.form.getChain());
     }
 

@@ -276,7 +276,7 @@ export class FormImpl implements EventListener
                 let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
 
-                block.table = new TableData(null,block.getDatabaseUsage(),columns);
+                block.table = new TableData(null,columns);
                 block.display(0);
             }
         });

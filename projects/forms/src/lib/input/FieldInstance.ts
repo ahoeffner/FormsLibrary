@@ -131,6 +131,11 @@ export class FieldInstance implements AfterViewInit
         setTimeout(() => {this.clazz.element.blur()},0);
     }
 
+    public get current() : boolean
+    {
+        return(this.guid.startsWith("c"));
+    }
+
     public setUpperCase() : void
     {
         this.upper = true;
@@ -228,8 +233,6 @@ export class FieldInstance implements AfterViewInit
 
                 if (mapped != null)
                 {
-                    this.fgroup$["onEvent"](event,this,"change");
-
                     // handled by application
                     if
                     (

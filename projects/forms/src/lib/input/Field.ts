@@ -107,7 +107,7 @@ export class Field
         else
         {
             this.fields$.push(field);
-            field.guid = "r:"+(this.seq++);
+            field.guid = "f:"+(this.seq++);
         }
 
         this.index.set(field.guid,field);

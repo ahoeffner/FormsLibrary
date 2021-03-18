@@ -12,7 +12,6 @@ import { InstanceEvents } from "../events/InstanceEvents";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { InstanceListener } from "../events/InstanceListener";
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { FormImpl } from "../forms/FormImpl";
 
 
 export class BlockImpl
@@ -157,16 +156,53 @@ export class BlockImpl
     }
 
 
+    private keyinsert(after:boolean) : boolean
+    {
+        if (!this.dbusage.insert) return(false);
+        let ok:boolean = this.insert(after);
+
+        if (ok)
+        {
+            // Is first row
+            if (this.table.rows == 1)
+            {
+                this.display(this.offset);
+                return;
+            }
+
+            let scroll:number = 0;
+
+            if (after && this.row == this.rows - 1)
+                scroll = 1;
+
+            if (!after && this.row == 0)
+                scroll = -1;
+
+            let move:number = 0;
+            if (scroll == 0) move = after ? 1 : 0;
+
+            this.display(+this.offset + scroll);
+
+            this.row$ = +this.row$ + +move;
+            let rec:Record = this.records[+this.row];
+            rec.current = true;
+
+            let field:FieldInstance = rec.getFieldByGuid(this.field.name,this.field.guid);
+            if (field != null) field.focus();
+        }
+    }
+
+
     private insert(after:boolean) : boolean
     {
         let off:number = after ? 1 : 0;
-        if (!this.validate()) return(false);
-        return(this.table.insert(+this.row + +off));
+        return(this.table.insert(+this.row + +this.offset + +off));
     }
 
 
     public validate() : boolean
     {
+        console.log("validate "+this.field.name+" row: "+this.row);
         if (!this.validatefield())
             return(false);
 
@@ -176,15 +212,15 @@ export class BlockImpl
 
     private validatefield() : boolean
     {
+        console.log("validatefield "+this.field.name+" row: "+this.row+" value: "+this.field.value);
         if (this.field == null) return(true);
-        console.log("validate "+this.field.name);
         return(true);
     }
 
 
     private validaterecord() : boolean
     {
-        console.log("validate record "+this.row);
+        console.log("validaterecord "+this.field.name+" row: "+this.row);
         return(true);
     }
 
@@ -192,6 +228,7 @@ export class BlockImpl
     public async display(start:number)
     {
         this.offset = start;
+        if (this.offset < 0) this.offset = 0;
 
         if (this.table != null)
         {
@@ -275,6 +312,7 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            console.log("focus row: "+this.field?.row+" "+this.field?.value);
             if (this.row != field.row)
             {
                 if (!this.validaterecord())
@@ -292,24 +330,30 @@ export class BlockImpl
 
         if (type == "change")
         {
+            console.log("change");
             if (!this.validatefield()) return;
             this.setValue(field.row,field.name,field.value,true);
         }
 
         if (type == "key" && key == this.keymap.insertafter)
         {
-            this.insert(true);
-            this.display(+this.offset + 1);
+            if (!this.validate()) return;
+            this.setValue(field.row,field.name,field.value,true);
+            this.keyinsert(true);
         }
 
         if (type == "key" && key == this.keymap.insertbefore)
         {
-            this.insert(false);
-            this.display(+this.offset - 1);
+            if (!this.validate()) return;
+            this.setValue(field.row,field.name,field.value,true);
+            this.keyinsert(false);
         }
 
         if (type == "key" && key == this.keymap.nextrecord)
         {
+            if (this.field.current)
+                this.onEvent(event,this.field,"focus");
+
             let rec:Record = this.getRecord(+field.row+1);
             if (rec == null || !rec.enabled)
             {
@@ -328,13 +372,15 @@ export class BlockImpl
             else
             {
                 let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-                if (inst != null) inst.focus();
-                rec.current = true;
+                rec.current = true; if (inst != null) inst.focus();
             }
         }
 
         if (type == "key" && key == this.keymap.prevrecord)
         {
+            if (this.field.current)
+                this.onEvent(event,this.field,"focus");
+
             if (+field.row == 0)
             {
                 if (this.table != null && this.offset > 0)

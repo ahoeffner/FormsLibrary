@@ -1,23 +1,115 @@
-import { DatabaseUsage } from "../database/DatabaseUsage";
-
-
-class Column
+export class TableData
 {
-    public value$:any;
-    public scn:number = 0;
+    private table:string;
+    private scn:number = 0;
+    private data:Row[] = [];
+    private columns$:string[];
+    private deleted$:Row[] = [];
+    private index:Map<string,number> = new Map<string,number>();
 
-    constructor(scn:number, value?:any)
+
+    public constructor(table:string, columns:string[])
     {
-        this.scn = scn;
-        this.value$ = value;
-        if (value == undefined) this.value$ = null;
+        this.table = table;
+        this.columns$ = columns;
+
+        for(let i = 0; i < columns.length; i++)
+            this.index.set(columns[i].toLowerCase(),i);
     }
 
-    public setValue(scn:number, value:any) : void
+
+    public get columns() : string[]
     {
-        this.scn = scn;
-        this.value$ = value;
-        if (value == undefined) this.value$ = null;
+        return(this.columns$);
+    }
+
+
+    public insert(row:number) : boolean
+    {
+        console.log("insert after row: "+row);
+        let data:Row[] = [];
+        if (row > this.data.length) row = this.data.length;
+
+        data = this.data.slice(0,row);
+        data[row] = new Row(++this.scn,this);
+        data = data.concat(this.data.slice(row,this.data.length));
+
+        this.data = data;
+        return(true);
+    }
+
+
+    public delete(row:number) : boolean
+    {
+        let data:Row[] = [];
+
+        if (row < 0 || row >= this.data.length)
+            return(false);
+
+        this.data[row].scn = ++this.scn;
+        this.deleted$.push(this.data[row]);
+
+        data = this.data.slice(0,row);
+        data = data.concat(this.data.slice(row,this.data.length));
+
+        this.data = data;
+        return(true);
+    }
+
+
+    public update(row:number, col:string, value:any) : boolean
+    {
+        if (row < 0 || row >= this.data.length)
+            return(false);
+
+        let colno:number = this.index.get(col.toLowerCase());
+
+        if (colno == null)
+            return(false);
+
+        let rec:Row = this.data[+row];
+
+        if (rec.columns[+colno].value$ != value)
+        {
+            let scn:number = ++this.scn;
+
+            rec.scn = scn;
+            rec.columns[+colno].setValue(scn,value);
+        }
+    }
+
+
+    public get rows() : number
+    {
+        return(this.data.length);
+    }
+
+
+    public async fetch(offset:number, rows:number) : Promise<number>
+    {
+        if (this.data.length <= +offset + rows && this.table != null)
+        {
+            //fetch
+        }
+
+        let avail:number = this.data.length - offset - 1;
+        if (avail < 0) avail = 0;
+
+        return(avail);
+    }
+
+
+    public get(start:number, rows:number) : any[][]
+    {
+        let values:any[][] = [];
+        if (start < 0) start = 0;
+        let end:number = +start + rows;
+        if (end > this.data.length) end = this.data.length;
+
+        for(let i = start; i < end; i++)
+            values.push(this.data[i].values);
+
+        return(values);
     }
 }
 
@@ -54,136 +146,22 @@ class Row
 }
 
 
-export class TableData
+class Column
 {
-    private table:string;
-    private scn:number = 0;
-    private data:Row[] = [];
-    private columns$:string[];
-    private deleted$:Row[] = [];
-    private usage:DatabaseUsage;
-    private index:Map<string,number> = new Map<string,number>();
+    public value$:any;
+    public scn:number = 0;
 
-
-    public constructor(table:string, usage:DatabaseUsage, columns:string[])
+    constructor(scn:number, value?:any)
     {
-        this.table = table;
-        this.usage = usage;
-        this.columns$ = columns;
-
-        for(let i = 0; i < columns.length; i++)
-            this.index.set(columns[i].toLowerCase(),i);
-
-        if (table == null && usage.update && !usage.insert)
-        {
-            let row:Row = new Row(++this.scn,this);
-            this.data.push(row);
-        }
+        this.scn = scn;
+        this.value$ = value;
+        if (value == undefined) this.value$ = null;
     }
 
-
-    public get columns() : string[]
+    public setValue(scn:number, value:any) : void
     {
-        return(this.columns$);
-    }
-
-
-    public insert(row:number) : boolean
-    {
-        console.log("insert "+this.usage.insert);
-        
-        if (!this.usage.insert)
-            return(false);
-
-        let data:Row[] = [];
-
-        if (row > 0)
-            data = this.data.slice(0,row);
-
-        data[row] = new Row(++this.scn,this);
-
-        if (row < this.data.length)
-            data = data.concat(this.data.slice(row,this.data.length));
-
-        this.data = data;
-
-        return(true);
-    }
-
-
-    public delete(row:number) : boolean
-    {
-        if (!this.usage.delete)
-            return(false);
-
-        let data:Row[] = [];
-
-        if (row < 0 || row >= this.data.length)
-            return(false);
-
-        this.data[row].scn = ++this.scn;
-        this.deleted$.push(this.data[row]);
-
-        if (row > 0)
-            data = this.data.slice(0,row);
-
-        if (row < this.data.length)
-            data = data.concat(this.data.slice(row,this.data.length));
-
-        this.data = data;
-
-        return(true);
-    }
-
-
-    public update(row:number, col:string, value:any) : boolean
-    {
-        if (!this.usage.update)
-            return(false);
-
-        if (row < 0 || row >= this.data.length)
-            return(false);
-
-        let colno:number = this.index.get(col.toLowerCase());
-
-        if (colno == null)
-            return(false);
-
-        let rec:Row = this.data[+row];
-
-        if (rec.columns[+colno].value$ != value)
-        {
-            let scn:number = ++this.scn;
-
-            rec.scn = scn;
-            rec.columns[+colno].setValue(scn,value);
-        }
-    }
-
-
-    public async fetch(offset:number, rows:number) : Promise<number>
-    {
-        if (this.data.length <= +offset + rows && this.table != null)
-        {
-            //fetch
-        }
-
-        let avail:number = this.data.length - offset - 1;
-        if (avail < 0) avail = 0;
-
-        return(avail);
-    }
-
-
-    public get(start:number, rows:number) : any[][]
-    {
-        let values:any[][] = [];
-        let end:number = +start + rows;
-        if (end > this.data.length) end = this.data.length;
-
-        for(let i = start; i < end; i++)
-            values.push(this.data[i].values);
-
-        return(values);
+        this.scn = scn;
+        this.value$ = value;
+        if (value == undefined) this.value$ = null;
     }
 }
