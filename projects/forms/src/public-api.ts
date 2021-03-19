@@ -22,10 +22,13 @@ export {MenuHandler} from './lib/menu/MenuHandler';
 export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 
 export {Block} from './lib/blocks/Block';
+
 export {FieldInstance} from './lib/input/FieldInstance';
+export {FieldDefinition} from './lib/input/FieldDefinition';
 
 export {Transaction} from './lib/database/Transaction';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'
+export {ColumnDefinition} from './lib/database/ColumnDefinition';
 
 export {FormList} from './lib/menu/FormList';
 export {FormArea} from './lib/forms/FormArea';

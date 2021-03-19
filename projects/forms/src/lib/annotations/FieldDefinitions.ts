@@ -15,14 +15,13 @@ export class FieldDefinitions
             FieldDefinitions.index.set(block,fields);
         }
 
-        console.log(block+" field "+JSON.stringify(def));
         fields.unshift(def);
     }
 
 
     public static getFields(block:string) : FieldDefinition[]
     {
-        let fields:FieldDefinition[] =  FieldDefinitions.index.get(block);
+        let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
         if (fields == null) fields = [];
         return(fields);
     }
@@ -31,7 +30,7 @@ export class FieldDefinitions
     public static getFieldIndex(block:string) : Map<string,FieldDefinition>
     {
         let index:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
-        let fields:FieldDefinition[] =  FieldDefinitions.index.get(block);
+        let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
         if (fields != null) fields.forEach((field) => {index.set(field.name,field)});
         return(index);
     }
