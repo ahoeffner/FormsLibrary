@@ -15,6 +15,7 @@ export class FieldDefinitions
             FieldDefinitions.index.set(block,fields);
         }
 
+        console.log(block+" field "+JSON.stringify(def));
         fields.unshift(def);
     }
 

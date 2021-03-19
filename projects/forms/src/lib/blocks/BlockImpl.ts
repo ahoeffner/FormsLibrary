@@ -1,7 +1,7 @@
 import { Block } from "./Block";
 import { Record } from "./Record";
 import { Field } from "../input/Field";
-import { TableData } from "./TableData";
+import { Table } from "../database/Table";
 import { KeyMap } from "../keymap/KeyMap";
 import { Listener } from "../events/Listener";
 import { Config } from "../application/Config";
@@ -17,8 +17,8 @@ export class BlockImpl
 {
     private name$:string;
     private keymap:KeyMap;
+    private table$:Table;
     private row$:number = 0;
-    private table$:TableData;
     private offset:number = 0;
     private app:ApplicationImpl;
     private field$:FieldInstance;
@@ -71,13 +71,13 @@ export class BlockImpl
     }
 
 
-    public get table() : TableData
+    public get table() : Table
     {
         return(this.table$);
     }
 
 
-    public set table(table:TableData)
+    public set table(table:Table)
     {
         this.table$ = table;
     }
@@ -98,6 +98,13 @@ export class BlockImpl
     public set parent(parent:EventListener)
     {
         this.parent$ = parent;
+    }
+
+
+    public focus() : void
+    {
+        if (this.field != null) this.field.focus();
+        else this.records[this.row].fields[0].focus();
     }
 
 

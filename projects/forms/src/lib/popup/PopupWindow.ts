@@ -263,7 +263,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
 		this.content.appendChild(this.element);
 
 		this.minh = 150;
-		this.minw = 300;
+		this.minw = 250;
 
 		this.titlebar.innerHTML = this.title$;
 		this.change.detectChanges();

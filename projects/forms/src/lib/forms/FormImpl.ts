@@ -2,6 +2,7 @@ import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
+import { Table } from "../database/Table";
 import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
@@ -9,9 +10,9 @@ import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
-import { TableData } from "../blocks/TableData";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
+import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
@@ -35,6 +36,7 @@ export class FormImpl implements EventListener
     private title$:string;
     private root:FormImpl;
     private next:FormImpl;
+    private conn:Connection;
     private win:ModalWindow;
     private inst:InstanceID;
     private parent:FormImpl;
@@ -107,6 +109,12 @@ export class FormImpl implements EventListener
     }
 
 
+    public focus() : void
+    {
+        this.block.focus();
+    }
+
+
     public set block(block:BlockImpl)
     {
         if (this.block != null && this.block != block)
@@ -165,6 +173,7 @@ export class FormImpl implements EventListener
     {
         this.app = app;
         this.menu$ = new DefaultMenu();
+        this.conn = app.appstate.connection;
         this.ddmenu = app.createmenu(this.menu$);
     }
 
@@ -276,7 +285,7 @@ export class FormImpl implements EventListener
                 let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
 
-                block.table = new TableData(null,columns);
+                block.table = new Table(this.conn,null,columns);
                 block.display(0);
             }
         });

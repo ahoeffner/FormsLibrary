@@ -33,11 +33,13 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
             height: 80px;
             display: block;
             text-align: center;
+            word-wrap: break-all;
         }
 
         .messagebox-buttom
         {
             right: 1px;
+            bottom: 4px;
             witdh: 35px;
             height: 35px;
             display: block;
@@ -63,13 +65,14 @@ export class MessageBox implements Popup, AfterViewInit
 {
     public top:string    = "20%";
     public left:string   = "25%";
-    public width:string  = "300px";
-    public height:string = "150px";
+    public width$:string  = "300px";
+    public height$:string = "150px";
     public title$:string  = "alert";
     public message:string = "the message";
 
     private conf:Config;
     private win:PopupWindow;
+    private app: ApplicationImpl;
     private msg:HTMLDivElement = null;
     private btn:HTMLButtonElement = null;
 
@@ -77,13 +80,15 @@ export class MessageBox implements Popup, AfterViewInit
     @ViewChild("accept", {read: ElementRef}) private acceptelem: ElementRef;
 
 
-    public static show(app:ApplicationImpl, message:string, title?:string)
+    public static show(app:ApplicationImpl, message:string, title?:string, width?:string, height?:string)
     {
         let pinst:PopupInstance = new PopupInstance();
         let mbox:MessageBox = pinst.display(app,MessageBox) as MessageBox;
 
         mbox.title = title;
         mbox.message = message;
+        if (width != null) mbox.width = width;
+        if (height != null) mbox.height = height;
     }
 
 
@@ -105,6 +110,30 @@ export class MessageBox implements Popup, AfterViewInit
 	}
 
 
+    public set width(width:string)
+    {
+        this.width$ = width;
+    }
+
+
+    public get width() : string
+    {
+        return(this.width$);
+    }
+
+
+    public set height(height:string)
+    {
+        this.height$ = height;
+    }
+
+
+    public get height() : string
+    {
+        return(this.height$);
+    }
+
+
     public set title(title:string)
     {
         this.title$ = title;
@@ -124,15 +153,16 @@ export class MessageBox implements Popup, AfterViewInit
     }
 
 
-    public setApp(_app: ApplicationImpl): void
+    public setApp(app: ApplicationImpl): void
     {
+        this.app = app;
     }
 
 
     public close(_cancel: boolean): void
     {
-        console.log("close");
         this.win.closeWindow();
+        this.app.getCurrentForm()?.focus();
     }
 
 

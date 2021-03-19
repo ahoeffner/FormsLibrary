@@ -64,6 +64,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
     {
         this.win.closeWindow();
         if (!cancel) this.app.appstate.connection.connect(this.usr.value,this.pwd.value);
+        this.app.getCurrentForm()?.focus();
     }
 
     public async onEvent(event:any, field:FieldInstance,_type:string,key:string)

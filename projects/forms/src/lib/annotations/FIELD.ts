@@ -1,8 +1,9 @@
 import { Utils } from '../utils/Utils';
-import { FieldDefinition } from '../input/FieldDefinition';
 import { FieldDefinitions } from './FieldDefinitions';
+import { FieldDefinition } from '../input/FieldDefinition';
 
-export const FIELD = (name:string, type:string) =>
+
+export const FIELD = (definition:FieldDefinition) =>
 {
     function def(comp:any)
     {
@@ -12,12 +13,11 @@ export const FIELD = (name:string, type:string) =>
 
         if (ctype != "Block")
         {
-            window.alert("@FIELD("+name+","+type+") can only be used on blocks");
+            window.alert("@FIELD("+JSON.stringify(definition.name)+") can only be used on blocks");
             return;
         }
 
-        let def:FieldDefinition = {name: name, type: type};
-        FieldDefinitions.add(cname,def);
+        FieldDefinitions.add(cname,definition);
     }
     return(def);
 }

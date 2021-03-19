@@ -1,15 +1,19 @@
-export class TableData
+import { Connection } from "./Connection";
+
+export class Table
 {
     private table:string;
     private scn:number = 0;
     private data:Row[] = [];
+    private conn:Connection;
     private columns$:string[];
     private deleted$:Row[] = [];
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(table:string, columns:string[])
+    public constructor(conn:Connection, table:string, columns:string[])
     {
+        this.conn = conn;
         this.table = table;
         this.columns$ = columns;
 
@@ -120,7 +124,7 @@ class Row
     public scn:number = 0;
     public columns:Column[] = [];
 
-    constructor(scn:number, table:TableData, columns?:any[])
+    constructor(scn:number, table:Table, columns?:any[])
     {
         this.scn = scn;
 
