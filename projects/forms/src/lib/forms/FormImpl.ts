@@ -641,7 +641,7 @@ export class FormImpl implements EventListener
         });
 
         this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
-        this.fields$[0].focus();
+        if (this.fields$.length > 0) this.fields$[0].focus();
     }
 
 

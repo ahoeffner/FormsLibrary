@@ -1,0 +1,37 @@
+<html>
+	<style>
+		.frame
+		{
+			width: 14px;
+			height: 200px;
+			border-top: 1px solid black;
+			border-bottom: 1px solid black;
+		}
+		
+		.scrollbar
+		{
+			left: 0;
+			right: 0;
+			width: 12px;
+			height: 200px;
+			overflow-x: hidden;
+			overflow-y: scroll;
+			display: inline-block;
+		}
+		
+		.content
+		{
+			width: 1px;
+			height: 1000px;
+			overflow: none;
+			display: inline-block;
+		}
+	</style>
+	
+	<div class="frame">
+		<div class="scrollbar">
+			<div class="content">
+			</div>
+		</div>
+	</div>
+</html>
