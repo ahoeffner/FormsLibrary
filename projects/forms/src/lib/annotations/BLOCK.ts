@@ -4,7 +4,7 @@ import { DatabaseUsage } from '../database/DatabaseUsage';
 import { BlockDefinition } from '../blocks/BlockDefinition';
 
 
-export const BLOCK = (alias?:string, component?:any, usage?:DatabaseUsage) =>
+export const BLOCK = (component?:any, alias?:string, usage?:DatabaseUsage) =>
 {
     function def(comp:any, prop?:string)
     {

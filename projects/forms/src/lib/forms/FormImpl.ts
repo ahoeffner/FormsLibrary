@@ -566,6 +566,7 @@ export class FormImpl implements EventListener
         {
             alias = block.constructor.name;
             alias = BlockDefinitions.getBlockDefaultAlias(alias);
+            console.log("default alias for "+alias+" is "+alias)
         }
 
         alias = alias.toLowerCase();
