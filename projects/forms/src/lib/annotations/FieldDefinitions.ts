@@ -36,11 +36,24 @@ export class FieldDefinitions
     }
 
 
-    public static getFieldIndex(block:string) : Map<string,FieldDefinition>
+    public static getIndex(block:string) : Map<string,FieldDefinition>
     {
         let index:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
         let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
         if (fields != null) fields.forEach((field) => {index.set(field.name,field)});
+        return(index);
+    }
+
+
+    public static getColumnIndex(block:string) : Map<string,FieldDefinition>
+    {
+        let index:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
+        let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
+        if (fields != null) fields.forEach((field) =>
+        {
+            if (field.column != null)
+                index.set(""+field.column,field);
+        });
         return(index);
     }
 }

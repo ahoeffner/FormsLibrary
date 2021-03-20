@@ -18,7 +18,15 @@ export class ColumnDefinitions
     }
 
 
-    public static getColumns(block:string) : Map<string,ColumnDefinition>
+    public static get(block:string) : ColumnDefinition[]
+    {
+        let columns:ColumnDefinition[] = ColumnDefinitions.index.get(block);
+        if (columns == null) columns = [];
+        return(columns);
+    }
+
+
+    public static getIndex(block:string) : Map<string,ColumnDefinition>
     {
         let index:Map<string,ColumnDefinition> = new Map<string,ColumnDefinition>();
         let columns:ColumnDefinition[] = ColumnDefinitions.index.get(block);

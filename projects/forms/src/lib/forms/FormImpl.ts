@@ -18,12 +18,14 @@ import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
+import { ColumnDefinition } from "../database/ColumnDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { TableDefinition } from "../annotations/TableDefinition";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
+import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 
@@ -255,9 +257,11 @@ export class FormImpl implements EventListener
             block.config = this.app.conf;
 
             cb.records.forEach((rec) =>
+            // Copy records from container
             {block.addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
+            // Set fieldtype for all fields
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getIndex(block.clazz);
             cb.fields.forEach((inst) =>
             {
                 let def:FieldDefinition = fielddef.get(inst.name);
@@ -269,27 +273,40 @@ export class FormImpl implements EventListener
 
         this.blkindex.forEach((block) =>
         {
-            let rec:Record = block.getRecord(0);
+            // Finish setup for each block
             let table:TableDefinition = TableDefinitions.get(block.name);
 
+            let fields:string[] = [];
+            // List of fields, first all columns, then other fields
+            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
+            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
+
+            columns.forEach((column) =>
+            {
+                let cname:string = "";
+                let field:FieldDefinition = cindex.get(column.name);
+                if (field != null) cname = field.name;
+                fields.push(cname);
+            });
+
+            let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
+            fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});
+
+            block.data = new FieldData(fields);
+
+            let rec:Record = block.getRecord(0);
 
             if (rec != null)
             {
                 rec.enable(true);
                 rec.current = true;
-
-                let columns:string[] = [];
-                let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
-                fielddef.forEach((col) => {columns.push(col.name)});
-
-                block.data = new FieldData(columns);
                 block.display(0);
             }
         });
 
-        // All fields on form
+        // Get all fields on form
         this.fields$ = container.fields;
-        this.rehash();
+        this.regroup();
     }
 
 
@@ -605,7 +622,8 @@ export class FormImpl implements EventListener
     }
 
 
-    public rehash(groups?:string[]) : void
+    // Sort fields by group and set tabindex
+    public regroup(groups?:string[]) : void
     {
         let seq:number = 1;
         if (groups == null) groups = [];
