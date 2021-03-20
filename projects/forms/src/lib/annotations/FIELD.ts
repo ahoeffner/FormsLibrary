@@ -3,7 +3,7 @@ import { FieldDefinitions } from './FieldDefinitions';
 import { FieldDefinition } from '../input/FieldDefinition';
 
 
-export const FIELD = (definition:FieldDefinition) =>
+export const field = (definition:FieldDefinition) =>
 {
     function def(comp:any)
     {

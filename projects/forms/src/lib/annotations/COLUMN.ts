@@ -3,7 +3,7 @@ import { ColumnDefinitions } from './ColumnDefinitions';
 import { ColumnDefinition } from '../database/ColumnDefinition';
 
 
-export const COLUMN = (name:string, type:string) =>
+export const column = (name:string, type:string) =>
 {
     function def(comp:any)
     {
@@ -13,7 +13,7 @@ export const COLUMN = (name:string, type:string) =>
 
         if (ctype != "Block")
         {
-            window.alert("@COLUMN("+name+","+type+") can only be used on blocks");
+            window.alert("@column("+name+","+type+") can only be used on blocks");
             return;
         }
 

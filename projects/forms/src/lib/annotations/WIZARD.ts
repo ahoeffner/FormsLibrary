@@ -3,7 +3,7 @@ import { FormDefinitions } from "./FormDefinitions";
 import { WindowOptions } from "../forms/WindowOptions";
 
 
-export const WIZARD = () =>
+export const wizard = () =>
 {
     function def(form:any)
     {

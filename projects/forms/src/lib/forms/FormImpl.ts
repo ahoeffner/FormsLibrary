@@ -236,15 +236,8 @@ export class FormImpl implements EventListener
         // DatabaseUsage for this form
         let fusage:DatabaseUsage = DatabaseDefinitions.getFormUsage(this.name);
 
-        // DatabaseUsage for DATABASE anotated form properties
-        let propusage:Map<string,DatabaseUsage> = DatabaseDefinitions.getBlockUsage(this.name);
-
         // Merge default, block-spec and prop usage. Form usage overides
-        blockdef.forEach((bdef) =>
-        {
-            let usage:DatabaseUsage = propusage.get(bdef.prop);
-            this.setBlockUsage(fusage,usage,bdef);
-        });
+        blockdef.forEach((bdef) => {this.setBlockUsage(fusage,bdef);});
 
         container.finish();
         container.getBlocks().forEach((cb) =>
@@ -581,7 +574,7 @@ export class FormImpl implements EventListener
     }
 
 
-    private setBlockUsage(formusage:DatabaseUsage, propusage:DatabaseUsage, blockdef:BlockDefinition) : void
+    private setBlockUsage(formusage:DatabaseUsage, blockdef:BlockDefinition) : void
     {
         let block:BlockImpl = this.blkindex.get(blockdef.alias);
         let bname:string = block.clazz;
@@ -594,21 +587,19 @@ export class FormImpl implements EventListener
 
         let usage1:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
         let usage2:DatabaseUsage = blockdef.databaseopts;
-        let usage3:DatabaseUsage = propusage;
-        let usage4:DatabaseUsage = formusage;
-        let usage5:DatabaseUsage = {};
+        let usage3:DatabaseUsage = formusage;
+        let usage4:DatabaseUsage = {};
 
         if (usage1 == null) usage1 = {};
         if (usage2 == null) usage2 = {};
         if (usage3 == null) usage3 = {};
-        if (usage4 == null) usage4 = {};
 
-        usage5 = DBUsage.merge(usage2,usage1);
-        usage5 = DBUsage.merge(usage3,usage5);
-        usage5 = DBUsage.override(usage4,usage5);
-        usage5 = DBUsage.complete(usage5);
+        usage4 = DBUsage.merge(usage2,usage1);
+        usage4 = DBUsage.merge(usage3,usage4);
+        usage4 = DBUsage.override(usage3,usage4);
+        usage4 = DBUsage.complete(usage4);
 
-        block.setDatabaseUsage(usage5);
+        block.setDatabaseUsage(usage4);
     }
 
 

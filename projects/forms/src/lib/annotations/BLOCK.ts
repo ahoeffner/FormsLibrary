@@ -1,30 +1,29 @@
 import { Utils } from '../utils/Utils';
+import { BlockDefinition } from './BlockDefinition';
 import { BlockDefinitions } from './BlockDefinitions';
-import { DatabaseUsage } from '../database/DatabaseUsage';
-import { BlockDefinition } from '../blocks/BlockDefinition';
+import { BlockDefinition as BlockDef } from '../blocks/BlockDefinition';
 
 
-export const BLOCK = (component?:any, alias?:string, usage?:DatabaseUsage) =>
+export const block = (definition:BlockDefinition) =>
 {
     function def(comp:any, prop?:string)
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(comp);
         let type:string = utils.getType(comp);
-        if (alias != null) alias = alias.toLowerCase();
 
-        if (type == "Block")
+        if (type != "Form")
         {
-            BlockDefinitions.setBlockDefaultAlias(name,alias);
+            window.alert("@block can only be used with forms");
             return;
         }
 
-        let def:BlockDefinition =
+        let def:BlockDef =
         {
             prop: prop,
-            alias: alias,
-            component: component,
-            databaseopts: usage
+            alias: definition.alias,
+            component: definition.component,
+            databaseopts: definition.databaseopts
         }
 
         BlockDefinitions.setBlock(name,def);

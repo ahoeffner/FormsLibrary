@@ -3,7 +3,7 @@ import { Utils } from "../utils/Utils";
 import { FormDefinitions } from "./FormDefinitions";
 
 
-export const INIT = (form:Form, func?:string) =>
+export const init = (form:Form, func?:string) =>
 {
     let utils:Utils = new Utils();
     let fname:string = utils.getName(form);

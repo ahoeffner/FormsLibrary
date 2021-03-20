@@ -9,7 +9,6 @@ export interface PropUsage
 
 export class DatabaseDefinitions
 {
-    private static usage:Map<string,PropUsage[]> = new Map<string,PropUsage[]>();
     private static bdefault:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
     private static fdefault:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
 
@@ -43,34 +42,5 @@ export class DatabaseDefinitions
 
         if (block != null) usage = DatabaseDefinitions.bdefault.get(block.toLowerCase());
         return(DBUsage.merge(usage,base));
-    }
-
-    public static setBlockUsage(form:string, prop:string, usage:DatabaseUsage) : void
-    {
-        let opts:PropUsage[] = DatabaseDefinitions.usage.get(form);
-
-        if (opts == null)
-        {
-            opts = [];
-            DatabaseDefinitions.usage.set(form,opts);
-        }
-
-        let dbopts:PropUsage = {prop: prop, usage: usage};
-        opts.unshift(dbopts);
-    }
-
-
-    public static getBlockUsage(form:string) : Map<string,DatabaseUsage>
-    {
-        let index:Map<string,DatabaseUsage> = new Map<string,DatabaseUsage>();
-        let usage:PropUsage[] = DatabaseDefinitions.usage.get(form.toLowerCase());
-
-        if (usage != null)
-        {
-            usage.forEach((pusage) =>
-            {index.set(pusage.prop,pusage.usage);});
-        }
-
-        return(index);
     }
 }

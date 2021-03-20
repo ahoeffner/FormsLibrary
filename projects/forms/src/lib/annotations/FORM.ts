@@ -2,7 +2,7 @@ import { FormDefinitions } from "./FormDefinitions";
 import { FormDefinition } from "../forms/FormsDefinition";
 
 
-export const FORM = (component:any, title:string, path:string, navigable?:boolean) =>
+export const form = (component:any, title:string, path:string, navigable?:boolean) =>
 {
     function def(_target:any)
     {

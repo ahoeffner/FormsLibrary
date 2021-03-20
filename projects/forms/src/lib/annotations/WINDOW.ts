@@ -3,7 +3,7 @@ import { FormDefinitions } from "./FormDefinitions";
 import { WindowOptions } from "../forms/WindowOptions";
 
 
-export const WINDOW = (inherit:boolean, top?:number|string, left?:number|string, width?:number|string, height?:number|string) =>
+export const window = (inherit:boolean, top?:number|string, left?:number|string, width?:number|string, height?:number|string) =>
 {
     function def(form:any)
     {

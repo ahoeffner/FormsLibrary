@@ -1,18 +1,18 @@
 /*
  * Public API Surface of forms
  */
-export {FORM} from './lib/annotations/FORM';
-export {INIT} from './lib/annotations/INIT';
-export {SHOW} from './lib/annotations/SHOW';
-export {HIDE} from './lib/annotations/HIDE';
-export {BLOCK} from './lib/annotations/BLOCK';
-export {FIELD} from './lib/annotations/FIELD';
-export {WIZARD} from './lib/annotations/WIZARD';
-export {WINDOW} from './lib/annotations/WINDOW';
-export {CONNECT} from './lib/annotations/CONNECT';
-export {DESTROY} from './lib/annotations/DESTROY';
-export {DATABASE} from './lib/annotations/DATABASE';
-export {DISCONNECT} from './lib/annotations/DISCONNECT';
+export {form} from './lib/annotations/form';
+export {init} from './lib/annotations/init';
+export {show} from './lib/annotations/show';
+export {hide} from './lib/annotations/hide';
+export {block} from './lib/annotations/block';
+export {field} from './lib/annotations/field';
+export {wizard} from './lib/annotations/wizard';
+export {window} from './lib/annotations/window';
+export {connect} from './lib/annotations/connect';
+export {destroy} from './lib/annotations/destroy';
+export {database} from './lib/annotations/database';
+export {disconnect} from './lib/annotations/disconnect';
 
 export {Menu} from './lib/menu/Menu';
 export {MenuArea} from './lib/menu/MenuArea';

@@ -1,6 +1,6 @@
 import { Utils } from '../utils/Utils';
 
-export const TABLE = (name:string) =>
+export const table = (name:string) =>
 {
     function def(comp:any)
     {
