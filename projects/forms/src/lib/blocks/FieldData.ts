@@ -1,30 +1,26 @@
-import { Connection } from "./Connection";
-import { TableDefinition } from "../annotations/TableDefinition";
-
-export class Table
+export class FieldData
 {
     private scn:number = 0;
     private data:Row[] = [];
-    private conn:Connection;
-    private columns$:string[];
-    private table:TableDefinition;
+    private fields$:string[];
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(conn:Connection, table:TableDefinition, columns:string[])
+    public constructor(fields:string[])
     {
-        this.conn = conn;
-        this.table = table;
-        this.columns$ = columns;
+        this.fields$ = fields;
 
-        for(let i = 0; i < columns.length; i++)
-            this.index.set(columns[i].toLowerCase(),i);
+        if (fields != null)
+        {
+            for(let i = 0; i < fields.length; i++)
+                this.index.set(fields[i].toLowerCase(),i);
+        }
     }
 
 
-    public get columns() : string[]
+    public get fields() : string[]
     {
-        return(this.columns$);
+        return(this.fields$);
     }
 
 
@@ -91,7 +87,7 @@ export class Table
 
     public async fetch(offset:number, rows:number) : Promise<number>
     {
-        if (this.data.length <= +offset + rows && this.table != null)
+        if (this.data.length <= +offset + rows)
         {
             //fetch
         }
@@ -123,11 +119,11 @@ class Row
     public scn:number = 0;
     public columns:Column[] = [];
 
-    constructor(scn:number, table:Table, columns?:any[])
+    constructor(scn:number, table:FieldData, columns?:any[])
     {
         this.scn = scn;
 
-        for(let i = 0; i < table.columns.length; i++)
+        for(let i = 0; i < table.fields.length; i++)
             this.columns.push(new Column(scn));
 
         let i:number = 0;

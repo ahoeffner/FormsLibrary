@@ -2,7 +2,6 @@ import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
-import { Table } from "../database/Table";
 import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
@@ -10,6 +9,7 @@ import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { FieldData } from "../blocks/FieldData";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
@@ -281,8 +281,8 @@ export class FormImpl implements EventListener
                 let columns:string[] = [];
                 let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
-                block.table = new Table(this.conn,table,columns);
 
+                block.data = new FieldData(columns);
                 block.display(0);
             }
         });

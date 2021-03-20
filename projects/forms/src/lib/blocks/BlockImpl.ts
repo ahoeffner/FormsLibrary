@@ -1,7 +1,7 @@
 import { Block } from "./Block";
 import { Record } from "./Record";
 import { Field } from "../input/Field";
-import { Table } from "../database/Table";
+import { FieldData } from "./FieldData";
 import { KeyMap } from "../keymap/KeyMap";
 import { Listener } from "../events/Listener";
 import { Config } from "../application/Config";
@@ -17,8 +17,8 @@ export class BlockImpl
 {
     private alias$:string;
     private keymap:KeyMap;
-    private table$:Table;
     private row$:number = 0;
+    private data$:FieldData;
     private offset:number = 0;
     private app:ApplicationImpl;
     private field$:FieldInstance;
@@ -76,15 +76,15 @@ export class BlockImpl
     }
 
 
-    public get table() : Table
+    public get data() : FieldData
     {
-        return(this.table$);
+        return(this.data$);
     }
 
 
-    public set table(table:Table)
+    public set data(data:FieldData)
     {
-        this.table$ = table;
+        this.data$ = data;
     }
 
 
@@ -136,8 +136,8 @@ export class BlockImpl
 
     public setValue(row:number, col:string, value:any, change:boolean) : void
     {
-        if (this.table != null)
-            this.table.update(+row+this.offset,col,value);
+        if (this.data != null)
+            this.data.update(+row+this.offset,col,value);
     }
 
 
@@ -183,11 +183,11 @@ export class BlockImpl
     {
         let off:number = after ? 1 : 0;
 
-        if (!this.table.insert(+this.row + +this.offset + +off))
+        if (!this.data.insert(+this.row + +this.offset + +off))
             return(false);
 
         // Is first row
-        if (this.table.rows == 1)
+        if (this.data.rows == 1)
         {
             this.display(this.offset);
             return;
@@ -224,13 +224,13 @@ export class BlockImpl
 
     public delete() : boolean
     {
-        if (!this.table.delete(+this.row + +this.offset))
+        if (!this.data.delete(+this.row + +this.offset))
             return(false);
 
         this.clear();
 
         // current view is not full
-        if (+this.table.rows - this.offset < this.rows)
+        if (+this.data.rows - this.offset < this.rows)
         {
             this.offset--;
             if (this.offset < 0) this.offset = 0;
@@ -239,10 +239,10 @@ export class BlockImpl
         this.display(this.offset);
 
         // no records at current position
-        if ((+this.row) + (+this.offset) >= this.table.rows)
-            this.row = this.table.rows - this.offset - 1;
+        if ((+this.row) + (+this.offset) >= this.data.rows)
+            this.row = this.data.rows - this.offset - 1;
 
-        if (this.table.rows == 0) this.records[0].clear(true);
+        if (this.data.rows == 0) this.records[0].clear(true);
         else this.goField(this.row,this.field);
     }
 
@@ -301,10 +301,10 @@ export class BlockImpl
         this.offset = start;
         if (this.offset < 0) this.offset = 0;
 
-        if (this.table != null)
+        if (this.data != null)
         {
-            let columns:string[] = this.table.columns;
-            let rows:any[][] = this.table$.get(start,this.rows);
+            let columns:string[] = this.data.fields;
+            let rows:any[][] = this.data.get(start,this.rows);
 
             for(let r = 0; r < rows.length; r++)
             {
@@ -432,10 +432,10 @@ export class BlockImpl
             if (+row >= +this.rows)
             {
                 row = +this.rows - 1;
-                if (this.table == null) return(false);
+                if (this.data == null) return(false);
 
                 let offset:number = +this.offset + +field.row;
-                let fetched:number = await this.table$.fetch(offset,1);
+                let fetched:number = await this.data.fetch(offset,1);
 
                 if (fetched == 0) return(false);
                 if (!this.onEvent(null,this.field,"change")) return(false);
@@ -459,7 +459,7 @@ export class BlockImpl
             if (+row < 0)
             {
                 row = 0;
-                if (this.table == null) return(false);
+                if (this.data == null) return(false);
 
                 if (!this.onEvent(null,this.field,"change"))
                     return(false);
