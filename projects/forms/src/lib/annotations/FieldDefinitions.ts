@@ -15,6 +15,15 @@ export class FieldDefinitions
             FieldDefinitions.index.set(block,fields);
         }
 
+        if (def.hasOwnProperty("column"))
+        {
+            if (def.column.constructor.name == "Boolean")
+            {
+                if (!def.column) def.column = null;
+                else             def.column = def.name;
+            }
+        }
+
         fields.unshift(def);
     }
 

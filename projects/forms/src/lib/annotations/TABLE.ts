@@ -15,6 +15,7 @@ export const table = (table:string) =>
             return;
         }
 
+        console.log("setting table "+table+" for "+cname);
         TableDefinitions.set(cname,table);
     }
     return(def);

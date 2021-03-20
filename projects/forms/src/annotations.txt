@@ -1,0 +1,33 @@
+
+@block({component: SalesData}) or
+@block({component: SalesData, alias: sales, database: {update:false})
+
+@database({insert: false})
+export class Orders extends Form
+{
+	@block()
+	private manager:Employees = new Employees("managers");
+
+	@block({alias: manager, database: {update:false})
+	private salesman:Employees = new Employees("sales");
+}
+
+
+
+
+@alias("emp")
+@table("employees")
+
+@column("initials","varchar")
+@column("firstname","varchar")
+@column("lastname","varchar")
+
+@field({name: "initials" , type: "input", column: true        , mandatory: true})
+@field({name: "fname"  	 , type: "input", column: "firstname" , mandatory: true})
+@field({name: "lname"  	 , type: "input", column: "lastname"  , mandatory: true})
+
+@database({query:false})
+export class Employees extends Block
+{
+	
+}
