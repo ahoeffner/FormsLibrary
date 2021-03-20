@@ -183,7 +183,7 @@ export class FormsControl
         if (!(ref.instance instanceof Form))
         {
             let name:string = ref.instance.constructor.name;
-            window.alert("Component "+name+" is not an instance of Form");
+            console.log("Component "+name+" is not an instance of Form");
             return;
         }
 

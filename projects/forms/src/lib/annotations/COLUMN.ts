@@ -13,7 +13,7 @@ export const column = (name:string, type:string) =>
 
         if (ctype != "Block")
         {
-            window.alert("@column("+name+","+type+") can only be used on blocks");
+            console.log("@column("+name+","+type+") can only be used on blocks");
             return;
         }
 

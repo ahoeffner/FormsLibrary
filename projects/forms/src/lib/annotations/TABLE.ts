@@ -11,7 +11,7 @@ export const table = (table:string) =>
 
         if (ctype != "Block")
         {
-            window.alert("@table("+table+") can only be used on blocks");
+            console.log("@table("+table+") can only be used on blocks");
             return;
         }
 

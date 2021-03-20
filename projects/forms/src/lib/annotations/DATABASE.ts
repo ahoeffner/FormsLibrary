@@ -22,7 +22,7 @@ export const database = (usage:DatabaseUsage) =>
             return;
         }
 
-        window.alert("@database can only be used in conjunction with Form or Block");
+        console.log("@database can only be used in conjunction with Form or Block");
     }
     return(def);
 }

@@ -12,7 +12,7 @@ export const alias = (alias:string) =>
 
         if (ctype != "Block")
         {
-            window.alert("@alias("+alias+") can only be used on blocks");
+            console.log("@alias("+alias+") can only be used on blocks");
             return;
         }
 

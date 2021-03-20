@@ -14,7 +14,7 @@ export const block = (definition:BlockDefinition) =>
 
         if (type != "Form")
         {
-            window.alert("@block can only be used with forms");
+            console.log("@block can only be used with forms");
             return;
         }
 

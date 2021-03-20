@@ -247,7 +247,7 @@ export class FormImpl implements EventListener
 
             if (block == null)
             {
-                window.alert("Form has fields bound to "+cb.name+" that doesn't exist");
+                console.log("Form has fields bound to "+cb.name+" that doesn't exist");
                 return;
             }
 
@@ -262,7 +262,7 @@ export class FormImpl implements EventListener
                 let def:FieldDefinition = fielddef.get(inst.name);
 
                 if (def != null) inst.type = def.type;
-                else window.alert("Field "+inst.name+" has no correponding definition");
+                else console.log("Field "+inst.name+" has no correponding definition");
             });
         });
 
@@ -526,7 +526,7 @@ export class FormImpl implements EventListener
 
         if (impl != null)
         {
-            window.alert("Block alias "+blockdef.alias+" defined twice");
+            console.log("Block alias "+blockdef.alias+" defined twice");
             return;
         }
 
@@ -553,7 +553,7 @@ export class FormImpl implements EventListener
 
         if (impl == null)
         {
-            window.alert(this.name+" cannot create instance of "+blockdef.alias);
+            console.log(this.name+" cannot create instance of "+blockdef.alias);
             return;
         }
 
@@ -584,7 +584,7 @@ export class FormImpl implements EventListener
 
         if (!(block instanceof BlockImpl))
         {
-            window.alert(bname+" is not a block");
+            console.log(bname+" is not a block");
             return;
         }
 

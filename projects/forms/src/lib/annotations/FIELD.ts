@@ -13,7 +13,7 @@ export const field = (definition:FieldDefinition) =>
 
         if (ctype != "Block")
         {
-            window.alert("@field("+JSON.stringify(definition.name)+") can only be used on blocks");
+            console.log("@field("+JSON.stringify(definition.name)+") can only be used on blocks");
             return;
         }
 
