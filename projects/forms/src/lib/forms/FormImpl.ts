@@ -23,6 +23,7 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { TableDefinitions } from "../annotations/TableDefinitions";
 
 
 export class FormImpl implements EventListener
@@ -236,7 +237,7 @@ export class FormImpl implements EventListener
         // DatabaseUsage for this form
         let fusage:DatabaseUsage = DatabaseDefinitions.getFormUsage(this.name);
 
-        // Merge default, block-spec and prop usage. Form usage overides
+        // Merge form, block and block usage. Form usage overides
         blockdef.forEach((bdef) => {this.setBlockUsage(fusage,bdef);});
 
         container.finish();
@@ -268,6 +269,9 @@ export class FormImpl implements EventListener
         this.blkindex.forEach((block) =>
         {
             let rec:Record = block.getRecord(0);
+            let table:string = TableDefinitions.get(block.name);
+            console.log("block: "+block.name+" table: "+table);
+
 
             if (rec != null)
             {
@@ -277,8 +281,8 @@ export class FormImpl implements EventListener
                 let columns:string[] = [];
                 let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
                 fielddef.forEach((col) => {columns.push(col.name)});
-
                 block.table = new Table(this.conn,null,columns);
+
                 block.display(0);
             }
         });
@@ -559,12 +563,11 @@ export class FormImpl implements EventListener
         {
             alias = block.constructor.name;
             alias = BlockDefinitions.getBlockDefaultAlias(alias);
-            console.log("default alias for "+alias+" is "+alias)
         }
 
         alias = alias.toLowerCase();
 
-        impl.name = alias;
+        impl.alias = alias;
         blockdef.alias = alias;
         this.blocks.push(impl);
         this.blkindex.set(alias,impl);
@@ -574,7 +577,7 @@ export class FormImpl implements EventListener
     }
 
 
-    private setBlockUsage(formusage:DatabaseUsage, blockdef:BlockDefinition) : void
+    private setBlockUsage(fusage:DatabaseUsage, blockdef:BlockDefinition) : void
     {
         let block:BlockImpl = this.blkindex.get(blockdef.alias);
         let bname:string = block.clazz;
@@ -585,21 +588,20 @@ export class FormImpl implements EventListener
             return;
         }
 
-        let usage1:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
-        let usage2:DatabaseUsage = blockdef.databaseopts;
-        let usage3:DatabaseUsage = formusage;
-        let usage4:DatabaseUsage = {};
+        let usage:DatabaseUsage = {};
+        let pusage:DatabaseUsage = blockdef.databaseopts;
+        let dusage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
 
-        if (usage1 == null) usage1 = {};
-        if (usage2 == null) usage2 = {};
-        if (usage3 == null) usage3 = {};
+        if (dusage == null) dusage = {};
+        if (pusage == null) pusage = {};
+        if (fusage == null) fusage = {};
 
-        usage4 = DBUsage.merge(usage2,usage1);
-        usage4 = DBUsage.merge(usage3,usage4);
-        usage4 = DBUsage.override(usage3,usage4);
-        usage4 = DBUsage.complete(usage4);
+        usage = DBUsage.merge(pusage,dusage);
+        usage = DBUsage.merge(fusage,usage);
+        usage = DBUsage.override(fusage,usage);
+        usage = DBUsage.complete(usage);
 
-        block.setDatabaseUsage(usage4);
+        block.setDatabaseUsage(usage);
     }
 
 

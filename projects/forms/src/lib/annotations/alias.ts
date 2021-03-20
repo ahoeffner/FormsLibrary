@@ -1,7 +1,8 @@
 import { Utils } from '../utils/Utils';
-import { TableDefinitions } from './TableDefinitions';
+import { BlockDefinitions } from './BlockDefinitions';
 
-export const table = (table:string) =>
+
+export const alias = (alias:string) =>
 {
     function def(comp:any)
     {
@@ -11,11 +12,11 @@ export const table = (table:string) =>
 
         if (ctype != "Block")
         {
-            window.alert("@table("+table+") can only be used on blocks");
+            window.alert("@alias("+alias+") can only be used on blocks");
             return;
         }
 
-        TableDefinitions.set(cname,table);
+        BlockDefinitions.setBlockDefaultAlias(cname,alias.toLowerCase());
     }
     return(def);
 }

@@ -4,7 +4,7 @@ import { FormDefinition } from "../forms/FormsDefinition";
 
 export const form = (component:any, title:string, path:string, navigable?:boolean) =>
 {
-    function def(_target:any)
+    function def(_comp:any)
     {
         let def:FormDefinition =
         {

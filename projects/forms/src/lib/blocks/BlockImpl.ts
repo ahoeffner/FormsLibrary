@@ -15,7 +15,7 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 
 export class BlockImpl
 {
-    private name$:string;
+    private alias$:string;
     private keymap:KeyMap;
     private table$:Table;
     private row$:number = 0;
@@ -29,15 +29,20 @@ export class BlockImpl
 
     constructor(public block:Block) {}
 
-    public set name(alias:string)
+    public get name() : string
     {
-        this.name$ = alias;
+        return(this.block.constructor.name);
+    }
+
+    public set alias(alias:string)
+    {
+        this.alias$ = alias;
     }
 
 
-    public get name() : string
+    public get alias() : string
     {
-        return(this.name$);
+        return(this.alias$);
     }
 
 
