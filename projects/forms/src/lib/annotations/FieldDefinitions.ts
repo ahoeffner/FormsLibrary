@@ -24,6 +24,21 @@ export class FieldDefinitions
             }
         }
 
+        fields.forEach((existing) =>
+        {
+            if (def.name == existing.name)
+            {
+                console.log("Field "+def.name+" defined twice");
+                return;
+            }
+
+            if (def.column!= null && def.column == existing.column)
+            {
+                console.log("Column "+def.column+" defined twice");
+                return;
+            }
+        });
+
         fields.unshift(def);
     }
 
