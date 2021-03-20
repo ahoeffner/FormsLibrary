@@ -19,11 +19,12 @@ import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { TableDefinition } from "../annotations/TableDefinition";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
-import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
+import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 
 export class FormImpl implements EventListener
@@ -269,8 +270,7 @@ export class FormImpl implements EventListener
         this.blkindex.forEach((block) =>
         {
             let rec:Record = block.getRecord(0);
-            let table:string = TableDefinitions.get(block.name);
-            console.log("block: "+block.name+" table: "+table);
+            let table:TableDefinition = TableDefinitions.get(block.name);
 
 
             if (rec != null)
@@ -562,7 +562,7 @@ export class FormImpl implements EventListener
         if (alias == null)
         {
             alias = block.constructor.name;
-            alias = BlockDefinitions.getBlockDefaultAlias(alias);
+            alias = BlockDefinitions.getDefaultAlias(alias);
         }
 
         alias = alias.toLowerCase();

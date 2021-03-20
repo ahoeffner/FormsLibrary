@@ -16,7 +16,7 @@ export const alias = (alias:string) =>
             return;
         }
 
-        BlockDefinitions.setBlockDefaultAlias(cname,alias.toLowerCase());
+        BlockDefinitions.setDefaultAlias(cname,alias.toLowerCase());
     }
     return(def);
 }

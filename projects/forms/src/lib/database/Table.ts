@@ -1,17 +1,17 @@
 import { Connection } from "./Connection";
+import { TableDefinition } from "../annotations/TableDefinition";
 
 export class Table
 {
-    private table:string;
     private scn:number = 0;
     private data:Row[] = [];
     private conn:Connection;
     private columns$:string[];
-    private deleted$:Row[] = [];
+    private table:TableDefinition;
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(conn:Connection, table:string, columns:string[])
+    public constructor(conn:Connection, table:TableDefinition, columns:string[])
     {
         this.conn = conn;
         this.table = table;
@@ -50,7 +50,6 @@ export class Table
             return(false);
 
         this.data[row].scn = ++this.scn;
-        this.deleted$.push(this.data[row]);
 
         data = this.data.slice(0,row);
         data = data.concat(this.data.slice(+row+1,this.data.length));

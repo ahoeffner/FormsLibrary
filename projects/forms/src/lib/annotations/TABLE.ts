@@ -1,7 +1,8 @@
 import { Utils } from '../utils/Utils';
+import { TableDefinition } from './TableDefinition';
 import { TableDefinitions } from './TableDefinitions';
 
-export const table = (table:string) =>
+export const table = (name:string, order?:string) =>
 {
     function def(comp:any)
     {
@@ -11,12 +12,12 @@ export const table = (table:string) =>
 
         if (ctype != "Block")
         {
-            console.log("@table("+table+") can only be used on blocks");
+            console.log("@table("+name+") can only be used on blocks");
             return;
         }
 
-        console.log("setting table "+table+" for "+cname);
-        TableDefinitions.set(cname,table);
+        let definition:TableDefinition = {name: name, order: order};
+        TableDefinitions.set(cname,definition);
     }
     return(def);
 }

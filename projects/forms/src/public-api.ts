@@ -1,6 +1,4 @@
-/*
- * Public API Surface of forms
- */
+export {key} from './lib/annotations/key';
 export {form} from './lib/annotations/form';
 export {init} from './lib/annotations/init';
 export {show} from './lib/annotations/show';
