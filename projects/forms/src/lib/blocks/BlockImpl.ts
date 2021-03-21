@@ -306,12 +306,14 @@ export class BlockImpl
         for(let r = 0; r < rows.length; r++)
         {
             let rec:Record = this.getRecord(r);
+
             for(let c = 0; c < rows[r].length; c++)
             {
                 let field:Field = rec.getField(columns[c]);
-                field.value = rows[r][c];
-                rec.enable(false);
+                if (field != null) field.value = rows[r][c];
             }
+
+            rec.enable(false);
         }
     }
 
