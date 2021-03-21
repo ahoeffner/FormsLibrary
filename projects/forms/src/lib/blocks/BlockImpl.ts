@@ -136,8 +136,7 @@ export class BlockImpl
 
     public setValue(row:number, col:string, value:any, change:boolean) : void
     {
-        if (this.data != null)
-            this.data.update(+row+this.offset,col,value);
+        this.data.update(+row+this.offset,col,value);
     }
 
 
@@ -456,7 +455,6 @@ export class BlockImpl
             if (+row < 0)
             {
                 row = 0;
-                if (this.data == null) return(false);
 
                 if (!this.onEvent(null,this.field,"change"))
                     return(false);
