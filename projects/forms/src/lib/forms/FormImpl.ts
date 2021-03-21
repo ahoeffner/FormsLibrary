@@ -18,6 +18,7 @@ import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
+import { KeyDefinition } from "../annotations/KeyDefinition";
 import { ColumnDefinition } from "../database/ColumnDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { TableDefinition } from "../annotations/TableDefinition";
@@ -275,6 +276,7 @@ export class FormImpl implements EventListener
         {
             // Finish setup for each block
             let table:TableDefinition = TableDefinitions.get(block.name);
+            let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
 
             let fields:string[] = [];
             // List of fields, first all columns, then other fields
