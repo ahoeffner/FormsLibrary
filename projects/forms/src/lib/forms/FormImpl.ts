@@ -1,3 +1,4 @@
+import { Key } from "../blocks/Key";
 import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
@@ -53,6 +54,7 @@ export class FormImpl implements EventListener
     private initiated$:boolean = false;
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
+    private keys:Map<string,Key> = new Map<string,Key>();
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
     private blkindex:Map<string,BlockImpl> = new Map<string,BlockImpl>();
@@ -294,7 +296,39 @@ export class FormImpl implements EventListener
             let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
             fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});
 
-            block.data = new FieldData(fields);
+            // Create keys and decide on primary
+            let pkey:Key = null;
+            keys.forEach((kdef) =>
+            {
+                let key:Key = this.keys.get(kdef.name);
+
+                if (key != null)
+                {
+                    console.log("key "+kdef.name+" is defined twice");
+                    return;
+                }
+
+                kdef.columns.forEach((col) =>
+                {
+                    if (cindex.get(col) == null)
+                    {
+                        console.log("key "+kdef.name+" column "+col+" is not a column");
+                        return;
+                    }
+                });
+
+                key = new Key(kdef.name);
+                this.keys.set(kdef.name,key);
+                kdef.columns.forEach((col) => {key.add(col)});
+
+                if (kdef.unique && pkey == null) pkey = key;
+                if (kdef.name.startsWith("primary")) pkey = key;
+            });
+
+            // Create data backing table
+            block.data = new FieldData(table,pkey,columns,fields);
+
+            // Start form
             let rec:Record = block.getRecord(0);
 
             if (rec != null)

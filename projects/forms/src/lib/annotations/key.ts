@@ -26,7 +26,10 @@ export const key = (name:string, unique:boolean, columns:string|string[]) =>
         if (arr) cols = columns as string[];
         else     cols.push(columns as string);
 
-        let def:KeyDefinition = {name: name, unique: unique, columns: cols}
+        let lccols:string[] = [];
+        cols.forEach((col) => {lccols.push(col.toLowerCase())});
+
+        let def:KeyDefinition = {name: name, unique: unique, columns: lccols}
         BlockDefinitions.setKey(cname,def);
     }
     return(def);

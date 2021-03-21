@@ -21,7 +21,8 @@ export class Connection
     {
         if (this.url == null)
         {
-            let conf:any = await this.app.conf.others();
+            await this.app.conf.ready();
+            let conf:any = await this.app.conf.others;
 
             this.url = conf["backend"];
             if (this.url == null || this.url.length == 0)
@@ -51,7 +52,7 @@ export class Connection
 
         this.conn = response["id"];;
         this.keepalive = response["keep-alive"];
-        
+
         this.app.appstate.onConnect();
         this.keepAlive();
     }

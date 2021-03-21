@@ -17,7 +17,7 @@ export const column = (name:string, type:string) =>
             return;
         }
 
-        let def:ColumnDefinition = {name: name, type: type};
+        let def:ColumnDefinition = {name: name.toLowerCase(), type: type};
         ColumnDefinitions.add(cname,def);
     }
     return(def);

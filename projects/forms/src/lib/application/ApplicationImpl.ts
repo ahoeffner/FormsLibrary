@@ -54,7 +54,8 @@ export class ApplicationImpl
 
     private async loadConfig()
     {
-        this.config = await this.conf.others();
+        await this.config.ready();
+        this.config = this.conf.others;
 
         if (this.config.hasOwnProperty("title"))
             this.setTitle(this.config["title"]);

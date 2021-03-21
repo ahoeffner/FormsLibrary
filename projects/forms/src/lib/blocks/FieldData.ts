@@ -1,3 +1,8 @@
+import { Key } from "./Key";
+import { ColumnDefinition } from "../database/ColumnDefinition";
+import { TableDefinition } from "../annotations/TableDefinition";
+
+
 export class FieldData
 {
     private scn:number = 0;
@@ -6,7 +11,7 @@ export class FieldData
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(fields:string[])
+    public constructor(table:TableDefinition, key:Key, columns:ColumnDefinition[], fields:string[])
     {
         this.fields$ = fields;
 
@@ -67,13 +72,13 @@ export class FieldData
 
         let rec:Row = this.data[+row];
 
-        if (rec.columns[+colno].value$ == value)
+        if (rec.fields[+colno].value$ == value)
             return(false);
 
         let scn:number = ++this.scn;
 
         rec.scn = scn;
-        rec.columns[+colno].setValue(scn,value);
+        rec.fields[+colno].setValue(scn,value);
 
         return(true);
     }
@@ -114,28 +119,37 @@ export class FieldData
 }
 
 
+enum status
+{
+    query,
+    insert,
+    delete
+}
+
+
 class Row
 {
     public scn:number = 0;
-    public columns:Column[] = [];
+    public fields:Column[] = [];
+    public status:status = status.insert;
 
-    constructor(scn:number, table:FieldData, columns?:any[])
+    constructor(scn:number, table:FieldData, values?:any[])
     {
         this.scn = scn;
 
         for(let i = 0; i < table.fields.length; i++)
-            this.columns.push(new Column(scn));
+            this.fields.push(new Column(scn));
 
         let i:number = 0;
 
-        if (columns != null) this.columns.forEach((column) =>
-        {column.setValue(scn,columns[i++])});
+        if (values != null) this.fields.forEach((column) =>
+        {column.setValue(scn,values[i++])});
     }
 
     public get values() : any[]
     {
         let values:any[] = [];
-        this.columns.forEach((col) =>
+        this.fields.forEach((col) =>
         {
             let val:any = col.value$;
             if (val == null) val = "";

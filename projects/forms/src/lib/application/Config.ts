@@ -48,13 +48,15 @@ export class Config
         this.invoker.then(data => {this.config = data;}, error => {this.config = {}; console.log("Loading config failed: "+error)});
     }
 
-    private async ready()
+    public async ready() : Promise<boolean>
     {
         if (this.invoker != null)
         {
             await this.invoker;
             this.invoker = null;
         }
+
+        return(true);
     }
 
     public get keymap() : KeyMap
@@ -72,9 +74,8 @@ export class Config
         return(this.colors$);
     }
 
-    public async others() : Promise<any>
+    public get others() : any
     {
-        await this.ready();
         return(this.config);
     }
 
