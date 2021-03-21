@@ -7,7 +7,7 @@ export class FieldDefinitions
 
     public static add(block:string, def:FieldDefinition) : void
     {
-        let fields:FieldDefinition[] =  FieldDefinitions.index.get(block);
+        let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
 
         if (fields == null)
         {
@@ -63,7 +63,7 @@ export class FieldDefinitions
     public static getColumnIndex(block:string) : Map<string,FieldDefinition>
     {
         let index:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
-        let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
+        let fields:FieldDefinition[] = FieldDefinitions.index.get(block.toLowerCase());
         if (fields != null) fields.forEach((field) =>
         {
             if (field.column != null)

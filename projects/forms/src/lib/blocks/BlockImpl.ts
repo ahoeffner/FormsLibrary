@@ -301,20 +301,17 @@ export class BlockImpl
         this.offset = start;
         if (this.offset < 0) this.offset = 0;
 
-        if (this.data != null)
-        {
-            let columns:string[] = this.data.fields;
-            let rows:any[][] = this.data.get(start,this.rows);
+        let columns:string[] = this.data.fields;
+        let rows:any[][] = this.data.get(start,this.rows);
 
-            for(let r = 0; r < rows.length; r++)
+        for(let r = 0; r < rows.length; r++)
+        {
+            let rec:Record = this.getRecord(r);
+            for(let c = 0; c < rows[r].length; c++)
             {
-                let rec:Record = this.getRecord(r);
-                for(let c = 0; c < rows[r].length; c++)
-                {
-                    let field:Field = rec.getField(columns[c]);
-                    field.value = rows[r][c];
-                    rec.enable(false);
-                }
+                let field:Field = rec.getField(columns[c]);
+                field.value = rows[r][c];
+                rec.enable(false);
             }
         }
     }

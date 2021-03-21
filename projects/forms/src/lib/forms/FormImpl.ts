@@ -293,7 +293,6 @@ export class FormImpl implements EventListener
             fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});
 
             block.data = new FieldData(fields);
-
             let rec:Record = block.getRecord(0);
 
             if (rec != null)

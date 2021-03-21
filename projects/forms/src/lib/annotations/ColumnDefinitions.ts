@@ -20,7 +20,7 @@ export class ColumnDefinitions
 
     public static get(block:string) : ColumnDefinition[]
     {
-        let columns:ColumnDefinition[] = ColumnDefinitions.index.get(block);
+        let columns:ColumnDefinition[] = ColumnDefinitions.index.get(block.toLowerCase());
         if (columns == null) columns = [];
         return(columns);
     }
@@ -29,7 +29,7 @@ export class ColumnDefinitions
     public static getIndex(block:string) : Map<string,ColumnDefinition>
     {
         let index:Map<string,ColumnDefinition> = new Map<string,ColumnDefinition>();
-        let columns:ColumnDefinition[] = ColumnDefinitions.index.get(block);
+        let columns:ColumnDefinition[] = ColumnDefinitions.index.get(block.toLowerCase());
         if (columns != null) columns.forEach((column) => {index.set(column.name,column)});
         return(index);
     }
