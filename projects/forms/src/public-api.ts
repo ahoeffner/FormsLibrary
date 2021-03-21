@@ -29,7 +29,7 @@ export {Block} from './lib/blocks/Block';
 export {FieldInstance} from './lib/input/FieldInstance';
 export {FieldDefinition} from './lib/input/FieldDefinition';
 
-export {Transaction} from './lib/database/Transaction';
+export {Condition} from './lib/database/Condition';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'
 export {ColumnDefinition} from './lib/database/ColumnDefinition';
 

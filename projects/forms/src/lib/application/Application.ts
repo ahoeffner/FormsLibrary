@@ -26,12 +26,12 @@ export class Application
         this._impl_ = new ApplicationImpl(conf,this,client,builder);
     }
 
-    public get Title() : string
+    public get title() : string
     {
         return(this.title$);
     }
 
-    public set Title(title:string)
+    public set title(title:string)
     {
         this.title$ = title;
         this._impl_.setTitle(title);
@@ -42,14 +42,19 @@ export class Application
         return(this._impl_.getCurrentTitle());
     }
 
-    public set Menu(menu:Menu)
+    public set menu(menu:Menu)
     {
         this._impl_.setMenu(menu);
     }
 
-    public get Menu() : Menu
+    public get menu() : Menu
     {
         return(this._impl_.getMenu());
+    }
+
+    public get transaction() : boolean
+    {
+        return(this._impl_.appstate.transaction);
     }
 
     public newform(form:any, parameters?:Map<string,any>)

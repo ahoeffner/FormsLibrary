@@ -1,4 +1,5 @@
 import { Key } from "./Key";
+import { Condition } from "../database/Condition";
 import { Connection } from "../database/Connection";
 import { TableDefinition } from "../database/TableDefinition";
 import { ColumnDefinition } from "../database/ColumnDefinition";
@@ -21,6 +22,14 @@ export class FieldData
             for(let i = 0; i < fields.length; i++)
                 this.index.set(fields[i].toLowerCase(),i);
         }
+
+        let where:Condition =
+        Condition.where("id","7").push().and().
+        next(new Condition("name","%")).push().or().
+        next(new Condition("name","B%")).pop().and().
+        next(new Condition("type","2","<>")).pop();
+
+        console.log("select * from test "+where.toString());
     }
 
 

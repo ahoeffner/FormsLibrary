@@ -1,5 +1,5 @@
 import { Key } from "../blocks/Key";
-import { Criteria } from "./Criterie";
+import { Condition } from "./Condition";
 import { Connection } from "./Connection";
 import { TableDefinition } from "./TableDefinition";
 import { ColumnDefinition } from "./ColumnDefinition";
@@ -21,7 +21,7 @@ export class Table
     }
 
 
-    public async query(keys:Key[], criterias:Criteria[])
+    public parseQuery(keys:Key[], criterias:Condition[])
     {
 
     }

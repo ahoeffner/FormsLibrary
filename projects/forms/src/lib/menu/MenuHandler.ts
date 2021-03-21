@@ -1,6 +1,5 @@
 import { Form } from '../forms/Form';
 import { MenuInterface } from "./MenuInterface";
-import { Transaction } from '../database/Transaction';
 import { Application } from "../application/Application";
 
 
@@ -54,5 +53,5 @@ export abstract class MenuHandler
     abstract onConnect() : void;
     abstract onDisconnect() : void;
     abstract onFormChange(form:Form) : void;
-    abstract onTransactio(action:Transaction) : void;
+    abstract onTransactionChange() : void;
 }

@@ -1,6 +1,5 @@
 import { Form } from "../forms/Form";
 import { MenuHandler } from './MenuHandler';
-import { Transaction } from '../database/Transaction';
 
 
 export class DefaultMenuHandler extends MenuHandler
@@ -22,14 +21,14 @@ export class DefaultMenuHandler extends MenuHandler
         this.init();
     }
 
-    public onTransactio(action:Transaction) : void
-    {
-    }
-
     public onFormChange(form: Form): void
     {
         this.form = form;
         if (this.ready) this.init();
+    }
+
+    public onTransactionChange(): void
+    {
     }
 
     private init() : void

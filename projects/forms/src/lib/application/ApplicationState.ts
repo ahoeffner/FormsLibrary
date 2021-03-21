@@ -14,6 +14,7 @@ export class ApplicationState
     public menu:Menu = null;
     public form:FormImpl = null;
     public connection:Connection;
+    public transaction:boolean = false;
     public appmenu:ComponentRef<DropDownMenu> = null;
     public forms:Map<number,FormImpl> = new Map<number,FormImpl>();
     public menus:Map<number,MenuHandler> = new Map<number,MenuHandler>();
@@ -63,6 +64,13 @@ export class ApplicationState
         });
 
         return(true);
+    }
+
+
+    public transactionChange(trans:boolean) : void
+    {
+        this.transaction = trans;
+        this.menus.forEach((mhdl) => {mhdl.onTransactionChange()});
     }
 
 
