@@ -20,9 +20,9 @@ import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { KeyDefinition } from "../annotations/KeyDefinition";
+import { TableDefinition } from "../database/TableDefinition";
 import { ColumnDefinition } from "../database/ColumnDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { TableDefinition } from "../annotations/TableDefinition";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
@@ -325,8 +325,9 @@ export class FormImpl implements EventListener
                 if (kdef.name.startsWith("primary")) pkey = key;
             });
 
-            // Create data backing table
-            block.data = new FieldData(table,pkey,columns,fields);
+            // Create data-backing table
+            let conn:Connection = this.app.appstate.connection;
+            block.data = new FieldData(conn,table,pkey,columns,fields);
 
             // Start form
             let rec:Record = block.getRecord(0);

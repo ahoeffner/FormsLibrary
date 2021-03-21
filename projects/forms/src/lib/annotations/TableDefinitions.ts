@@ -1,4 +1,4 @@
-import { TableDefinition } from "./TableDefinition";
+import { TableDefinition } from "../database/TableDefinition";
 
 export class TableDefinitions
 {

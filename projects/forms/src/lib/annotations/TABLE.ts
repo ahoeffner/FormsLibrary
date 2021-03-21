@@ -1,6 +1,6 @@
 import { Utils } from '../utils/Utils';
-import { TableDefinition } from './TableDefinition';
 import { TableDefinitions } from './TableDefinitions';
+import { TableDefinition } from '../database/TableDefinition';
 
 export const table = (name:string, order?:string) =>
 {

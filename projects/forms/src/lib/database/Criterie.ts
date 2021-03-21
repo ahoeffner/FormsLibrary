@@ -1,10 +1,20 @@
 export class Criteria
 {
     public value:string;
+    public column:string;
     public operator:string;
 
-    constructor(value:string)
+    constructor(column:string, value:string, operator?:string)
     {
+        this.column = column;
+        
+        if (operator != null)
+        {
+            this.value = value;
+            this.operator = operator;
+            return;
+        }
+
         this.operator = "";
         value = value.trim();
         let quoted:boolean = false;

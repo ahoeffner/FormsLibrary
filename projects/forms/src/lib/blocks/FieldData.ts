@@ -1,6 +1,7 @@
 import { Key } from "./Key";
+import { Connection } from "../database/Connection";
+import { TableDefinition } from "../database/TableDefinition";
 import { ColumnDefinition } from "../database/ColumnDefinition";
-import { TableDefinition } from "../annotations/TableDefinition";
 
 
 export class FieldData
@@ -11,7 +12,7 @@ export class FieldData
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(table:TableDefinition, key:Key, columns:ColumnDefinition[], fields:string[])
+    public constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[], fields:string[])
     {
         this.fields$ = fields;
 
