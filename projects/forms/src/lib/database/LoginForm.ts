@@ -62,6 +62,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
 
     public close(cancel:boolean) : void
     {
+        this.app.enable();
         this.win.closeWindow();
         if (!cancel) this.app.appstate.connection.connect(this.usr.value,this.pwd.value);
         this.app.getCurrentForm()?.focus();
@@ -87,6 +88,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
 
     public ngOnInit(): void
     {
+        this.app.disable();
         this.app.setContainer();
     }
 

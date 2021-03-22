@@ -142,12 +142,6 @@ export class BlockImpl
     }
 
 
-    public setValue(row:number, col:string, value:any, change:boolean) : void
-    {
-        this.data.update(+row+this.offset,col,value);
-    }
-
-
     public addRecord(record:Record)
     {
         this.records.push(record);
@@ -232,6 +226,7 @@ export class BlockImpl
     public insert(after:boolean) : boolean
     {
         let off:number = after ? 1 : 0;
+        if (this.data == null) return(false);
 
         if (!this.data.insert(+this.row + +this.offset + +off))
             return(false);
@@ -267,6 +262,8 @@ export class BlockImpl
 
     public delete() : boolean
     {
+        if (this.data == null) return(false);
+
         if (!this.data.delete(+this.row + +this.offset))
             return(false);
 
@@ -290,6 +287,13 @@ export class BlockImpl
     }
 
 
+    public setValue(row:number, col:string, value:any, change:boolean) : void
+    {
+        if (this.data == null) return;
+        this.data.update(+row+this.offset,col,value);
+    }
+
+
     public async validate() : Promise<boolean>
     {
         let rec:Record = this.records[this.row];
@@ -304,12 +308,14 @@ export class BlockImpl
 
     private async validatefield() : Promise<boolean>
     {
+        if (this.data == null) return(true);
         return(true);
     }
 
 
     private async validaterecord() : Promise<boolean>
     {
+        if (this.data == null) return(true);
         return(true);
     }
 
@@ -486,6 +492,7 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.nextrecord)
         {
             let row:number = +field.row + 1;
+            if (this.data == null) return(false);
 
             if (+row >= +this.rows)
             {
@@ -513,6 +520,7 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.prevrecord)
         {
             let row:number = +field.row - 1;
+            if (this.data == null) return(false);
 
             if (+row < 0)
             {

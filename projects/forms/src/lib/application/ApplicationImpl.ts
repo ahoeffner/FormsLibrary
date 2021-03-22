@@ -41,6 +41,7 @@ export class ApplicationImpl
 
     constructor(public conf:Config, private app:Application, public client:HttpClient, public builder:Builder)
     {
+        this.enable();
         this.loadConfig();
         this.state = new ApplicationState(this);
         this.contctl = new ContainerControl(builder);
@@ -62,8 +63,18 @@ export class ApplicationImpl
 
         if (this.config.hasOwnProperty("theme"))
             this.conf.setTheme(this.config["theme"]);
+    }
 
+
+    public enable() : void
+    {
         WindowListener.add("app",this,"keydown");
+    }
+
+
+    public disable() : void
+    {
+        WindowListener.remove("app","keydown");
     }
 
 
