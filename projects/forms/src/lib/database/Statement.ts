@@ -1,6 +1,5 @@
 import { BindValue } from "./BindValue";
 import { Condition } from "./Condition";
-import { Connection } from "./Connection";
 
 export enum SQLType
 {
@@ -9,6 +8,13 @@ export enum SQLType
     insert,
     update,
     delete
+}
+
+
+export interface SQL
+{
+    sql:string;
+    bindvalues:BindValue[];
 }
 
 
@@ -136,23 +142,27 @@ export class Statement
         return(this);
     }
 
-    public build() : void
+    public build() : SQL
     {
-        if (this.sql$ == null && this.type$ != SQLType.call)
-            this.sql$ = SQLType[this.type$] + " ";
+        let sql:string = this.sql$;
+
+        if (sql == null && this.type$ != SQLType.call)
+            sql += SQLType[this.type$] + " ";
 
         if (this.columns$ != null)
         {
             for(let i = 0; i < this.columns$.length - 1; i++)
-                this.sql$ += this.columns$[i]+", ";
+                sql += this.columns$[i]+", ";
 
-            this.sql$ += this.columns$[this.columns$.length-1];
+            sql += this.columns$[this.columns$.length-1];
         }
 
         if (this.condition$ != null)
-            this.sql$ += " "+this.condition$.toString();
+            sql += " "+this.condition$.toString();
 
-        this.condition$.bindvalues().forEach((bind) =>
-        {this.bindvalues.push(bind);});
+        let bindvalues:BindValue[] = this.bindvalues;
+        this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+
+        return({sql: sql, bindvalues: bindvalues});
     }
 }
