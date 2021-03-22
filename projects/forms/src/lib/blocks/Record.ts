@@ -1,6 +1,14 @@
 import { Field } from "../input/Field";
-import { FormState } from "../forms/FormState";
 import { FieldInstance } from "../input/FieldInstance";
+
+
+export enum RecordState
+{
+    na,
+    entqry,
+    insert,
+    update
+}
 
 
 export class Record
@@ -30,7 +38,7 @@ export class Record
         return(this.rec);
     }
 
-    public focus(state:FormState) : void
+    public focus() : void
     {
         this.fields[0].focus();
     }
@@ -52,10 +60,10 @@ export class Record
         this.fields.forEach((field) => {field.disable()});
     }
 
-    public enable(readonly?:boolean) : void
+    public enable(state:RecordState, readonly?:boolean) : void
     {
         this.enabled = true;
-        this.fields.forEach((field) => {field.enable(readonly)});
+        this.fields.forEach((field) => {field.enable(state,readonly)});
     }
 
     public getField(name:string) : Field

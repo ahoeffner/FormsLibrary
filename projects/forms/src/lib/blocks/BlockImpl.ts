@@ -1,16 +1,18 @@
+import { Key } from "./Key";
 import { Block } from "./Block";
-import { Record } from "./Record";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
 import { KeyMap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
+import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { Config } from "../application/Config";
 import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
 import { InstanceEvents } from "../events/InstanceEvents";
 import { DatabaseUsage } from "../database/DatabaseUsage";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { InstanceListener } from "../events/InstanceListener";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
@@ -30,6 +32,7 @@ export class BlockImpl
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
     private state:FormState = FormState.normal;
+    private fielddef$:Map<string,FieldDefinition>;
     private listener:InstanceEvents = new InstanceEvents();
 
     constructor(public block:Block) {}
@@ -75,6 +78,18 @@ export class BlockImpl
     }
 
 
+    public set fielddef(def:Map<string,FieldDefinition>)
+    {
+        this.fielddef = def;
+    }
+
+
+    public get fielddef() : Map<string,FieldDefinition>
+    {
+        return(this.fielddef);
+    }
+
+
     public get clazz() : string
     {
         return(this.block.constructor.name.toLowerCase());
@@ -117,7 +132,7 @@ export class BlockImpl
     public focus() : void
     {
         if (this.field != null) this.field.focus();
-        else this.records[this.row].focus(this.state);
+        else this.records[this.row].focus();
     }
 
 
@@ -207,8 +222,8 @@ export class BlockImpl
         if (this.records.length > 0)
         {
             this.state = FormState.entqry;
-            this.records[0].enable(false);
-            this.records[0].focus(this.state);
+            this.records[0].enable(RecordState.entqry,false);
+            this.records[0].focus();
         }
 
         return(true);
@@ -217,8 +232,13 @@ export class BlockImpl
 
     public executeqry() : boolean
     {
-        console.log("execute query");
-        this.records[0].fields.forEach((field) => {console.log(field.name+" "+field.value)});
+        let keys:Key[] = [];
+        let fields:Field[] = [];
+
+        if (this.state == FormState.entqry)
+            fields = this.records[0].fields;
+
+        this.data.parseQuery(keys,fields);
         return(true);
     }
 
@@ -338,7 +358,7 @@ export class BlockImpl
 
         let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
         if (inst != null) inst.focus();
-        else rec.focus(this.state);
+        else rec.focus();
 
         if (field.name == this.field.name && row == this.field.row)
         {
@@ -358,6 +378,8 @@ export class BlockImpl
         for(let r = 0; r < rows.length; r++)
         {
             let rec:Record = this.getRecord(r);
+            let status:RecordState = RecordState.update;
+            if (this.data.isNew(start+r)) status = RecordState.insert;
 
             for(let c = 0; c < rows[r].length; c++)
             {
@@ -365,7 +387,7 @@ export class BlockImpl
                 if (field != null) field.value = rows[r][c];
             }
 
-            rec.enable(false);
+            rec.enable(status,false);
         }
     }
 

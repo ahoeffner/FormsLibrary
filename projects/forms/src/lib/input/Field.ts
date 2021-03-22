@@ -1,4 +1,4 @@
-import { Record } from "../blocks/Record";
+import { RecordState } from "../blocks/Record";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldInstance } from "./FieldInstance";
 
@@ -116,7 +116,7 @@ export class Field
         return(this.fields$);
     }
 
-    public get currxfields() : FieldInstance[]
+    public get currfields() : FieldInstance[]
     {
         return(this.current$);
     }
@@ -140,14 +140,15 @@ export class Field
     }
 
 
-    public enable(readonly:boolean, id?:string) : void
+    public enable(state:RecordState, readonly:boolean, id?:string) : void
     {
         if (id != null)
         {
             let field:FieldInstance = this.ids.get(id.toLowerCase());
+
             if (field != null)
             {
-                field.enable = true;
+                field.enable(state);
                 field.readonly = readonly;
             }
         }
@@ -155,7 +156,7 @@ export class Field
         {
             for (let i = 0; i < this.fields$.length; i++)
             {
-                this.fields$[i].enable = true;
+                this.fields$[i].enable(state);
                 this.fields$[i].readonly = readonly;
             }
 
@@ -163,7 +164,7 @@ export class Field
             {
                 for (let i = 0; i < this.current$.length; i++)
                 {
-                    this.current$[i].enable = true;
+                    this.current$[i].enable(state);
                     this.current$[i].readonly = readonly;
                 }
             }
@@ -176,17 +177,17 @@ export class Field
         if (id != null)
         {
             let field:FieldInstance = this.ids.get(id.toLowerCase());
-            if (field != null) field.enable = false;
+            if (field != null) field.disable();
         }
         else
         {
             for (let i = 0; i < this.fields$.length; i++)
-                this.fields$[i].enable = false;
+                this.fields$[i].disable();
 
             if (this.current$)
             {
                 for (let i = 0; i < this.current$.length; i++)
-                    this.current$[i].enable = false;
+                    this.current$[i].disable();
             }
         }
     }

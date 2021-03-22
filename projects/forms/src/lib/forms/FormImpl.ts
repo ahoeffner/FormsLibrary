@@ -3,7 +3,6 @@ import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
-import { Record } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
@@ -16,6 +15,7 @@ import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
+import { Record, RecordState } from "../blocks/Record";
 import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
@@ -273,6 +273,8 @@ export class FormImpl implements EventListener
                 if (def != null) inst.type = def.type;
                 else console.log("Field "+inst.name+" has no correponding definition");
             });
+
+            block.fielddef = fielddef;
         });
 
         this.blkindex.forEach((block) =>
@@ -331,7 +333,7 @@ export class FormImpl implements EventListener
             let rows:number = block.records.length;
 
             if (tabdef != null)
-                table = new Table(this.conn,tabdef,pkey,columns,rows);
+                table = new Table(this.conn,tabdef,pkey,columns,block.fielddef,rows);
 
             block.data = new FieldData(table,fields);
 
@@ -340,7 +342,7 @@ export class FormImpl implements EventListener
 
             if (rec != null)
             {
-                rec.enable(true);
+                rec.enable(RecordState.na,true);
                 rec.current = true;
                 block.display(0);
             }

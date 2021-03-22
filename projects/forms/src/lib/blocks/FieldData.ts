@@ -1,4 +1,7 @@
+import { Key } from "./Key";
+import { Field } from "../input/Field";
 import { Table } from "../database/Table";
+import { SQL } from "../database/Statement";
 
 
 export class FieldData
@@ -26,6 +29,24 @@ export class FieldData
     public get fields() : string[]
     {
         return(this.fields$);
+    }
+
+
+    public isNew(row:number) : boolean
+    {
+        return(this.data[row].status == status.insert);
+    }
+
+
+    public parseQuery(keys:Key[], fields:Field[]) : SQL
+    {
+        if (this.table == null) return(null);
+        return(this.table.parseQuery(keys,fields));
+    }
+
+
+    public async query()
+    {
     }
 
 
@@ -122,8 +143,7 @@ export class FieldData
 enum status
 {
     query,
-    insert,
-    delete
+    insert
 }
 
 

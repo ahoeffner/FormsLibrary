@@ -1,7 +1,7 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Block } from "../blocks/Block";
-import { Record } from "../blocks/Record";
+import { Record, RecordState } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
 import { Config } from "../application/Config";
 import { Container} from "../container/Container";
@@ -106,8 +106,8 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
         this.usr.setType("input");
         this.pwd.setType("password");
 
-        this.usr.enable(false);
-        this.pwd.enable(false);
+        this.usr.enable(RecordState.na,false);
+        this.pwd.enable(RecordState.na,false);
 
         this.usr.focus();
         this.app.dropContainer();

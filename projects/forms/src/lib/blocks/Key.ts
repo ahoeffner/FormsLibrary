@@ -26,4 +26,9 @@ export class Key
         this.index.set(name,value);
         this.values.push({name: name, value: value});
     }
+
+    public get columns() : NameValuePair[]
+    {
+        return(this.values);
+    }
 }

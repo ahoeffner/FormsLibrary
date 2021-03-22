@@ -1,8 +1,10 @@
 import { Field } from './Field';
 import { Config } from '../application/Config';
+import { RecordState } from '../blocks/Record';
 import { Key, KeyMapper } from '../keymap/KeyMap';
 import { FieldTypes, FieldType } from './FieldType';
 import { Application } from "../application/Application";
+import { FieldOption, FieldOptions } from './FieldOptions';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
 
@@ -24,6 +26,7 @@ export class FieldInstance implements AfterViewInit
     private lower:boolean = false;
     private container:HTMLSpanElement;
     private firstchange:boolean = true;
+    private options$:FieldOptions = {query: true, insert: true, update: true};
 
     @Input("id")    private id$:string = "";
     @Input("row")   private row$:number = -2;
@@ -119,6 +122,11 @@ export class FieldInstance implements AfterViewInit
         this.fgroup$ = field;
     }
 
+    public get options() : FieldOptions
+    {
+        return(this.options$);
+    }
+
     public focus() : void
     {
         if (this.clazz != null)
@@ -162,17 +170,34 @@ export class FieldInstance implements AfterViewInit
     }
 
 
-    public set enable(flag:boolean)
+    public disable() : void
     {
         if (this.clazz != null)
-        this.clazz.enable = flag;
+        this.clazz.enable = false;
+    }
+
+
+    public enable(state:RecordState)
+    {
+        let enable:boolean = false;
+        if (state == RecordState.na) enable = true;
+        else if (state == RecordState.entqry && this.options$.query) enable = true;
+        else if (state == RecordState.insert && this.options$.insert) enable = true;
+        else if (state == RecordState.update && this.options$.update) enable = true;
+        if (enable && this.clazz != null) this.clazz.enable = true;
     }
 
 
     public set readonly(flag:boolean)
     {
-        if (this.clazz != null)
-        this.clazz.rdonly = flag;
+        if (this.enabled && this.clazz != null)
+            this.clazz.rdonly = flag;
+    }
+
+
+    public set restrict(restrict:FieldOptions)
+    {
+        this.options$ = FieldOption.restrict(this.options$,restrict);
     }
 
 
