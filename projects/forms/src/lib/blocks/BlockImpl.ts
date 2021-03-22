@@ -3,7 +3,9 @@ import { Record } from "./Record";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
 import { KeyMap } from "../keymap/KeyMap";
+import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
+import { FormState } from "../forms/FormState";
 import { Config } from "../application/Config";
 import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
@@ -22,9 +24,12 @@ export class BlockImpl
     private offset:number = 0;
     private app:ApplicationImpl;
     private field$:FieldInstance;
+    private form$:FormImpl = null;
     private parent$:EventListener;
     private dbusage:DatabaseUsage;
     private records$:Record[] = [];
+    private details$:BlockImpl[] = [];
+    private state:FormState = FormState.normal;
     private listener:InstanceEvents = new InstanceEvents();
 
     constructor(public block:Block) {}
@@ -103,13 +108,16 @@ export class BlockImpl
     public set parent(parent:EventListener)
     {
         this.parent$ = parent;
+
+        if (parent.constructor.name == "FormImpl")
+            this.form$ = parent as FormImpl;
     }
 
 
     public focus() : void
     {
         if (this.field != null) this.field.focus();
-        else this.records[this.row].fields[0].focus();
+        else this.records[this.row].focus(this.state);
     }
 
 
@@ -178,6 +186,49 @@ export class BlockImpl
     }
 
 
+    private keydelete() : boolean
+    {
+        if (!this.dbusage.delete) return(false);
+        return(this.delete());
+    }
+
+
+    private keyentqry() : boolean
+    {
+        if (!this.dbusage.query) return(false);
+        return(this.enterqry());
+    }
+
+
+    private keyexeqry() : boolean
+    {
+        if (!this.dbusage.query) return(false);
+        return(this.executeqry());
+    }
+
+
+    public enterqry() : boolean
+    {
+        this.clear();
+        if (this.records.length > 0)
+        {
+            this.state = FormState.entqry;
+            this.records[0].enable(false);
+            this.records[0].focus(this.state);
+        }
+
+        return(true);
+    }
+
+
+    public executeqry() : boolean
+    {
+        console.log("execute query");
+        this.records[0].fields.forEach((field) => {console.log(field.name+" "+field.value)});
+        return(true);
+    }
+
+
     public insert(after:boolean) : boolean
     {
         let off:number = after ? 1 : 0;
@@ -211,13 +262,6 @@ export class BlockImpl
 
         let field:FieldInstance = rec.getFieldByGuid(this.field.name,this.field.guid);
         if (field != null) field.focus();
-    }
-
-
-    private keydelete() : boolean
-    {
-        if (!this.dbusage.delete) return(false);
-        return(this.delete());
     }
 
 
@@ -274,6 +318,8 @@ export class BlockImpl
     {
         for(let r = 0; r < this.rows; r++)
             this.records[r].clear();
+
+        this.details$.forEach((block) => {block.clear()});
     }
 
 
@@ -286,7 +332,7 @@ export class BlockImpl
 
         let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
         if (inst != null) inst.focus();
-        else rec.fields[0].focus();
+        else rec.focus(this.state);
 
         if (field.name == this.field.name && row == this.field.row)
         {
@@ -400,6 +446,20 @@ export class BlockImpl
         {
             if (!this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
+        }
+
+        // Enter query
+        if (type == "key" && key == this.keymap.enterquery)
+        {
+            if (!this.validate()) return(false);
+            this.keyentqry();
+        }
+
+        // Execute query
+        if (type == "key" && key == this.keymap.executequery)
+        {
+            if (!this.validate()) return(false);
+            this.keyexeqry();
         }
 
         // Delete

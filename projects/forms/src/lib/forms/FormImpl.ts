@@ -328,9 +328,11 @@ export class FormImpl implements EventListener
 
             // Create data-backing table
             let table:Table = null;
-            let fetch:number = block.records.length;
-            let conn:Connection = this.app.appstate.connection;
-            if (tabdef != null) table = new Table(conn,tabdef,pkey,columns,fetch);
+            let rows:number = block.records.length;
+
+            if (tabdef != null)
+                table = new Table(this.conn,tabdef,pkey,columns,rows);
+
             block.data = new FieldData(table,fields);
 
             // Start form

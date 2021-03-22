@@ -1,8 +1,11 @@
+import { BindValue } from "./BindValue";
+
 export class Condition
 {
     private value$:string;
     private column$:string;
     private operator$:string;
+    private datatype$:string;
     private level$:number = 0;
     private type$:string = "and";
     private prev$:Condition = null;
@@ -16,7 +19,7 @@ export class Condition
     }
 
 
-    constructor(column:string, value:string, operator?:string)
+    constructor(column:string, value:string, datatype?:string)
     {
         this.column$ = column;
         let numeric:boolean = !isNaN(+value);
@@ -25,14 +28,6 @@ export class Condition
         {
             this.value$ = "null";
             this.operator$ = "is";
-            return;
-        }
-
-        if (operator != null)
-        {
-            this.value$ = value;
-            this.operator$ = operator;
-            if (!numeric) this.value$ = "'"+value.trim()+"'";
             return;
         }
 
@@ -53,10 +48,7 @@ export class Condition
             this.value$ = value.substring(1).trim();
 
         if (value.startsWith('"') && value.endsWith('"'))
-        {
-            quoted = true;
             value = "'"+value.substring(1,value.length-1)+"'";
-        }
 
         if (value.startsWith("'") && value.endsWith("'"))
             quoted = true;
@@ -89,28 +81,89 @@ export class Condition
     }
 
 
-    public next(next:Condition) : Condition
+    public next(next?:Condition) : Condition
     {
+        if (next == null) return(this.next$);
+
+        if (this.next$ != null)
+            this.next$.prev$ = next;
+
         this.next$ = next;
         next.prev$ = this;
-        next.level$ += +this.level$;
         return(next);
+    }
+
+
+    public prev(prev?:Condition) : Condition
+    {
+        if (prev == null) return(this.prev$);
+
+        if (this.prev$ != null)
+            this.prev$.next$ = prev;
+
+        this.prev$ = prev;
+        prev.next$ = this;
+        return(prev);
+    }
+
+
+    public first() : Condition
+    {
+        let pc:Condition = this;
+        while(pc.prev$ != null) pc = pc.prev$;
+        return(pc);
+    }
+
+
+    public last() : Condition
+    {
+        let nc:Condition = this;
+        while(nc.next$ != null) nc = nc.next$;
+        return(nc);
     }
 
 
     public pop() : Condition
     {
-        if (this.prev$ == null) this.level$--;
-        else this.level$ = +this.prev$.level$ - 1;
+        this.level$ = -1;
         return(this);
     }
 
 
     public push() : Condition
     {
-        if (this.prev$ == null) this.level$++;
-        else this.level$ = +this.prev$.level$ + 1;
+        this.level$ = +1;
         return(this);
+    }
+
+
+    public bindvalues() : BindValue[]
+    {
+        let bindvalues:BindValue[] = [];
+        let cd:Condition = this.first();
+
+        while(cd != null)
+        {
+            bindvalues.push({name: cd.column$, value: cd.value$, type: cd.datatype$});
+            cd =cd.next$;
+        }
+
+        return(bindvalues);
+    }
+
+
+    public split() : Condition[]
+    {
+        let conditions:Condition[] = [];
+        let cd:Condition = this.first();
+
+        while(cd != null)
+        {
+            conditions.push(cd);
+            cd =cd.next$;
+        }
+
+        return(conditions);
     }
 
 
@@ -129,9 +182,9 @@ export class Condition
         while(nc.next$ != null)
         {
             nc = nc.next$;
-            if (+nc.level$ > +nc.prev$.level$) str += "(";
+            if (+nc.level$ > 0) str += "(";
             str += ":"+nc.column$+" "+nc.operator$+" "+nc.value$;
-            if (+nc.level$ < +nc.prev$.level$) str += ")";
+            if (+nc.level$ < 0) str += ")";
             if (nc.next$ != null) str += " "+nc.type$+" ";
         }
 

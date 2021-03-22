@@ -1,4 +1,5 @@
 import { Field } from "../input/Field";
+import { FormState } from "../forms/FormState";
 import { FieldInstance } from "../input/FieldInstance";
 
 
@@ -27,6 +28,11 @@ export class Record
     public get record() : number
     {
         return(this.rec);
+    }
+
+    public focus(state:FormState) : void
+    {
+        this.fields[0].focus();
     }
 
     public set current(flag:boolean)

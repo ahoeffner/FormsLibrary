@@ -13,12 +13,12 @@ export class Table
     private columns:ColumnDefinition[];
 
 
-    constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[], fetch:number)
+    constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[], rows:number)
     {
         this.key = key;
         this.conn = conn;
+        this.fetch = rows;
         this.table = table;
-        this.fetch = fetch;
         this.columns = columns;
 
         this.fetch *= 4;

@@ -1,5 +1,6 @@
 import { BlockImpl } from "./BlockImpl";
 import { Listener } from "../events/Listener";
+import { FormImpl } from "../forms/FormImpl";
 
 
 export class Block
@@ -10,6 +11,11 @@ export class Block
     constructor()
     {
         this._impl_ = new BlockImpl(this);
+    }
+
+    public set form(form:FormImpl)
+    {
+        
     }
 
     public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
