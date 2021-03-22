@@ -7,17 +7,22 @@ import { ColumnDefinition } from "./ColumnDefinition";
 export class Table
 {
     private key:Key;
+    private fetch:number;
     private conn:Connection;
     private table:TableDefinition;
     private columns:ColumnDefinition[];
 
 
-    constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[])
+    constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[], fetch:number)
     {
         this.key = key;
         this.conn = conn;
         this.table = table;
+        this.fetch = fetch;
         this.columns = columns;
+
+        this.fetch *= 4;
+        if (this.fetch < 10) this.fetch = 10;
     }
 
 

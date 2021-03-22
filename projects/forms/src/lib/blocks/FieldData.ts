@@ -1,20 +1,18 @@
-import { Key } from "./Key";
-import { Condition } from "../database/Condition";
-import { Connection } from "../database/Connection";
-import { TableDefinition } from "../database/TableDefinition";
-import { ColumnDefinition } from "../database/ColumnDefinition";
+import { Table } from "../database/Table";
 
 
 export class FieldData
 {
+    private table:Table;
     private scn:number = 0;
     private data:Row[] = [];
     private fields$:string[];
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[], fields:string[])
+    public constructor(table:Table, fields:string[])
     {
+        this.table = table;
         this.fields$ = fields;
 
         if (fields != null)
@@ -22,14 +20,6 @@ export class FieldData
             for(let i = 0; i < fields.length; i++)
                 this.index.set(fields[i].toLowerCase(),i);
         }
-
-        let where:Condition =
-        Condition.where("id","7").push().and().
-        next(new Condition("name","%")).push().or().
-        next(new Condition("name","B%")).pop().and().
-        next(new Condition("type","2","<>")).pop();
-
-        console.log("select * from test "+where.toString());
     }
 
 

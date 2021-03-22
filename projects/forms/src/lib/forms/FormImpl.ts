@@ -29,6 +29,7 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { Table } from "../database/Table";
 
 
 export class FormImpl implements EventListener
@@ -277,7 +278,7 @@ export class FormImpl implements EventListener
         this.blkindex.forEach((block) =>
         {
             // Finish setup for each block
-            let table:TableDefinition = TableDefinitions.get(block.name);
+            let tabdef:TableDefinition = TableDefinitions.get(block.name);
             let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
 
             let fields:string[] = [];
@@ -326,8 +327,11 @@ export class FormImpl implements EventListener
             });
 
             // Create data-backing table
+            let table:Table = null;
+            let fetch:number = block.records.length;
             let conn:Connection = this.app.appstate.connection;
-            block.data = new FieldData(conn,table,pkey,columns,fields);
+            if (tabdef != null) table = new Table(conn,tabdef,pkey,columns,fetch);
+            block.data = new FieldData(table,fields);
 
             // Start form
             let rec:Record = block.getRecord(0);

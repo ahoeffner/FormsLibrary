@@ -93,6 +93,7 @@ export class Condition
     {
         this.next$ = next;
         next.prev$ = this;
+        next.level$ += +this.level$;
         return(next);
     }
 
