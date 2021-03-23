@@ -5,15 +5,14 @@ import { FieldData } from "./FieldData";
 import { KeyMap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
+import { Triggers } from "../events/Triggers";
+import { Config } from "../application/Config";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
-import { Config } from "../application/Config";
 import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
-import { InstanceEvents } from "../events/InstanceEvents";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
-import { InstanceListener } from "../events/InstanceListener";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 
 
@@ -32,8 +31,8 @@ export class BlockImpl
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
     private state:FormState = FormState.normal;
+    private triggers:Triggers = new Triggers();
     private fielddef$:Map<string,FieldDefinition>;
-    private listener:InstanceEvents = new InstanceEvents();
 
     constructor(public block:Block) {}
 
@@ -394,57 +393,7 @@ export class BlockImpl
 
     public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
     {
-        if (types != null)
-        {
-            let typesarr:string[] = [];
-            let array:boolean = false;
-            if (types.constructor.name == "Array") array = true;
-
-            if (array) typesarr = types as string[];
-            else       typesarr.push(types as string);
-
-            typesarr.forEach((type) =>
-            {
-                type = type.toLowerCase();
-
-                if (type != "key" || keys == null)
-                {
-                    let lsnrs:InstanceListener[] = this.listener.types.get(type);
-
-                    if (lsnrs == null)
-                    {
-                        lsnrs = [];
-                        this.listener.types.set(type,lsnrs);
-                    }
-
-                    lsnrs.push({inst: instance, lsnr: listener});
-                }
-            });
-        }
-
-        if (keys != null)
-        {
-            let keysarr:string[] = [];
-            let array:boolean = false;
-            if (keys.constructor.name == "Array") array = true;
-
-            if (array) keysarr = keys as string[];
-            else       keysarr.push(keys as string);
-
-            keysarr.forEach((key) =>
-            {
-                key = key.toLowerCase();
-                let lsnrs:InstanceListener[] = this.listener.keys.get(key);
-
-                if (lsnrs == null)
-                {
-                    lsnrs = [];
-                    this.listener.keys.set(key,lsnrs);
-                }
-
-                lsnrs.push({inst: instance, lsnr: listener});
-            });
-        }
+        this.triggers.addListener(instance,listener,types,keys);
     }
 
 
@@ -562,25 +511,12 @@ export class BlockImpl
             this.goField(row,this.field);
         }
 
+        // Pass event to subscribers, continue if not handled
+        if (!this.triggers.execute(type,field,key)) return(true);
+
         // Pass event on to parent (form)
         if (this.parent != null)
             this.parent.onEvent(event,field,type,key);
-
-        // Pass event to subscribers
-        let lsnrs:InstanceListener[] = this.listener.types.get(type);
-        if (lsnrs != null) lsnrs.forEach((ilsnr) =>
-        {
-            ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
-        });
-
-        if (type == "key")
-        {
-            lsnrs = this.listener.keys.get(key);
-            if (lsnrs != null) lsnrs.forEach((ilsnr) =>
-            {
-                ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
-            });
-        }
 
         return(true);
     }

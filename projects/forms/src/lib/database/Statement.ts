@@ -159,7 +159,7 @@ export class Statement
         let sql:string = this.sql$;
 
         if (sql == null && this.type$ != null && this.type$ != SQLType.call)
-            sql += SQLType[this.type$] + " ";
+            sql = SQLType[this.type$] + " ";
 
         if (this.columns$ != null)
         {

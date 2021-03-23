@@ -60,12 +60,15 @@ export class Table
 
         fields.forEach((field) =>
         {
-            let def:FieldDefinition = this.fielddef.get(field.name);
-
-            if (def.column != null)
+            if (field.value != null && (""+field.value).trim() != "")
             {
-                let type:string = this.index.get(""+def.column).type;
-                stmt.and(""+def.column,field.value,type);
+                let def:FieldDefinition = this.fielddef.get(field.name);
+
+                if (def.column != null)
+                {
+                    let type:string = this.index.get(""+def.column).type;
+                    stmt.and(""+def.column,field.value,type);
+                }
             }
         });
 
