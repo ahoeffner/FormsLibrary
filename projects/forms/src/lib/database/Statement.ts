@@ -21,6 +21,8 @@ export interface SQL
 export class Statement
 {
     private sql$:string = null;
+    private table$:string = null;
+    private order$:string = null;
     private type$:SQLType = null;
     private columns$:string[] = [];
     private condition$:Condition = null;
@@ -50,6 +52,16 @@ export class Statement
     public set type(type:SQLType)
     {
         this.type$ = type;
+    }
+
+    public set table(table:string)
+    {
+        this.table$ = table;
+    }
+
+    public set order(order:string)
+    {
+        this.order$ = order;
     }
 
     public set columns(columns:string|string[])
@@ -146,7 +158,7 @@ export class Statement
     {
         let sql:string = this.sql$;
 
-        if (sql == null && this.type$ != SQLType.call)
+        if (sql == null && this.type$ != null && this.type$ != SQLType.call)
             sql += SQLType[this.type$] + " ";
 
         if (this.columns$ != null)
@@ -157,11 +169,17 @@ export class Statement
             sql += this.columns$[this.columns$.length-1];
         }
 
+        if (this.table$ != null)
+            sql += " from "+this.table$;
+
         if (this.condition$ != null)
             sql += " "+this.condition$.toString();
 
         let bindvalues:BindValue[] = this.bindvalues;
         this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+
+        if (this.type$ == SQLType.select && this.order$ != null)
+            sql += " order by "+this.order$;
 
         return({sql: sql, bindvalues: bindvalues});
     }

@@ -46,6 +46,8 @@ export class Table
         let stmt:Statement = new Statement(SQLType.select);
 
         stmt.columns = this.cnames;
+        stmt.table = this.table.name;
+        stmt.order = this.table.order;
 
         keys.forEach((key) =>
         {
