@@ -1,5 +1,6 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
+import { Listener } from "../events/Listener";
 import { Container } from "../container/Container";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
 
@@ -91,6 +92,11 @@ export class Form implements OnInit, AfterViewInit
     public setCallback(func:CallBack) : void
     {
         this._impl_.setCallback(func);
+    }
+
+    public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
+    {
+        this._impl_.addListener(this,listener,types,keys);
     }
 
     public ngOnInit()

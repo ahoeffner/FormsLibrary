@@ -3,10 +3,13 @@ import { Menu } from "../menu/Menu";
 import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
+import { Table } from "../database/Table";
 import { KeyMap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
+import { Listener } from "../events/Listener";
+import { Triggers } from "../events/Triggers";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
@@ -29,7 +32,6 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
-import { Table } from "../database/Table";
 
 
 export class FormImpl implements EventListener
@@ -55,6 +57,7 @@ export class FormImpl implements EventListener
     private initiated$:boolean = false;
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
+    private triggers:Triggers = new Triggers();
     private keys:Map<string,Key> = new Map<string,Key>();
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
@@ -350,6 +353,7 @@ export class FormImpl implements EventListener
 
         // Get all fields on form
         this.fields$ = container.fields;
+        this.block$ = this.blocks[0];
         this.regroup();
     }
 
@@ -733,7 +737,13 @@ export class FormImpl implements EventListener
     }
 
 
-    public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
+    public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
+    {
+        this.triggers.addListener(instance,listener,types,keys);
+    }
+
+
+    public async onEvent(event:any, field:FieldInstance, type:string, key:string)
     {
         if (this.app == null)
             return;
@@ -778,5 +788,8 @@ export class FormImpl implements EventListener
             if (!next) event.preventDefault();
             return;
         }
+
+        if (event["navigate"])
+            return;
     }
  }

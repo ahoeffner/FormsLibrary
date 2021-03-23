@@ -45,8 +45,9 @@ export class FieldData
     }
 
 
-    public async query()
+    public async execute(sql:SQL) : Promise<boolean>
     {
+        return(true);
     }
 
 

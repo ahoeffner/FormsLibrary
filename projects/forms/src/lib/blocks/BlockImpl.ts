@@ -3,6 +3,7 @@ import { Block } from "./Block";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
 import { KeyMap } from "../keymap/KeyMap";
+import { SQL } from "../database/Statement";
 import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
 import { Triggers } from "../events/Triggers";
@@ -208,7 +209,7 @@ export class BlockImpl
     }
 
 
-    private keyexeqry() : boolean
+    private async keyexeqry() : Promise<boolean>
     {
         if (!this.dbusage.query) return(false);
         return(this.executeqry());
@@ -229,7 +230,7 @@ export class BlockImpl
     }
 
 
-    public executeqry() : boolean
+    public async executeqry() : Promise<boolean>
     {
         let keys:Key[] = [];
         let fields:Field[] = [];
@@ -237,7 +238,9 @@ export class BlockImpl
         if (this.state == FormState.entqry)
             fields = this.records[0].fields;
 
-        this.data.parseQuery(keys,fields);
+        let sql:SQL = this.data.parseQuery(keys,fields);
+
+
         return(true);
     }
 
@@ -406,7 +409,7 @@ export class BlockImpl
         {
             if (this.row != field.row)
             {
-                if (!this.validaterecord())
+                if (!await this.validaterecord())
                 {
                     this.records[+this.row].current = true;
                     this.field.focus();
@@ -421,21 +424,21 @@ export class BlockImpl
 
         if (type == "change")
         {
-            if (!this.validatefield()) return(false);
+            if (!await this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
         }
 
         // Enter query
         if (type == "key" && key == this.keymap.enterquery)
         {
-            if (!this.validate()) return(false);
+            if (!await this.validate()) return(false);
             this.keyentqry();
         }
 
         // Execute query
         if (type == "key" && key == this.keymap.executequery)
         {
-            if (!this.validate()) return(false);
+            if (!await this.validate()) return(false);
             this.keyexeqry();
         }
 
@@ -446,7 +449,7 @@ export class BlockImpl
         // Insert after
         if (type == "key" && key == this.keymap.insertafter)
         {
-            if (!this.validate()) return(false);
+            if (!await this.validate()) return(false);
             this.setValue(field.row,field.name,field.value,true);
             this.keyinsert(true);
         }
@@ -454,7 +457,7 @@ export class BlockImpl
         // Insert before
         if (type == "key" && key == this.keymap.insertbefore)
         {
-            if (!this.validate()) return(false);
+            if (!await this.validate()) return(false);
             this.setValue(field.row,field.name,field.value,true);
             this.keyinsert(false);
         }
@@ -474,14 +477,14 @@ export class BlockImpl
                 let fetched:number = await this.data.fetch(offset,1);
 
                 if (fetched == 0) return(false);
-                if (!this.onEvent(null,this.field,"change")) return(false);
+                if (!await this.onEvent(null,this.field,"change")) return(false);
 
                 this.display(this.offset+1);
             }
             else
             {
                 if (field.current)
-                if (!this.onEvent(null,this.field,"change")) return(false);
+                if (!await this.onEvent(null,this.field,"change")) return(false);
             }
 
             this.goField(row,this.field);
@@ -497,7 +500,7 @@ export class BlockImpl
             {
                 row = 0;
 
-                if (!this.onEvent(null,this.field,"change"))
+                if (!await this.onEvent(null,this.field,"change"))
                     return(false);
 
                 this.display(this.offset-1);
@@ -505,14 +508,24 @@ export class BlockImpl
             else
             {
                 if (field.current)
-                if (!this.onEvent(null,this.field,"change")) return(false);
+                if (!await this.onEvent(null,this.field,"change")) return(false);
             }
 
             this.goField(row,this.field);
         }
 
+        event["navigate"] = true;
+
+        if (type == "key" && key == this.keymap.prevfield && this.parent != null)
+            await this.parent.onEvent(event,field,type,key);
+
+        if (type == "key" && key == this.keymap.nextfield && this.parent != null)
+            await this.parent.onEvent(event,field,type,key);
+
+        event["navigate"] = false;
+
         // Pass event to subscribers, continue if not handled
-        if (!this.triggers.execute(type,field,key)) return(true);
+        if (await this.triggers.execute(type,field,key)) return(true);
 
         // Pass event on to parent (form)
         if (this.parent != null)

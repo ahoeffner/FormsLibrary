@@ -64,7 +64,7 @@ export class Triggers
     }
 
 
-    public execute(type:string, field:FieldInstance, key:string) : boolean
+    public async execute(type:string, field:FieldInstance, key:string) : Promise<boolean>
     {
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
 
