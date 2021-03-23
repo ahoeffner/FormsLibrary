@@ -68,17 +68,17 @@ export class Triggers
     {
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
 
-        if (lsnrs != null) lsnrs.forEach((ilsnr) =>
+        if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
-            ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
+            await ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
         });
 
         if (type == "key")
         {
             lsnrs = this.listener.keys.get(key);
-            if (lsnrs != null) lsnrs.forEach((ilsnr) =>
+            if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
             {
-                ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
+                await ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
             });
         }
 
