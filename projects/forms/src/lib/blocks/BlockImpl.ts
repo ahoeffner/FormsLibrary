@@ -80,13 +80,13 @@ export class BlockImpl
 
     public set fielddef(def:Map<string,FieldDefinition>)
     {
-        this.fielddef = def;
+        this.fielddef$ = def;
     }
 
 
     public get fielddef() : Map<string,FieldDefinition>
     {
-        return(this.fielddef);
+        return(this.fielddef$);
     }
 
 
