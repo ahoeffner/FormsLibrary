@@ -27,7 +27,6 @@ export class BlockImpl
     private app:ApplicationImpl;
     private field$:FieldInstance;
     private form$:FormImpl = null;
-    private parent$:EventListener;
     private dbusage:DatabaseUsage;
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
@@ -114,18 +113,9 @@ export class BlockImpl
     }
 
 
-    public get parent() : EventListener
+    public set form(parent:FormImpl)
     {
-        return(this.parent$);
-    }
-
-
-    public set parent(parent:EventListener)
-    {
-        this.parent$ = parent;
-
-        if (parent.constructor.name == "FormImpl")
-            this.form$ = parent as FormImpl;
+        this.form$ = parent as FormImpl;
     }
 
 
@@ -516,11 +506,11 @@ export class BlockImpl
 
         event["navigate"] = true;
 
-        if (type == "key" && key == this.keymap.prevfield && this.parent != null)
-            await this.parent.onEvent(event,field,type,key);
+        if (type == "key" && key == this.keymap.prevfield && this.form != null)
+            await this.form.onEvent(event,field,type,key);
 
-        if (type == "key" && key == this.keymap.nextfield && this.parent != null)
-            await this.parent.onEvent(event,field,type,key);
+        if (type == "key" && key == this.keymap.nextfield && this.form != null)
+            await this.form.onEvent(event,field,type,key);
 
         event["navigate"] = false;
 
@@ -528,8 +518,8 @@ export class BlockImpl
         if (await this.triggers.execute(type,field,key)) return(true);
 
         // Pass event on to parent (form)
-        if (this.parent != null)
-            this.parent.onEvent(event,field,type,key);
+        if (this.form != null)
+            this.form.onEvent(event,field,type,key);
 
         return(true);
     }

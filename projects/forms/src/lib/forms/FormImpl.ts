@@ -637,7 +637,7 @@ export class FormImpl implements EventListener
         this.blocks.push(impl);
         this.blkindex.set(alias,impl);
 
-        impl.parent = this;
+        impl.form = this;
         impl.setApplication(this.app);
     }
 

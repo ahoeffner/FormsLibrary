@@ -47,7 +47,6 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
         super();
         this.keymap = conf.keymap;
         this["_impl_"].config = conf;
-        this["_impl_"].parent = this;
     }
 
     public setWin(win:PopupWindow): void
