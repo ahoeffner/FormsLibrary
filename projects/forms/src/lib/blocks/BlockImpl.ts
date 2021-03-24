@@ -15,6 +15,7 @@ import { EventListener } from "../events/EventListener";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { FieldTriggerEvent, KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 
 
 export class BlockImpl
@@ -392,6 +393,8 @@ export class BlockImpl
 
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
+        let trgevent:TriggerEvent = null;
+
         if (this.keymap == null)
             return(false);
 
@@ -410,18 +413,21 @@ export class BlockImpl
             this.field$ = field;
             this.row = field.row;
             this.records$[+field.row].current = true;
+            trgevent = new FieldTriggerEvent(type,field);
         }
 
         if (type == "change")
         {
             if (!await this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
+            trgevent = new FieldTriggerEvent(type,field);
         }
 
         // Enter query
         if (type == "key" && key == this.keymap.enterquery)
         {
             if (!await this.validate()) return(false);
+            trgevent = new KeyTriggerEvent(type,key,field);
             this.keyentqry();
         }
 
@@ -429,17 +435,22 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.executequery)
         {
             if (!await this.validate()) return(false);
+            trgevent = new KeyTriggerEvent(type,key,field);
             this.keyexeqry();
         }
 
         // Delete
         if (type == "key" && key == this.keymap.delete)
+        {
+            trgevent = new KeyTriggerEvent(type,key,field);
             this.keydelete();
+        }
 
         // Insert after
         if (type == "key" && key == this.keymap.insertafter)
         {
             if (!await this.validate()) return(false);
+            trgevent = new KeyTriggerEvent(type,key,field);
             this.setValue(field.row,field.name,field.value,true);
             this.keyinsert(true);
         }
@@ -448,6 +459,7 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.insertbefore)
         {
             if (!await this.validate()) return(false);
+            trgevent = new KeyTriggerEvent(type,key,field);
             this.setValue(field.row,field.name,field.value,true);
             this.keyinsert(false);
         }
@@ -457,6 +469,7 @@ export class BlockImpl
         {
             let row:number = +field.row + 1;
             if (this.data == null) return(false);
+            trgevent = new KeyTriggerEvent(type,key,field);
 
             if (+row >= +this.rows)
             {
@@ -485,6 +498,7 @@ export class BlockImpl
         {
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
+            trgevent = new KeyTriggerEvent(type,key,field);
 
             if (+row < 0)
             {
@@ -515,7 +529,7 @@ export class BlockImpl
         event["navigate"] = false;
 
         // Pass event to subscribers, continue if not handled
-        if (await this.triggers.execute(type,field,key)) return(true);
+        if (await this.triggers.execute(type,key,trgevent)) return(true);
 
         // Pass event on to parent (form)
         if (this.form != null)

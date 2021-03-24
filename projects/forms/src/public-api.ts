@@ -16,6 +16,11 @@ export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 
+export {Key} from './lib/keymap/KeyMap';
+export {TriggerEvent} from './lib/events/TriggerEvent';
+export {KeyTriggerEvent} from './lib/events/TriggerEvent';
+export {FieldTriggerEvent} from './lib/events/TriggerEvent';
+
 export {Menu} from './lib/menu/Menu';
 export {MenuArea} from './lib/menu/MenuArea';
 export {MenuEntry} from './lib/menu/MenuEntry';

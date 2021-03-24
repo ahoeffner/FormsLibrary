@@ -1,7 +1,7 @@
 import { Listener } from "./Listener";
+import { TriggerEvent } from "./TriggerEvent";
 import { InstanceEvents } from "./InstanceEvents";
 import { InstanceListener } from "./InstanceListener";
-import { FieldInstance } from "../input/FieldInstance";
 
 
 export class Triggers
@@ -64,13 +64,13 @@ export class Triggers
     }
 
 
-    public async execute(type:string, field:FieldInstance, key:string) : Promise<boolean>
+    public async execute(type:string, key:string, event:TriggerEvent) : Promise<boolean>
     {
         let lsnrs:InstanceListener[] = this.listener.types.get(type);
 
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
-            await ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
+            await ilsnr.inst[ilsnr.lsnr.name](event);
         });
 
         if (type == "key")
@@ -78,7 +78,7 @@ export class Triggers
             lsnrs = this.listener.keys.get(key);
             if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
             {
-                await ilsnr.inst[ilsnr.lsnr.name](field.name,field.row,type,field.value,key);
+                await ilsnr.inst[ilsnr.lsnr.name](event);
             });
         }
 

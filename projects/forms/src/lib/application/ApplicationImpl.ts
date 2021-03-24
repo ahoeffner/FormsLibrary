@@ -63,6 +63,8 @@ export class ApplicationImpl
 
         if (this.config.hasOwnProperty("theme"))
             this.conf.setTheme(this.config["theme"]);
+
+        KeyMapper.index(this.conf.keymap);
     }
 
 

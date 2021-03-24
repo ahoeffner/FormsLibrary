@@ -176,7 +176,14 @@ export class Statement
             sql += " "+this.condition$.toString();
 
         let bindvalues:BindValue[] = this.bindvalues;
-        this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+
+        if (this.condition$ != null)
+        {
+            this.condition$.bindvalues().forEach((bind) =>
+            {
+                bindvalues.push(bind);
+            });
+        }
 
         if (this.type$ == SQLType.select && this.order$ != null)
             sql += " order by "+this.order$;

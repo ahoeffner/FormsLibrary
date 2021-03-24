@@ -1,4 +1,6 @@
+import { TriggerEvent } from "./TriggerEvent";
+
 export interface Listener
 {
-    (field:string, row:number, type:string, value:any, key?:string) : Promise<boolean>;
+    (event:TriggerEvent) : Promise<boolean>;
 }
