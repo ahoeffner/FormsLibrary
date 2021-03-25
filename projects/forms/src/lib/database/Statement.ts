@@ -14,6 +14,8 @@ export enum SQLType
 export interface SQL
 {
     sql:string;
+    rows?:number;
+    cursor?:string;
     bindvalues:BindValue[];
 }
 

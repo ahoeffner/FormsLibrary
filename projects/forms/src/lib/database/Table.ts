@@ -40,15 +40,18 @@ export class Table
     }
 
 
-    public async execute(sql:SQL) : Promise<boolean>
+    public async execute(stmt:Statement) : Promise<boolean>
     {
+        let sql:SQL = stmt.build();
+        if (stmt.type == SQLType.select) sql.rows = this.fetch;
+        let response:any = await this.conn.invoke(SQLType[stmt.type],sql);
+        console.log("Response "+JSON.stringify(response));
         return(true);
     }
 
 
-    public parseQuery(keys:Key[], fields:Field[]) : SQL
+    public parseQuery(keys:Key[], fields:Field[]) : Statement
     {
-        let sql:SQL;
         let stmt:Statement = new Statement(SQLType.select);
 
         stmt.columns = this.cnames;
@@ -78,9 +81,6 @@ export class Table
             }
         });
 
-        let result:any = stmt.build();
-        console.log("sql: "+result.sql);
-
-        return(sql);
+        return(stmt);
     }
 }

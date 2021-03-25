@@ -3,13 +3,13 @@ import { Block } from "./Block";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
 import { KeyMap } from "../keymap/KeyMap";
-import { SQL } from "../database/Statement";
 import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
 import { Triggers } from "../events/Triggers";
 import { Config } from "../application/Config";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
+import { Statement } from "../database/Statement";
 import { FieldInstance } from "../input/FieldInstance";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
@@ -247,11 +247,11 @@ export class BlockImpl
             this.records[0].disable();
         }
 
-        let sql:SQL = this.data.parseQuery(keys,fields);
-        let trigger:SQLTriggerEvent = new SQLTriggerEvent({type:"PreQuery"},sql);
+        let stmt:Statement = this.data.parseQuery(keys,fields);
+        let trigger:SQLTriggerEvent = new SQLTriggerEvent({type:"PreQuery"},stmt);
         this.triggers.invokeCustomTriggers("prequery",trigger);
 
-        this.data.execute(sql);
+        this.data.execute(stmt);
         return(true);
     }
 

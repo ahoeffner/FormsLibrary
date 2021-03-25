@@ -1,4 +1,4 @@
-import { SQL } from "../database/Statement";
+import { Statement } from "../database/Statement";
 import { Key, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
 
@@ -59,11 +59,11 @@ export class FieldTriggerEvent extends TriggerEvent
 
 export class SQLTriggerEvent extends TriggerEvent
 {
-    public sql:SQL;
+    public stmt:Statement;
 
-    constructor(event:any, sql:SQL)
+    constructor(event:any, stmt:Statement)
     {
         super(event);
-        this.sql = sql;
+        this.stmt = stmt;
     }
 }

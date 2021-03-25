@@ -105,10 +105,12 @@ export class Connection
     }
 
 
-    private async invoke(cmd:string, body:any) : Promise<any>
+    public async invoke(cmd:string, body:any) : Promise<any>
     {
         let url:string = this.url + "/";
+        
         if (this.conn != null) url = url + this.conn + "/";
+        else return({status: "failed", error: "500", message: "not logged on"});
 
         return(
             this.client.post<any>(url+cmd,body).toPromise().then

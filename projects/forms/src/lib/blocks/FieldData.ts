@@ -1,7 +1,7 @@
 import { Key } from "./Key";
 import { Field } from "../input/Field";
 import { Table } from "../database/Table";
-import { SQL } from "../database/Statement";
+import { SQL, Statement } from "../database/Statement";
 
 
 export class FieldData
@@ -38,17 +38,17 @@ export class FieldData
     }
 
 
-    public parseQuery(keys:Key[], fields:Field[]) : SQL
+    public parseQuery(keys:Key[], fields:Field[]) : Statement
     {
         if (this.table == null) return(null);
         return(this.table.parseQuery(keys,fields));
     }
 
 
-    public async execute(sql:SQL) : Promise<boolean>
+    public async execute(stmt:Statement) : Promise<boolean>
     {
         if (this.table == null) return(false);
-        return(this.table.execute(sql));
+        return(this.table.execute(stmt));
     }
 
 
