@@ -287,16 +287,16 @@ export class FormImpl implements EventListener
             let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
 
             let fields:string[] = [];
+            let orphans:string[] = [];
             // List of fields, first all columns, then other fields
             let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
             let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
 
             columns.forEach((column) =>
             {
-                let cname:string = "";
                 let field:FieldDefinition = cindex.get(column.name);
-                if (field != null) cname = field.name;
-                fields.push(cname);
+                if (field == null) orphans.push(column.name);
+                else               fields.push(field.name);
             });
 
             let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
@@ -330,6 +330,34 @@ export class FormImpl implements EventListener
                 if (kdef.unique && pkey == null) pkey = key;
                 if (kdef.name.startsWith("primary")) pkey = key;
             });
+
+            // Orphans makes sense if part of primary key
+            if (orphans.length > 0 && pkey != null)
+            {
+                let ok:number = 0;
+                orphans.forEach((cname) =>
+                {
+                    for(let i = 0; i < pkey.columns.length; i++)
+                        if (pkey.columns[i].name == cname) ok++;
+                });
+
+                if (ok == orphans.length) orphans = [];
+            }
+
+            // Remove orphans
+            if (orphans.length > 0)
+            {
+                let colsused:ColumnDefinition[] = [];
+                orphans.forEach((cname) => {console.log("Column "+cname+" is defined, but not used");});
+
+                columns.forEach((col) =>
+                {
+                    let used:boolean = true;
+                    for(let i = 0; i < orphans.length; i++)
+                        if (col.name == orphans[i]) used = false;
+                    if (used) colsused.push(col);
+                });
+            }
 
             // Create data-backing table
             let table:Table = null;
@@ -737,9 +765,21 @@ export class FormImpl implements EventListener
     }
 
 
-    public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
+    public addListener(instance:any, listener:Listener, types?:string|string[]) : void
     {
-        this.triggers.addListener(instance,listener,types,keys);
+        this.triggers.addKeyListener(instance,listener,types);
+    }
+
+
+    public addKeyListener(instance:any, listener:Listener, keys?:string|string[]) : void
+    {
+        this.triggers.addKeyListener(instance,listener,keys);
+    }
+
+
+    public addFieldListener(instance:any, listener:Listener, types:string|string[], fields?:string|string[]) : void
+    {
+        this.triggers.addFieldListener(instance,listener,types,fields);
     }
 
 

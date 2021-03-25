@@ -40,6 +40,12 @@ export class Table
     }
 
 
+    public async execute(sql:SQL) : Promise<boolean>
+    {
+        return(true);
+    }
+
+
     public parseQuery(keys:Key[], fields:Field[]) : SQL
     {
         let sql:SQL;

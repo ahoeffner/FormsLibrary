@@ -47,7 +47,8 @@ export class FieldData
 
     public async execute(sql:SQL) : Promise<boolean>
     {
-        return(true);
+        if (this.table == null) return(false);
+        return(this.table.execute(sql));
     }
 
 

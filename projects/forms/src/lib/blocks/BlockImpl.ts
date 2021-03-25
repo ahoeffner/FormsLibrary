@@ -14,7 +14,7 @@ import { FieldInstance } from "../input/FieldInstance";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { FieldTriggerEvent, KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
+import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 
 
 export class BlockImpl
@@ -224,6 +224,7 @@ export class BlockImpl
     public enterqry() : boolean
     {
         this.clear();
+
         if (this.records.length > 0)
         {
             this.state = FormState.entqry;
@@ -241,11 +242,16 @@ export class BlockImpl
         let fields:Field[] = [];
 
         if (this.state == FormState.entqry)
+        {
             fields = this.records[0].fields;
+            this.records[0].disable();
+        }
 
         let sql:SQL = this.data.parseQuery(keys,fields);
+        let trigger:SQLTriggerEvent = new SQLTriggerEvent({type:"PreQuery"},sql);
+        this.triggers.invokeCustomTriggers("prequery",trigger);
 
-
+        this.data.execute(sql);
         return(true);
     }
 
@@ -399,9 +405,21 @@ export class BlockImpl
     }
 
 
-    public addListener(instance:any, listener:Listener, types:string|string[], keys?:string|string[]) : void
+    public addListener(instance:any, listener:Listener, types:string|string[]) : void
     {
-        this.triggers.addListener(instance,listener,types,keys);
+        this.triggers.addKeyListener(instance,listener,types);
+    }
+
+
+    public addKeyListener(instance:any, listener:Listener, keys?:string|string[]) : void
+    {
+        this.triggers.addKeyListener(instance,listener,keys);
+    }
+
+
+    public addFieldListener(instance:any, listener:Listener, types:string|string[], fields?:string|string[]) : void
+    {
+        this.triggers.addFieldListener(instance,listener,types,fields);
     }
 
 
@@ -445,7 +463,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
             this.keyentqry();
         }
@@ -457,7 +475,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
             this.keyexeqry();
         }
@@ -467,7 +485,7 @@ export class BlockImpl
         {
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
             this.keydelete();
         }
@@ -480,7 +498,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
             this.keyinsert(true);
         }
@@ -493,7 +511,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
             this.keyinsert(false);
         }
@@ -564,7 +582,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
 
         // Pass event to subscribers, stop if signalled
-        if (!await this.triggers.execute(type,key,trgevent))
+        if (!await this.triggers.invokeTriggers(type,key,trgevent))
             return(true);
 
         // Pass event on to parent (form)

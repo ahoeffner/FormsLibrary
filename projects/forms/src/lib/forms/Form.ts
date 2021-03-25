@@ -94,9 +94,21 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.setCallback(func);
     }
 
-    public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
+    public addListener(listener:Listener, types:string|string[]) : void
     {
-        this._impl_.addListener(this,listener,types,keys);
+        this._impl_.addListener(this,listener,types);
+    }
+
+
+    public addKeyListener(listener:Listener, keys?:string|string[]) : void
+    {
+        this._impl_.addKeyListener(this,listener,keys);
+    }
+
+
+    public addFieldListener(listener:Listener, types:string|string[], fields?:string|string[]) : void
+    {
+        this._impl_.addFieldListener(this,listener,types,fields);
     }
 
     public ngOnInit()

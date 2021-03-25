@@ -1,6 +1,6 @@
+import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
 import { Listener } from "../events/Listener";
-import { FormImpl } from "../forms/FormImpl";
 
 
 export class Block
@@ -13,13 +13,18 @@ export class Block
         this._impl_ = new BlockImpl(this);
     }
 
-    public set form(form:FormImpl)
+    public get form(): Form
     {
-        
+        return(this._impl_.form.form);
     }
 
-    public addListener(listener:Listener, types:string|string[], keys?:string|string[]) : void
+    public addKeyListener(listener:Listener, keys?:string|string[]) : void
     {
-        this._impl_.addListener(this,listener,types,keys);
+        this._impl_.addKeyListener(this,listener,keys);
+    }
+
+    public addFieldListener(listener:Listener, types:string|string[], fields?:string|string[]) : void
+    {
+        this._impl_.addFieldListener(this,listener,types,fields);
     }
 }
