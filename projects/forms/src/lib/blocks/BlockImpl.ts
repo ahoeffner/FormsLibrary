@@ -393,6 +393,7 @@ export class BlockImpl
 
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
+        let triggered:boolean = false;
         let trgevent:TriggerEvent = null;
 
         if (this.keymap == null)
@@ -413,21 +414,25 @@ export class BlockImpl
             this.field$ = field;
             this.row = field.row;
             this.records$[+field.row].current = true;
-            trgevent = new FieldTriggerEvent(type,field);
+            trgevent = new FieldTriggerEvent(event,field);
         }
 
         if (type == "change")
         {
             if (!await this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
-            trgevent = new FieldTriggerEvent(type,field);
+            trgevent = new FieldTriggerEvent(event,field);
         }
 
         // Enter query
         if (type == "key" && key == this.keymap.enterquery)
         {
             if (!await this.validate()) return(false);
-            trgevent = new KeyTriggerEvent(type,key,field);
+
+            triggered = true;
+            trgevent = new KeyTriggerEvent(event,key,field);
+            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+
             this.keyentqry();
         }
 
@@ -435,14 +440,21 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.executequery)
         {
             if (!await this.validate()) return(false);
-            trgevent = new KeyTriggerEvent(type,key,field);
+
+            triggered = true;
+            trgevent = new KeyTriggerEvent(event,key,field);
+            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+
             this.keyexeqry();
         }
 
         // Delete
         if (type == "key" && key == this.keymap.delete)
         {
-            trgevent = new KeyTriggerEvent(type,key,field);
+            triggered = true;
+            trgevent = new KeyTriggerEvent(event,key,field);
+            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+
             this.keydelete();
         }
 
@@ -450,8 +462,12 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.insertafter)
         {
             if (!await this.validate()) return(false);
-            trgevent = new KeyTriggerEvent(type,key,field);
             this.setValue(field.row,field.name,field.value,true);
+
+            triggered = true;
+            trgevent = new KeyTriggerEvent(event,key,field);
+            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+
             this.keyinsert(true);
         }
 
@@ -459,8 +475,12 @@ export class BlockImpl
         if (type == "key" && key == this.keymap.insertbefore)
         {
             if (!await this.validate()) return(false);
-            trgevent = new KeyTriggerEvent(type,key,field);
             this.setValue(field.row,field.name,field.value,true);
+
+            triggered = true;
+            trgevent = new KeyTriggerEvent(event,key,field);
+            if (!await this.triggers.execute(type,key,trgevent)) return(true);
+
             this.keyinsert(false);
         }
 
@@ -469,7 +489,6 @@ export class BlockImpl
         {
             let row:number = +field.row + 1;
             if (this.data == null) return(false);
-            trgevent = new KeyTriggerEvent(type,key,field);
 
             if (+row >= +this.rows)
             {
@@ -498,7 +517,6 @@ export class BlockImpl
         {
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
-            trgevent = new KeyTriggerEvent(type,key,field);
 
             if (+row < 0)
             {
@@ -528,8 +546,12 @@ export class BlockImpl
 
         event["navigate"] = false;
 
-        // Pass event to subscribers, continue if not handled
-        if (await this.triggers.execute(type,key,trgevent)) return(true);
+        if (!triggered && type == "key")
+            trgevent = new KeyTriggerEvent(event,key,field);
+
+        // Pass event to subscribers, stop if signalled
+        if (!await this.triggers.execute(type,key,trgevent))
+            return(true);
 
         // Pass event on to parent (form)
         if (this.form != null)

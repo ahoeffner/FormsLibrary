@@ -4,11 +4,13 @@ import { FieldInstance } from "../input/FieldInstance";
 
 export class TriggerEvent
 {
+    public event:any;
     public type:string;
 
-    constructor(type:string)
+    constructor(event:any)
     {
-        this.type = type;
+        this.event = event;
+        this.type = event.type;
     }
 }
 
@@ -17,11 +19,15 @@ export class KeyTriggerEvent extends TriggerEvent
 {
     public key:Key;
     public row:number;
+    public code:string;
     public field:string;
 
-    constructor(type:string, key:string, field:FieldInstance)
+    constructor(event:any, key:string, field:FieldInstance)
     {
-        super(type);
+        super(event);
+
+        this.code = key;
+        this.event = event;
         this.key = KeyMapper.parse(key);
         this.key.name = KeyMapper.key(key);
 
@@ -40,9 +46,9 @@ export class FieldTriggerEvent extends TriggerEvent
     public row:number;
     public field:string;
 
-    constructor(type:string, field:FieldInstance)
+    constructor(event:any, field:FieldInstance)
     {
-        super(type);
+        super(event);
         this.row = field.row;
         this.field = field.name;
         this.value = field.value;

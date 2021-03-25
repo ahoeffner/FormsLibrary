@@ -82,6 +82,6 @@ export class Triggers
             });
         }
 
-        return(false);
+        return(true);
     }
 }

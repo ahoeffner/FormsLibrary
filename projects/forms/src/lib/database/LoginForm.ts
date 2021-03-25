@@ -10,6 +10,7 @@ import { FieldInstance } from "../input/FieldInstance";
 import { EventListener } from "../events/EventListener";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
+import { KeyTriggerEvent } from "../events/TriggerEvent";
 
 
 @Component({
@@ -47,6 +48,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
         super();
         this.keymap = conf.keymap;
         this["_impl_"].config = conf;
+        this.addListener(this.onEvent,"key",[this.keymap.enter, this.keymap.escape]);
     }
 
     public setWin(win:PopupWindow): void
@@ -67,22 +69,24 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, Ev
         this.app.getCurrentForm()?.focus();
     }
 
-    public async onEvent(event:any, field:FieldInstance,_type:string,key:string)
+    public async onEvent(kevent:KeyTriggerEvent) : Promise<boolean>
     {
-        if (key == this.keymap.enter) this.close(false);
-        if (key == this.keymap.escape) this.close(true);
+        if (kevent.code == this.keymap.enter) this.close(false);
+        if (kevent.code == this.keymap.escape) this.close(true);
 
-        if (key == this.keymap.nextfield && field.name == "pwd")
+        if (kevent.code == this.keymap.nextfield && kevent.field == "pwd")
         {
-            event.preventDefault();
+            kevent.event.preventDefault();
             this.usr.focus();
         }
 
-        if (key == this.keymap.prevfield && field.name == "usr")
+        if (kevent.code == this.keymap.prevfield && kevent.field == "usr")
         {
-            event.preventDefault();
+            kevent.event.preventDefault();
             this.pwd.focus();
         }
+
+        return(true);
     }
 
     public ngOnInit(): void
