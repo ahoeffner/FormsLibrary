@@ -175,6 +175,6 @@ export class MessageBox implements Popup, AfterViewInit
         this.btn.addEventListener("keydown",() => {this.close(false)});
 
         this.msg.innerHTML = this.message;
-        setTimeout(() => {this.btn.focus();},0);
+        setTimeout(() => {this.btn.focus();},5);
     }
 }

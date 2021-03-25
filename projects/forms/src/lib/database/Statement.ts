@@ -56,6 +56,11 @@ export class Statement
         this.type$ = type;
     }
 
+    public get type() : SQLType
+    {
+        return(this.type$);
+    }
+
     public set table(table:string)
     {
         this.table$ = table;
