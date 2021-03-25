@@ -11,7 +11,6 @@ import { Config } from "../application/Config";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { FieldInstance } from "../input/FieldInstance";
-import { EventListener } from "../events/EventListener";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -28,14 +27,23 @@ export class BlockImpl
     private app:ApplicationImpl;
     private field$:FieldInstance;
     private form$:FormImpl = null;
-    private dbusage:DatabaseUsage;
+    private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
     private state:FormState = FormState.normal;
     private triggers:Triggers = new Triggers();
     private fielddef$:Map<string,FieldDefinition>;
 
-    constructor(public block:Block) {}
+    constructor(public block:Block)
+    {
+        this.dbusage$ =
+        {
+            query: false,
+            insert: false,
+            update: false,
+            delete: false
+        };
+    }
 
     public get name() : string
     {
@@ -114,9 +122,15 @@ export class BlockImpl
     }
 
 
-    public set form(parent:FormImpl)
+    public set form(form:FormImpl)
     {
-        this.form$ = parent as FormImpl;
+        this.form$ = form;
+    }
+
+
+    public get form() : FormImpl
+    {
+        return(this.form$);
     }
 
 
@@ -157,13 +171,13 @@ export class BlockImpl
 
     public setDatabaseUsage(usage:DatabaseUsage) : void
     {
-        this.dbusage = usage;
+        this.dbusage$ = usage;
     }
 
 
-    public getDatabaseUsage() : DatabaseUsage
+    public get dbusage() : DatabaseUsage
     {
-        return(this.dbusage);
+        return(this.dbusage$);
     }
 
 
