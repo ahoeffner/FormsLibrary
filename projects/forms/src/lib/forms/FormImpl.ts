@@ -19,7 +19,6 @@ import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
 import { Record, RecordState } from "../blocks/Record";
-import { EventListener } from "../events/EventListener";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { KeyDefinition } from "../annotations/KeyDefinition";
@@ -34,7 +33,7 @@ import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 
-export class FormImpl implements EventListener
+export class FormImpl
 {
     private static id:number = 0;
 
@@ -279,6 +278,7 @@ export class FormImpl implements EventListener
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.name);
             let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
+            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
 
             // Create keys and decide on primary
             let pkey:Key = null;
@@ -312,7 +312,6 @@ export class FormImpl implements EventListener
             let fields:string[] = [];
             // List of data-fields, first pkey, then other columns, then other fields
             let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
-            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
 
             if (pkey != null)
                 pkey.columns.forEach((part) => {fields.push(part.name)});

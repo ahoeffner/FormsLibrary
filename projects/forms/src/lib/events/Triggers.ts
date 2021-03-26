@@ -189,6 +189,7 @@ export class Triggers
                 return(false);
         });
 
+        lsnrs = this.triggers.types.get("key");
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
             if (!await ilsnr.inst[ilsnr.lsnr.name](event))

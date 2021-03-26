@@ -37,14 +37,14 @@ export class Connection
 
         if (usr == null || pwd == null)
         {
-            this.alert("username and password must be specified to logon");
+            this.alert("Username and password must be specified to logon");
             return;
         }
 
         let credentials = {usr: usr, pwd: pwd};
         let response:any = await this.invoke("connect",credentials);
 
-        if (response["status"] != "ok")
+        if (response["status"] == "failed")
         {
             this.alert(JSON.stringify(response));
             return;
@@ -55,6 +55,8 @@ export class Connection
 
         this.app.appstate.onConnect();
         this.keepAlive();
+
+        return(response);
     }
 
 
@@ -75,10 +77,7 @@ export class Connection
         let response:any = await this.invoke("disconnect",{});
 
         if (response["status"] != "ok")
-        {
             this.alert(JSON.stringify(response));
-            return;
-        }
 
         this.conn = null;
         this.keepalive = 0;

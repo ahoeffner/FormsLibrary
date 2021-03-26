@@ -7,7 +7,7 @@ export class PopupInstance
 {
     public popupref:ComponentRef<Popup>;
 
-    public display(app:ApplicationImpl, popup:any) : Popup
+    public display(app:ApplicationImpl, popup:any) : void
     {
         this.popupref = app.builder.createComponent(popup);
         this.popupref.instance.setApp(app);
@@ -23,6 +23,11 @@ export class PopupInstance
         app.builder.getAppRef().attachView(winref.hostView);
 
         document.body.appendChild(element);
+    }
+
+
+    public get popup() : Popup
+    {
         return(this.popupref.instance);
     }
 }

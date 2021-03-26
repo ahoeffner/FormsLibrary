@@ -1,16 +1,14 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Block } from "../blocks/Block";
-import { Record, RecordState } from "../blocks/Record";
 import { KeyMap } from "../keymap/KeyMap";
 import { Config } from "../application/Config";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
-import { FieldInstance } from "../input/FieldInstance";
-import { EventListener } from "../events/EventListener";
+import { Record, RecordState } from "../blocks/Record";
+import { KeyTriggerEvent } from "../events/TriggerEvent";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
-import { KeyTriggerEvent } from "../events/TriggerEvent";
 
 
 @Component({
@@ -29,7 +27,7 @@ import { KeyTriggerEvent } from "../events/TriggerEvent";
 })
 
 
-export class LoginForm extends Block implements Popup, OnInit, AfterViewInit, EventListener
+export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 {
     private usr:Field;
     private pwd:Field;

@@ -84,10 +84,13 @@ export class MessageBox implements Popup, AfterViewInit
     public static show(app:ApplicationImpl, message:string, title?:string, width?:string, height?:string)
     {
         let pinst:PopupInstance = new PopupInstance();
-        let mbox:MessageBox = pinst.display(app,MessageBox) as MessageBox;
+
+        pinst.display(app,MessageBox);
+        let mbox:MessageBox = pinst.popup as MessageBox;
 
         mbox.title = title;
         mbox.message = message;
+
         if (width != null) mbox.width = width;
         if (height != null) mbox.height = height;
     }
