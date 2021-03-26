@@ -269,13 +269,7 @@ export class FormImpl implements EventListener
 
             // Set fieldtype for all fields
             let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getIndex(block.clazz);
-            cb.fields.forEach((inst) =>
-            {
-                let def:FieldDefinition = fielddef.get(inst.name);
-
-                if (def != null) inst.type = def.type;
-                else console.log("Field "+inst.name+" has no correponding definition");
-            });
+            cb.fields.forEach((inst) => {if (inst.type == null) inst.type = fielddef.get(inst.name)?.type;});
 
             block.fielddef = fielddef;
         });
@@ -285,22 +279,6 @@ export class FormImpl implements EventListener
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.name);
             let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
-
-            let fields:string[] = [];
-            let orphans:string[] = [];
-            // List of fields, first all columns, then other fields
-            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
-            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
-
-            columns.forEach((column) =>
-            {
-                let field:FieldDefinition = cindex.get(column.name);
-                if (field == null) orphans.push(column.name);
-                else               fields.push(field.name);
-            });
-
-            let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
-            fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});
 
             // Create keys and decide on primary
             let pkey:Key = null;
@@ -331,33 +309,42 @@ export class FormImpl implements EventListener
                 if (kdef.name.startsWith("primary")) pkey = key;
             });
 
-            // Orphans makes sense if part of primary key
-            if (orphans.length > 0 && pkey != null)
+            let fields:string[] = [];
+            // List of data-fields, first pkey, then other columns, then other fields
+            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
+            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
+
+            if (pkey != null)
+                pkey.columns.forEach((part) => {fields.push(part.name)});
+
+            columns.forEach((column) =>
             {
-                let ok:number = 0;
-                orphans.forEach((cname) =>
+                let nonkey:boolean = true;
+                if (pkey != null && pkey.partof(column.name)) nonkey = false;
+
+                if (nonkey)
                 {
-                    for(let i = 0; i < pkey.columns.length; i++)
-                        if (pkey.columns[i].name == cname) ok++;
-                });
+                    let fname:string = null;
+                    let field:FieldDefinition = cindex.get(column.name);
 
-                if (ok == orphans.length) orphans = [];
-            }
+                    if (field != null) fname = field.name;
+                    else
+                    {
+                        field = block.fielddef.get(column.name);
+                        if (field == null) fname = column.name;
+                        else
+                        {
+                            fname = field.name;
+                            field.column = column.name;
+                        }
+                    }
 
-            // Remove orphans
-            if (orphans.length > 0)
-            {
-                let colsused:ColumnDefinition[] = [];
-                orphans.forEach((cname) => {console.log("Column "+cname+" is defined, but not used");});
+                    fields.push(fname);
+                }
+            });
 
-                columns.forEach((col) =>
-                {
-                    let used:boolean = true;
-                    for(let i = 0; i < orphans.length; i++)
-                        if (col.name == orphans[i]) used = false;
-                    if (used) colsused.push(col);
-                });
-            }
+            let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
+            fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});
 
             // Create data-backing table
             let table:Table = null;

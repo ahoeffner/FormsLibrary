@@ -17,7 +17,6 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 
 export class FieldInstance implements AfterViewInit
 {
-    private type$:string;
     private guid$:string;
     private clazz:FieldType;
     private app:ApplicationImpl;
@@ -31,6 +30,7 @@ export class FieldInstance implements AfterViewInit
     @Input("id")    private id$:string = "";
     @Input("row")   private row$:number = -2;
     @Input("name")  private name$:string = "";
+    @Input("type")  private type$:string = "";
     @Input("block") private block$:string = "";
     @Input("group") private group$:string = "";
     @Input("class") private class$:string = "";
@@ -78,7 +78,8 @@ export class FieldInstance implements AfterViewInit
 
     public get type() : string
     {
-        return(this.type$);
+        if (this.type$ == "") return(null);
+        else                  return(this.type$);
     }
 
     public get dirty() : boolean

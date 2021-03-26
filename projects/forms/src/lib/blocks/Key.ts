@@ -15,6 +15,11 @@ export class Key
         return(this.values[part as number]);
     }
 
+    public partof(part:string) : boolean
+    {
+        return(this.index.get(part) != null);
+    }
+
     public set(name:string, value:any) : void
     {
         let nvp:NameValuePair = this.index.get(name);

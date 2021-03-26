@@ -22,7 +22,13 @@ export class Condition
     constructor(column:string, value:string, datatype?:string)
     {
         this.column$ = column;
-        let numeric:boolean = !isNaN(+value);
+        this.datatype$ = datatype;
+
+        if (this.datatype$ == null)
+        {
+            let numeric:boolean = !isNaN(+value);
+            if (numeric) this.datatype$ = "number";
+        }
 
         if (value == null)
         {
@@ -48,10 +54,16 @@ export class Condition
             this.value$ = value.substring(1).trim();
 
         if (value.startsWith('"') && value.endsWith('"'))
-            value = "'"+value.substring(1,value.length-1)+"'";
+        {
+            quoted = true;
+            value = value.substring(1,value.length-1);
+        }
 
         if (value.startsWith("'") && value.endsWith("'"))
+        {
             quoted = true;
+            value = value.substring(1,value.length-1);
+        }
 
         if (!quoted)
         {
@@ -63,7 +75,6 @@ export class Condition
 
         this.value$ = value.trim();
         if (this.operator$.length == 0) this.operator$ = "=";
-        if (!quoted && !numeric) this.value$ = "'"+this.value$+"'";
     }
 
 
@@ -173,17 +184,17 @@ export class Condition
         while(nc.prev$ != null) nc = nc.prev$;
 
         if (nc.next$ == null)
-            return("where :"+nc.column$+" "+nc.operator$+" "+nc.value$);
+            return("where "+nc.column$+" "+nc.operator$+" :"+nc.column$);
 
         let str:string = (nc.level$ == 0) ? "where " : "where (";
-        str += ":"+nc.column$+" "+nc.operator$+" "+nc.value$;
+        str += nc.column$+" "+nc.operator$+" :"+nc.column$;
         if (nc.next$ != null) str += " "+nc.type$+" ";
 
         while(nc.next$ != null)
         {
             nc = nc.next$;
             if (+nc.level$ > 0) str += "(";
-            str += ":"+nc.column$+" "+nc.operator$+" "+nc.value$;
+            str += nc.column$+" "+nc.operator$+" :"+nc.column$;
             if (+nc.level$ < 0) str += ")";
             if (nc.next$ != null) str += " "+nc.type$+" ";
         }
