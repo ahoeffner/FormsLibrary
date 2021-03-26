@@ -286,7 +286,7 @@ export class BlockImpl
 
         let stmt:Statement = this.data.parseQuery(keys,fields);
         let trigger:SQLTriggerEvent = new SQLTriggerEvent({type:"PreQuery"},stmt);
-        this.triggers.invokeCustomTriggers("prequery",trigger);
+        if (!this.triggers.invokeCustomTriggers("prequery",trigger)) return(false);
 
         let response:any = await this.data.execute(stmt);
 
@@ -296,6 +296,7 @@ export class BlockImpl
             return(false);
         }
 
+        this.display(0);
         return(true);
     }
 

@@ -1,7 +1,7 @@
 import { Key } from "./Key";
 import { Field } from "../input/Field";
 import { Table } from "../database/Table";
-import { SQL, Statement } from "../database/Statement";
+import { Statement } from "../database/Statement";
 
 
 export class FieldData
@@ -17,6 +17,7 @@ export class FieldData
     {
         this.table = table;
         this.fields$ = fields;
+        this.table.fielddata = this;
 
         if (fields != null)
         {
@@ -29,6 +30,31 @@ export class FieldData
     public get fields() : string[]
     {
         return(this.fields$);
+    }
+
+
+    public get row() : Row
+    {
+        let row:Row = new Row(++this.scn,this);
+        return(row);
+    }
+
+
+    public set row(row:Row)
+    {
+        this.data.push(row);
+    }
+
+
+    public column(fname:string) : number
+    {
+        return(this.index.get(fname.toLowerCase()));
+    }
+
+
+    public clear() : void
+    {
+        this.data = [];
     }
 
 
@@ -45,9 +71,9 @@ export class FieldData
     }
 
 
-    public async execute(stmt:Statement) : Promise<boolean>
+    public async execute(stmt:Statement) : Promise<any>
     {
-        if (this.table == null) return(false);
+        if (this.table == null) return({status: "ok"});
         return(this.table.execute(stmt));
     }
 
@@ -149,7 +175,7 @@ enum status
 }
 
 
-class Row
+export class Row
 {
     public scn:number = 0;
     public fields:Column[] = [];
@@ -167,6 +193,13 @@ class Row
         if (values != null) this.fields.forEach((column) =>
         {column.setValue(scn,values[i++])});
     }
+
+
+    public setValue(col:number, value:any) : void
+    {
+        this.fields[col].value$ = value;
+    }
+
 
     public get values() : any[]
     {
