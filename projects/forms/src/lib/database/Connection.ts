@@ -108,6 +108,9 @@ export class Connection
         let url:string = this.url + "/";
         if (this.conn != null) url = url + this.conn + "/";
 
+        if (this.conn == null && cmd != "connect")
+            return({status: "failed", message: "Not logged on"});
+
         return(
             this.client.post<any>(url+cmd,body).toPromise().then
             (
@@ -129,7 +132,7 @@ export class Connection
 
     private alert(msg:string, title?:string) : void
     {
-        if (title == null) title = "Failed to logon to database";
+        if (title == null) title = "Database Call Failed";
         MessageBox.show(this.app,msg,title);
     }
 }

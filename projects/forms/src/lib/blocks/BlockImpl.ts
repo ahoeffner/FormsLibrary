@@ -9,6 +9,7 @@ import { Triggers } from "../events/Triggers";
 import { Config } from "../application/Config";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
+import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
 import { FieldInstance } from "../input/FieldInstance";
 import { DatabaseUsage } from "../database/DatabaseUsage";
@@ -193,30 +194,66 @@ export class BlockImpl
     }
 
 
-    private keyinsert(after:boolean) : boolean
+    private async keyinsert(after:boolean) : Promise<boolean>
     {
+        if (this.data == null) return(false);
         if (!this.dbusage.insert) return(false);
+        if (!await this.validate()) return(false);
+
+        if (!this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database Query");
+            return(false);
+        }
+
         return(this.insert(after));
     }
 
 
-    private keydelete() : boolean
+    private async keydelete() : Promise<boolean>
     {
+        if (this.data == null) return(false);
         if (!this.dbusage.delete) return(false);
+        if (!await this.validate()) return(false);
+
+        if (!this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database Query");
+            return(false);
+        }
+
         return(this.delete());
     }
 
 
-    private keyentqry() : boolean
+    private async keyentqry() : Promise<boolean>
     {
+        if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
+        if (!await this.validate()) return(false);
+
+        if (!this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database Query");
+            return(false);
+        }
+
         return(this.enterqry());
     }
 
 
     private async keyexeqry() : Promise<boolean>
     {
+        if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
+        if (!await this.validate()) return(false);
+
+        if (!this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database Query");
+            return(false);
+        }
+
         return(this.executeqry());
     }
 
@@ -251,7 +288,14 @@ export class BlockImpl
         let trigger:SQLTriggerEvent = new SQLTriggerEvent({type:"PreQuery"},stmt);
         this.triggers.invokeCustomTriggers("prequery",trigger);
 
-        this.data.execute(stmt);
+        let response:any = await this.data.execute(stmt);
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Database Query");
+            return(false);
+        }
+
         return(true);
     }
 
@@ -259,7 +303,6 @@ export class BlockImpl
     public insert(after:boolean) : boolean
     {
         let off:number = after ? 1 : 0;
-        if (this.data == null) return(false);
 
         if (!this.data.insert(+this.row + +this.offset + +off))
             return(false);
@@ -295,8 +338,6 @@ export class BlockImpl
 
     public delete() : boolean
     {
-        if (this.data == null) return(false);
-
         if (!this.data.delete(+this.row + +this.offset))
             return(false);
 
@@ -335,21 +376,38 @@ export class BlockImpl
         if (!await this.validatefield())
             return(false);
 
-        return(await this.validaterecord());
+        let response:any = await this.validaterecord();
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Validate Record");
+            return(false);
+        }
+
+        return(true);
     }
 
 
     private async validatefield() : Promise<boolean>
     {
         if (this.data == null) return(true);
+
+        let response:any = {status: "ok"};
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Validate Record");
+            return(false);
+        }
+
         return(true);
     }
 
 
-    private async validaterecord() : Promise<boolean>
+    private async validaterecord() : Promise<any>
     {
         if (this.data == null) return(true);
-        return(true);
+        return({status: "ok"});
     }
 
 
@@ -465,7 +523,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
             if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
-            this.keyentqry();
+            await this.keyentqry();
         }
 
         // Execute query
@@ -477,7 +535,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
             if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
-            this.keyexeqry();
+            await this.keyexeqry();
         }
 
         // Delete
@@ -487,7 +545,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
             if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
-            this.keydelete();
+            await this.keydelete();
         }
 
         // Insert after
@@ -500,7 +558,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
             if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
-            this.keyinsert(true);
+            await this.keyinsert(true);
         }
 
         // Insert before
@@ -513,7 +571,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
             if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
 
-            this.keyinsert(false);
+            await this.keyinsert(false);
         }
 
         // Next record
@@ -590,5 +648,11 @@ export class BlockImpl
             this.form.onEvent(event,field,type,key);
 
         return(true);
+    }
+
+
+    private alert(msg:string, title:string) : void
+    {
+        MessageBox.show(this.app,msg,title);
     }
 }
