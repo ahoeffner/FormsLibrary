@@ -6,17 +6,17 @@ import { InstanceListener } from "./InstanceListener";
 
 export class Trigger
 {
-    public static Key:Trigger = new Trigger("Key");
-    public static Lock:Trigger = new Trigger("Lock");
-    public static Change:Trigger = new Trigger("Change");
-    public static Typing:Trigger = new Trigger("Typing");
-    public static PreField:Trigger = new Trigger("PreField");
-    public static PostField:Trigger = new Trigger("PostField");
-    public static PostChange:Trigger = new Trigger("PostChange");
-    public static PreQuery:Trigger = new Trigger("PreQuery");
-    public static PreInsert:Trigger = new Trigger("PreInsert");
-    public static PreUpdate:Trigger = new Trigger("PreUpdate");
-    public static PreDelete:Trigger = new Trigger("PreDelete");
+    public static Key:Trigger           = new Trigger("Key");
+    public static Lock:Trigger          = new Trigger("Lock");
+    public static Change:Trigger        = new Trigger("Change");
+    public static Typing:Trigger        = new Trigger("Typing");
+    public static PreField:Trigger      = new Trigger("PreField");
+    public static PostField:Trigger     = new Trigger("PostField");
+    public static PostChange:Trigger    = new Trigger("PostChange");
+    public static PreQuery:Trigger      = new Trigger("PreQuery");
+    public static PreInsert:Trigger     = new Trigger("PreInsert");
+    public static PreUpdate:Trigger     = new Trigger("PreUpdate");
+    public static PreDelete:Trigger     = new Trigger("PreDelete");
 
     private constructor(public name:string) {};
 }
@@ -105,7 +105,6 @@ export class Triggers
 
             keysarr.forEach((key) =>
             {
-                key = key.toLowerCase();
                 let lsnrs:InstanceListener[] = this.triggers.keys.get(key);
 
                 if (lsnrs == null)
@@ -194,9 +193,7 @@ export class Triggers
 
     public async invokeKeyTriggers(key:string, event:TriggerEvent) : Promise<boolean>
     {
-        let lsnrs:InstanceListener[] = this.triggers.types.get(Trigger.Key.name);
-
-        lsnrs = this.triggers.keys.get(key);
+        let lsnrs:InstanceListener[] = this.triggers.keys.get(key);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
             if (!await ilsnr.inst[ilsnr.lsnr.name](event))

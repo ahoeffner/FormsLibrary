@@ -471,7 +471,6 @@ export class BlockImpl
 
             if (state == RecordState.na)
             {
-                console.log("triggers "+(+this.offset+r));
                 for(let c = 0; c < rows[r].length; c++)
                 {
                     let field:Field = rec.getField(columns[c]);
@@ -479,10 +478,11 @@ export class BlockImpl
                     if (field != null)
                     {
                         let inst:FieldInstance = field.fields[0];
-                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(null,inst);
+                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(Trigger.PostChange,inst);
                         this.triggers.invokeCustomTriggers(Trigger.PostChange,trgevent);
                     }
                 }
+
                 this.data.state(+this.offset+r,RecordState.update);
             }
 
@@ -686,7 +686,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
 
         // Pass event to subscribers, stop if signalled
-        if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent))
+        if (key != null && !await this.triggers.invokeTriggers(Trigger.Key,key,trgevent))
             return(true);
 
         // Pass event on to parent (form)

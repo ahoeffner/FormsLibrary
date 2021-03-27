@@ -26,7 +26,7 @@ export class KeyTriggerEvent extends TriggerEvent
 
     constructor(event:any, key:string, field:FieldInstance)
     {
-        super("key",event);
+        super(Trigger.Key.name,event);
 
         this.code = key;
         this.event = event;
@@ -48,9 +48,9 @@ export class FieldTriggerEvent extends TriggerEvent
     public row:number;
     public field:string;
 
-    constructor(event:any, field:FieldInstance)
+    constructor(type:Trigger, field:FieldInstance)
     {
-        super(event.type,event);
+        super(type.name,null);
 
         this.row = field.row;
         this.field = field.name;
