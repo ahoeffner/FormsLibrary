@@ -83,10 +83,12 @@ export class Table
             Object.keys(row).forEach((key) =>
             {
                 let val = row[key];
-                drow.setValue(col,val);
-                this.fielddata.row = drow;
+                drow.setValue(col++,val);
                 if (keys.length < klen) keys.push(val);
             });
+
+            this.fielddata.row = drow;
+            drow.print();
         });
 
         return(true);

@@ -31,6 +31,7 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { column } from "../annotations/column";
 
 
 export class FormImpl
@@ -278,6 +279,7 @@ export class FormImpl
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.name);
             let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
+            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.name);
             let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
 
             // Create keys and decide on primary
@@ -294,7 +296,7 @@ export class FormImpl
 
                 kdef.columns.forEach((col) =>
                 {
-                    if (cindex.get(col) == null)
+                    if (colindex.get(col) == null)
                     {
                         console.log("key "+kdef.name+" column "+col+" is not a column");
                         return;
@@ -310,11 +312,18 @@ export class FormImpl
             });
 
             let fields:string[] = [];
+            let sorted:ColumnDefinition[] = [];
             // List of data-fields, first pkey, then other columns, then other fields
             let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
 
             if (pkey != null)
-                pkey.columns.forEach((part) => {fields.push(part.name)});
+            {
+                pkey.columns.forEach((part) =>
+                {
+                    fields.push(part.name);
+                    sorted.push(colindex.get(part.name));
+                });
+            }
 
             columns.forEach((column) =>
             {
@@ -323,6 +332,7 @@ export class FormImpl
 
                 if (nonkey)
                 {
+                    sorted.push(column);
                     let fname:string = null;
                     let field:FieldDefinition = cindex.get(column.name);
 
@@ -341,6 +351,8 @@ export class FormImpl
                     fields.push(fname);
                 }
             });
+
+            columns = sorted;
 
             let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
             fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});

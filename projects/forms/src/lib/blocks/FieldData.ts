@@ -212,6 +212,21 @@ export class Row
         });
         return(values);
     }
+
+
+    public print() : void
+    {
+        let values:string = "";
+        this.fields.forEach((col) =>
+        {
+            let val:any = col.value$;
+            if (val == null) val = "";
+            values += col.value$ + ", ";
+        });
+
+        values = values.substring(0,values.length-2);
+        console.log(values);
+    }
 }
 
 

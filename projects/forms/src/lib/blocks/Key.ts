@@ -17,7 +17,7 @@ export class Key
 
     public partof(part:string) : boolean
     {
-        return(this.index.get(part) != null);
+        return(this.index.has(part));
     }
 
     public set(name:string, value:any) : void
