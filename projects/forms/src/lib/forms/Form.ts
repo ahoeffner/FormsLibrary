@@ -1,5 +1,7 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
+import { Block } from "../blocks/Block";
+import { Trigger } from "../events/Triggers";
 import { Listener } from "../events/Listener";
 import { Container } from "../container/Container";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
@@ -47,6 +49,11 @@ export class Form implements OnInit, AfterViewInit
     public get Menu()
     {
         return(this._impl_.getMenu());
+    }
+
+    public get block() : Block
+    {
+        return(this._impl_.block.block);
     }
 
     public newform(form:any, parameters?:Map<string,any>) : void
@@ -106,7 +113,7 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
-    public addFieldListener(listener:Listener, types:string|string[], fields?:string|string[]) : void
+    public addFieldListener(listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this._impl_.addFieldListener(this,listener,types,fields);
     }

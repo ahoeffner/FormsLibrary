@@ -1,5 +1,6 @@
 import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
+import { Trigger } from "../events/Triggers";
 import { Listener } from "../events/Listener";
 
 
@@ -18,12 +19,27 @@ export class Block
         return(this._impl_.form.form);
     }
 
+    public cancel() : void
+    {
+        this._impl_.dokey("escape");
+    }
+
+    public enterQuery() : void
+    {
+        this._impl_.dokey("enterquery");
+    }
+
+    public executeQuery() : void
+    {
+        this._impl_.dokey("executequery");
+    }
+
     public addKeyListener(listener:Listener, keys?:string|string[]) : void
     {
         this._impl_.addKeyListener(this,listener,keys);
     }
 
-    public addFieldListener(listener:Listener, types:string|string[], fields?:string|string[]) : void
+    public addFieldListener(listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this._impl_.addFieldListener(this,listener,types,fields);
     }

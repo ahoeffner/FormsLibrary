@@ -4,35 +4,51 @@ import { TriggerEvents } from "./TriggerEvents";
 import { InstanceListener } from "./InstanceListener";
 
 
+export class Trigger
+{
+    public static Key:Trigger = new Trigger("Key");
+    public static Lock:Trigger = new Trigger("Lock");
+    public static Change:Trigger = new Trigger("Change");
+    public static Typing:Trigger = new Trigger("Typing");
+    public static PreField:Trigger = new Trigger("PreField");
+    public static PostField:Trigger = new Trigger("PostField");
+    public static PostChange:Trigger = new Trigger("PostChange");
+    public static PreQuery:Trigger = new Trigger("PreQuery");
+    public static PreInsert:Trigger = new Trigger("PreInsert");
+    public static PreUpdate:Trigger = new Trigger("PreUpdate");
+    public static PreDelete:Trigger = new Trigger("PreDelete");
+
+    private constructor(public name:string) {};
+}
+
+
 export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
 
-    public addListener(instance:any, listener:Listener, types:string|string[]) : void
+    public addListener(instance:any, listener:Listener, types:Trigger|Trigger[]) : void
     {
-        let typesarr:string[] = [];
+        let typesarr:Trigger[] = [];
         let array:boolean = false;
         if (types.constructor.name == "Array") array = true;
 
-        if (array) typesarr = types as string[];
-        else       typesarr.push(types as string);
+        if (array) typesarr = types as Trigger[];
+        else       typesarr.push(types as Trigger);
 
         typesarr.forEach((type) =>
         {
-            type = type.toLowerCase();
-
             switch(type)
             {
-                case "key"       : this.addKeyListener(instance,listener); break;
-                case "blur"      : this.addFieldListener(instance,listener,type); break;
-                case "focus"     : this.addFieldListener(instance,listener,type); break;
-                case "change"    : this.addFieldListener(instance,listener,type); break;
-                case "fchange"   : this.addFieldListener(instance,listener,type); break;
-                case "ichange"   : this.addFieldListener(instance,listener,type); break;
-                case "prequery"  : this.addEventListener(instance,listener,type); break;
-                case "preinsert" : this.addEventListener(instance,listener,type); break;
-                case "preupdate" : this.addEventListener(instance,listener,type); break;
-                case "predelete" : this.addEventListener(instance,listener,type); break;
+                case Trigger.Key       : this.addKeyListener(instance,listener); break;
+                case Trigger.PostField : this.addFieldListener(instance,listener,type); break;
+                case Trigger.PreField  : this.addFieldListener(instance,listener,type); break;
+                case Trigger.Change    : this.addFieldListener(instance,listener,type); break;
+                case Trigger.Lock      : this.addFieldListener(instance,listener,type); break;
+                case Trigger.Typing    : this.addFieldListener(instance,listener,type); break;
+                case Trigger.PreQuery  : this.addEventListener(instance,listener,type); break;
+                case Trigger.PreInsert : this.addEventListener(instance,listener,type); break;
+                case Trigger.PreUpdate : this.addEventListener(instance,listener,type); break;
+                case Trigger.PreDelete : this.addEventListener(instance,listener,type); break;
 
                 default: console.log("Add Listener, unknown type: "+type);
             }
@@ -40,24 +56,23 @@ export class Triggers
     }
 
 
-    public addEventListener(instance:any, listener:Listener, types:string|string[]) : void
+    private addEventListener(instance:any, listener:Listener, types:Trigger|Trigger[]) : void
     {
-        let typesarr:string[] = [];
+        let typesarr:Trigger[] = [];
         let array:boolean = false;
         if (types.constructor.name == "Array") array = true;
 
-        if (array) typesarr = types as string[];
-        else       typesarr.push(types as string);
+        if (array) typesarr = types as Trigger[];
+        else       typesarr.push(types as Trigger);
 
         typesarr.forEach((type) =>
         {
-            type = type.toLowerCase();
-            let lsnrs:InstanceListener[] = this.triggers.types.get(type);
+            let lsnrs:InstanceListener[] = this.triggers.types.get(type.name);
 
             if (lsnrs == null)
             {
                 lsnrs = [];
-                this.triggers.types.set(type,lsnrs);
+                this.triggers.types.set(type.name,lsnrs);
             }
 
             lsnrs.push({inst: instance, lsnr: listener});
@@ -69,12 +84,12 @@ export class Triggers
     {
         if (keys == null)
         {
-            let lsnrs:InstanceListener[] = this.triggers.types.get("key");
+            let lsnrs:InstanceListener[] = this.triggers.types.get(Trigger.Key.name);
 
             if (lsnrs == null)
             {
                 lsnrs = [];
-                this.triggers.types.set("key",lsnrs);
+                this.triggers.types.set(Trigger.Key.name,lsnrs);
             }
 
             lsnrs.push({inst: instance, lsnr: listener});
@@ -105,26 +120,25 @@ export class Triggers
     }
 
 
-    public addFieldListener(instance:any, listener:Listener, types:string|string[], fields?:string|string[]) : void
+    public addFieldListener(instance:any, listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         if (fields == null)
         {
-            let typesarr:string[] = [];
+            let typesarr:Trigger[] = [];
             let array:boolean = false;
             if (types.constructor.name == "Array") array = true;
 
-            if (array) typesarr = types as string[];
-            else       typesarr.push(types as string);
+            if (array) typesarr = types as Trigger[];
+            else       typesarr.push(types as Trigger);
 
             typesarr.forEach((type) =>
             {
-                type = type.toLowerCase();
-                let lsnrs:InstanceListener[] = this.triggers.types.get(type);
+                let lsnrs:InstanceListener[] = this.triggers.types.get(type.name);
 
                 if (lsnrs == null)
                 {
                     lsnrs = [];
-                    this.triggers.types.set(type,lsnrs);
+                    this.triggers.types.set(type.name,lsnrs);
                 }
 
                 lsnrs.push({inst: instance, lsnr: listener});
@@ -156,20 +170,20 @@ export class Triggers
     }
 
 
-    public async invokeTriggers(type:string, arg:string, event:TriggerEvent) : Promise<boolean>
+    public async invokeTriggers(type:Trigger, arg:string, event:TriggerEvent) : Promise<boolean>
     {
         switch(type)
         {
-            case "key": return(this.invokeKeyTriggers(arg,event));
-            case "blur": return(this.invokeFieldTriggers(arg,event));
-            case "focus": return(this.invokeFieldTriggers(arg,event));
-            case "change": return(this.invokeFieldTriggers(arg,event));
-            case "fchange": return(this.invokeFieldTriggers(arg,event));
-            case "ichange": return(this.invokeFieldTriggers(arg,event));
-            case "prequery": return(this.invokeFieldTriggers(arg,event));
-            case "preinsert": return(this.invokeFieldTriggers(arg,event));
-            case "preupdate": return(this.invokeFieldTriggers(arg,event));
-            case "predelete": return(this.invokeFieldTriggers(arg,event));
+            case Trigger.Key: return(this.invokeKeyTriggers(arg,event));
+            case Trigger.PostField: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.PreField: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.Change: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.Lock: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.Typing: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.PreQuery: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.PreInsert: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.PreUpdate: return(this.invokeFieldTriggers(arg,event));
+            case Trigger.PreDelete: return(this.invokeFieldTriggers(arg,event));
 
             default: console.log("Add Listener, unknown type: "+type);
         }
@@ -180,7 +194,7 @@ export class Triggers
 
     public async invokeKeyTriggers(key:string, event:TriggerEvent) : Promise<boolean>
     {
-        let lsnrs:InstanceListener[] = this.triggers.types.get("key");
+        let lsnrs:InstanceListener[] = this.triggers.types.get(Trigger.Key.name);
 
         lsnrs = this.triggers.keys.get(key);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
@@ -189,7 +203,7 @@ export class Triggers
                 return(false);
         });
 
-        lsnrs = this.triggers.types.get("key");
+        lsnrs = this.triggers.types.get(Trigger.Key.name);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
             if (!await ilsnr.inst[ilsnr.lsnr.name](event))
@@ -202,7 +216,15 @@ export class Triggers
 
     public async invokeFieldTriggers(field:string, event:TriggerEvent) : Promise<boolean>
     {
-        let types:string[] = ["blur","focus","change","ichange","fchange"];
+        let types:Trigger[] =
+        [
+            Trigger.PostField,
+            Trigger.PreField,
+            Trigger.Change,
+            Trigger.Typing,
+            Trigger.Lock
+        ];
+
         let lsnrs:InstanceListener[] = null;;
 
         lsnrs = this.triggers.fields.get(field);
@@ -214,7 +236,7 @@ export class Triggers
 
         types.forEach((type) =>
         {
-            lsnrs = this.triggers.types.get(type);
+            lsnrs = this.triggers.types.get(type.name);
 
             if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
             {
@@ -227,10 +249,10 @@ export class Triggers
     }
 
 
-    public async invokeCustomTriggers(type:string, event:TriggerEvent) : Promise<boolean>
+    public async invokeCustomTriggers(type:Trigger, event:TriggerEvent) : Promise<boolean>
     {
         let lsnrs:InstanceListener[] = null;;
-        lsnrs = this.triggers.types.get(type);
+        lsnrs = this.triggers.types.get(type.name);
 
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {

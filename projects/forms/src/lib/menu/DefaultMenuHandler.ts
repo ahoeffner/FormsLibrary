@@ -66,6 +66,24 @@ export class DefaultMenuHandler extends MenuHandler
         this.init();
     }
 
+    public cancel() : void
+    {
+        if (this.form != null)
+            this.form.block.cancel();
+    }
+
+    public enterQuery() : void
+    {
+        if (this.form != null)
+            this.form.block.enterQuery();
+    }
+
+    public executeQuery() : void
+    {
+        if (this.form != null)
+            this.form.block.executeQuery();
+    }
+
     public close() : void
     {
         this.form.close(false);

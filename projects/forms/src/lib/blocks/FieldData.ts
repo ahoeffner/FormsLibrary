@@ -1,4 +1,5 @@
 import { Key } from "./Key";
+import { RecordState } from "./Record";
 import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
@@ -62,9 +63,10 @@ export class FieldData
     }
 
 
-    public isNew(row:number) : boolean
+    public state(row:number, state?:RecordState) : RecordState
     {
-        return(this.data[row].status == status.insert);
+        if (state != null) this.data[row].state = state;
+        return(this.data[row].state);
     }
 
 
@@ -89,7 +91,10 @@ export class FieldData
         if (row > this.data.length) row = this.data.length;
 
         data = this.data.slice(0,row);
-        data[row] = new Row(++this.scn,this);
+
+        data[+row] = new Row(++this.scn,this);
+        data[+row].state = RecordState.insert;
+        
         data = data.concat(this.data.slice(row,this.data.length));
 
         this.data = data;
@@ -147,7 +152,15 @@ export class FieldData
     public async fetch(offset:number, rows:number) : Promise<number>
     {
         if (this.data.length <= +offset + rows && this.query != null)
-            this.table.fetch(this.query);
+        {
+            let response:any = await this.table.fetch(this.query);
+
+            if (response["status"] == "failed")
+            {
+                this.block.alert(JSON.stringify(response),"Database");
+                return(0);
+            }
+        }
 
         let avail:number = this.data.length - offset - 1;
         if (avail < 0) avail = 0;
@@ -171,18 +184,11 @@ export class FieldData
 }
 
 
-enum status
-{
-    query,
-    insert
-}
-
-
 export class Row
 {
     public scn:number = 0;
     public fields:Column[] = [];
-    public status:status = status.insert;
+    public state:RecordState = RecordState.na;
 
     constructor(scn:number, table:FieldData, values?:any[])
     {

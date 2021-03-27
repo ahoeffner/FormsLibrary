@@ -41,6 +41,7 @@ export interface KeyMap
 export class KeyMapper
 {
     private static keys:Map<string,string> = new Map<string,string>();
+    private static names:Map<string,string> = new Map<string,string>();
 
 
     public static index(map:KeyMap) : void
@@ -48,7 +49,8 @@ export class KeyMapper
         Object.keys(map).forEach((key) =>
         {
             let val:string = map[key];
-            KeyMapper.keys.set(val,key);
+            KeyMapper.keys.set(key,val);
+            KeyMapper.names.set(val,key);
         });
     }
 
@@ -56,6 +58,12 @@ export class KeyMapper
     public static key(key:string) : string
     {
         return(KeyMapper.keys.get(key));
+    }
+
+
+    public static keyname(key:string) : string
+    {
+        return(KeyMapper.names.get(key));
     }
 
 

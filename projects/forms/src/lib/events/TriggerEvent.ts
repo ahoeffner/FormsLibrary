@@ -1,3 +1,4 @@
+import { Trigger } from "./Triggers";
 import { Statement } from "../database/Statement";
 import { Key, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
@@ -30,7 +31,7 @@ export class KeyTriggerEvent extends TriggerEvent
         this.code = key;
         this.event = event;
         this.key = KeyMapper.parse(key);
-        this.key.name = KeyMapper.key(key);
+        this.key.name = KeyMapper.keyname(key);
 
         if (field != null)
         {
@@ -50,7 +51,7 @@ export class FieldTriggerEvent extends TriggerEvent
     constructor(event:any, field:FieldInstance)
     {
         super(event.type,event);
-        
+
         this.row = field.row;
         this.field = field.name;
         this.value = field.value;
@@ -62,9 +63,9 @@ export class SQLTriggerEvent extends TriggerEvent
 {
     public stmt:Statement;
 
-    constructor(type:string, stmt:Statement)
+    constructor(type:Trigger, stmt:Statement)
     {
-        super(type,null);
+        super(type.name,null);
         this.stmt = stmt;
     }
 }

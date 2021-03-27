@@ -24,9 +24,9 @@ export class DefaultMenu implements Menu
             {
                 name: "Query", title: "Query actions", options:
                 [
-                    {name: "enter", action: null},
-                    {name: "execute", action: null},
-                    {name: "cancel", action: null},
+                    {name: "enter", action: "enterQuery"},
+                    {name: "execute", action: "executeQuery"},
+                    {name: "cancel", action: "cancel"},
                 ]
             }
             ,
@@ -35,7 +35,6 @@ export class DefaultMenu implements Menu
                 [
                     {name: "insert", action: null},
                     {name: "delete", action: null},
-                    {name: "dublicate", action: null},
                     {name: "undo", action: null},
                     {name: "clear", action: null},
                 ]
@@ -44,15 +43,14 @@ export class DefaultMenu implements Menu
             {
                 name: "Block", title: "Block actions", options:
                 [
-                    {name: "undo", action: null},
-                    {name: "clear", action: null},
+                    {name: "next", action: null},
+                    {name: "previous", action: null},
                 ]
             }
             ,
             {
                 name: "Form", title: "Form actions", options:
                 [
-                    {name: "undo", action: null},
                     {name: "clear", action: null},
                     {name: "close", action: "close"},
                 ]

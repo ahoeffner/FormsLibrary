@@ -9,7 +9,6 @@ import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { Listener } from "../events/Listener";
-import { Triggers } from "../events/Triggers";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
@@ -19,6 +18,7 @@ import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
 import { Record, RecordState } from "../blocks/Record";
+import { Trigger, Triggers } from "../events/Triggers";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { KeyDefinition } from "../annotations/KeyDefinition";
@@ -779,7 +779,7 @@ export class FormImpl
     }
 
 
-    public addFieldListener(instance:any, listener:Listener, types:string|string[], fields?:string|string[]) : void
+    public addFieldListener(instance:any, listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this.triggers.addFieldListener(instance,listener,types,fields);
     }

@@ -2,16 +2,16 @@ import { Key } from "./Key";
 import { Block } from "./Block";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
-import { KeyMap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
-import { Triggers } from "../events/Triggers";
 import { Config } from "../application/Config";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
+import { KeyMap, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
+import { Trigger, Triggers } from "../events/Triggers";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -189,6 +189,13 @@ export class BlockImpl
     }
 
 
+    public dokey(name:string) : void
+    {
+        let key:string = KeyMapper.key(name);
+        this.sendkey(null,key);
+    }
+
+
     public sendkey(event:any,key:string) : void
     {
         this.onEvent(event,this.field,"key",key);
@@ -287,8 +294,8 @@ export class BlockImpl
 
         this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
-        let trigger:SQLTriggerEvent = new SQLTriggerEvent("PreQuery",stmt);
-        if (!this.triggers.invokeCustomTriggers("prequery",trigger)) return(false);
+        let trigger:SQLTriggerEvent = new SQLTriggerEvent(Trigger.PreQuery,stmt);
+        if (!this.triggers.invokeTriggers(Trigger.PreQuery,null,trigger)) return(false);
 
         let response:any = await this.data.executequery(stmt);
 
@@ -454,8 +461,7 @@ export class BlockImpl
         for(let r = 0; r < rows.length; r++)
         {
             let rec:Record = this.getRecord(r);
-            let status:RecordState = RecordState.update;
-            if (this.data.isNew(this.offset+r)) status = RecordState.insert;
+            let state:RecordState = this.data.state(+this.offset+r);
 
             for(let c = 0; c < rows[r].length; c++)
             {
@@ -463,14 +469,31 @@ export class BlockImpl
                 if (field != null) field.value = rows[r][c];
             }
 
-            rec.enable(status,false);
+            if (state == RecordState.na)
+            {
+                console.log("triggers "+(+this.offset+r));
+                for(let c = 0; c < rows[r].length; c++)
+                {
+                    let field:Field = rec.getField(columns[c]);
+
+                    if (field != null)
+                    {
+                        let inst:FieldInstance = field.fields[0];
+                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(null,inst);
+                        this.triggers.invokeCustomTriggers(Trigger.PostChange,trgevent);
+                    }
+                }
+                this.data.state(+this.offset+r,RecordState.update);
+            }
+
+            rec.enable(state,false);
         }
     }
 
 
-    public addListener(instance:any, listener:Listener, types:string|string[]) : void
+    public addListener(instance:any, listener:Listener, types:Trigger|Trigger[]) : void
     {
-        this.triggers.addKeyListener(instance,listener,types);
+        this.triggers.addListener(instance,listener,types);
     }
 
 
@@ -480,7 +503,7 @@ export class BlockImpl
     }
 
 
-    public addFieldListener(instance:any, listener:Listener, types:string|string[], fields?:string|string[]) : void
+    public addFieldListener(instance:any, listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this.triggers.addFieldListener(instance,listener,types,fields);
     }
@@ -521,13 +544,30 @@ export class BlockImpl
         }
 
         // Enter query
+        if (type == "key" && key == this.keymap.escape)
+        {
+            if (this.state == FormState.entqry)
+            {
+                this.records[0].disable();
+                this.records[0].clear(true);
+                this.state = FormState.normal;
+                this.records[0].enable(RecordState.na,true);
+                this.field.focus();
+            }
+            else if (this.records[this.row])
+            {
+
+            }
+        }
+
+        // Enter query
         if (type == "key" && key == this.keymap.enterquery)
         {
             if (!await this.validate()) return(false);
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent)) return(true);
 
             await this.keyentqry();
         }
@@ -539,7 +579,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent)) return(true);
 
             await this.keyexeqry();
         }
@@ -549,7 +589,7 @@ export class BlockImpl
         {
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent)) return(true);
 
             await this.keydelete();
         }
@@ -562,7 +602,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent)) return(true);
 
             await this.keyinsert(true);
         }
@@ -575,7 +615,7 @@ export class BlockImpl
 
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
-            if (!await this.triggers.invokeTriggers(type,key,trgevent)) return(true);
+            if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent)) return(true);
 
             await this.keyinsert(false);
         }
@@ -646,7 +686,7 @@ export class BlockImpl
             trgevent = new KeyTriggerEvent(event,key,field);
 
         // Pass event to subscribers, stop if signalled
-        if (!await this.triggers.invokeTriggers(type,key,trgevent))
+        if (!await this.triggers.invokeTriggers(Trigger.Key,key,trgevent))
             return(true);
 
         // Pass event on to parent (form)
@@ -657,7 +697,7 @@ export class BlockImpl
     }
 
 
-    private alert(msg:string, title:string) : void
+    public alert(msg:string, title:string) : void
     {
         MessageBox.show(this.app,msg,title);
     }
