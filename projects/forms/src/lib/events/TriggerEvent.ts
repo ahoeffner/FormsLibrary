@@ -8,10 +8,10 @@ export class TriggerEvent
     public event:any;
     public type:string;
 
-    constructor(event:any)
+    constructor(type:string, event:any)
     {
+        this.type = type;
         this.event = event;
-        this.type = event.type;
     }
 }
 
@@ -25,7 +25,7 @@ export class KeyTriggerEvent extends TriggerEvent
 
     constructor(event:any, key:string, field:FieldInstance)
     {
-        super(event);
+        super("key",event);
 
         this.code = key;
         this.event = event;
@@ -49,7 +49,8 @@ export class FieldTriggerEvent extends TriggerEvent
 
     constructor(event:any, field:FieldInstance)
     {
-        super(event);
+        super(event.type,event);
+        
         this.row = field.row;
         this.field = field.name;
         this.value = field.value;
@@ -61,9 +62,9 @@ export class SQLTriggerEvent extends TriggerEvent
 {
     public stmt:Statement;
 
-    constructor(event:any, stmt:Statement)
+    constructor(type:string, stmt:Statement)
     {
-        super(event);
+        super(type,null);
         this.stmt = stmt;
     }
 }

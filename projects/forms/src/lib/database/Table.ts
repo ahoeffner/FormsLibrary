@@ -88,7 +88,6 @@ export class Table
             });
 
             this.fielddata.row = drow;
-            drow.print();
         });
 
         return(true);

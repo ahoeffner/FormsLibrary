@@ -216,12 +216,14 @@ export class Row
 
     public print() : void
     {
+        let i:number = 0;
         let values:string = "";
         this.fields.forEach((col) =>
         {
             let val:any = col.value$;
             if (val == null) val = "";
-            values += col.value$ + ", ";
+            values += i+" "+col.value$ + ", ";
+            i++;
         });
 
         values = values.substring(0,values.length-2);

@@ -320,8 +320,8 @@ export class FormImpl
             {
                 pkey.columns.forEach((part) =>
                 {
-                    fields.push(part.name);
                     sorted.push(colindex.get(part.name));
+                    fields.push(cindex.get(part.name).name);
                 });
             }
 

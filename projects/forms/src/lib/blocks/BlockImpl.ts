@@ -284,8 +284,9 @@ export class BlockImpl
             this.records[0].disable();
         }
 
+        this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
-        let trigger:SQLTriggerEvent = new SQLTriggerEvent({type:"PreQuery"},stmt);
+        let trigger:SQLTriggerEvent = new SQLTriggerEvent("PreQuery",stmt);
         if (!this.triggers.invokeCustomTriggers("prequery",trigger)) return(false);
 
         let response:any = await this.data.execute(stmt);
@@ -297,6 +298,9 @@ export class BlockImpl
         }
 
         this.display(0);
+        this.state = FormState.normal;
+        this.records[0].focus();
+
         return(true);
     }
 
@@ -433,14 +437,13 @@ export class BlockImpl
         else rec.focus();
 
         if (field.name == this.field.name && row == this.field.row)
-        {
             this.onEvent(null,this.field,"focus");
-        }
     }
 
 
     public async display(start:number)
     {
+        this.clear();
         this.offset = start;
         if (this.offset < 0) this.offset = 0;
 
@@ -451,7 +454,7 @@ export class BlockImpl
         {
             let rec:Record = this.getRecord(r);
             let status:RecordState = RecordState.update;
-            if (this.data.isNew(start+r)) status = RecordState.insert;
+            if (this.data.isNew(this.offset+r)) status = RecordState.insert;
 
             for(let c = 0; c < rows[r].length; c++)
             {
@@ -486,6 +489,7 @@ export class BlockImpl
     {
         let triggered:boolean = false;
         let trgevent:TriggerEvent = null;
+        if (event == null) event = {type: type};
 
         if (this.keymap == null)
             return(false);
