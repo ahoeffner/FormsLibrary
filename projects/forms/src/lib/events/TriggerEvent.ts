@@ -48,13 +48,13 @@ export class FieldTriggerEvent extends TriggerEvent
     public row:number;
     public field:string;
 
-    constructor(type:Trigger, field:FieldInstance)
+    constructor(type:Trigger, field:string, row:number, value:any)
     {
         super(type.name,null);
 
-        this.row = field.row;
-        this.field = field.name;
-        this.value = field.value;
+        this.row = row;
+        this.field = field;
+        this.value = value;
     }
 }
 

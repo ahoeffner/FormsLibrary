@@ -159,7 +159,7 @@ export class BlockImpl
     {
         this.records.push(record);
         record.fields.forEach((inst) => {inst.block = this});
-        if (this.field == null) this.field$ = record.fields[0].fields[0];
+        if (this.field == null) this.field$ = record.fields[0].getFirstInstance();
     }
 
 
@@ -472,8 +472,7 @@ export class BlockImpl
 
                     if (field != null)
                     {
-                        let inst:FieldInstance = field.fields[0];
-                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(Trigger.PostChange,inst);
+                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(Trigger.PostChange,field.name,r,field.value);
                         this.triggers.invokeCustomTriggers(Trigger.PostChange,trgevent);
                     }
                 }
@@ -525,14 +524,14 @@ export class BlockImpl
             this.field$ = field;
             this.row = field.row;
             this.records$[+field.row].current = true;
-            trgevent = new FieldTriggerEvent(event,field);
+            trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value);
         }
 
         if (type == "change")
         {
             if (!await this.validatefield()) return(false);
             this.setValue(field.row,field.name,field.value,true);
-            trgevent = new FieldTriggerEvent(event,field);
+            trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value);
         }
 
         // Enter query

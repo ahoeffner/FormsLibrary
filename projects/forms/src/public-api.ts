@@ -17,6 +17,7 @@ export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 
+export {Trigger} from './lib/events/Triggers';
 export {Key,keymap} from './lib/keymap/KeyMap';
 export {TriggerEvent} from './lib/events/TriggerEvent';
 export {KeyTriggerEvent} from './lib/events/TriggerEvent';

@@ -46,6 +46,21 @@ export class Field
         return(this.index.get(guid));
     }
 
+    public getFirstInstance() : FieldInstance
+    {
+        if (this.fields.length > 0)
+            return(this.fields[0]);
+
+        if (this.current$.length > 0)
+        {
+            let inst:FieldInstance = this.current$[0];
+            inst.row = this.row;
+            return(inst);
+        }
+
+        return(null);
+    }
+
     public set current(flag:boolean)
     {
         if (!flag) this.current$.forEach((inst) => {inst.value = null;});
