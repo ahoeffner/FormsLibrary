@@ -31,7 +31,6 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
-import { column } from "../annotations/column";
 
 
 export class FormImpl
@@ -364,7 +363,7 @@ export class FormImpl
             if (tabdef != null)
                 table = new Table(this.conn,tabdef,pkey,columns,block.fielddef,rows);
 
-            block.data = new FieldData(table,fields);
+            block.data = new FieldData(block,table,fields);
 
             // Start form
             let rec:Record = block.getRecord(0);

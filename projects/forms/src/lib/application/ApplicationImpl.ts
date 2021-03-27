@@ -456,6 +456,18 @@ export class ApplicationImpl
 
         let key:string = KeyMapper.map(keydef);
 
+        if (key == this.conf.keymap.connect)
+        {
+            this.app.connect();
+            return;
+        }
+
+        if (key == this.conf.keymap.disconnect)
+        {
+            this.app.disconnect();
+            return;
+        }
+
         if
         (
             key == this.conf.keymap.delete          ||

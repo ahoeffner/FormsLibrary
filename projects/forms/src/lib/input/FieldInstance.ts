@@ -264,6 +264,8 @@ export class FieldInstance implements AfterViewInit
                 // handled by application
                 if
                 (
+                    key == this.conf.keymap.connect         ||
+                    key == this.conf.keymap.disconnect      ||
                     key == this.conf.keymap.delete          ||
                     key == this.conf.keymap.insertafter     ||
                     key == this.conf.keymap.insertbefore    ||

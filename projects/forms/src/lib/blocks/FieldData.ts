@@ -1,5 +1,6 @@
 import { Key } from "./Key";
 import { Field } from "../input/Field";
+import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
 import { Statement } from "../database/Statement";
 
@@ -8,13 +9,16 @@ export class FieldData
 {
     private table:Table;
     private scn:number = 0;
+    private query:Statement;
+    private block:BlockImpl;
     private data:Row[] = [];
     private fields$:string[];
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(table:Table, fields:string[])
+    public constructor(block:BlockImpl, table:Table, fields:string[])
     {
+        this.block = block;
         this.table = table;
         this.fields$ = fields;
         this.table.fielddata = this;
@@ -67,14 +71,15 @@ export class FieldData
     public parseQuery(keys:Key[], fields:Field[]) : Statement
     {
         if (this.table == null) return(null);
-        return(this.table.parseQuery(keys,fields));
+        return(this.table.parseQuery(this.block.alias,keys,fields));
     }
 
 
-    public async execute(stmt:Statement) : Promise<any>
+    public async executequery(stmt:Statement) : Promise<any>
     {
+        this.query = stmt;
         if (this.table == null) return({status: "ok"});
-        return(this.table.execute(stmt));
+        return(this.table.executequery(stmt));
     }
 
 
@@ -141,10 +146,8 @@ export class FieldData
 
     public async fetch(offset:number, rows:number) : Promise<number>
     {
-        if (this.data.length <= +offset + rows)
-        {
-            //fetch
-        }
+        if (this.data.length <= +offset + rows && this.query != null)
+            this.table.fetch(this.query);
 
         let avail:number = this.data.length - offset - 1;
         if (avail < 0) avail = 0;

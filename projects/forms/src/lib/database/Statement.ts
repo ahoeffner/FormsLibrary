@@ -3,11 +3,11 @@ import { Condition } from "./Condition";
 
 export enum SQLType
 {
-    call,
     select,
     insert,
     update,
-    delete
+    delete,
+    function
 }
 
 
@@ -26,6 +26,7 @@ export class Statement
     private table$:string = null;
     private order$:string = null;
     private type$:SQLType = null;
+    private cursor$:string = null;
     private columns$:string[] = [];
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
@@ -41,7 +42,7 @@ export class Statement
 
         if (this.sql$ != null)
         {
-            this.type$ = SQLType.call;
+            this.type$ = SQLType.function;
             let test:string = this.sql$.substring(0,7).trim().toLowerCase();
 
             if (test == "select") this.type$ = SQLType.select;
@@ -61,6 +62,31 @@ export class Statement
         return(this.type$);
     }
 
+    public isFunction() : boolean
+    {
+        return(this.type == SQLType.function);
+    }
+
+    public isSelect() : boolean
+    {
+        return(this.type == SQLType.select);
+    }
+
+    public isInsert() : boolean
+    {
+        return(this.type == SQLType.insert);
+    }
+
+    public isUpdate() : boolean
+    {
+        return(this.type == SQLType.update);
+    }
+
+    public isDelete() : boolean
+    {
+        return(this.type == SQLType.delete);
+    }
+
     public set table(table:string)
     {
         this.table$ = table;
@@ -69,6 +95,16 @@ export class Statement
     public set order(order:string)
     {
         this.order$ = order;
+    }
+
+    public set cursor(cursor:string)
+    {
+        this.cursor$ = cursor;
+    }
+
+    public get cursor() : string
+    {
+        return(this.cursor$);
     }
 
     public set columns(columns:string|string[])
@@ -165,7 +201,7 @@ export class Statement
     {
         let sql:string = this.sql$;
 
-        if (sql == null && this.type$ != null && this.type$ != SQLType.call)
+        if (sql == null && this.type$ != null && this.type$ != SQLType.function)
             sql = SQLType[this.type$] + " ";
 
         if (this.columns$ != null)

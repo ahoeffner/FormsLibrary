@@ -203,7 +203,7 @@ export class BlockImpl
 
         if (!this.app.appstate.connected)
         {
-            this.alert("Not logged on","Database Query");
+            this.alert("Not logged on","Database");
             return(false);
         }
 
@@ -219,7 +219,7 @@ export class BlockImpl
 
         if (!this.app.appstate.connected)
         {
-            this.alert("Not logged on","Database Query");
+            this.alert("Not logged on","Database");
             return(false);
         }
 
@@ -235,7 +235,7 @@ export class BlockImpl
 
         if (!this.app.appstate.connected)
         {
-            this.alert("Not logged on","Database Query");
+            this.alert("Not logged on","Database");
             return(false);
         }
 
@@ -251,7 +251,7 @@ export class BlockImpl
 
         if (!this.app.appstate.connected)
         {
-            this.alert("Not logged on","Database Query");
+            this.alert("Not logged on","Database");
             return(false);
         }
 
@@ -290,7 +290,7 @@ export class BlockImpl
         let trigger:SQLTriggerEvent = new SQLTriggerEvent("PreQuery",stmt);
         if (!this.triggers.invokeCustomTriggers("prequery",trigger)) return(false);
 
-        let response:any = await this.data.execute(stmt);
+        let response:any = await this.data.executequery(stmt);
 
         if (response["status"] == "failed")
         {

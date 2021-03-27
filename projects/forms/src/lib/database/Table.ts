@@ -11,7 +11,9 @@ import { SQL, SQLType, Statement } from "../database/Statement";
 export class Table
 {
     private key:Key;
-    private fetch:number;
+    private select:SQL;
+    private eof:boolean;
+    private fetch$:number;
     private data:any[] = [];
     private cnames:string[];
     private conn:Connection;
@@ -26,8 +28,8 @@ export class Table
     {
         this.key = key;
         this.conn = conn;
-        this.fetch = rows;
         this.table = table;
+        this.fetch$ = rows;
         this.columns = columns;
         this.fielddef = fielddef;
 
@@ -37,8 +39,8 @@ export class Table
             this.columns.forEach((col) => {this.key.add(col.name)});
         }
 
-        this.fetch *= 4;
-        if (this.fetch < 10) this.fetch = 10;
+        this.fetch$ *= 4;
+        if (this.fetch$ < 10) this.fetch$ = 10;
 
         this.cnames = [];
         this.columns.forEach((column) =>
@@ -61,46 +63,14 @@ export class Table
     }
 
 
-    public async execute(stmt:Statement) : Promise<any>
-    {
-        let sql:SQL = stmt.build();
-        if (stmt.type == SQLType.select) sql.rows = this.fetch;
-        let response:any = await this.conn.invoke(SQLType[stmt.type],sql);
-
-        if (response["status"] == "failed")
-            return(response);
-
-        this.fielddata.clear();
-        let rows:any[] = response["rows"];
-        let klen:number = this.key.columns.length;
-
-        rows.forEach((row) =>
-        {
-            let col:number = 0;
-            let keys:any[] = [];
-            let drow:Row = this.fielddata.row;
-
-            Object.keys(row).forEach((key) =>
-            {
-                let val = row[key];
-                drow.setValue(col++,val);
-                if (keys.length < klen) keys.push(val);
-            });
-
-            this.fielddata.row = drow;
-        });
-
-        return(true);
-    }
-
-
-    public parseQuery(keys:Key[], fields:Field[]) : Statement
+    public parseQuery(cursor:string, keys:Key[], fields:Field[]) : Statement
     {
         let stmt:Statement = new Statement(SQLType.select);
 
         stmt.columns = this.cnames;
         stmt.table = this.table.name;
         stmt.order = this.table.order;
+        stmt.cursor = cursor + Date.now();
 
         keys.forEach((key) =>
         {
@@ -126,5 +96,63 @@ export class Table
         });
 
         return(stmt);
+    }
+
+
+    public async executequery(stmt:Statement) : Promise<any>
+    {
+        this.eof = false;
+        this.fielddata.clear();
+        this.select = stmt.build();
+
+        this.select.rows = this.fetch$;
+        this.select.cursor = stmt.cursor;
+
+        let response:any = await this.conn.invoke("select",this.select);
+
+        if (response["status"] == "failed")
+            return(response);
+
+        this.addRows(response["rows"]);
+        return(true);
+    }
+
+
+    public async fetch(stmt:Statement) : Promise<any>
+    {
+        if (this.eof) return({status: "ok"});
+
+        let fetch:any = {cursor: stmt.cursor, rows: this.fetch$};
+        let response:any = await this.conn.invoke("fetch",fetch);
+
+        if (response["status"] == "failed")
+            return(response);
+
+        this.addRows(response["rows"]);
+        return(true);
+    }
+
+
+    private addRows(rows:any[]) : void
+    {
+        let klen:number = this.key.columns.length;
+        if (rows.length < this.fetch$) this.eof = true;
+
+        rows.forEach((row) =>
+        {
+            let col:number = 0;
+            let keys:any[] = [];
+            let drow:Row = this.fielddata.row;
+
+            Object.keys(row).forEach((key) =>
+            {
+                let val = row[key];
+                drow.setValue(col++,val);
+                if (keys.length < klen) keys.push(val);
+            });
+
+            this.data.push(keys);
+            this.fielddata.row = drow;
+        });
     }
 }
