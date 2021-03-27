@@ -8,7 +8,7 @@ import { keymap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
-import { Listener } from "../events/Listener";
+import { TriggerFunction } from "../events/TriggerFunction";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
@@ -359,7 +359,10 @@ export class FormImpl
             let rows:number = block.records.length;
 
             if (tabdef != null)
-                table = new Table(this.conn,tabdef,pkey,columns,block.fielddef,rows);
+            {
+                if (tabdef.name == null) console.log("No table specified for "+block.alias);
+                else table = new Table(this.conn,tabdef,pkey,columns,block.fielddef,rows);
+            }
 
             block.data = new FieldData(block,table,fields);
 
@@ -765,21 +768,21 @@ export class FormImpl
     }
 
 
-    public addListener(instance:any, listener:Listener, types?:string|string[]) : void
+    public addTrigger(instance:any, func:TriggerFunction, types?:string|string[]) : void
     {
-        this.triggers.addKeyListener(instance,listener,types);
+        this.triggers.addKeyListener(instance,func,types);
     }
 
 
-    public addKeyListener(instance:any, listener:Listener, keys?:string|string[]) : void
+    public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
     {
-        this.triggers.addKeyListener(instance,listener,keys);
+        this.triggers.addKeyListener(instance,func,keys);
     }
 
 
-    public addFieldListener(instance:any, listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
-        this.triggers.addFieldListener(instance,listener,types,fields);
+        this.triggers.addFieldListener(instance,func,types,fields);
     }
 
 

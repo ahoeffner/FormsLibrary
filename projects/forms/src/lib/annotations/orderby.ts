@@ -2,7 +2,7 @@ import { Utils } from '../utils/Utils';
 import { TableDefinitions } from './TableDefinitions';
 import { TableDefinition } from '../database/TableDefinition';
 
-export const table = (name:string) =>
+export const orderby = (order:string) =>
 {
     function def(comp:any)
     {
@@ -12,11 +12,11 @@ export const table = (name:string) =>
 
         if (ctype != "Block")
         {
-            console.log("@table("+name+") can only be used on blocks");
+            console.log("@orderby can only be used on blocks");
             return;
         }
 
-        let definition:TableDefinition = {name: name};
+        let definition:TableDefinition = {order: order};
         TableDefinitions.set(cname,definition);
     }
     return(def);

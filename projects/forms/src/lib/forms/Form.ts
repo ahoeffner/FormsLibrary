@@ -2,7 +2,7 @@ import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
 import { Block } from "../blocks/Block";
 import { Trigger } from "../events/Triggers";
-import { Listener } from "../events/Listener";
+import { TriggerFunction } from "../events/TriggerFunction";
 import { Container } from "../container/Container";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
 
@@ -101,21 +101,21 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.setCallback(func);
     }
 
-    public addListener(listener:Listener, types:string|string[]) : void
+    public addTrigger(func:TriggerFunction, types:string|string[]) : void
     {
-        this._impl_.addListener(this,listener,types);
+        this._impl_.addTrigger(this,func,types);
     }
 
 
-    public addKeyListener(listener:Listener, keys?:string|string[]) : void
+    public addKeyTrigger(func:TriggerFunction, keys?:string|string[]) : void
     {
-        this._impl_.addKeyListener(this,listener,keys);
+        this._impl_.addKeyTrigger(this,func,keys);
     }
 
 
-    public addFieldListener(listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldListener(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
-        this._impl_.addFieldListener(this,listener,types,fields);
+        this._impl_.addFieldTrigger(this,listener,types,fields);
     }
 
     public ngOnInit()

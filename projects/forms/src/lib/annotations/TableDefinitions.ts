@@ -6,7 +6,17 @@ export class TableDefinitions
 
     public static set(block:string, table:TableDefinition) : void
     {
-        TableDefinitions.index.set(block.toLowerCase(),table);
+        let def:TableDefinition = TableDefinitions.index.get(block.toLowerCase());
+
+        if (def != null)
+        {
+            if (table.hasOwnProperty("name")) def.name = table.name;
+            if (table.hasOwnProperty("order")) def.order = table.order;
+        }
+        else
+        {
+            TableDefinitions.index.set(block.toLowerCase(),table);
+        }
     }
 
     public static get(block:string) : TableDefinition

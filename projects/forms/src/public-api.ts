@@ -10,16 +10,18 @@ export {field} from './lib/annotations/field';
 export {column} from './lib/annotations/column';
 export {wizard} from './lib/annotations/wizard';
 export {window} from './lib/annotations/window';
+export {orderby} from './lib/annotations/orderby';
 export {connect} from './lib/annotations/connect';
 export {destroy} from './lib/annotations/destroy';
 export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 
-export {Key} from './lib/keymap/KeyMap';
+export {Key,keymap} from './lib/keymap/KeyMap';
 export {TriggerEvent} from './lib/events/TriggerEvent';
 export {KeyTriggerEvent} from './lib/events/TriggerEvent';
 export {FieldTriggerEvent} from './lib/events/TriggerEvent';
+export {TriggerFunction} from './lib/events/TriggerFunction';
 
 export {Menu} from './lib/menu/Menu';
 export {MenuArea} from './lib/menu/MenuArea';

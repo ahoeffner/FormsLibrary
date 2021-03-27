@@ -1,7 +1,7 @@
 import { Listener } from "./Listener";
 import { TriggerEvent } from "./TriggerEvent";
 import { TriggerEvents } from "./TriggerEvents";
-import { InstanceListener } from "./InstanceListener";
+import { TriggerFunction } from "./TriggerFunction";
 
 
 export class Trigger
@@ -26,7 +26,7 @@ export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
 
-    public addListener(instance:any, listener:Listener, types:Trigger|Trigger[]) : void
+    public addListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[]) : void
     {
         let typesarr:Trigger[] = [];
         let array:boolean = false;
@@ -56,7 +56,7 @@ export class Triggers
     }
 
 
-    private addEventListener(instance:any, listener:Listener, types:Trigger|Trigger[]) : void
+    private addEventListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[]) : void
     {
         let typesarr:Trigger[] = [];
         let array:boolean = false;
@@ -67,7 +67,7 @@ export class Triggers
 
         typesarr.forEach((type) =>
         {
-            let lsnrs:InstanceListener[] = this.triggers.types.get(type.name);
+            let lsnrs:Listener[] = this.triggers.types.get(type.name);
 
             if (lsnrs == null)
             {
@@ -75,16 +75,16 @@ export class Triggers
                 this.triggers.types.set(type.name,lsnrs);
             }
 
-            lsnrs.push({inst: instance, lsnr: listener});
+            lsnrs.push({inst: instance, func: listener});
         });
     }
 
 
-    public addKeyListener(instance:any, listener:Listener, keys?:string|string[]) : void
+    public addKeyListener(instance:any, listener:TriggerFunction, keys?:string|string[]) : void
     {
         if (keys == null)
         {
-            let lsnrs:InstanceListener[] = this.triggers.types.get(Trigger.Key.name);
+            let lsnrs:Listener[] = this.triggers.types.get(Trigger.Key.name);
 
             if (lsnrs == null)
             {
@@ -92,7 +92,7 @@ export class Triggers
                 this.triggers.types.set(Trigger.Key.name,lsnrs);
             }
 
-            lsnrs.push({inst: instance, lsnr: listener});
+            lsnrs.push({inst: instance, func: listener});
         }
         else
         {
@@ -105,7 +105,7 @@ export class Triggers
 
             keysarr.forEach((key) =>
             {
-                let lsnrs:InstanceListener[] = this.triggers.keys.get(key);
+                let lsnrs:Listener[] = this.triggers.keys.get(key);
 
                 if (lsnrs == null)
                 {
@@ -113,13 +113,13 @@ export class Triggers
                     this.triggers.keys.set(key,lsnrs);
                 }
 
-                lsnrs.push({inst: instance, lsnr: listener});
+                lsnrs.push({inst: instance, func: listener});
             });
         }
     }
 
 
-    public addFieldListener(instance:any, listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         if (fields == null)
         {
@@ -132,7 +132,7 @@ export class Triggers
 
             typesarr.forEach((type) =>
             {
-                let lsnrs:InstanceListener[] = this.triggers.types.get(type.name);
+                let lsnrs:Listener[] = this.triggers.types.get(type.name);
 
                 if (lsnrs == null)
                 {
@@ -140,7 +140,7 @@ export class Triggers
                     this.triggers.types.set(type.name,lsnrs);
                 }
 
-                lsnrs.push({inst: instance, lsnr: listener});
+                lsnrs.push({inst: instance, func: listener});
             });
         }
         else
@@ -155,7 +155,7 @@ export class Triggers
             fieldsarr.forEach((field) =>
             {
                 field = field.toLowerCase();
-                let lsnrs:InstanceListener[] = this.triggers.fields.get(field);
+                let lsnrs:Listener[] = this.triggers.fields.get(field);
 
                 if (lsnrs == null)
                 {
@@ -163,7 +163,7 @@ export class Triggers
                     this.triggers.fields.set(field,lsnrs);
                 }
 
-                lsnrs.push({inst: instance, lsnr: listener});
+                lsnrs.push({inst: instance, func: listener});
             });
         }
     }
@@ -193,17 +193,17 @@ export class Triggers
 
     public async invokeKeyTriggers(key:string, event:TriggerEvent) : Promise<boolean>
     {
-        let lsnrs:InstanceListener[] = this.triggers.keys.get(key);
+        let lsnrs:Listener[] = this.triggers.keys.get(key);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
-            if (!await ilsnr.inst[ilsnr.lsnr.name](event))
+            if (!await ilsnr.inst[ilsnr.func.name](event))
                 return(false);
         });
 
         lsnrs = this.triggers.types.get(Trigger.Key.name);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
-            if (!await ilsnr.inst[ilsnr.lsnr.name](event))
+            if (!await ilsnr.inst[ilsnr.func.name](event))
                 return(false);
         });
 
@@ -222,12 +222,12 @@ export class Triggers
             Trigger.Lock
         ];
 
-        let lsnrs:InstanceListener[] = null;;
+        let lsnrs:Listener[] = null;;
 
         lsnrs = this.triggers.fields.get(field);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
-            if (!await ilsnr.inst[ilsnr.lsnr.name](event))
+            if (!await ilsnr.inst[ilsnr.func.name](event))
                 return(false);
         });
 
@@ -237,7 +237,7 @@ export class Triggers
 
             if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
             {
-                if (!await ilsnr.inst[ilsnr.lsnr.name](event))
+                if (!await ilsnr.inst[ilsnr.func.name](event))
                     return(false);
             });
         });
@@ -248,12 +248,12 @@ export class Triggers
 
     public async invokeCustomTriggers(type:Trigger, event:TriggerEvent) : Promise<boolean>
     {
-        let lsnrs:InstanceListener[] = null;;
+        let lsnrs:Listener[] = null;;
         lsnrs = this.triggers.types.get(type.name);
 
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
         {
-            if (!await ilsnr.inst[ilsnr.lsnr.name](event))
+            if (!await ilsnr.inst[ilsnr.func.name](event))
                 return(false);
         });
 

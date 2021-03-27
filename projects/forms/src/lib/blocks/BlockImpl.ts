@@ -3,7 +3,7 @@ import { Block } from "./Block";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
 import { FormImpl } from "../forms/FormImpl";
-import { Listener } from "../events/Listener";
+import { TriggerFunction } from "../events/TriggerFunction";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
@@ -486,19 +486,19 @@ export class BlockImpl
     }
 
 
-    public addListener(instance:any, listener:Listener, types:Trigger|Trigger[]) : void
+    public addListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[]) : void
     {
         this.triggers.addListener(instance,listener,types);
     }
 
 
-    public addKeyListener(instance:any, listener:Listener, keys?:string|string[]) : void
+    public addKeyListener(instance:any, listener:TriggerFunction, keys?:string|string[]) : void
     {
         this.triggers.addKeyListener(instance,listener,keys);
     }
 
 
-    public addFieldListener(instance:any, listener:Listener, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this.triggers.addFieldListener(instance,listener,types,fields);
     }

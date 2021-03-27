@@ -1,6 +1,7 @@
-import { TriggerEvent } from "./TriggerEvent";
+import { TriggerFunction } from "./TriggerFunction";
 
 export interface Listener
 {
-    (event:TriggerEvent) : Promise<boolean>;
+    inst:any;
+    func:TriggerFunction;
 }
