@@ -5,7 +5,7 @@ import { FieldInstance } from "../input/FieldInstance";
 export enum RecordState
 {
     na,
-    entqry,
+    qmode,
     insert,
     update
 }

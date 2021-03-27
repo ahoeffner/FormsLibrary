@@ -380,7 +380,13 @@ export class FormImpl
         // Get all fields on form
         this.fields$ = container.fields;
         this.block$ = this.blocks[0];
+
         this.regroup();
+
+        this.blocks.forEach((block) =>
+        {block.records[0].enable(0,true);});
+
+        if (this.fields$.length > 0) this.fields$[0].focus();
     }
 
 
@@ -736,7 +742,6 @@ export class FormImpl
         });
 
         this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
-        if (this.fields$.length > 0) this.fields$[0].focus();
     }
 
 

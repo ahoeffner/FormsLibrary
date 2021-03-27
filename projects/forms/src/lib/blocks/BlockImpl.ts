@@ -167,6 +167,7 @@ export class BlockImpl
     {
         this.records.push(record);
         record.fields.forEach((inst) => {inst.block = this});
+        if (this.field == null) this.field$ = record.fields[0].fields[0];
     }
 
 
@@ -265,7 +266,7 @@ export class BlockImpl
         if (this.records.length > 0)
         {
             this.state = FormState.entqry;
-            this.records[0].enable(RecordState.entqry,false);
+            this.records[0].enable(RecordState.qmode,false);
             this.records[0].focus();
         }
 

@@ -131,7 +131,7 @@ export class FieldInstance implements AfterViewInit
     public focus() : void
     {
         if (this.clazz != null)
-        setTimeout(() => {this.clazz.element.focus()},0);
+            setTimeout(() => {this.clazz.element.focus()},0);
     }
 
     public blur() : void
@@ -182,7 +182,7 @@ export class FieldInstance implements AfterViewInit
     {
         let enable:boolean = false;
         if (state == RecordState.na) enable = true;
-        else if (state == RecordState.entqry && this.options$.query) enable = true;
+        else if (state == RecordState.qmode && this.options$.query) enable = true;
         else if (state == RecordState.insert && this.options$.insert) enable = true;
         else if (state == RecordState.update && this.options$.update) enable = true;
         if (enable && this.clazz != null) this.clazz.enable = true;
