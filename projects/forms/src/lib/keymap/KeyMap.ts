@@ -38,6 +38,37 @@ export interface KeyMap
     executequery:string;
 }
 
+export class keymap
+{
+    public static enter:string = null;
+    public static escape:string = null;
+
+    public static delete:string = null;
+    public static dublicate:string = null;
+    public static insertafter:string = null;
+    public static insertbefore:string = null;
+
+    public static commit:string = null;
+    public static rollback:string = null;
+
+    public static connect:string = null;
+    public static disconnect:string = null;
+
+    public static nextfield:string = null;
+    public static prevfield:string = null;
+    public static nextblock:string = null;
+    public static prevblock:string = null;
+    public static nextrecord:string = null;
+    public static prevrecord:string = null;
+
+    public static clearform:string = null;
+    public static clearblock:string = null;
+
+    public static enterquery:string = null;
+    public static executequery:string = null;
+}
+
+
 export class KeyMapper
 {
     private static keys:Map<string,string> = new Map<string,string>();
@@ -52,6 +83,33 @@ export class KeyMapper
             KeyMapper.keys.set(key,val);
             KeyMapper.names.set(val,key);
         });
+
+        keymap.enter = map.enter;
+        keymap.escape = map.escape;
+
+        keymap.delete = map.delete;
+        keymap.dublicate = map.dublicate;
+        keymap.insertafter = map.insertafter;
+        keymap.insertbefore = map.insertbefore;
+
+        keymap.commit = map.commit;
+        keymap.rollback = map.rollback;
+
+        keymap.connect = map.connect;
+        keymap.disconnect = map.disconnect;
+
+        keymap.nextfield = map.nextfield;
+        keymap.prevfield = map.prevfield;
+        keymap.nextblock = map.nextblock;
+        keymap.prevblock = map.prevblock;
+        keymap.nextrecord = map.nextrecord;
+        keymap.prevrecord = map.prevrecord;
+
+        keymap.clearform = map.clearform;
+        keymap.clearblock = map.clearblock;
+
+        keymap.enterquery = map.enterquery;
+        keymap.executequery = map.executequery;
     }
 
 

@@ -4,12 +4,11 @@ import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
 import { FormImpl } from "../forms/FormImpl";
 import { Listener } from "../events/Listener";
-import { Config } from "../application/Config";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
-import { KeyMap, KeyMapper } from "../keymap/KeyMap";
+import { keymap, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { DatabaseUsage } from "../database/DatabaseUsage";
@@ -21,7 +20,6 @@ import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } fro
 export class BlockImpl
 {
     private alias$:string;
-    private keymap:KeyMap;
     private row$:number = 0;
     private data$:FieldData;
     private offset:number = 0;
@@ -114,12 +112,6 @@ export class BlockImpl
     public set data(data:FieldData)
     {
         this.data$ = data;
-    }
-
-
-    public set config(conf:Config)
-    {
-        this.keymap = conf.keymap;
     }
 
 
@@ -427,7 +419,10 @@ export class BlockImpl
     public async clear()
     {
         for(let r = 0; r < this.rows; r++)
+        {
             this.records[r].clear();
+            this.records[r].disable();
+        }
 
         this.details$.forEach((block) => {block.clear()});
     }
@@ -515,9 +510,6 @@ export class BlockImpl
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
 
-        if (this.keymap == null)
-            return(false);
-
         if (type == "focus")
         {
             if (this.row != field.row)
@@ -544,7 +536,7 @@ export class BlockImpl
         }
 
         // Enter query
-        if (type == "key" && key == this.keymap.escape)
+        if (type == "key" && key == keymap.escape)
         {
             if (this.state == FormState.entqry)
             {
@@ -561,7 +553,7 @@ export class BlockImpl
         }
 
         // Enter query
-        if (type == "key" && key == this.keymap.enterquery)
+        if (type == "key" && key == keymap.enterquery)
         {
             if (!await this.validate()) return(false);
 
@@ -573,7 +565,7 @@ export class BlockImpl
         }
 
         // Execute query
-        if (type == "key" && key == this.keymap.executequery)
+        if (type == "key" && key == keymap.executequery)
         {
             if (!await this.validate()) return(false);
 
@@ -585,7 +577,7 @@ export class BlockImpl
         }
 
         // Delete
-        if (type == "key" && key == this.keymap.delete)
+        if (type == "key" && key == keymap.delete)
         {
             triggered = true;
             trgevent = new KeyTriggerEvent(event,key,field);
@@ -595,7 +587,7 @@ export class BlockImpl
         }
 
         // Insert after
-        if (type == "key" && key == this.keymap.insertafter)
+        if (type == "key" && key == keymap.insertafter)
         {
             if (!await this.validate()) return(false);
             this.setValue(field.row,field.name,field.value,true);
@@ -608,7 +600,7 @@ export class BlockImpl
         }
 
         // Insert before
-        if (type == "key" && key == this.keymap.insertbefore)
+        if (type == "key" && key == keymap.insertbefore)
         {
             if (!await this.validate()) return(false);
             this.setValue(field.row,field.name,field.value,true);
@@ -621,7 +613,7 @@ export class BlockImpl
         }
 
         // Next record
-        if (type == "key" && key == this.keymap.nextrecord)
+        if (type == "key" && key == keymap.nextrecord)
         {
             let row:number = +field.row + 1;
             if (this.data == null) return(false);
@@ -641,15 +633,15 @@ export class BlockImpl
             }
             else
             {
-                if (field.current)
-                if (!await this.onEvent(null,this.field,"change")) return(false);
+                if (field.current && !await this.onEvent(null,this.field,"change"))
+                    return(false);
             }
 
             this.goField(row,this.field);
         }
 
         // Previous record
-        if (type == "key" && key == this.keymap.prevrecord)
+        if (type == "key" && key == keymap.prevrecord)
         {
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
@@ -674,10 +666,10 @@ export class BlockImpl
 
         event["navigate"] = true;
 
-        if (type == "key" && key == this.keymap.prevfield && this.form != null)
+        if (type == "key" && key == keymap.prevfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 
-        if (type == "key" && key == this.keymap.nextfield && this.form != null)
+        if (type == "key" && key == keymap.nextfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 
         event["navigate"] = false;

@@ -1,8 +1,7 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Block } from "../blocks/Block";
-import { KeyMap } from "../keymap/KeyMap";
-import { Config } from "../application/Config";
+import { keymap } from "../keymap/KeyMap";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { Record, RecordState } from "../blocks/Record";
@@ -31,7 +30,6 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 {
     private usr:Field;
     private pwd:Field;
-    private keymap:KeyMap;
     private win:PopupWindow;
     private app:ApplicationImpl;
 
@@ -41,18 +39,16 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
     public height:string = "150px";
     public title:string  = "Login";
 
-    constructor(conf:Config)
+    constructor()
     {
         super();
-        this.keymap = conf.keymap;
-        this["_impl_"].config = conf;
-        
+
         this.addKeyListener(this.onEvent,
         [
-            this.keymap.enter,
-            this.keymap.escape,
-            this.keymap.nextfield,
-            this.keymap.prevfield
+            keymap.enter,
+            keymap.escape,
+            keymap.nextfield,
+            keymap.prevfield
         ]);
     }
 
@@ -76,16 +72,16 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 
     public async onEvent(kevent:KeyTriggerEvent) : Promise<boolean>
     {
-        if (kevent.code == this.keymap.enter) this.close(false);
-        if (kevent.code == this.keymap.escape) this.close(true);
+        if (kevent.code == keymap.enter) this.close(false);
+        if (kevent.code == keymap.escape) this.close(true);
 
-        if (kevent.code == this.keymap.nextfield && kevent.field == "pwd")
+        if (kevent.code == keymap.nextfield && kevent.field == "pwd")
         {
             kevent.event.preventDefault();
             this.usr.focus();
         }
 
-        if (kevent.code == this.keymap.prevfield && kevent.field == "usr")
+        if (kevent.code == keymap.prevfield && kevent.field == "usr")
         {
             kevent.event.preventDefault();
             this.pwd.focus();

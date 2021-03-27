@@ -10,13 +10,13 @@ import { ComponentRef } from "@angular/core";
 import { InstanceID } from "../forms/InstanceID";
 import { HttpClient } from "@angular/common/http";
 import { MenuFactory } from "../menu/MenuFactory";
-import { Key, KeyMapper } from "../keymap/KeyMap";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
 import { ApplicationState } from "./ApplicationState";
 import { WindowOptions } from "../forms/WindowOptions";
+import { Key, keymap, KeyMapper } from "../keymap/KeyMap";
 import { FormDefinition } from "../forms/FormsDefinition";
 import { WindowListener } from "../events/WindowListener";
 import { InstanceControl } from "../forms/InstanceControl";
@@ -63,8 +63,6 @@ export class ApplicationImpl
 
         if (this.config.hasOwnProperty("theme"))
             this.conf.setTheme(this.config["theme"]);
-
-        KeyMapper.index(this.conf.keymap);
     }
 
 
@@ -456,13 +454,13 @@ export class ApplicationImpl
 
         let key:string = KeyMapper.map(keydef);
 
-        if (key == this.conf.keymap.connect)
+        if (key == keymap.connect)
         {
             this.app.connect();
             return;
         }
 
-        if (key == this.conf.keymap.disconnect)
+        if (key == keymap.disconnect)
         {
             this.app.disconnect();
             return;
@@ -470,11 +468,11 @@ export class ApplicationImpl
 
         if
         (
-            key == this.conf.keymap.delete          ||
-            key == this.conf.keymap.insertafter     ||
-            key == this.conf.keymap.insertbefore    ||
-            key == this.conf.keymap.enterquery      ||
-            key == this.conf.keymap.executequery
+            key == keymap.delete          ||
+            key == keymap.insertafter     ||
+            key == keymap.insertbefore    ||
+            key == keymap.enterquery      ||
+            key == keymap.executequery
         )
         {
             let form:FormImpl = this.getCurrentForm();

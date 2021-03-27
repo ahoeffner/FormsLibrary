@@ -4,7 +4,7 @@ import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
 import { Table } from "../database/Table";
-import { KeyMap } from "../keymap/KeyMap";
+import { keymap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
@@ -259,8 +259,6 @@ export class FormImpl
                 console.log("Form has fields bound to "+cb.name+" that doesn't exist");
                 return;
             }
-
-            block.config = this.app.conf;
 
             cb.records.forEach((rec) =>
             // Copy records from container
@@ -789,8 +787,6 @@ export class FormImpl
     {
         if (this.app == null)
             return;
-
-        let keymap:KeyMap = this.app.conf.keymap;
 
         if (type == "focus")
             this.block = this.blkindex.get(field.block);

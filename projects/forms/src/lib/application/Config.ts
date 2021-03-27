@@ -1,4 +1,4 @@
-import { KeyMap } from "../keymap/KeyMap";
+import { KeyMapper } from "../keymap/KeyMap";
 import { Injectable } from "@angular/core";
 import { MacKeyMap } from "../keymap/MacKeyMap";
 import { HttpClient } from "@angular/common/http";
@@ -14,32 +14,22 @@ export class Config
 {
     private colors$:Theme;
     private config:any = null;
-    private keymap$:KeyMap = null;
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
     private themes:Map<string,Theme> = new Map<string,Theme>();
-    private mapkey$:Map<string,string> = new Map<string,string>();
 
 
     constructor(private client:HttpClient)
     {
         this.load();
-        this.keymap$ = new MacKeyMap();
         this.themes.set("pink",new Pink());
         this.themes.set("grey",new Grey());
         this.themes.set("indigo",new Indigo());
         this.themes.set("yellow",new Yellow());
         this.themes.set("default",new defaultTheme());
-        this.colors$ = this.themes.get("default");
 
-        Object.entries(this.keymap$).forEach((prop) =>
-        {
-            let entry:string = ""+prop;
-            let pos:number = entry.indexOf(",");
-            let key:string = entry.substring(0,pos);
-            let val:string = entry.substring(pos+1);
-            this.mapkey$.set(val,key);
-        });
+        KeyMapper.index(new MacKeyMap());
+        this.colors$ = this.themes.get("default");
     }
 
     private async load()
@@ -57,16 +47,6 @@ export class Config
         }
 
         return(true);
-    }
-
-    public get keymap() : KeyMap
-    {
-        return(this.keymap$);
-    }
-
-    public mapkey(key:string) : string
-    {
-        return(this.mapkey$.get(key));
     }
 
     public get colors() : Theme

@@ -1,7 +1,6 @@
 import { Field } from './Field';
-import { Config } from '../application/Config';
 import { RecordState } from '../blocks/Record';
-import { Key, KeyMapper } from '../keymap/KeyMap';
+import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
 import { FieldTypes, FieldType } from './FieldType';
 import { Application } from "../application/Application";
 import { FieldOption, FieldOptions } from './FieldOptions';
@@ -39,7 +38,7 @@ export class FieldInstance implements AfterViewInit
     @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
 
 
-    constructor(private conf:Config, app:Application)
+    constructor(app:Application)
     {
         this.app = app["_impl_"];
     }
@@ -257,20 +256,20 @@ export class FieldInstance implements AfterViewInit
             }
 
             let key:string = KeyMapper.map(keydef);
-            let mapped:string = this.conf.mapkey(key);
+            let mapped:string = KeyMapper.keyname(key);
 
             if (mapped != null)
             {
                 // handled by application
                 if
                 (
-                    key == this.conf.keymap.connect         ||
-                    key == this.conf.keymap.disconnect      ||
-                    key == this.conf.keymap.delete          ||
-                    key == this.conf.keymap.insertafter     ||
-                    key == this.conf.keymap.insertbefore    ||
-                    key == this.conf.keymap.enterquery      ||
-                    key == this.conf.keymap.executequery
+                    key == keymap.connect         ||
+                    key == keymap.disconnect      ||
+                    key == keymap.delete          ||
+                    key == keymap.insertafter     ||
+                    key == keymap.insertbefore    ||
+                    key == keymap.enterquery      ||
+                    key == keymap.executequery
                 )
                 return;
 
