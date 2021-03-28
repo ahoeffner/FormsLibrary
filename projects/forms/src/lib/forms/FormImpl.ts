@@ -9,6 +9,7 @@ import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
+import { FieldType } from "../input/FieldType";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
 import { DefaultMenu } from "../menu/DefaultMenu";
@@ -266,13 +267,24 @@ export class FormImpl
 
             // Set fieldtype for all fields
             let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getIndex(block.clazz);
+            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.name);
 
-            fielddef.forEach((def) =>
+            cb.fields.forEach((inst) =>
             {
-                if (def.type == null) def.type = "input";
-            });
+                let def:FieldDefinition = fielddef.get(inst.name);
 
-            cb.fields.forEach((inst) => {if (inst.type == null) inst.type = fielddef.get(inst.name)?.type;});
+                if (def == null) def = {name: inst.name};
+
+                if (def.type == null)
+                {
+                    let coldef:ColumnDefinition = colindex.get(inst.name.toLowerCase());
+                    if (coldef != null) def.mandatory = coldef.mandatory;
+                    def.type = FieldType.input;
+                }
+
+                inst.type = def.type;
+                inst.case = def.case;
+            });
 
             block.fielddef = fielddef;
         });

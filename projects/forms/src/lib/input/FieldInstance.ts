@@ -1,10 +1,11 @@
 import { Field } from './Field';
+import { Case } from './FieldDefinition';
 import { RecordState } from '../blocks/Record';
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
-import { FieldTypes, FieldType } from './FieldType';
 import { Application } from "../application/Application";
 import { FieldOption, FieldOptions } from './FieldOptions';
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
 
 
@@ -16,12 +17,12 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 
 export class FieldInstance implements AfterViewInit
 {
+    private case$:Case;
     private guid$:string;
-    private clazz:FieldType;
+    private type$:FieldType;
     private app:ApplicationImpl;
+    private clazz:FieldInterface;
     private fgroup$:Field = null;
-    private upper:boolean = false;
-    private lower:boolean = false;
     private container:HTMLSpanElement;
     private firstchange:boolean = true;
     private options$:FieldOptions = {query: true, insert: true, update: true};
@@ -29,7 +30,6 @@ export class FieldInstance implements AfterViewInit
     @Input("id")    private id$:string = "";
     @Input("row")   private row$:number = -2;
     @Input("name")  private name$:string = "";
-    @Input("type")  private type$:string = "";
     @Input("block") private block$:string = "";
     @Input("group") private group$:string = "";
     @Input("class") private class$:string = "";
@@ -75,10 +75,9 @@ export class FieldInstance implements AfterViewInit
         return(this.name$);
     }
 
-    public get type() : string
+    public get type() : FieldType
     {
-        if (this.type$ == "") return(null);
-        else                  return(this.type$);
+        return(this.type$);
     }
 
     public get dirty() : boolean
@@ -144,16 +143,10 @@ export class FieldInstance implements AfterViewInit
         return(this.guid.startsWith("c"));
     }
 
-    public setUpperCase() : void
+    public set case(type:Case)
     {
-        this.upper = true;
-        this.lower = false;
-    }
-
-    public setLowerCase() : void
-    {
-        this.lower = true;
-        this.upper = false;
+        this.case$ = type;
+        if (type == null) this.case$ = Case.mixed;
     }
 
     public set value(value:any)
@@ -162,13 +155,11 @@ export class FieldInstance implements AfterViewInit
         this.clazz.value = value;
     }
 
-
     public get enabled() : boolean
     {
         if (this.clazz == null) return(false);
         else return(this.clazz.enable);
     }
-
 
     public disable() : void
     {
@@ -201,11 +192,11 @@ export class FieldInstance implements AfterViewInit
     }
 
 
-    public set type(type:string)
+    public set type(type:FieldType)
     {
         this.type$ = type;
         this.container.innerHTML = null;
-        let cname:any = FieldTypes.getClass(type);
+        let cname:any = FieldImplementation.getClass(type.name);
 
         if (cname != null)
         {
@@ -279,10 +270,10 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "keypress" || keypress)
         {
-            if (this.lower)
+            if (this.case$ == Case.lower)
                 setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
 
-            if (this.upper)
+            if (this.case$ == Case.upper)
                 setTimeout(() => {this.value = (""+this.value).toUpperCase();},0);
 
             if (this.firstchange)

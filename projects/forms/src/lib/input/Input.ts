@@ -1,7 +1,7 @@
-import { FieldType } from "./FieldType";
+import { FieldInterface } from "./FieldType";
 
 
-export class Input implements FieldType
+export class Input implements FieldInterface
 {
     private enabled$:boolean;
     public element$:HTMLInputElement;

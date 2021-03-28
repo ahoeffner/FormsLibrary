@@ -1,3 +1,4 @@
+import { FieldType } from "./FieldType";
 import { RecordState } from "../blocks/Record";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldInstance } from "./FieldInstance";
@@ -137,7 +138,7 @@ export class Field
     }
 
 
-    public setType(type:string, id?:string) : void
+    public setType(type:FieldType, id?:string) : void
     {
         if (id != null)
         {

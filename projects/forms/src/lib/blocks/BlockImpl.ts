@@ -533,6 +533,9 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            if (this.state == FormState.entqry)
+                return(true);
+
             if (this.row != field.row)
             {
                 if (!await this.validaterecord())
@@ -558,6 +561,9 @@ export class BlockImpl
 
         if (type == "blur")
         {
+            if (this.state == FormState.entqry)
+                return(true);
+
             trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,field.value);
 
             if (!await this.triggers.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
@@ -569,6 +575,9 @@ export class BlockImpl
 
         if (type == "fchange")
         {
+            if (this.state == FormState.entqry)
+                return(true);
+
             let previous:any = this.getValue(field.row,field.name);
             trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);
 
@@ -578,6 +587,9 @@ export class BlockImpl
 
         if (type == "change")
         {
+            if (this.state == FormState.entqry)
+                return(true);
+
             if (!await this.validatefield()) return(false);
             let previous:any = this.getValue(field.row,field.name);
 
@@ -608,6 +620,9 @@ export class BlockImpl
         // Enter query
         if (type == "key" && key == keymap.enterquery)
         {
+            if (this.state == FormState.entqry)
+                return(true);
+
             if (!await this.validate()) return(false);
 
             triggered = true;

@@ -33,8 +33,9 @@ export {DefaultMenuHandler} from './lib/menu/DefaultMenuHandler';
 export {Form} from './lib/forms/Form';
 export {Block} from './lib/blocks/Block';
 
+export {FieldType} from './lib/input/FieldType';
 export {FieldInstance} from './lib/input/FieldInstance';
-export {FieldDefinition} from './lib/input/FieldDefinition';
+export {FieldDefinition, Case} from './lib/input/FieldDefinition';
 
 export {Condition} from './lib/database/Condition';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'

@@ -2,28 +2,37 @@ import { Input } from "./Input";
 import { Password } from "./Password";
 
 
-export class FieldTypes
+export class FieldType
 {
-    private static types:Map<string,any> = null;
+    public static input:FieldType = new FieldType("input");
+    public static password:FieldType = new FieldType("password");
+
+    private constructor(public name:string) {};
+}
+
+
+export class FieldImplementation
+{
+    private static impl:Map<string,any> = null;
 
     private static init() : void
     {
-        if (FieldTypes.types != null) return;
-        FieldTypes.types = new Map<string,any>();
+        if (FieldImplementation.impl != null) return;
+        FieldImplementation.impl = new Map<string,any>();
 
-        FieldTypes.types.set("input",Input);
-        FieldTypes.types.set("password",Password);
+        FieldImplementation.impl.set("input",Input);
+        FieldImplementation.impl.set("password",Password);
     }
 
     public static getClass(type:string) : any
     {
-        FieldTypes.init();
-        return(FieldTypes.types.get(type.toLowerCase()));
+        FieldImplementation.init();
+        return(FieldImplementation.impl.get(type.toLowerCase()));
     }
 }
 
 
-export interface FieldType
+export interface FieldInterface
 {
     value:any;
     html:string;
