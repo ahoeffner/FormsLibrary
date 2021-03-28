@@ -120,6 +120,12 @@ export class FormImpl
     }
 
 
+    public clear() : void
+    {
+        this.blocks.forEach((block) => {block.clear()});
+    }
+
+
     public focus() : void
     {
         this.block.focus();

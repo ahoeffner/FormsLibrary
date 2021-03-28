@@ -96,6 +96,9 @@ export class Application
     public disconnect() : void
     {
         if (this._impl_.appstate.connected)
+        {
             this._impl_.appstate.connection.disconnect();
+            this._impl_.getCurrentForm()?.clear();
+        }
     }
 }
