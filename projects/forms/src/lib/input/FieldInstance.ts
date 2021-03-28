@@ -17,12 +17,12 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 
 export class FieldInstance implements AfterViewInit
 {
-    private case$:Case;
     private guid$:string;
     private type$:FieldType;
     private app:ApplicationImpl;
     private clazz:FieldInterface;
     private fgroup$:Field = null;
+    private case$:Case = Case.mixed;
     private container:HTMLSpanElement;
     private firstchange:boolean = true;
     private options$:FieldOptions = {query: true, insert: true, update: true};
