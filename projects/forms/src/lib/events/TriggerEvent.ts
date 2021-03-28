@@ -9,9 +9,8 @@ export class TriggerEvent
     public jsevent:any;
     public type:string;
 
-    constructor(type:string, jsevent:any)
+    constructor(jsevent:any)
     {
-        this.type = type;
         this.jsevent = jsevent;
     }
 }
@@ -24,12 +23,12 @@ export class KeyTriggerEvent extends TriggerEvent
     public code:string;
     public field:string;
 
-    constructor(event:any, key:string, field:FieldInstance)
+    constructor(field:FieldInstance, key:string, jsevent:any)
     {
-        super(Trigger.Key.name,event);
+        super(jsevent);
 
         this.code = key;
-        this.jsevent = event;
+        this.jsevent = jsevent;
         this.key = KeyMapper.parse(key);
         this.key.name = KeyMapper.keyname(key);
 
@@ -49,9 +48,9 @@ export class FieldTriggerEvent extends TriggerEvent
     public field:string;
     public previous:any;
 
-    constructor(type:Trigger, field:string, row:number, value:any, previous:any)
+    constructor(field:string, row:number, value:any, previous:any, jsevent?:any)
     {
-        super(type.name,null);
+        super(jsevent);
 
         this.row = row;
         this.field = field;
@@ -65,9 +64,9 @@ export class SQLTriggerEvent extends TriggerEvent
 {
     public stmt:Statement;
 
-    constructor(type:Trigger, stmt:Statement)
+    constructor(stmt:Statement)
     {
-        super(type.name,null);
+        super(null);
         this.stmt = stmt;
     }
 }

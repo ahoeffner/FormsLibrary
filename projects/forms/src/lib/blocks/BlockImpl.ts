@@ -317,7 +317,7 @@ export class BlockImpl
 
         this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
-        let event:SQLTriggerEvent = new SQLTriggerEvent(Trigger.PreQuery,stmt);
+        let event:SQLTriggerEvent = new SQLTriggerEvent(stmt);
         if (!this.triggers.invokeTriggers(Trigger.PreQuery,event)) return(false);
 
         let response:any = await this.data.executequery(stmt);
@@ -425,7 +425,7 @@ export class BlockImpl
     }
 
 
-    private async validatefield(field:FieldInstance, event:any) : Promise<boolean>
+    private async validatefield(field:FieldInstance, jsevent:any) : Promise<boolean>
     {
         if (field == null) return(true);
         if (this.state == FormState.entqry) return(true);
@@ -433,7 +433,7 @@ export class BlockImpl
         let previous:any = this.getValue(field.name,field.row);
         this.setDataValue(field.row,field.name,field.value);
 
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
 
         if (!await this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
             return(true);
@@ -515,7 +515,7 @@ export class BlockImpl
 
                     if (field != null)
                     {
-                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(Trigger.PostChange,field.name,r,field.value,field.value);
+                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,r,field.value,field.value);
                         this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent);
                     }
                 }
@@ -572,7 +572,7 @@ export class BlockImpl
             this.row = field.row;
             this.records$[+field.row].current = true;
 
-            trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,field.value);
+            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,field.value,event);
 
             if (!await this.triggers.invokeFieldTriggers(Trigger.PreField,field.name,trgevent))
                 return(true);
@@ -586,7 +586,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,field.value);
+            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,field.value,event);
 
             if (!await this.triggers.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
                 return(true);
@@ -601,7 +601,7 @@ export class BlockImpl
                 return(true);
 
             let previous:any = this.getValue(field.name,field.row);
-            trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);
+            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
 
             if (!await this.triggers.invokeTriggers(Trigger.Lock,trgevent))
                 return(true);
@@ -635,7 +635,7 @@ export class BlockImpl
             if (!await this.validate()) return(false);
 
             triggered = true;
-            trgevent = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -650,7 +650,7 @@ export class BlockImpl
             if (!await this.validate()) return(false);
 
             triggered = true;
-            trgevent = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -663,7 +663,7 @@ export class BlockImpl
         if (type == "key" && key == keymap.delete)
         {
             triggered = true;
-            trgevent = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -679,7 +679,7 @@ export class BlockImpl
             this.setDataValue(field.row,field.name,field.value);
 
             triggered = true;
-            trgevent = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -695,7 +695,7 @@ export class BlockImpl
             this.setDataValue(field.row,field.name,field.value);
 
             triggered = true;
-            trgevent = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -769,7 +769,7 @@ export class BlockImpl
         // Pass event to subscribers, stop if signalled
         if (!triggered && type == "key")
         {
-            trgevent = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(field,key,event);
 
             if (key != null && !await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);

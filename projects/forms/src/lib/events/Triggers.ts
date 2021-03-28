@@ -177,6 +177,7 @@ export class Triggers
             {
                 lsnrs.forEach(async (lsnr) =>
                 {
+                    event.type = type.name;
                     if (!await lsnr.inst[lsnr.func.name](event))
                         return(false);
                 });
@@ -190,6 +191,7 @@ export class Triggers
             {
                 lsnrs.forEach(async (lsnr) =>
                 {
+                    event.type = type.name;
                     if (!await lsnr.inst[lsnr.func.name](event))
                         return(false);
                 });
@@ -213,6 +215,7 @@ export class Triggers
             {
                 lsnrs.forEach(async (lsnr) =>
                 {
+                    event.type = type.name;
                     if (!await lsnr.inst[lsnr.func.name](event))
                         return(false);
                 });
@@ -226,6 +229,7 @@ export class Triggers
             {
                 lsnrs.forEach(async (lsnr) =>
                 {
+                    event.type = type.name;
                     if (!await lsnr.inst[lsnr.func.name](event))
                         return(false);
                 });
