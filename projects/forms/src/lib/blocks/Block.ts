@@ -19,6 +19,16 @@ export class Block
         return(this._impl_.form.form);
     }
 
+    public getValue(field:string, row:number) : any
+    {
+        return(this._impl_.getValue(field,row));
+    }
+
+    public setValue(field:string, row:number, value:any) : boolean
+    {
+        return(this._impl_.setValue(field,row,value));
+    }
+
     public cancel() : void
     {
         this._impl_.dokey("escape");

@@ -134,10 +134,22 @@ export class BlockImpl
     }
 
 
-    public getValue(row:number, column:string)
+    public getValue(column:string, row:number) : any
     {
         if (this.data == null) return(null);
         return(this.data.getValue(row,column));
+    }
+
+
+    public setValue(column:string, row:number, value:any) : boolean
+    {
+        if (this.data == null) return(false);
+        if (row < 0 || row >= this.rows) return(false);
+
+        let field:Field = this.records[row].getField(column);
+        if (field != null) field.value = value;
+
+        return(this.data.update(row,column,value));
     }
 
 
@@ -398,7 +410,7 @@ export class BlockImpl
         let rec:Record = this.records[this.row];
         if (!rec.enabled) return(true);
 
-        if (!await this.validatefield())
+        if (!await this.validatefield(this.field,null))
             return(false);
 
         let response:any = await this.validaterecord();
@@ -413,17 +425,27 @@ export class BlockImpl
     }
 
 
-    private async validatefield() : Promise<boolean>
+    private async validatefield(field:FieldInstance, event:any) : Promise<boolean>
     {
-        if (this.data == null) return(true);
+        if (field == null) return(true);
+        if (this.state == FormState.entqry) return(true);
 
-        let response:any = {status: "ok"};
+        let previous:any = this.getValue(field.name,field.row);
+        this.setDataValue(field.row,field.name,field.value);
 
-        if (response["status"] == "failed")
-        {
-            this.alert(JSON.stringify(response),"Validate Record");
-            return(false);
-        }
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);
+
+        if (!await this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
+            return(true);
+
+        if (!await this.triggers.invokeTriggers(Trigger.PostChange,trgevent))
+            return(true);
+
+        if (!await this.triggers.invokeFieldTriggers(Trigger.ValidateField,field.name,trgevent))
+            return(true);
+
+        if (!await this.triggers.invokeTriggers(Trigger.ValidateField,trgevent))
+            return(true);
 
         return(true);
     }
@@ -578,7 +600,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            let previous:any = this.getValue(field.row,field.name);
+            let previous:any = this.getValue(field.name,field.row);
             trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);
 
             if (!await this.triggers.invokeTriggers(Trigger.Lock,trgevent))
@@ -587,21 +609,8 @@ export class BlockImpl
 
         if (type == "change")
         {
-            if (this.state == FormState.entqry)
-                return(true);
-
-            if (!await this.validatefield()) return(false);
-            let previous:any = this.getValue(field.row,field.name);
-
-            this.setDataValue(field.row,field.name,field.value);
-
-            trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);
-
-            if (!await this.triggers.invokeFieldTriggers(Trigger.Change,field.name,trgevent))
-                return(true);
-
-            if (!await this.triggers.invokeTriggers(Trigger.Change,trgevent))
-                return(true);
+            if (!await this.validatefield(field,event))
+                return(false);
         }
 
         // Cancel
