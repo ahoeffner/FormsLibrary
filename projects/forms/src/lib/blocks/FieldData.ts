@@ -88,7 +88,7 @@ export class FieldData
     public parseQuery(keys:Key[], fields:Field[]) : Statement
     {
         if (this.table == null) return(null);
-        return(this.table.parseQuery(this.block.alias,keys,fields));
+        return(this.table.parseQuery(keys,fields));
     }
 
 

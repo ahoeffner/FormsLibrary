@@ -17,6 +17,7 @@ import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
 import { Record, RecordState } from "../blocks/Record";
+import { Trigger, Triggers } from "../events/Triggers";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { TriggerFunction } from "../events/TriggerFunction";
@@ -28,7 +29,6 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
-import { FieldTrigger, Trigger, Triggers } from "../events/Triggers";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
@@ -266,6 +266,12 @@ export class FormImpl
 
             // Set fieldtype for all fields
             let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getIndex(block.clazz);
+
+            fielddef.forEach((def) =>
+            {
+                if (def.type == null) def.type = "input";
+            });
+
             cb.fields.forEach((inst) => {if (inst.type == null) inst.type = fielddef.get(inst.name)?.type;});
 
             block.fielddef = fielddef;
@@ -780,9 +786,9 @@ export class FormImpl
     }
 
 
-    public addFieldTrigger(instance:any, func:TriggerFunction, types:FieldTrigger|FieldTrigger[], fields:string|string[], keys?:string|string[]) : void
+    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields:string|string[], keys?:string|string[]) : void
     {
-        this.triggers.addFieldTrigger(instance,func,types,fields,keys)
+        this.triggers.addTrigger(instance,func,types,fields,keys)
     }
 
 

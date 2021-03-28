@@ -1,7 +1,7 @@
 export interface FieldDefinition
 {
     name:string;
-    type:string;
+    type?:string;
     case?:string;
     mandatory?:boolean;
     column?:boolean|string;

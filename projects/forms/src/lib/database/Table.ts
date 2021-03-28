@@ -14,6 +14,7 @@ export class Table
     private select:SQL;
     private eof:boolean;
     private fetch$:number;
+    private cursor:string;
     private data:any[] = [];
     private cnames:string[];
     private conn:Connection;
@@ -32,6 +33,7 @@ export class Table
         this.fetch$ = rows;
         this.columns = columns;
         this.fielddef = fielddef;
+        this.cursor = table.name + Date.now();;
 
         if (this.key == null)
         {
@@ -63,14 +65,14 @@ export class Table
     }
 
 
-    public parseQuery(cursor:string, keys:Key[], fields:Field[]) : Statement
+    public parseQuery(keys:Key[], fields:Field[]) : Statement
     {
         let stmt:Statement = new Statement(SQLType.select);
 
+        stmt.cursor = this.cursor;
         stmt.columns = this.cnames;
         stmt.table = this.table.name;
         stmt.order = this.table.order;
-        stmt.cursor = cursor + Date.now();
 
         keys.forEach((key) =>
         {
