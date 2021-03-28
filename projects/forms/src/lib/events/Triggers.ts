@@ -160,6 +160,7 @@ export class Triggers
                 if (lsnrs == null)
                 {
                     lsnrs = [];
+                    console.log("adFieldTrigger for field "+field);
                     this.triggers.fields.set(field,lsnrs);
                 }
 
@@ -177,6 +178,7 @@ export class Triggers
         if (type == Trigger.Key)
             return(this.invokeKeyTriggers(arg,event));
 
+        console.log("type: "+type.name+" arg = "+arg);
         if
         (
             type == Trigger.PostField   ||
@@ -218,6 +220,9 @@ export class Triggers
     public async invokeFieldTriggers(field:string, event:TriggerEvent, types:Trigger|Trigger[]) : Promise<boolean>
     {
         let lsnrs:Listener[] = null;
+        if (field != null) field = field.toLowerCase();
+
+        this.triggers.fields.forEach((trg,field) => {console.log(field+" "+trg[0].field)});
 
         lsnrs = this.triggers.fields.get(field);
         if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>

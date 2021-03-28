@@ -472,6 +472,7 @@ export class BlockImpl
 
                     if (field != null)
                     {
+                        console.log("invokeTriggers "+FileReader.name);
                         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(Trigger.PostChange,field.name,r,field.value);
                         this.triggers.invokeTriggers(Trigger.PostChange,field.name,trgevent);
                     }
