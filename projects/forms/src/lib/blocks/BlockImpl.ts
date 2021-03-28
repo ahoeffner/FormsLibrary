@@ -134,6 +134,20 @@ export class BlockImpl
     }
 
 
+    public getValue(row:number, column:string)
+    {
+        if (this.data == null) return(null);
+        return(this.data.getValue(row,column));
+    }
+
+
+    public getFieldValue(row:number, column:string)
+    {
+        if (row < 0 || row >= this.rows) return(null);
+        return(this.records[+row].getField(column)?.value);
+    }
+
+
     public get records() : Record[]
     {
         return(this.records$);
@@ -536,7 +550,7 @@ export class BlockImpl
         if (type == "change")
         {
             if (!await this.validatefield()) return(false);
-            let previous:any = this.data.getValue(field.row,field.name);
+            let previous:any = this.getValue(field.row,field.name);
 
             this.setValue(field.row,field.name,field.value);
             trgevent = new FieldTriggerEvent(event,field.name,field.row,field.value,previous);

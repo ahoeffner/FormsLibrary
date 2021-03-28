@@ -2,8 +2,8 @@ import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
 import { Block } from "../blocks/Block";
 import { Trigger } from "../events/Triggers";
-import { TriggerFunction } from "../events/TriggerFunction";
 import { Container } from "../container/Container";
+import { TriggerFunction } from "../events/TriggerFunction";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
 
 
@@ -101,7 +101,7 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.setCallback(func);
     }
 
-    public addTrigger(func:TriggerFunction, types:string|string[]) : void
+    public addTrigger(func:TriggerFunction, types?:Trigger|Trigger[]) : void
     {
         this._impl_.addTrigger(this,func,types);
     }
@@ -113,7 +113,7 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
-    public addFieldListener(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldTrigger(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this._impl_.addFieldTrigger(this,listener,types,fields);
     }
