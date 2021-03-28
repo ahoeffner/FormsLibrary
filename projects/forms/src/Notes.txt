@@ -1,6 +1,6 @@
 Drop down colors
 Add F1-F12 in KeyCodes
-Listen on change-event for input
+close cursor
 
 Library ng-package.json
 

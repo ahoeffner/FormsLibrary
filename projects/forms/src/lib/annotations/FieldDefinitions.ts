@@ -3,7 +3,7 @@ import { FieldDefinition } from "../input/FieldDefinition";
 
 export class FieldDefinitions
 {
-    private static idx:Map<string,FieldDefinition[]> = new Map<string,FieldDefinition[]>();
+    private static idx:Map<string,Map<string,FieldDefinition>> = new Map<string,Map<string,FieldDefinition>>();
     private static index:Map<string,FieldDefinition[]> = new Map<string,FieldDefinition[]>();
 
 
@@ -53,12 +53,12 @@ export class FieldDefinitions
 
     private static addidx(block:string, def:FieldDefinition) : void
     {
-        let fields:FieldDefinition[] = FieldDefinitions.idx.get(block);
+        let blockids:Map<string,FieldDefinition> = FieldDefinitions.idx.get(block);
 
-        if (fields == null)
+        if (blockids == null)
         {
-            fields = [];
-            FieldDefinitions.idx.set(block,fields);
+            blockids = new Map<string,FieldDefinition>();
+            FieldDefinitions.idx.set(block,blockids);
         }
 
         if (def.hasOwnProperty("column"))
@@ -67,16 +67,18 @@ export class FieldDefinitions
             console.log("Column cannot be specified for instance override "+def.name+"."+def.id);
         }
 
-        fields.forEach((existing) =>
-        {
-            if (def.id == existing.id)
-            {
-                console.log("Field "+def.name+"."+def.id+" defined twice");
-                return;
-            }
-        });
+        blockids.set(def.id,def);
+    }
 
-        fields.unshift(def);
+
+    public static getInstanceDefinition(block:string, id:string) : FieldDefinition
+    {
+        let blockids:Map<string,FieldDefinition> = FieldDefinitions.idx.get(block);
+
+        if (blockids != null)
+            return(blockids.get(id));
+
+        return(null);
     }
 
 

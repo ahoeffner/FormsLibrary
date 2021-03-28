@@ -273,6 +273,12 @@ export class FormImpl
             {
                 let def:FieldDefinition = fielddef.get(inst.name);
 
+                if (inst.id.length > 0)
+                {
+                    let idef:FieldDefinition = FieldDefinitions.getInstanceDefinition(block.name,inst.id);
+                    if (idef != null) def = idef;
+                }
+
                 if (def == null) def = {name: inst.name};
 
                 if (def.type == null)
