@@ -317,7 +317,7 @@ export class BlockImpl
 
         this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
-        let event:SQLTriggerEvent = new SQLTriggerEvent(stmt);
+        let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
         if (!this.triggers.invokeTriggers(Trigger.PreQuery,event)) return(false);
 
         let response:any = await this.data.executequery(stmt);
@@ -436,25 +436,31 @@ export class BlockImpl
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
 
         if (!await this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
-            return(true);
+            return(false);
 
         if (!await this.triggers.invokeTriggers(Trigger.PostChange,trgevent))
-            return(true);
+            return(false);
 
-        if (!await this.triggers.invokeFieldTriggers(Trigger.ValidateField,field.name,trgevent))
-            return(true);
+        if (!await this.triggers.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
+            return(false);
 
-        if (!await this.triggers.invokeTriggers(Trigger.ValidateField,trgevent))
-            return(true);
+        if (!await this.triggers.invokeTriggers(Trigger.WhenValidateField,trgevent))
+            return(false);
 
         return(true);
     }
 
 
-    private async validaterecord() : Promise<any>
+    private async validaterecord() : Promise<boolean>
     {
         if (this.data == null) return(true);
-        return({status: "ok"});
+
+        let trgevent:TriggerEvent = new TriggerEvent(this.row,null);
+
+        if (!await this.triggers.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
+            return(false);
+
+        return(true);
     }
 
 

@@ -6,18 +6,18 @@ import { TriggerFunction } from "./TriggerFunction";
 
 export class Trigger
 {
-    public static Key:Trigger               = new Trigger("Key");
-    public static Lock:Trigger              = new Trigger("Lock");
-    public static Typing:Trigger            = new Trigger("Typing");
-    public static PreField:Trigger          = new Trigger("PreField");
-    public static PostField:Trigger         = new Trigger("PostField");
-    public static PostChange:Trigger        = new Trigger("PostChange");
-    public static ValidateField:Trigger     = new Trigger("ValidateField");
-    public static ValidateRecord:Trigger    = new Trigger("ValidateRecord");
-    public static PreQuery:Trigger          = new Trigger("PreQuery");
-    public static PreInsert:Trigger         = new Trigger("PreInsert");
-    public static PreUpdate:Trigger         = new Trigger("PreUpdate");
-    public static PreDelete:Trigger         = new Trigger("PreDelete");
+    public static Key:Trigger                   = new Trigger("Key");
+    public static Lock:Trigger                  = new Trigger("Lock");
+    public static Typing:Trigger                = new Trigger("Typing");
+    public static PreField:Trigger              = new Trigger("PreField");
+    public static PostField:Trigger             = new Trigger("PostField");
+    public static PostChange:Trigger            = new Trigger("PostChange");
+    public static WhenValidateField:Trigger     = new Trigger("WhenValidateField");
+    public static WhenValidateRecord:Trigger    = new Trigger("WhenValidateRecord");
+    public static PreQuery:Trigger              = new Trigger("PreQuery");
+    public static PreInsert:Trigger             = new Trigger("PreInsert");
+    public static PreUpdate:Trigger             = new Trigger("PreUpdate");
+    public static PreDelete:Trigger             = new Trigger("PreDelete");
 
     private constructor(public name:string) {};
 }
@@ -31,7 +31,7 @@ export class FieldTrigger
     public static PreField:Trigger              = Trigger.PreField;
     public static PostField:Trigger             = Trigger.PostField;
     public static PostChange:Trigger            = Trigger.PostChange;
-    public static ValidateField:Trigger         = Trigger.ValidateField;
+    public static ValidateField:Trigger         = Trigger.WhenValidateField;
 
     public static isFieldTrigger(trigger:Trigger) : boolean
     {
@@ -44,7 +44,7 @@ export class FieldTrigger
             FieldTrigger.index.set(Trigger.PreField.name,true);
             FieldTrigger.index.set(Trigger.PostField.name,true);
             FieldTrigger.index.set(Trigger.PostChange.name,true);
-            FieldTrigger.index.set(Trigger.ValidateField.name,true);
+            FieldTrigger.index.set(Trigger.WhenValidateField.name,true);
         }
 
         return(FieldTrigger.index.has(trigger.name));
