@@ -655,9 +655,9 @@ export class BlockImpl
             this.setDataValue(field.row,field.name,field.value);
 
             triggered = true;
-            event = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(event,key,field);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,event,key))
+            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
             if (!await this.keyinsert(true))
@@ -671,9 +671,9 @@ export class BlockImpl
             this.setDataValue(field.row,field.name,field.value);
 
             triggered = true;
-            event = new KeyTriggerEvent(event,key,field);
+            trgevent = new KeyTriggerEvent(event,key,field);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,event,key))
+            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
             if (!await this.keyinsert(false))
