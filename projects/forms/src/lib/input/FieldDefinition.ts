@@ -9,6 +9,7 @@ export enum Case
 
 export interface FieldDefinition
 {
+    id?:string;
     case?:Case;
     name:string;
     type?:FieldType;

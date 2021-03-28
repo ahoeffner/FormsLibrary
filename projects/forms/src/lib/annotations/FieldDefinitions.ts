@@ -3,10 +3,18 @@ import { FieldDefinition } from "../input/FieldDefinition";
 
 export class FieldDefinitions
 {
+    private static idx:Map<string,FieldDefinition[]> = new Map<string,FieldDefinition[]>();
     private static index:Map<string,FieldDefinition[]> = new Map<string,FieldDefinition[]>();
+
 
     public static add(block:string, def:FieldDefinition) : void
     {
+        if (def.id != null)
+        {
+            FieldDefinitions.addidx(block,def);
+            return;
+        }
+
         let fields:FieldDefinition[] = FieldDefinitions.index.get(block);
 
         if (fields == null)
@@ -35,6 +43,35 @@ export class FieldDefinitions
             if (def.column!= null && def.column == existing.column)
             {
                 console.log("Column "+def.column+" defined twice");
+                return;
+            }
+        });
+
+        fields.unshift(def);
+    }
+
+
+    private static addidx(block:string, def:FieldDefinition) : void
+    {
+        let fields:FieldDefinition[] = FieldDefinitions.idx.get(block);
+
+        if (fields == null)
+        {
+            fields = [];
+            FieldDefinitions.idx.set(block,fields);
+        }
+
+        if (def.hasOwnProperty("column"))
+        {
+            def.column = null;
+            console.log("Column cannot be specified for instance override "+def.name+"."+def.id);
+        }
+
+        fields.forEach((existing) =>
+        {
+            if (def.id == existing.id)
+            {
+                console.log("Field "+def.name+"."+def.id+" defined twice");
                 return;
             }
         });
