@@ -23,7 +23,7 @@ export class Trigger
 
 export class FieldTrigger
 {
-    private static index:Map<string,boolean> = null;
+    private static index:Map<string,Trigger> = null;
 
     public static Key:Trigger           = Trigger.Key;
     public static Change:Trigger        = Trigger.Change;
@@ -36,14 +36,14 @@ export class FieldTrigger
     {
         if (FieldTrigger.index == null)
         {
-            FieldTrigger.index = new Map<string,boolean>();
+            FieldTrigger.index = new Map<string,Trigger>();
 
-            FieldTrigger.index.set(Trigger.Key.name,true);
-            FieldTrigger.index.set(Trigger.Change.name,true);
-            FieldTrigger.index.set(Trigger.Typing.name,true);
-            FieldTrigger.index.set(Trigger.PreField.name,true);
-            FieldTrigger.index.set(Trigger.PostField.name,true);
-            FieldTrigger.index.set(Trigger.PostChange.name,true);
+            FieldTrigger.index.set(Trigger.Key.name,Trigger.Key);
+            FieldTrigger.index.set(Trigger.Change.name,Trigger.Change);
+            FieldTrigger.index.set(Trigger.Typing.name,Trigger.Typing);
+            FieldTrigger.index.set(Trigger.PreField.name,Trigger.PreField);
+            FieldTrigger.index.set(Trigger.PostField.name,Trigger.PostField);
+            FieldTrigger.index.set(Trigger.PostChange.name,Trigger.PostChange);
         }
 
         return(FieldTrigger.index.get(trigger.name) != null);
@@ -54,6 +54,20 @@ export class FieldTrigger
 export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
+
+    public addFieldTrigger(instance:any, func:TriggerFunction, ttypes:FieldTrigger|FieldTrigger[], tfields?:string|string[], tkeys?:string|string[]) : void
+    {
+        let types:Trigger[] = [];
+        let tasa:boolean = false;
+
+        if (ttypes.constructor.name == "Array") tasa = true;
+
+        if (tasa) types = ttypes as Trigger[];
+        else      types.push(ttypes as Trigger);
+
+        this.addTrigger(instance,func,types,tfields,tkeys);
+    }
+
 
     public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
     {

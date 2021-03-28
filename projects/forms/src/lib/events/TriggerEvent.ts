@@ -47,14 +47,16 @@ export class FieldTriggerEvent extends TriggerEvent
     public value:any;
     public row:number;
     public field:string;
+    public previous:any;
 
-    constructor(type:Trigger, field:string, row:number, value:any)
+    constructor(type:Trigger, field:string, row:number, value:any, previous:any)
     {
         super(type.name,null);
 
         this.row = row;
         this.field = field;
         this.value = value;
+        this.previous = previous;
     }
 }
 

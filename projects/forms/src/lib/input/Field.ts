@@ -51,7 +51,7 @@ export class Field
         if (this.fields.length > 0)
             return(this.fields[0]);
 
-        if (this.current$.length > 0)
+        if (this.current && this.current$.length > 0)
         {
             let inst:FieldInstance = this.current$[0];
             inst.row = this.row;

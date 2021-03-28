@@ -63,6 +63,21 @@ export class FieldData
     }
 
 
+    public getValue(row:number, column:string) : any
+    {
+        if (row < 0 || row >= this.data.length)
+            return(false);
+
+        let colno:number = this.index.get(column.toLowerCase());
+
+        if (colno == null)
+             return(false);
+
+        let rec:Row = this.data[+row];
+        return(rec.fields[+colno].value$);
+    }
+
+
     public state(row:number, state?:RecordState) : RecordState
     {
         if (state != null) this.data[row].state = state;
@@ -94,7 +109,7 @@ export class FieldData
 
         data[+row] = new Row(++this.scn,this);
         data[+row].state = RecordState.insert;
-        
+
         data = data.concat(this.data.slice(row,this.data.length));
 
         this.data = data;
@@ -119,12 +134,12 @@ export class FieldData
     }
 
 
-    public update(row:number, col:string, value:any) : boolean
+    public update(row:number, column:string, value:any) : boolean
     {
         if (row < 0 || row >= this.data.length)
             return(false);
 
-        let colno:number = this.index.get(col.toLowerCase());
+        let colno:number = this.index.get(column.toLowerCase());
 
         if (colno == null)
             return(false);
