@@ -6,13 +6,13 @@ import { FieldInstance } from "../input/FieldInstance";
 
 export class TriggerEvent
 {
-    public event:any;
+    public jsevent:any;
     public type:string;
 
-    constructor(type:string, event:any)
+    constructor(type:string, jsevent:any)
     {
         this.type = type;
-        this.event = event;
+        this.jsevent = jsevent;
     }
 }
 
@@ -29,7 +29,7 @@ export class KeyTriggerEvent extends TriggerEvent
         super(Trigger.Key.name,event);
 
         this.code = key;
-        this.event = event;
+        this.jsevent = event;
         this.key = KeyMapper.parse(key);
         this.key.name = KeyMapper.keyname(key);
 

@@ -17,12 +17,11 @@ export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 
-export {Trigger} from './lib/events/Triggers';
 export {Key,keymap} from './lib/keymap/KeyMap';
 export {TriggerEvent} from './lib/events/TriggerEvent';
-export {KeyTriggerEvent} from './lib/events/TriggerEvent';
-export {FieldTriggerEvent} from './lib/events/TriggerEvent';
+export {Trigger,FieldTrigger} from './lib/events/Triggers';
 export {TriggerFunction} from './lib/events/TriggerFunction';
+export {KeyTriggerEvent,FieldTriggerEvent} from './lib/events/TriggerEvent';
 
 export {Menu} from './lib/menu/Menu';
 export {MenuArea} from './lib/menu/MenuArea';
