@@ -464,10 +464,11 @@ export class BlockImpl
     }
 
 
-    public async display(start:number)
+    public async display(start:number) : Promise<void>
     {
         this.clear();
         this.offset = start;
+        if (this.data == null) return;
         if (this.offset < 0) this.offset = 0;
 
         let columns:string[] = this.data.fields;
@@ -497,6 +498,7 @@ export class BlockImpl
                     }
                 }
 
+                this.triggers.invokeTriggers(Trigger.PostChange);
                 this.data.state(+this.offset+r,RecordState.update);
             }
 
