@@ -473,7 +473,7 @@ export class BlockImpl
                     if (field != null)
                     {
                         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(Trigger.PostChange,field.name,r,field.value);
-                        this.triggers.invokeCustomTriggers(Trigger.PostChange,trgevent);
+                        this.triggers.invokeTriggers(Trigger.PostChange,field.name,trgevent);
                     }
                 }
 
@@ -485,21 +485,21 @@ export class BlockImpl
     }
 
 
-    public addListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[]) : void
+    public addTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[]) : void
     {
-        this.triggers.addListener(instance,listener,types);
+        this.triggers.addTrigger(instance,func,types);
     }
 
 
-    public addKeyListener(instance:any, listener:TriggerFunction, keys?:string|string[]) : void
+    public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
     {
-        this.triggers.addKeyListener(instance,listener,keys);
+        this.triggers.addKeyTrigger(instance,func,keys);
     }
 
 
-    public addFieldListener(instance:any, listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
-        this.triggers.addFieldListener(instance,listener,types,fields);
+        this.triggers.addFieldTrigger(instance,func,types,fields);
     }
 
 

@@ -36,11 +36,11 @@ export class Block
 
     public addKeyListener(listener:TriggerFunction, keys?:string|string[]) : void
     {
-        this._impl_.addKeyListener(this,listener,keys);
+        this._impl_.addKeyTrigger(this,listener,keys);
     }
 
     public addFieldListener(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
-        this._impl_.addFieldListener(this,listener,types,fields);
+        this._impl_.addFieldTrigger(this,listener,types,fields);
     }
 }

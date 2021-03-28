@@ -770,19 +770,19 @@ export class FormImpl
 
     public addTrigger(instance:any, func:TriggerFunction, types?:string|string[]) : void
     {
-        this.triggers.addKeyListener(instance,func,types);
+        this.triggers.addKeyTrigger(instance,func,types);
     }
 
 
     public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
     {
-        this.triggers.addKeyListener(instance,func,keys);
+        this.triggers.addKeyTrigger(instance,func,keys);
     }
 
 
     public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
-        this.triggers.addFieldListener(instance,func,types,fields);
+        this.triggers.addFieldTrigger(instance,func,types,fields);
     }
 
 
