@@ -21,153 +21,146 @@ export class Trigger
     private constructor(public name:string) {};
 }
 
+export class FieldTrigger
+{
+    private static index:Map<string,boolean> = null;
+
+    public static Key:Trigger           = Trigger.Key;
+    public static Change:Trigger        = Trigger.Change;
+    public static Typing:Trigger        = Trigger.Typing;
+    public static PreField:Trigger      = Trigger.PreField;
+    public static PostField:Trigger     = Trigger.PostField;
+    public static PostChange:Trigger    = Trigger.PostChange;
+
+    public static isFieldTrigger(trigger:Trigger) : boolean
+    {
+        if (FieldTrigger.index == null)
+        {
+            FieldTrigger.index = new Map<string,boolean>();
+
+            FieldTrigger.index.set(Trigger.Key.name,true);
+            FieldTrigger.index.set(Trigger.Change.name,true);
+            FieldTrigger.index.set(Trigger.Typing.name,true);
+            FieldTrigger.index.set(Trigger.PreField.name,true);
+            FieldTrigger.index.set(Trigger.PostField.name,true);
+            FieldTrigger.index.set(Trigger.PostChange.name,true);
+        }
+
+        return(FieldTrigger.index.get(trigger.name) != null);
+    }
+}
+
 
 export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
 
-    public addTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[]) : void
+    public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
     {
-        let typesarr:Trigger[] = [];
-        let array:boolean = false;
-        if (types.constructor.name == "Array") array = true;
+        let keys:string[] = [];
+        let fields:string[] = [];
+        let types:Trigger[] = [];
 
-        if (array) typesarr = types as Trigger[];
-        else       typesarr.push(types as Trigger);
+        let tasa:boolean = false;
+        if (ttypes.constructor.name == "Array") tasa = true;
 
-        typesarr.forEach((type) =>
+        if (tasa) types = ttypes as Trigger[];
+        else      types.push(ttypes as Trigger);
+
+        if (tfields != null)
         {
-            switch(type)
-            {
-                case Trigger.Key       : this.addKeyTrigger(instance,func); break;
-                case Trigger.PostField : this.addFieldTrigger(instance,func,type); break;
-                case Trigger.PreField  : this.addFieldTrigger(instance,func,type); break;
-                case Trigger.Change    : this.addFieldTrigger(instance,func,type); break;
-                case Trigger.Lock      : this.addFieldTrigger(instance,func,type); break;
-                case Trigger.Typing    : this.addFieldTrigger(instance,func,type); break;
-                case Trigger.PreQuery  : this.addEventTrigger(instance,func,type); break;
-                case Trigger.PreInsert : this.addEventTrigger(instance,func,type); break;
-                case Trigger.PreUpdate : this.addEventTrigger(instance,func,type); break;
-                case Trigger.PreDelete : this.addEventTrigger(instance,func,type); break;
+            let fasa:boolean = false;
+            if (tfields.constructor.name == "Array") fasa = true;
 
-                default: console.log("Add Listener, unknown type: "+type);
-            }
-        });
-    }
-
-
-    private addEventTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[]) : void
-    {
-        let typesarr:Trigger[] = [];
-        let array:boolean = false;
-        if (types.constructor.name == "Array") array = true;
-
-        if (array) typesarr = types as Trigger[];
-        else       typesarr.push(types as Trigger);
-
-        typesarr.forEach((type) =>
-        {
-            let lsnrs:Listener[] = this.triggers.types.get(type.name);
-
-            if (lsnrs == null)
-            {
-                lsnrs = [];
-                this.triggers.types.set(type.name,lsnrs);
-            }
-
-            lsnrs.push({inst: instance, func: func});
-        });
-    }
-
-
-    public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
-    {
-        if (keys == null)
-        {
-            let lsnrs:Listener[] = this.triggers.types.get(Trigger.Key.name);
-
-            if (lsnrs == null)
-            {
-                lsnrs = [];
-                this.triggers.types.set(Trigger.Key.name,lsnrs);
-            }
-
-            lsnrs.push({inst: instance, func: func});
+            if (fasa) fields = tfields as string[];
+            else      fields.push(tfields as string);
         }
-        else
+
+        if (tkeys != null)
         {
-            let keysarr:string[] = [];
-            let array:boolean = false;
-            if (keys.constructor.name == "Array") array = true;
+            let kasa:boolean = false;
+            if (tkeys.constructor.name == "Array") kasa = true;
 
-            if (array) keysarr = keys as string[];
-            else       keysarr.push(keys as string);
-
-            keysarr.forEach((key) =>
-            {
-                let lsnrs:Listener[] = this.triggers.keys.get(key);
-
-                if (lsnrs == null)
-                {
-                    lsnrs = [];
-                    this.triggers.keys.set(key,lsnrs);
-                }
-
-                lsnrs.push({inst: instance, func: func});
-            });
+            if (kasa) keys = tkeys as string[];
+            else      keys.push(tkeys as string);
         }
-    }
 
-
-    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
-    {
-        let typesarr:Trigger[] = [];
-        let array:boolean = false;
-        if (types.constructor.name == "Array") array = true;
-
-        if (array) typesarr = types as Trigger[];
-        else       typesarr.push(types as Trigger);
-
-        if (fields == null)
+        if (fields.length > 0)
         {
-            typesarr.forEach((type) =>
-            {
-                let lsnrs:Listener[] = this.triggers.types.get(type.name);
-
-                if (lsnrs == null)
-                {
-                    lsnrs = [];
-                    this.triggers.types.set(type.name,lsnrs);
-                }
-
-                lsnrs.push({inst: instance, func: func});
-            });
-        }
-        else
-        {
-            let fieldsarr:string[] = [];
-            let array:boolean = false;
-            if (fields.constructor.name == "Array") array = true;
-
-            if (array) fieldsarr = fields as string[];
-            else       fieldsarr.push(fields as string);
-
-            fieldsarr.forEach((field) =>
+            fields.forEach((field) =>
             {
                 field = field.toLowerCase();
-                let lsnrs:Listener[] = this.triggers.fields.get(field);
+                let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
 
-                if (lsnrs == null)
+                if (triggers == null)
                 {
-                    lsnrs = [];
-                    console.log("adFieldTrigger for field "+field);
-                    this.triggers.fields.set(field,lsnrs);
+                    triggers = new Map<string,Listener[]>();
+                    this.triggers.fields.set(field,triggers);
                 }
 
-                typesarr.forEach((type) =>
+                types.forEach((type) =>
                 {
-                    lsnrs.push({inst: instance, func: func, type: type});
+                    if (type == Trigger.Key)
+                    {
+                        keys.forEach((key) =>
+                        {
+                            let lsnrs:Listener[] = triggers.get(key);
+
+                            if (lsnrs == null)
+                            {
+                                lsnrs = [];
+                                triggers.set(key,lsnrs);
+                            }
+
+                            lsnrs.push({inst: instance, func: func});
+                        });
+                    }
+                    else if (FieldTrigger.isFieldTrigger(type))
+                    {
+                        let lsnrs:Listener[] = triggers.get(type.name);
+
+                        if (lsnrs == null)
+                        {
+                            lsnrs = [];
+                            triggers.set(type.name,lsnrs);
+                        }
+
+                        lsnrs.push({inst: instance, func: func});
+                    }
                 });
+            });
+        }
+        else
+        {
+            types.forEach((type) =>
+            {
+                if (type == Trigger.Key)
+                {
+                    keys.forEach((key) =>
+                    {
+                        let lsnrs:Listener[] = this.triggers.types.get(key);
+
+                        if (lsnrs == null)
+                        {
+                            lsnrs = [];
+                            this.triggers.types.set(key,lsnrs);
+                        }
+
+                        lsnrs.push({inst: instance, func: func});
+                    });
+                }
+                else
+                {
+                    let lsnrs:Listener[] = this.triggers.types.get(type.name);
+
+                    if (lsnrs == null)
+                    {
+                        lsnrs = [];
+                        this.triggers.types.set(type.name,lsnrs);
+                    }
+
+                    lsnrs.push({inst: instance, func: func});
+                }
             });
         }
     }
@@ -175,96 +168,12 @@ export class Triggers
 
     public async invokeTriggers(type:Trigger, arg:string, event:TriggerEvent) : Promise<boolean>
     {
-        if (type == Trigger.Key)
-            return(this.invokeKeyTriggers(arg,event));
+        let key:string = null;
+        let field:string = null;
 
-        console.log("type: "+type.name+" arg = "+arg);
-        if
-        (
-            type == Trigger.PostField   ||
-            type == Trigger.PreField    ||
-            type == Trigger.Change      ||
-            type == Trigger.Lock        ||
-            type == Trigger.Typing      ||
-            type == Trigger.PreQuery    ||
-            type == Trigger.PreInsert   ||
-            type == Trigger.PreUpdate   ||
-            type == Trigger.PreDelete
-        )
-        return(this.invokeFieldTriggers(arg,event,type));
+        if (type == Trigger.Key) key = arg;
+        else                     field = arg;
 
-        return(true);
-    }
-
-
-    public async invokeKeyTriggers(key:string, event:TriggerEvent) : Promise<boolean>
-    {
-        let lsnrs:Listener[] = this.triggers.keys.get(key);
-        if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
-        {
-            if (!await ilsnr.inst[ilsnr.func.name](event))
-                return(false);
-        });
-
-        lsnrs = this.triggers.types.get(Trigger.Key.name);
-        if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
-        {
-            if (!await ilsnr.inst[ilsnr.func.name](event))
-                return(false);
-        });
-
-        return(true);
-    }
-
-
-    public async invokeFieldTriggers(field:string, event:TriggerEvent, types:Trigger|Trigger[]) : Promise<boolean>
-    {
-        let lsnrs:Listener[] = null;
-        if (field != null) field = field.toLowerCase();
-
-        this.triggers.fields.forEach((trg,field) => {console.log(field+" "+trg[0].field)});
-
-        lsnrs = this.triggers.fields.get(field);
-        if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
-        {
-            console.log("invokeFieldTriggers "+field);
-            if (!await ilsnr.inst[ilsnr.func.name](event))
-                return(false);
-        });
-
-        let typesarr:Trigger[] = [];
-        let array:boolean = false;
-        if (types.constructor.name == "Array") array = true;
-
-        if (array) typesarr = types as Trigger[];
-        else       typesarr.push(types as Trigger);
-
-        typesarr.forEach((type) =>
-        {
-            lsnrs = this.triggers.types.get(type.name);
-
-            if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
-            {
-                if (!await ilsnr.inst[ilsnr.func.name](event))
-                    return(false);
-            });
-        });
-
-        return(true);
-    }
-
-
-    public async invokeCustomTriggers(type:Trigger, event:TriggerEvent) : Promise<boolean>
-    {
-        let lsnrs:Listener[] = null;;
-        lsnrs = this.triggers.types.get(type.name);
-
-        if (lsnrs != null) lsnrs.forEach(async (ilsnr) =>
-        {
-            if (!await ilsnr.inst[ilsnr.func.name](event))
-                return(false);
-        });
-
-        return(true);
+        
     }
 }
