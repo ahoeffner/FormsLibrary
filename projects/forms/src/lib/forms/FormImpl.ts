@@ -8,7 +8,6 @@ import { keymap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
-import { TriggerFunction } from "../events/TriggerFunction";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
@@ -21,6 +20,7 @@ import { Record, RecordState } from "../blocks/Record";
 import { Trigger, Triggers } from "../events/Triggers";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
+import { TriggerFunction } from "../events/TriggerFunction";
 import { KeyDefinition } from "../annotations/KeyDefinition";
 import { TableDefinition } from "../database/TableDefinition";
 import { ColumnDefinition } from "../database/ColumnDefinition";
@@ -768,21 +768,21 @@ export class FormImpl
     }
 
 
-    public addTrigger(instance:any, func:TriggerFunction, types?:string|string[]) : void
+    public addTrigger(instance:any, func:TriggerFunction, types?:Trigger|Trigger[]) : void
     {
-        this.triggers.addKeyTrigger(instance,func,types);
+        this.triggers.addTrigger(instance,func,types)
     }
 
 
     public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
     {
-        this.triggers.addKeyTrigger(instance,func,keys);
+        this.triggers.addTrigger(instance,func,Trigger.Key,null,keys)
     }
 
 
-    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields:string|string[], keys?:string|string[]) : void
     {
-        this.triggers.addFieldTrigger(instance,func,types,fields);
+        this.triggers.addTrigger(instance,func,types,fields,keys)
     }
 
 

@@ -166,14 +166,71 @@ export class Triggers
     }
 
 
-    public async invokeTriggers(type:Trigger, arg:string, event:TriggerEvent) : Promise<boolean>
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
     {
-        let key:string = null;
-        let field:string = null;
+        if (type == Trigger.Key && key != null)
+        {
+            let lsnrs:Listener[] = this.triggers.types.get(key);
 
-        if (type == Trigger.Key) key = arg;
-        else                     field = arg;
+            if (lsnrs != null)
+            {
+                lsnrs.forEach(async (lsnr) =>
+                {
+                    if (!await lsnr.inst[lsnr.func.name](event))
+                        return(false);
+                });
+            }
+        }
+        else
+        {
+            let lsnrs:Listener[] = this.triggers.types.get(type.name);
 
-        
+            if (lsnrs != null)
+            {
+                lsnrs.forEach(async (lsnr) =>
+                {
+                    if (!await lsnr.inst[lsnr.func.name](event))
+                        return(false);
+                });
+            }
+        }
+
+        return(true);
+    }
+
+
+    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
+    {
+        let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
+        if (triggers == null) return(true);
+
+        if (type == Trigger.Key && key != null)
+        {
+            let lsnrs:Listener[] = triggers.get(key);
+
+            if (lsnrs != null)
+            {
+                lsnrs.forEach(async (lsnr) =>
+                {
+                    if (!await lsnr.inst[lsnr.func.name](event))
+                        return(false);
+                });
+            }
+        }
+        else
+        {
+            let lsnrs:Listener[] = triggers.get(type.name);
+
+            if (lsnrs != null)
+            {
+                lsnrs.forEach(async (lsnr) =>
+                {
+                    if (!await lsnr.inst[lsnr.func.name](event))
+                        return(false);
+                });
+            }
+        }
+
+        return(true);
     }
 }
