@@ -747,7 +747,7 @@ export class BlockImpl
         {
             trgevent = new KeyTriggerEvent(event,key,field);
 
-            if (key != null && !await this.triggers.invokeTriggers(Trigger.Key,event,key))
+            if (key != null && !await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
         }
 

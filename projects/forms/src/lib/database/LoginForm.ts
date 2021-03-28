@@ -72,7 +72,6 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 
     public async onEvent(kevent:KeyTriggerEvent) : Promise<boolean>
     {
-        console.log("Login event="+kevent.code)
         if (kevent.code == keymap.enter) this.close(false);
         if (kevent.code == keymap.escape) this.close(true);
 
