@@ -349,21 +349,6 @@ export class FormImpl
                         console.log("key "+kdef.name+" column "+col+" is not a column");
                         return;
                     }
-
-                    // Create fiels if missing
-                    if (cindex.get(col) == null)
-                    {
-                        let def:FieldDefinition = block.fielddef.get(col);
-
-                        if (def == null)
-                        {
-                            def = {name: col};
-                            FieldDefinitions.add(block.clazz,def);
-                        }
-
-                        def.column = col;
-                        cindex = FieldDefinitions.getColumnIndex(block.clazz);
-                    }
                 });
 
                 key = new Key(kdef.name);
@@ -383,8 +368,13 @@ export class FormImpl
             {
                 pkey.columns.forEach((part) =>
                 {
+                    let fname:string = part.name.toLowerCase();
+                    let fdef:FieldDefinition = cindex.get(part.name);
+
+                    if (fdef != null) fname = fdef.name;
                     sorted.push(colindex.get(part.name));
-                    fields.push(cindex.get(part.name).name);
+
+                    fields.push(fname);
                 });
             }
 
