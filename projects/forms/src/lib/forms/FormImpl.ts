@@ -397,7 +397,10 @@ export class FormImpl
 
                 if (fdef == null)
                 {
-                    fdef = {name: inst.name};
+                    fdef = {name: inst.name, type: FieldType.input};
+
+                    let cdef:ColumnDefinition = colindex.get(""+fdef.name);
+                    if (cdef != null) fdef.mandatory = cdef.mandatory;
 
                     fields.push(inst.name);
                     fieldidx.set(inst.name,fdef);
