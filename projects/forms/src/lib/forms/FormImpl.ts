@@ -367,7 +367,7 @@ export class FormImpl
                     if (field != null) fname = field.name;
                     else
                     {
-                        field = ffieldidx.get(column.name);
+                        field = fieldidx.get(column.name);
                         if (field == null) fname = column.name;
                         else
                         {
@@ -382,26 +382,32 @@ export class FormImpl
 
             columns = sorted;
 
-            // Then other fields, form definition overrides
-            fieldidx.forEach((field) => {if (field.column == null) fields.push(field.name)});
+            // Then other defined fields (block or form)
+            fieldidx.forEach((field) => {if (field.column == null) console.log("fields add "+field); if (field.column == null) fields.push(field.name)});
 
-            // Set field properties
+            // Gather fieldinstance overrides
             let idindex:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
             let fidindex:Map<string,FieldDefinition> = FieldDefinitions.getFormFieldIndex(this.name,block.clazz);
             fidindex.forEach((def,fld) => {idindex.set(fld,def)});
 
+            // Set field properties and add undefined fields
             bfields.get(block.alias).forEach((inst) =>
             {
                 let fdef:FieldDefinition = fieldidx.get(inst.name);
+
+                if (fdef == null)
+                {
+                    fdef = {name: inst.name};
+
+                    fields.push(inst.name);
+                    fieldidx.set(inst.name,fdef);
+                }
 
                 if (inst.id.length > 0)
                 {
                     let iddef:FieldDefinition = idindex.get(inst.id);
                     if (iddef != null) fdef = iddef;
                 }
-
-                if (fdef == null)
-                    fdef = {name: inst.name};
 
                 if (fdef.type == null)
                     fdef.type = FieldType.input
@@ -421,6 +427,7 @@ export class FormImpl
                 else table = new Table(this.conn,tabdef,pkey,columns,ffieldidx,rows);
             }
 
+            block.fielddef = fieldidx;
             block.data = new FieldData(block,table,fields);
 
             // Start form

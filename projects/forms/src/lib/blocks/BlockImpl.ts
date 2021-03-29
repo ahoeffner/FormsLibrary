@@ -31,6 +31,7 @@ export class BlockImpl
     private details$:BlockImpl[] = [];
     private state:FormState = FormState.normal;
     private triggers:Triggers = new Triggers();
+    private fieldef$:Map<string,FieldDefinition>;
 
 
     constructor(public block:Block)
@@ -83,7 +84,7 @@ export class BlockImpl
     {
         return(this.field$);
     }
-    
+
 
     public get clazz() : string
     {
@@ -115,6 +116,18 @@ export class BlockImpl
     }
 
 
+    public set fielddef(fielddef:Map<string,FieldDefinition>)
+    {
+        this.fieldef$ = fielddef;
+    }
+
+
+    public get fielddef() : Map<string,FieldDefinition>
+    {
+        return(this.fieldef$);
+    }
+
+
     public focus() : void
     {
         if (this.field != null) this.field.focus();
@@ -125,7 +138,7 @@ export class BlockImpl
     public getValue(column:string, row:number) : any
     {
         if (this.data == null) return(null);
-        return(this.data.getValue(row,column));
+        return(this.data.getValue(+row+this.offset,column));
     }
 
 
@@ -137,7 +150,7 @@ export class BlockImpl
         let field:Field = this.records[row].getField(column);
         if (field != null) field.value = value;
 
-        return(this.data.update(row,column,value));
+        return(this.data.update(+row+this.offset,column,value));
     }
 
 
@@ -386,10 +399,10 @@ export class BlockImpl
     }
 
 
-    private setDataValue(row:number, col:string, value:any) : void
+    private setDataValue(row:number, col:string, value:any) : boolean
     {
-        if (this.data == null) return;
-        this.data.update(+row+this.offset,col,value);
+        if (this.data == null) return(false);
+        return(this.data.update(+row+this.offset,col,value));
     }
 
 
@@ -419,6 +432,8 @@ export class BlockImpl
         if (this.state == FormState.entqry) return(true);
 
         let previous:any = this.getValue(field.name,field.row);
+        if (previous == field.value) return(true);
+
         this.setDataValue(field.row,field.name,field.value);
 
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
@@ -513,12 +528,13 @@ export class BlockImpl
 
                     if (field != null)
                     {
-                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,r,field.value,field.value);
+                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+r,field.value,field.value);
                         this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent);
                     }
                 }
 
-                this.triggers.invokeTriggers(Trigger.PostChange);
+                // No row ?
+                //this.triggers.invokeTriggers(Trigger.PostChange);
                 this.data.state(+this.offset+r,RecordState.update);
             }
 

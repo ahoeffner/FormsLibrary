@@ -112,7 +112,7 @@ export class FieldDefinitions
 
         fields.unshift(def);
         index.set(def.name,def);
-        if (def.column != null) columns.set(def.name,def);
+        if (def.column != null) columns.set(""+def.column,def);
     }
 
 
@@ -160,7 +160,7 @@ export class FieldDefinitions
 
         fields.unshift(def);
         index.set(def.name,def);
-        if (def.column != null) columns.set(def.name,def);
+        if (def.column != null) columns.set(""+def.column,def);
     }
 
 
