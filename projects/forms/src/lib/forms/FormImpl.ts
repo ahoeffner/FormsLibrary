@@ -257,6 +257,7 @@ export class FormImpl
         blockdef.forEach((bdef) => {this.setBlockUsage(fusage,bdef);});
 
         container.finish();
+        let bfields:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
 
         container.getBlocks().forEach((cb) =>
         {
@@ -264,62 +265,24 @@ export class FormImpl
 
             if (block == null)
             {
-                console.log("Form has fields bound to "+cb.name+" that doesn't exist");
-                return;
+                let dblk = new Block();
+                block = dblk["_impl_"];
+
+                block.alias = cb.name;
+                this.blocks.push(block);
+                this.blkindex.set(cb.name,block);
+
+                block.form = this;
+                block.setApplication(this.app);
+
+                console.log("Form has fields bound to "+cb.name+" that doesn't exist. block created");
             }
+
+            bfields.set(block.alias,cb.fields);
 
             cb.records.forEach((rec) =>
             // Copy records from container
             {block.addRecord(new Record(rec.row,rec.fields,rec.index))});
-
-            // Set (create) field definitions for all fields
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
-            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
-
-            cb.fields.forEach((inst) =>
-            {
-                let def:FieldDefinition = fielddef.get(inst.name);
-                let coldef:ColumnDefinition = colindex.get(inst.name.toLowerCase());
-
-                if (def == null)
-                {
-                    def = {name: inst.name};
-                    FieldDefinitions.add(false,block.clazz,def);
-                    fielddef = FieldDefinitions.getFieldIndex(block.clazz);
-                }
-
-                if (def.type == null)
-                    def.type = FieldType.input;
-
-                if (!def.hasOwnProperty("mandatory") && coldef != null)
-                    def.mandatory = coldef.mandatory;
-
-                let idef:FieldDefinition = null;
-
-                if (inst.id.length > 0)
-                    idef = FieldDefinitions.getFieldOverride(block.clazz,inst.id);
-
-                if (idef != null)
-                {
-                    def = idef;
-
-                    if (idef.type == null)
-                        idef.type = def.type;
-
-                    if (!idef.hasOwnProperty("mandatory"))
-                        idef.mandatory = def.mandatory;
-
-                    if (!idef.hasOwnProperty("fieldoptions"))
-                        idef.fieldoptions = def.fieldoptions;
-                }
-
-                inst.type = def.type;
-                inst.case = def.case;
-                inst.fieldoptions = def.fieldoptions;
-
-            });
-
-            block.fielddef = fielddef;
         });
 
         this.blkindex.forEach((block) =>
@@ -327,8 +290,9 @@ export class FormImpl
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.clazz);
             let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.clazz);
+
+            // Column definitions
             let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
-            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
 
             // Create keys and decide on primary
             let pkey:Key = null;
@@ -336,41 +300,43 @@ export class FormImpl
             {
                 let key:Key = this.keys.get(kdef.name);
 
-                if (key != null)
+                if (key == null)
+                {
+                    key = new Key(kdef.name);
+                    this.keys.set(kdef.name,key);
+
+                    kdef.columns.forEach((col) =>
+                    {
+                        if (colindex.get(col) != null) key.add(col);
+                        else console.log("key "+kdef.name+" column "+col+" is not a column, ignored");
+                    });
+
+                    if (kdef.unique && pkey == null) pkey = key;
+                    if (kdef.name.startsWith("primary")) pkey = key;
+                }
+                else
                 {
                     console.log("key "+kdef.name+" is defined twice");
-                    return;
                 }
-
-                kdef.columns.forEach((col) =>
-                {
-                    // Check each column
-                    if (colindex.get(col) == null)
-                    {
-                        console.log("key "+kdef.name+" column "+col+" is not a column");
-                        return;
-                    }
-                });
-
-                key = new Key(kdef.name);
-                this.keys.set(kdef.name,key);
-                kdef.columns.forEach((col) => {key.add(col)});
-
-                if (kdef.unique && pkey == null) pkey = key;
-                if (kdef.name.startsWith("primary")) pkey = key;
             });
+
+            // Columns mapped to fields. Form definitions overrides
+            let colfields:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
+            let colffields:Map<string,FieldDefinition> = FieldDefinitions.getFormColumnIndex(this.name,block.alias);
+            colffields.forEach((def,fld) => {colfields.set(fld,def)});
 
             let fields:string[] = [];
             let sorted:ColumnDefinition[] = [];
-            // List of data-fields, first pkey, then other columns, then other fields
-            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.clazz);
 
+            // List of data-fields
+
+            // First pkey
             if (pkey != null)
             {
                 pkey.columns.forEach((part) =>
                 {
                     let fname:string = part.name.toLowerCase();
-                    let fdef:FieldDefinition = cindex.get(part.name);
+                    let fdef:FieldDefinition = colfields.get(part.name);
 
                     if (fdef != null) fname = fdef.name;
                     sorted.push(colindex.get(part.name));
@@ -378,6 +344,12 @@ export class FormImpl
                     fields.push(fname);
                 });
             }
+
+            // Then other columns. First gather all definitions
+            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.clazz);
+            let fieldidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
+            let ffieldidx:Map<string,FieldDefinition> = FieldDefinitions.getFormFieldIndex(this.name,block.alias);
+            ffieldidx.forEach((def,fld) => {fieldidx.set(fld,def)});
 
             columns.forEach((column) =>
             {
@@ -388,12 +360,12 @@ export class FormImpl
                 {
                     sorted.push(column);
                     let fname:string = null;
-                    let field:FieldDefinition = cindex.get(column.name);
+                    let field:FieldDefinition = colfields.get(column.name);
 
                     if (field != null) fname = field.name;
                     else
                     {
-                        field = block.fielddef.get(column.name);
+                        field = ffieldidx.get(column.name);
                         if (field == null) fname = column.name;
                         else
                         {
@@ -408,8 +380,15 @@ export class FormImpl
 
             columns = sorted;
 
-            let fielddef:FieldDefinition[] = FieldDefinitions.getFields(block.clazz);
-            fielddef.forEach((field) => {if (field.column == null) fields.push(field.name)});
+            // Then other fields, form definition overrides
+            fieldidx.forEach((field) => {if (field.column == null) fields.push(field.name)});
+
+            // Set field properties
+            console.log("alias: "+block.alias);
+            bfields.get(block.alias).forEach((inst) =>
+            {
+                console.log("inst: "+inst.name);
+            });
 
             // Create data-backing table
             let table:Table = null;
@@ -418,7 +397,7 @@ export class FormImpl
             if (tabdef != null)
             {
                 if (tabdef.name == null) console.log("No table specified for "+block.alias);
-                else table = new Table(this.conn,tabdef,pkey,columns,block.fielddef,rows);
+                else table = new Table(this.conn,tabdef,pkey,columns,ffieldidx,rows);
             }
 
             block.data = new FieldData(block,table,fields);

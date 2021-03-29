@@ -31,7 +31,7 @@ export class BlockImpl
     private details$:BlockImpl[] = [];
     private state:FormState = FormState.normal;
     private triggers:Triggers = new Triggers();
-    private fielddef$:Map<string,FieldDefinition>;
+
 
     constructor(public block:Block)
     {
@@ -83,19 +83,7 @@ export class BlockImpl
     {
         return(this.field$);
     }
-
-
-    public set fielddef(def:Map<string,FieldDefinition>)
-    {
-        this.fielddef$ = def;
-    }
-
-
-    public get fielddef() : Map<string,FieldDefinition>
-    {
-        return(this.fielddef$);
-    }
-
+    
 
     public get clazz() : string
     {
