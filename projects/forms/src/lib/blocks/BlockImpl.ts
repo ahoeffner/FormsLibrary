@@ -438,16 +438,16 @@ export class BlockImpl
 
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
 
-        if (!await this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
-            return(false);
-
-        if (!await this.triggers.invokeTriggers(Trigger.PostChange,trgevent))
-            return(false);
-
         if (!await this.triggers.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
             return(false);
 
         if (!await this.triggers.invokeTriggers(Trigger.WhenValidateField,trgevent))
+            return(false);
+
+        if (!await this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
+            return(false);
+
+        if (!await this.triggers.invokeTriggers(Trigger.PostChange,trgevent))
             return(false);
 
         return(true);
@@ -533,8 +533,7 @@ export class BlockImpl
                     }
                 }
 
-                // No row ?
-                //this.triggers.invokeTriggers(Trigger.PostChange);
+                this.triggers.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r));
                 this.data.state(+this.offset+r,RecordState.update);
             }
 

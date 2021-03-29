@@ -167,7 +167,7 @@ export class Triggers
     }
 
 
-    public async invokeTriggers(type:Trigger, event?:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
     {
         if (type == Trigger.Key && key != null)
         {
