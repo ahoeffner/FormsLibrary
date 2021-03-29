@@ -121,7 +121,12 @@ export class FieldInstance implements AfterViewInit
         this.fgroup$ = field;
     }
 
-    public get options() : FieldOptions
+    public set fieldoptions(options:FieldOptions)
+    {
+        this.options$ = options;
+    }
+
+    public get fieldoptions() : FieldOptions
     {
         return(this.options$);
     }

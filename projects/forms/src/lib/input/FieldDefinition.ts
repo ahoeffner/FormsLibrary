@@ -1,4 +1,7 @@
 import { FieldType } from "./FieldType";
+import { DatabaseUsage } from "../database/DatabaseUsage";
+import { FieldOption, FieldOptions } from "./FieldOptions";
+
 
 export enum Case
 {
@@ -15,4 +18,5 @@ export interface FieldDefinition
     type?:FieldType;
     mandatory?:boolean;
     column?:boolean|string;
+    fieldoptions?:FieldOptions;
 }

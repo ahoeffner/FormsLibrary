@@ -271,31 +271,50 @@ export class FormImpl
             // Copy records from container
             {block.addRecord(new Record(rec.row,rec.fields,rec.index))});
 
-            // Set fieldtype for all fields
+            // Set (create) field definitions for all fields
             let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getIndex(block.clazz);
             let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.name);
 
             cb.fields.forEach((inst) =>
             {
                 let def:FieldDefinition = fielddef.get(inst.name);
+                let coldef:ColumnDefinition = colindex.get(inst.name.toLowerCase());
 
-                if (inst.id.length > 0)
+                if (def == null)
                 {
-                    let idef:FieldDefinition = FieldDefinitions.getInstanceDefinition(block.name,inst.id);
-                    if (idef != null) def = idef;
+                    def = {name: inst.name};
+                    FieldDefinitions.add(inst.block,def);
                 }
 
-                if (def == null) def = {name: inst.name};
-
                 if (def.type == null)
-                {
-                    let coldef:ColumnDefinition = colindex.get(inst.name.toLowerCase());
-                    if (coldef != null) def.mandatory = coldef.mandatory;
                     def.type = FieldType.input;
+
+                if (!def.hasOwnProperty("mandatory") && coldef != null)
+                    def.mandatory = coldef.mandatory;
+
+                let idef:FieldDefinition = null;
+
+                if (inst.id.length > 0)
+                    idef = FieldDefinitions.getInstanceDefinition(block.name,inst.id);
+
+                if (idef != null)
+                {
+                    def = idef;
+
+                    if (idef.type == null)
+                        idef.type = def.type;
+
+                    if (!idef.hasOwnProperty("mandatory"))
+                        idef.mandatory = def.mandatory;
+
+                    if (!idef.hasOwnProperty("fieldoptions"))
+                        idef.fieldoptions = def.fieldoptions;
                 }
 
                 inst.type = def.type;
                 inst.case = def.case;
+                inst.fieldoptions = def.fieldoptions;
+
             });
 
             block.fielddef = fielddef;
