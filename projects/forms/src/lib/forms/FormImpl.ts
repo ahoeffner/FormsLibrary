@@ -257,6 +257,7 @@ export class FormImpl
         blockdef.forEach((bdef) => {this.setBlockUsage(fusage,bdef);});
 
         container.finish();
+
         container.getBlocks().forEach((cb) =>
         {
             let block:BlockImpl = this.blkindex.get(cb.name);
@@ -272,8 +273,8 @@ export class FormImpl
             {block.addRecord(new Record(rec.row,rec.fields,rec.index))});
 
             // Set (create) field definitions for all fields
-            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getIndex(block.clazz);
-            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.name);
+            let fielddef:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
+            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
 
             cb.fields.forEach((inst) =>
             {
@@ -283,8 +284,8 @@ export class FormImpl
                 if (def == null)
                 {
                     def = {name: inst.name};
-                    FieldDefinitions.add(block.clazz,def);
-                    fielddef = FieldDefinitions.getIndex(block.clazz);
+                    FieldDefinitions.add(false,block.clazz,def);
+                    fielddef = FieldDefinitions.getFieldIndex(block.clazz);
                 }
 
                 if (def.type == null)
@@ -296,7 +297,7 @@ export class FormImpl
                 let idef:FieldDefinition = null;
 
                 if (inst.id.length > 0)
-                    idef = FieldDefinitions.getInstanceDefinition(block.name,inst.id);
+                    idef = FieldDefinitions.getFieldOverride(block.clazz,inst.id);
 
                 if (idef != null)
                 {
@@ -362,7 +363,7 @@ export class FormImpl
             let fields:string[] = [];
             let sorted:ColumnDefinition[] = [];
             // List of data-fields, first pkey, then other columns, then other fields
-            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.name);
+            let columns:ColumnDefinition[] = ColumnDefinitions.get(block.clazz);
 
             if (pkey != null)
             {

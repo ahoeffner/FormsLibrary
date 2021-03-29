@@ -497,10 +497,14 @@ export class BlockImpl
         this.clear();
         this.offset = start;
         if (this.data == null) return;
+
+        if (+this.offset + +this.rows > +this.data.rows)
+            this.offset = this.data.rows - this.rows;
+
         if (this.offset < 0) this.offset = 0;
 
         let columns:string[] = this.data.fields;
-        let rows:any[][] = this.data.get(start,this.rows);
+        let rows:any[][] = this.data.get(this.offset,this.rows);
 
         for(let r = 0; r < rows.length; r++)
         {

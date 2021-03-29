@@ -123,7 +123,13 @@ export class FieldInstance implements AfterViewInit
 
     public set fieldoptions(options:FieldOptions)
     {
-        this.options$ = options;
+        if (options != null)
+        {
+            this.options$ = options;
+            if (!this.options$.hasOwnProperty("query")) options.query = true;
+            if (!this.options$.hasOwnProperty("insert")) options.insert = true;
+            if (!this.options$.hasOwnProperty("update")) options.update = true;
+        }
     }
 
     public get fieldoptions() : FieldOptions
