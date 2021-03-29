@@ -283,7 +283,8 @@ export class FormImpl
                 if (def == null)
                 {
                     def = {name: inst.name};
-                    FieldDefinitions.add(inst.block,def);
+                    FieldDefinitions.add(block.clazz,def);
+                    fielddef = FieldDefinitions.getIndex(block.clazz);
                 }
 
                 if (def.type == null)
@@ -323,10 +324,10 @@ export class FormImpl
         this.blkindex.forEach((block) =>
         {
             // Finish setup for each block
-            let tabdef:TableDefinition = TableDefinitions.get(block.name);
-            let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.name);
-            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.name);
-            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.name);
+            let tabdef:TableDefinition = TableDefinitions.get(block.clazz);
+            let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.clazz);
+            let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
+            let cindex:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
 
             // Create keys and decide on primary
             let pkey:Key = null;
@@ -342,10 +343,26 @@ export class FormImpl
 
                 kdef.columns.forEach((col) =>
                 {
+                    // Check each column
                     if (colindex.get(col) == null)
                     {
                         console.log("key "+kdef.name+" column "+col+" is not a column");
                         return;
+                    }
+
+                    // Create fiels if missing
+                    if (cindex.get(col) == null)
+                    {
+                        let def:FieldDefinition = block.fielddef.get(col);
+
+                        if (def == null)
+                        {
+                            def = {name: col};
+                            FieldDefinitions.add(block.clazz,def);
+                        }
+
+                        def.column = col;
+                        cindex = FieldDefinitions.getColumnIndex(block.clazz);
                     }
                 });
 
