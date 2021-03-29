@@ -124,6 +124,7 @@ export class Field
         }
 
         this.index.set(field.guid,field);
+
         if (field.id.length > 0)
         {
             if (this.ids.get(field.id) != null)
@@ -134,7 +135,7 @@ export class Field
 
             this.ids.set(field.id,field);
         }
- }
+    }
 
     public get fields() : FieldInstance[]
     {
