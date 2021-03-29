@@ -272,7 +272,7 @@ export class FieldDefinitions
         let index:Map<string,FieldDefinition> = formbfx.get(block.toLowerCase());
         if (index == null) return(new Map<string,FieldDefinition>());
 
-        return(index);
+        return(new Map(index));
     }
 
 
@@ -280,7 +280,7 @@ export class FieldDefinitions
     {
         let index:Map<string,FieldDefinition> = FieldDefinitions.bfx.get(block.toLowerCase());
         if (index == null) return(new Map<string,FieldDefinition>());
-        return(index);
+        return(new Map(index));
     }
 
 
@@ -292,7 +292,7 @@ export class FieldDefinitions
         let index:Map<string,FieldDefinition> = formbcx.get(block.toLowerCase());
         if (index == null) return(new Map<string,FieldDefinition>());
 
-        return(index);
+        return(new Map(index));
     }
 
 
@@ -300,7 +300,7 @@ export class FieldDefinitions
     {
         let index:Map<string,FieldDefinition> = FieldDefinitions.bcx.get(block.toLowerCase());
         if (index == null) index = new Map<string,FieldDefinition>();
-        return(index);
+        return(new Map(index));
     }
 
 

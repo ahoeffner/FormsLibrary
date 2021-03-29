@@ -257,6 +257,8 @@ export class FormImpl
         blockdef.forEach((bdef) => {this.setBlockUsage(fusage,bdef);});
 
         container.finish();
+
+        // Hold all fields per block
         let bfields:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
 
         container.getBlocks().forEach((cb) =>
@@ -275,7 +277,7 @@ export class FormImpl
                 block.form = this;
                 block.setApplication(this.app);
 
-                console.log("Form has fields bound to "+cb.name+" that doesn't exist. block created");
+                console.log("Block "+cb.name+" auto created");
             }
 
             bfields.set(block.alias,cb.fields);
@@ -384,10 +386,29 @@ export class FormImpl
             fieldidx.forEach((field) => {if (field.column == null) fields.push(field.name)});
 
             // Set field properties
-            console.log("alias: "+block.alias);
+            let idindex:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
+            let fidindex:Map<string,FieldDefinition> = FieldDefinitions.getFormFieldIndex(this.name,block.clazz);
+            fidindex.forEach((def,fld) => {idindex.set(fld,def)});
+
             bfields.get(block.alias).forEach((inst) =>
             {
-                console.log("inst: "+inst.name);
+                let fdef:FieldDefinition = fieldidx.get(inst.name);
+
+                if (inst.id.length > 0)
+                {
+                    let iddef:FieldDefinition = idindex.get(inst.id);
+                    if (iddef != null) fdef = iddef;
+                }
+
+                if (fdef == null)
+                    fdef = {name: inst.name};
+
+                if (fdef.type == null)
+                    fdef.type = FieldType.input
+
+                inst.type = fdef.type;
+                inst.case = fdef.case;
+                inst.fieldoptions = fdef.fieldoptions;
             });
 
             // Create data-backing table
@@ -713,17 +734,10 @@ export class FormImpl
     private setBlockUsage(fusage:DatabaseUsage, blockdef:BlockDefinition) : void
     {
         let block:BlockImpl = this.blkindex.get(blockdef.alias);
-        let bname:string = block.clazz;
-
-        if (!(block instanceof BlockImpl))
-        {
-            console.log(bname+" is not a block");
-            return;
-        }
 
         let usage:DatabaseUsage = {};
         let pusage:DatabaseUsage = blockdef.databaseopts;
-        let dusage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(bname);
+        let dusage:DatabaseUsage = DatabaseDefinitions.getBlockDefault(block.clazz);
 
         if (dusage == null) dusage = {};
         if (pusage == null) pusage = {};

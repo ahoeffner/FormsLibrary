@@ -18,6 +18,9 @@ export const block = (definition:BlockDefinition) =>
             return;
         }
 
+        if (definition.alias != null)
+            definition.alias = definition.alias.toLowerCase();
+
         let def:BlockDef =
         {
             prop: prop,

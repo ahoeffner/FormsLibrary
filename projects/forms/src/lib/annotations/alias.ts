@@ -16,6 +16,12 @@ export const alias = (alias:string) =>
             return;
         }
 
+        if (alias == null)
+        {
+            console.log("@alias("+alias+") cannot be null");
+            return;
+        }
+
         BlockDefinitions.setDefaultAlias(cname,alias.toLowerCase());
     }
     return(def);
