@@ -2,6 +2,7 @@ import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
 import { Block } from "../blocks/Block";
 import { Trigger } from "../events/Triggers";
+import { BlockImpl } from "../blocks/BlockImpl";
 import { Container } from "../container/Container";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
@@ -54,6 +55,14 @@ export class Form implements OnInit, AfterViewInit
     public get block() : Block
     {
         return(this._impl_.block.block);
+    }
+
+
+    public getBlock(block:string) : Block
+    {
+        let impl:BlockImpl = this._impl_.getBlock(block);
+        if (impl != null) return(impl.block);
+        return(null);
     }
 
     public newform(form:any, parameters?:Map<string,any>) : void

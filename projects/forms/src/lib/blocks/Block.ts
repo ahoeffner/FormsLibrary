@@ -1,6 +1,7 @@
 import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
 import { Trigger } from "../events/Triggers";
+import { DatabaseUsage } from "../database/DatabaseUsage";
 import { TriggerFunction } from "../events/TriggerFunction";
 
 
@@ -42,6 +43,11 @@ export class Block
     public executeQuery() : void
     {
         this._impl_.dokey("executequery");
+    }
+
+    public set restrict(usage:DatabaseUsage)
+    {
+        this._impl_.setDatabaseUsage(usage);
     }
 
     public addKeyListener(listener:TriggerFunction, keys?:string|string[]) : void

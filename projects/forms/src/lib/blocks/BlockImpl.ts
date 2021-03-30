@@ -231,13 +231,6 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.insert) return(false);
         if (!await this.validate()) return(false);
-
-        if (!this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
-            return(false);
-        }
-
         return(this.insert(after));
     }
 
@@ -247,13 +240,6 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.delete) return(false);
         if (!await this.validate()) return(false);
-
-        if (!this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
-            return(false);
-        }
-
         return(this.delete());
     }
 
@@ -263,13 +249,6 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
-
-        if (!this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
-            return(false);
-        }
-
         return(this.enterqry());
     }
 
@@ -279,19 +258,18 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
-
-        if (!this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
-            return(false);
-        }
-
         return(this.executeqry());
     }
 
 
     public enterqry() : boolean
     {
+        if (this.data.database && !this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database");
+            return(false);
+        }
+
         this.clear();
 
         if (this.records.length > 0)
@@ -307,6 +285,12 @@ export class BlockImpl
 
     public async executeqry() : Promise<boolean>
     {
+        if (this.data.database && !this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database");
+            return(false);
+        }
+
         let keys:Key[] = [];
         let fields:Field[] = [];
 
@@ -340,6 +324,12 @@ export class BlockImpl
 
     public insert(after:boolean) : boolean
     {
+        if (this.data.database && !this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database");
+            return(false);
+        }
+
         let off:number = after ? 1 : 0;
 
         if (!this.data.insert(+this.row + +this.offset + +off))
@@ -349,6 +339,7 @@ export class BlockImpl
         if (this.data.rows == 1)
         {
             this.display(this.offset);
+            if (this.field != null) this.field.focus();
             return;
         }
 
@@ -376,6 +367,12 @@ export class BlockImpl
 
     public delete() : boolean
     {
+        if (this.data.database && !this.app.appstate.connected)
+        {
+            this.alert("Not logged on","Database");
+            return(false);
+        }
+
         if (!this.data.delete(+this.row + +this.offset))
             return(false);
 

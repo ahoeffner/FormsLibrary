@@ -120,6 +120,12 @@ export class FormImpl
     }
 
 
+    public getBlock(bname:string)
+    {
+        return(this.blkindex.get(bname.toLowerCase()));
+    }
+
+
     public clear() : void
     {
         this.blocks.forEach((block) => {block.clear()});
@@ -270,11 +276,11 @@ export class FormImpl
                 let dblk = new Block();
                 block = dblk["_impl_"];
 
-                block.alias = cb.name;
                 this.blocks.push(block);
                 this.blkindex.set(cb.name,block);
 
                 block.form = this;
+                block.alias = cb.name;
                 block.setApplication(this.app);
 
                 console.log("Block "+cb.name+" auto created");

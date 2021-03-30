@@ -22,13 +22,21 @@ export class FieldData
         this.block = block;
         this.table = table;
         this.fields$ = fields;
-        this.table.fielddata = this;
+
+        if (table != null)
+            this.table.fielddata = this;
 
         if (fields != null)
         {
             for(let i = 0; i < fields.length; i++)
                 this.index.set(fields[i].toLowerCase(),i);
         }
+    }
+
+
+    public get database() : boolean
+    {
+        return(this.table != null);
     }
 
 
