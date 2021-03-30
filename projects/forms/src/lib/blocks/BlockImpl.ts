@@ -607,13 +607,24 @@ export class BlockImpl
             if (this.state == FormState.entqry || this.data == null)
                 return(true);
 
-            if (!this.data.lock(+field.row+this.offset))
+            if (this.data.locked(+field.row+this.offset))
                 return(false);
 
             let previous:any = this.getValue(field.name,field.row);
             trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
 
-            return(await this.invokeTriggers(Trigger.Lock,trgevent));
+            if (!await this.invokeTriggers(Trigger.Lock,trgevent))
+                return(false);
+
+            let response:any = await this.data.lock(+field.row+this.offset);
+
+            if (response["status"] == "failed")
+            {
+                this.alert(JSON.stringify(response),"Lock Record");
+                return(false);
+            }
+
+            return(true);
         }
 
         if (type == "ichange")
@@ -624,7 +635,7 @@ export class BlockImpl
             let previous:any = this.getValue(field.name,field.row);
             trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
 
-            return(await this.invokeTriggers(Trigger.Typing,trgevent));
+            this.invokeTriggers(Trigger.Typing,trgevent);
         }
 
         if (type == "change")

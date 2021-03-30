@@ -46,17 +46,25 @@ export class FieldData
     }
 
 
-    public lock(row:number) : boolean
+    public async lock(row:number) : Promise<any>
     {
         if (row < 0 || row >= this.data.length)
-            return(false);
+            return({status: "failed", message: "row "+row+" does not exist"});
 
         if (this.data[row].locked)
-            return(false);
+            return({status: "failed", message: "row "+row+" already locked"});
 
-        this.data[row].locked = true;
-        this.data[row].print();
-        return(true);
+        if (this.table == null)
+            return({status: "ok"});
+
+        return({status: "ok"});
+    }
+
+
+    public locked(row:number) : boolean
+    {
+        if (row < 0 || row >= this.data.length) return(false);
+        return(this.data[row].locked);
     }
 
 
