@@ -44,7 +44,12 @@ export class FieldDefinitions
             }
 
             let id:string = null;
-            if (parts.length > 1) id = parts[1];
+
+            if (parts.length > 1)
+            {
+                id = parts[1];
+                def.name = parts[0];
+            }
 
             if (id != null) FieldDefinitions.addblockid(comp,id,def);
             else            FieldDefinitions.addblockfield(comp,def);
@@ -182,7 +187,7 @@ export class FieldDefinitions
             formids.set(block,blockids);
         }
 
-        if (blockids.get(id) != null)
+        if (blockids.get(def.name+"."+id) != null)
         {
             console.log("Field "+form+"."+def.name+"."+id+" defined twice, ignored");
             return;
@@ -194,7 +199,7 @@ export class FieldDefinitions
             def.column = null;
         }
 
-        blockids.set(id,def);
+        blockids.set(def.name+"."+id,def);
     }
 
 
@@ -208,7 +213,7 @@ export class FieldDefinitions
             FieldDefinitions.bidx.set(block,blockids);
         }
 
-        if (blockids.get(id) != null)
+        if (blockids.get(def.name+"."+id) != null)
         {
             console.log("Field "+def.name+"."+id+" defined twice, ignored");
             return;
@@ -220,26 +225,26 @@ export class FieldDefinitions
             def.column = null;
         }
 
-        blockids.set(id,def);
+        blockids.set(def.name+"."+id,def);
     }
 
 
-    public static getFormFieldOverride(form:string, block:string, id:string) : FieldDefinition
+    public static getFormFieldOverride(form:string, block:string, fldid:string) : FieldDefinition
     {
         let formids:Map<string,Map<string,FieldDefinition>> = FieldDefinitions.fidx.get(form);
         if (formids == null) return(null);
 
-        let blockids:Map<string,FieldDefinition> = FieldDefinitions.bidx.get(block.toLowerCase());
-        if (blockids != null) return(blockids.get(id.toLowerCase()));
+        let blockids:Map<string,FieldDefinition> = formids.get(block.toLowerCase());
+        if (blockids != null) return(blockids.get(fldid.toLowerCase()));
 
         return(null);
     }
 
 
-    public static getFieldOverride(block:string, id:string) : FieldDefinition
+    public static getFieldOverride(block:string, fldid:string) : FieldDefinition
     {
         let blockids:Map<string,FieldDefinition> = FieldDefinitions.bidx.get(block.toLowerCase());
-        if (blockids != null) return(blockids.get(id.toLowerCase()));
+        if (blockids != null) return(blockids.get(fldid.toLowerCase()));
         return(null);
     }
 

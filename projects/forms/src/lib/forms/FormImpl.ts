@@ -390,11 +390,6 @@ export class FormImpl
             // Then other defined fields (block or form)
             fieldidx.forEach((field) => {if (field.column == null) console.log("fields add "+field); if (field.column == null) fields.push(field.name)});
 
-            // Gather fieldinstance overrides
-            let idindex:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
-            let fidindex:Map<string,FieldDefinition> = FieldDefinitions.getFormFieldIndex(this.name,block.clazz);
-            fidindex.forEach((def,fld) => {idindex.set(fld,def)});
-
             // Set field properties and add undefined fields
             bfields.get(block.alias).forEach((inst) =>
             {
@@ -419,7 +414,12 @@ export class FormImpl
 
                 if (inst.id.length > 0)
                 {
-                    let iddef:FieldDefinition = idindex.get(inst.id);
+                    let id:string = inst.name+"."+inst.id;
+                    let iddef:FieldDefinition = FieldDefinitions.getFormFieldOverride(this.name,block.alias,id);
+
+                    if (iddef != null) fdef = iddef;
+                    else iddef = FieldDefinitions.getFieldOverride(block.clazz,id);
+
                     if (iddef != null) fdef = iddef;
                 }
 
@@ -464,10 +464,11 @@ export class FormImpl
         this.blocks.forEach((block) =>
         {block.records[0].enable(0,true);});
 
-        this.initiated$ = true;
         this.app.newForm(this);
+        this.initiated$ = true;
 
-        if (this.fields$.length > 0) this.fields$[0].focus();
+        if (this.fields$.length > 0)
+            this.fields$[0].focus();
     }
 
 
