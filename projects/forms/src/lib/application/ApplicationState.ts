@@ -57,10 +57,10 @@ export class ApplicationState
     {
         this.menus.forEach((mhdl) => {mhdl.onConnect()});
 
-        this.forms.forEach((form) =>
+        this.forms.forEach(async (form) =>
         {
             let funcs:string[] = FormDefinitions.getOnConnect(form.name);
-            for(let i = 0; i < funcs.length; i++) this.app.execfunc(form,funcs[i]);
+            for(let i = 0; i < funcs.length; i++) await this.app.execfunc(form,funcs[i]);
         });
 
         return(true);
@@ -78,10 +78,10 @@ export class ApplicationState
     {
         this.menus.forEach((mhdl) => {mhdl.onDisconnect()});
 
-        this.forms.forEach((form) =>
+        this.forms.forEach(async (form) =>
         {
             let funcs:string[] = FormDefinitions.getOnDisconnect(form.name);
-            for(let i = 0; i < funcs.length; i++) this.app.execfunc(form,funcs[i]);
+            for(let i = 0; i < funcs.length; i++) await this.app.execfunc(form,funcs[i]);
         });
 
         return(true);

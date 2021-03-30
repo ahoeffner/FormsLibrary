@@ -192,26 +192,26 @@ export class ApplicationImpl
     }
 
 
-    private newForm(impl:FormImpl, formdef:FormInstance) : void
+    private async newForm(impl:FormImpl, formdef:FormInstance)
     {
         impl.path = formdef.path;
         impl.title = formdef.title;
 
-        impl.initiated(true);
         this.state.addForm(impl);
         let funcs:string[] = FormDefinitions.getOnInit(impl.name);
-        for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
+        for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
 }
 
 
-    public preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean) : void
+    public async preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean)
     {
-        if (!impl.initiated()) this.newForm(impl,formdef);
-
         impl.setParameters(parameters);
 
+        if (!impl.initiated())
+            this.newForm(impl,formdef);
+
         let funcs:string[] = FormDefinitions.getOnShow(impl.name);
-        for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
+        for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
 
         this.showTitle(impl.title);
         if (path) this.showPath(impl.name,impl.path);
@@ -220,27 +220,33 @@ export class ApplicationImpl
     }
 
 
-    private postform(impl:FormImpl, destroy:boolean) : void
+    public sleep(ms:number) : Promise<void>
+    {
+        return(new Promise( resolve => setTimeout(resolve,ms)));
+    }
+
+
+    private async postform(impl:FormImpl, destroy:boolean)
     {
         impl.onHide();
 
         let funcs:string[] = FormDefinitions.getOnHide(impl.name);
-        for(let i = 0; i < funcs.length; i++)  this.execfunc(impl,funcs[i]);
+        for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
 
         if (destroy)
         {
             this.state.dropForm(impl);
             let funcs:string[] = FormDefinitions.getOnDestroy(impl.name);
-            for(let i = 0; i < funcs.length; i++) this.execfunc(impl,funcs[i]);
+            for(let i = 0; i < funcs.length; i++) await this.execfunc(impl,funcs[i]);
         }
     }
 
 
-    public execfunc(impl:FormImpl, func:string) : void
+    public async execfunc(impl:FormImpl, func:string)
     {
         try
         {
-            impl.form[func]();
+            await impl.form[func]();
         }
         catch (error)
         {
@@ -266,7 +272,7 @@ export class ApplicationImpl
             let curr:FormImpl = this.state.form.getChain();
 
             // let form handle the showform
-            curr.callform(form,destroy,parameters);
+            await curr.callform(form,destroy,parameters);
         }
     }
 
@@ -317,7 +323,7 @@ export class ApplicationImpl
 
         if (formdef == null) return;
         let impl:FormImpl = formdef.formref.instance["_impl_"];
-        this.preform(impl,parameters,formdef,true);
+        await this.preform(impl,parameters,formdef,true);
 
         this.state.form = impl;
         let fmenu:ComponentRef<DropDownMenu> = impl.getDropDownMenu();

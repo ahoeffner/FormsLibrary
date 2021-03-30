@@ -153,9 +153,8 @@ export class FormImpl
     }
 
 
-    public initiated(done?:boolean) : boolean
+    public initiated() : boolean
     {
-        if (done != null) this.initiated$ = done;
         return(this.initiated$);
     }
 
@@ -466,6 +465,7 @@ export class FormImpl
         {block.records[0].enable(0,true);});
 
         if (this.fields$.length > 0) this.fields$[0].focus();
+        this.initiated$ = true;
     }
 
 
@@ -476,16 +476,16 @@ export class FormImpl
 
         if (this.win == null)
         {
-            this.app.showform(form,destroy,parameters);
+            await this.app.showform(form,destroy,parameters);
         }
         else
         {
-            this.replaceform(form,destroy,parameters);
+            await this.replaceform(form,destroy,parameters);
         }
     }
 
 
-    private replaceform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    private async replaceform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
@@ -508,7 +508,7 @@ export class FormImpl
         id.impl.setParent(this.parent);
 
         let inst:FormInstance = this.app.getInstance(id);
-        this.app.preform(id.impl,parameters,inst,false);
+        await this.app.preform(id.impl,parameters,inst,false);
 
         if (this.win != null)
         {
@@ -523,7 +523,7 @@ export class FormImpl
     }
 
 
-    public callform(form:any, destroy:boolean, parameters?:Map<string,any>) : void
+    public async callform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
@@ -549,7 +549,7 @@ export class FormImpl
         id.impl.setParent(this);
 
         let inst:FormInstance = this.app.getInstance(id);
-        this.app.preform(id.impl,parameters,inst,false);
+        await this.app.preform(id.impl,parameters,inst,false);
 
         if (this.win != null)
         {
