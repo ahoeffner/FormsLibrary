@@ -26,10 +26,15 @@ export interface KeyMap
 
     nextfield:string;
     prevfield:string;
+
     nextblock:string;
     prevblock:string;
+
     nextrecord:string;
     prevrecord:string;
+
+    pageup:string;
+    pagedown:string;
 
     clearform:string;
     clearblock:string;
@@ -56,10 +61,15 @@ export class keymap
 
     public static nextfield:string = null;
     public static prevfield:string = null;
+
     public static nextblock:string = null;
     public static prevblock:string = null;
+
     public static nextrecord:string = null;
     public static prevrecord:string = null;
+
+    public static pageup:string = null;
+    public static pagedown:string = null;
 
     public static clearform:string = null;
     public static clearblock:string = null;
@@ -100,10 +110,15 @@ export class KeyMapper
 
         keymap.nextfield = map.nextfield;
         keymap.prevfield = map.prevfield;
+
         keymap.nextblock = map.nextblock;
         keymap.prevblock = map.prevblock;
+
         keymap.nextrecord = map.nextrecord;
         keymap.prevrecord = map.prevrecord;
+
+        keymap.pageup = map.pageup;
+        keymap.pagedown = map.pagedown;
 
         keymap.clearform = map.clearform;
         keymap.clearblock = map.clearblock;

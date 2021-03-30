@@ -23,10 +23,15 @@ export class MacKeyMap implements KeyMap
 
     nextfield:string = KeyMapper.map({code: KeyCodes.tab});
     prevfield:string = KeyMapper.map({code: KeyCodes.tab, shift: true});
+
     nextrecord:string = KeyMapper.map({code: KeyCodes.down, shift: false});
     prevrecord:string = KeyMapper.map({code: KeyCodes.up, shift: false});
+
     nextblock:string = KeyMapper.map({code: KeyCodes.down, shift: true});
     prevblock:string = KeyMapper.map({code: KeyCodes.up, shift: true});
+
+    pageup:string = KeyMapper.map({code: 80, ctrl: true, shift: true});
+    pagedown:string = KeyMapper.map({code: 80, ctrl: true, shift: false});
 
     enterquery:string = KeyMapper.map({code: 81, ctrl: true});
     executequery:string = KeyMapper.map({code: 81, shift: true, ctrl: true});

@@ -431,7 +431,6 @@ export class BlockImpl
         if (previous == field.value) return(true);
 
         this.setDataValue(field.row,field.name,field.value);
-
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
 
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
@@ -799,6 +798,36 @@ export class BlockImpl
             }
 
             this.goField(row,this.field);
+        }
+
+        // Page down
+        if (type == "key" && key == keymap.pagedown)
+        {
+            let offset:number = +this.offset + +field.row;
+            let fetched:number = await this.data.fetch(offset,this.rows);
+
+            if (fetched == 0) return(false);
+            if (!await this.onEvent(null,this.field,"change")) return(false);
+
+            field.blur();
+            await this.sleep(20);
+
+            this.display(+this.offset+this.rows);
+            this.goField(0,field);
+
+            return(true);
+        }
+
+        // Page up
+        if (type == "key" && key == keymap.pageup)
+        {
+            field.blur();
+            await this.sleep(20);
+
+            this.display(+this.offset-this.rows);
+            this.goField(0,field);
+
+            return(true);
         }
 
         event["navigate"] = true;
