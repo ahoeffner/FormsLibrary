@@ -144,7 +144,7 @@ export class Table
         {
             let col:number = 0;
             let keys:any[] = [];
-            let drow:Row = this.fielddata.row;
+            let drow:Row = this.fielddata.newrow();
 
             Object.keys(row).forEach((key) =>
             {
@@ -154,7 +154,7 @@ export class Table
             });
 
             this.data.push(keys);
-            this.fielddata.row = drow;
+            this.fielddata.add(drow);
         });
     }
 }

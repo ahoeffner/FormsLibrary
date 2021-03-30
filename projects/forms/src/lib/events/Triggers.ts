@@ -56,6 +56,7 @@ export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
 
+    
     public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
     {
         let keys:string[] = [];
@@ -169,18 +170,16 @@ export class Triggers
 
     public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
     {
+        event.type = type.name;
+
         if (type == Trigger.Key && key != null)
         {
             let lsnrs:Listener[] = this.triggers.types.get(key);
 
             if (lsnrs != null)
             {
-                lsnrs.forEach(async (lsnr) =>
-                {
-                    event.type = type.name;
-                    if (!await lsnr.inst[lsnr.func.name](event))
-                        return(false);
-                });
+                for(let i = 0; i < lsnrs.length; i++)
+                    if (!await this.execfunc(lsnrs[i],event)) return(false);
             }
         }
         else
@@ -189,12 +188,8 @@ export class Triggers
 
             if (lsnrs != null)
             {
-                lsnrs.forEach(async (lsnr) =>
-                {
-                    event.type = type.name;
-                    if (!await lsnr.inst[lsnr.func.name](event))
-                        return(false);
-                });
+                for(let i = 0; i < lsnrs.length; i++)
+                    if (!await this.execfunc(lsnrs[i],event)) return(false);
             }
         }
 
@@ -207,18 +202,16 @@ export class Triggers
         let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
         if (triggers == null) return(true);
 
+        event.type = type.name;
+
         if (type == Trigger.Key && key != null)
         {
             let lsnrs:Listener[] = triggers.get(key);
 
             if (lsnrs != null)
             {
-                lsnrs.forEach(async (lsnr) =>
-                {
-                    event.type = type.name;
-                    if (!await lsnr.inst[lsnr.func.name](event))
-                        return(false);
-                });
+                for(let i = 0; i < lsnrs.length; i++)
+                    if (!await this.execfunc(lsnrs[i],event)) return(false);
             }
         }
         else
@@ -227,15 +220,25 @@ export class Triggers
 
             if (lsnrs != null)
             {
-                lsnrs.forEach(async (lsnr) =>
-                {
-                    event.type = type.name;
-                    if (!await lsnr.inst[lsnr.func.name](event))
-                        return(false);
-                });
+                for(let i = 0; i < lsnrs.length; i++)
+                    if (!await this.execfunc(lsnrs[i],event)) return(false);
             }
         }
 
         return(true);
+    }
+
+
+    private async execfunc(lsnr:Listener, event:TriggerEvent) : Promise<boolean>
+    {
+        try
+        {
+            return(await lsnr.inst[lsnr.func.name](event));
+        }
+        catch (error)
+        {
+            console.log(error);
+            return(false);
+        }
     }
 }

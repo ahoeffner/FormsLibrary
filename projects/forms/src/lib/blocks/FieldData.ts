@@ -46,14 +46,28 @@ export class FieldData
     }
 
 
-    public get row() : Row
+    public lock(row:number) : boolean
+    {
+        if (row < 0 || row >= this.data.length)
+            return(false);
+
+        if (this.data[row].locked)
+            return(false);
+
+        this.data[row].locked = true;
+        this.data[row].print();
+        return(true);
+    }
+
+
+    public newrow() : Row
     {
         let row:Row = new Row(++this.scn,this);
         return(row);
     }
 
 
-    public set row(row:Row)
+    public add(row:Row)
     {
         this.data.push(row);
     }
@@ -211,7 +225,9 @@ export class Row
 {
     public scn:number = 0;
     public fields:Column[] = [];
+    public locked:boolean = false;
     public state:RecordState = RecordState.na;
+
 
     constructor(scn:number, table:FieldData, values?:any[])
     {

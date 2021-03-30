@@ -16,6 +16,7 @@ import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { TriggerEvent } from "../events/TriggerEvent";
 import { FieldInstance } from "../input/FieldInstance";
 import { Record, RecordState } from "../blocks/Record";
 import { Trigger, Triggers } from "../events/Triggers";
@@ -907,5 +908,17 @@ export class FormImpl
 
         if (event["navigate"])
             return;
+    }
+
+
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
+    {
+        return(await this.triggers.invokeTriggers(type,event,key));
+    }
+
+
+    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
+    {
+        return(await this.triggers.invokeFieldTriggers(type,field,event,key));
     }
  }

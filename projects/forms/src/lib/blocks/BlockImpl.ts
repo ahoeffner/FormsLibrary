@@ -239,7 +239,6 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
         if (!this.dbusage.delete) return(false);
-        if (!await this.validate()) return(false);
         return(this.delete());
     }
 
@@ -303,7 +302,7 @@ export class BlockImpl
         this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
         let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
-        if (!this.triggers.invokeTriggers(Trigger.PreQuery,event)) return(false);
+        if (!await this.invokeTriggers(Trigger.PreQuery,event)) return(false);
 
         let response:any = await this.data.executequery(stmt);
 
@@ -435,16 +434,16 @@ export class BlockImpl
 
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
 
-        if (!await this.triggers.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
+        if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
             return(false);
 
-        if (!await this.triggers.invokeTriggers(Trigger.WhenValidateField,trgevent))
+        if (!await this.invokeTriggers(Trigger.WhenValidateField,trgevent))
             return(false);
 
-        if (!await this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
+        if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
             return(false);
 
-        if (!await this.triggers.invokeTriggers(Trigger.PostChange,trgevent))
+        if (!await this.invokeTriggers(Trigger.PostChange,trgevent))
             return(false);
 
         return(true);
@@ -457,7 +456,7 @@ export class BlockImpl
 
         let trgevent:TriggerEvent = new TriggerEvent(this.row,null);
 
-        if (!await this.triggers.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
+        if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
         return(true);
@@ -526,11 +525,11 @@ export class BlockImpl
                     if (field != null)
                     {
                         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+r,field.value,field.value);
-                        this.triggers.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent);
+                        this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent);
                     }
                 }
 
-                this.triggers.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r));
+                this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r));
                 this.data.state(+this.offset+r,RecordState.update);
             }
 
@@ -574,7 +573,7 @@ export class BlockImpl
                 {
                     this.records[+this.row].current = true;
                     this.field.focus();
-                    return(true);
+                    return(false);
                 }
             }
 
@@ -584,11 +583,10 @@ export class BlockImpl
 
             trgevent = new FieldTriggerEvent(field.name,field.row,field.value,field.value,event);
 
-            if (!await this.triggers.invokeFieldTriggers(Trigger.PreField,field.name,trgevent))
-                return(true);
+            if (!await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent))
+                return(false);
 
-            if (!await this.triggers.invokeTriggers(Trigger.PreField,trgevent))
-                return(true);
+            return(await this.invokeTriggers(Trigger.PreField,trgevent));
         }
 
         if (type == "blur")
@@ -598,14 +596,27 @@ export class BlockImpl
 
             trgevent = new FieldTriggerEvent(field.name,field.row,field.value,field.value,event);
 
-            if (!await this.triggers.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
-                return(true);
+            if (!await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
+                return(false);
 
-            if (!await this.triggers.invokeTriggers(Trigger.PostField,trgevent))
-                return(true);
+            return(await this.invokeTriggers(Trigger.PostField,trgevent));
         }
 
         if (type == "fchange")
+        {
+            if (this.state == FormState.entqry || this.data == null)
+                return(true);
+
+            if (!this.data.lock(+field.row+this.offset))
+                return(false);
+
+            let previous:any = this.getValue(field.name,field.row);
+            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
+
+            return(await this.invokeTriggers(Trigger.Lock,trgevent));
+        }
+
+        if (type == "ichange")
         {
             if (this.state == FormState.entqry)
                 return(true);
@@ -613,14 +624,13 @@ export class BlockImpl
             let previous:any = this.getValue(field.name,field.row);
             trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Lock,trgevent))
-                return(true);
+            return(await this.invokeTriggers(Trigger.Typing,trgevent));
         }
 
         if (type == "change")
         {
-            if (!await this.validatefield(field,event))
-                return(false);
+            await this.validatefield(field,event);
+            return(true);
         }
 
         // Cancel
@@ -628,6 +638,8 @@ export class BlockImpl
         {
             if (this.state == FormState.entqry)
             {
+                field.blur();
+                await this.sleep(20);
                 this.records[0].disable();
                 this.records[0].clear(true);
                 this.state = FormState.normal;
@@ -647,11 +659,12 @@ export class BlockImpl
             triggered = true;
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            if (!await this.keyentqry())
-                return(true);
+            field.blur();
+            await this.sleep(20);
+            return(await this.keyentqry());
         }
 
         // Execute query
@@ -662,11 +675,12 @@ export class BlockImpl
             triggered = true;
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            if (!await this.keyexeqry())
-                return(true);
+            field.blur();
+            await this.sleep(20);
+            return(await this.keyexeqry());
         }
 
         // Delete
@@ -675,11 +689,12 @@ export class BlockImpl
             triggered = true;
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            if (!await this.keydelete())
-                return(true);
+            field.blur();
+            await this.sleep(20);
+            return(await this.keydelete());
         }
 
         // Insert after
@@ -691,11 +706,12 @@ export class BlockImpl
             triggered = true;
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            if (!await this.keyinsert(true))
-                return(true);
+            field.blur();
+            await this.sleep(20);
+            return(await this.keyinsert(true));
         }
 
         // Insert before
@@ -707,11 +723,12 @@ export class BlockImpl
             triggered = true;
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            if (!await this.keyinsert(false))
-                return(true);
+            field.blur();
+            await this.sleep(20);
+            return(await this.keyinsert(false));
         }
 
         // Next record
@@ -730,6 +747,9 @@ export class BlockImpl
 
                 if (fetched == 0) return(false);
                 if (!await this.onEvent(null,this.field,"change")) return(false);
+
+                field.blur();
+                await this.sleep(20);
 
                 this.display(this.offset+1);
             }
@@ -754,6 +774,10 @@ export class BlockImpl
 
                 if (!await this.onEvent(null,this.field,"change"))
                     return(false);
+
+
+                field.blur();
+                await this.sleep(20);
 
                 this.display(this.offset-1);
             }
@@ -781,7 +805,7 @@ export class BlockImpl
         {
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (key != null && !await this.triggers.invokeTriggers(Trigger.Key,trgevent,key))
+            if (key != null && !await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
         }
 
@@ -790,6 +814,28 @@ export class BlockImpl
             this.form.onEvent(event,field,type,key);
 
         return(true);
+    }
+
+
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
+    {
+        if (!await this.triggers.invokeTriggers(type,event,key)) return(false);
+        if (this.form != null) return(await this.form.invokeTriggers(type,event,key));
+        return(true);
+    }
+
+
+    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
+    {
+        if (!await this.triggers.invokeFieldTriggers(type,field,event,key)) return(false);
+        if (this.form != null) return(await this.form.invokeFieldTriggers(type,field,event,key));
+        return(true);
+    }
+
+
+    public sleep(ms:number) : Promise<void>
+    {
+        return(new Promise(resolve => setTimeout(resolve,ms)));
     }
 
 
