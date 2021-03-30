@@ -192,15 +192,16 @@ export class ApplicationImpl
     }
 
 
-    private async newForm(impl:FormImpl, formdef:FormInstance)
+    public async newForm(impl:FormImpl)
     {
-        impl.path = formdef.path;
-        impl.title = formdef.title;
-
-        this.state.addForm(impl);
         let funcs:string[] = FormDefinitions.getOnInit(impl.name);
         for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
-}
+
+        funcs = FormDefinitions.getOnShow(impl.name);
+        for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
+
+        impl.onShow();
+    }
 
 
     public async preform(impl:FormImpl, parameters:Map<string,any>, formdef:FormInstance, path:boolean)
@@ -208,13 +209,22 @@ export class ApplicationImpl
         impl.setParameters(parameters);
 
         if (!impl.initiated())
-            this.newForm(impl,formdef);
+        {
+            impl.path = formdef.path;
+            impl.title = formdef.title;
 
-        let funcs:string[] = FormDefinitions.getOnShow(impl.name);
-        for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
+            this.state.addForm(impl);
+            this.showTitle(formdef.title);
+
+            if (path) this.showPath(impl.name,formdef.path);
+            return;
+        }
 
         this.showTitle(impl.title);
         if (path) this.showPath(impl.name,impl.path);
+
+        let funcs:string[] = FormDefinitions.getOnShow(impl.name);
+        for(let i = 0; i < funcs.length; i++)  await this.execfunc(impl,funcs[i]);
 
         impl.onShow();
     }

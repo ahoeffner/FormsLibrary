@@ -464,8 +464,10 @@ export class FormImpl
         this.blocks.forEach((block) =>
         {block.records[0].enable(0,true);});
 
-        if (this.fields$.length > 0) this.fields$[0].focus();
         this.initiated$ = true;
+        this.app.newForm(this);
+
+        if (this.fields$.length > 0) this.fields$[0].focus();
     }
 
 
