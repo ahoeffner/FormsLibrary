@@ -100,6 +100,16 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.wasCancelled());
     }
 
+    public clear() : void
+    {
+        this._impl_.clear();
+    }
+
+    public cancel() : void
+    {
+        this._impl_.cancel();
+    }
+
     public close(dismiss?:boolean) : void
     {
         this._impl_.close(dismiss);

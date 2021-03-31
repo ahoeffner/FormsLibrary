@@ -130,19 +130,21 @@ export class FormImpl
     public clear() : void
     {
         this.blocks.forEach((block) => {block.clear()});
+        if (this.blocks.length > 0) this.block = this.blocks[0];
+        this.block?.focus();
     }
 
 
     public focus() : void
     {
-        this.block.focus();
+        this.block?.focus();
     }
 
 
     public set block(block:BlockImpl)
     {
         if (this.block != null && this.block != block)
-            if (!this.block.validate()) return;
+            if (!this.block?.validate()) return;
         this.block$ = block;
     }
 
@@ -848,7 +850,7 @@ export class FormImpl
 
     public sendkey(event:any,key:string) : void
     {
-        this.block.sendkey(event,key);
+        this.block?.sendkey(event,key);
     }
 
 

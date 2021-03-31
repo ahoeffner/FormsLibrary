@@ -66,7 +66,12 @@ export class DefaultMenuHandler extends MenuHandler
         this.init();
     }
 
-    public cancel() : void
+    public clear() : void
+    {
+        this.form?.clear();
+    }
+
+    public cancelQuery() : void
     {
         this.form?.block?.cancel();
     }
@@ -81,6 +86,11 @@ export class DefaultMenuHandler extends MenuHandler
         this.form?.block?.executeQuery();
     }
 
+
+    public deleteRecord() : void
+    {
+        this.form?.block?.deleteRecord();
+    }
 
     public insertRecordAfter() : void
     {

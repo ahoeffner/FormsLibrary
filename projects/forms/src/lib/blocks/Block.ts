@@ -30,6 +30,11 @@ export class Block
         return(this._impl_.setValue(field,row,value));
     }
 
+    public get queryMode() : boolean
+    {
+        return(this._impl_.querymode);
+    }
+
     public cancel() : void
     {
         this._impl_.dokey("escape");
@@ -63,6 +68,11 @@ export class Block
     public pageDown() : void
     {
         this._impl_.dokey("pagedown");
+    }
+
+    public deleteRecord() : void
+    {
+        this._impl_.dokey("delete");
     }
 
     public createRecord(above?:boolean)

@@ -26,19 +26,20 @@ export class DefaultMenu implements Menu
                 [
                     {name: "enter",     action: "enterQuery"},
                     {name: "execute",   action: "executeQuery"},
-                    {name: "cancel",    action: "cancel"},
+                    {name: "cancel",    action: "cancelQuery"},
                 ]
             }
             ,
             {
                 name: "Record", title: "Record actions", options:
                 [
-                    {name: "insert",    action: "nextrecord"},
-                    {name: "delete",    action: null},
-                    {name: "next",      action: "nextRecord"},
-                    {name: "previous",  action: "prevRecord"},
-                    {name: "pagedown",  action: "pageDown"},
-                    {name: "pageup",    action: "pageUp"},
+                    {name: "insert below",  action: "insertRecordAfter"},
+                    {name: "insert above",  action: "insertRecordBefore"},
+                    {name: "delete",        action: "deleteRecord"},
+                    {name: "next",          action: "nextRecord"},
+                    {name: "previous",      action: "prevRecord"},
+                    {name: "pagedown",      action: "pageDown"},
+                    {name: "pageup",        action: "pageUp"},
                 ]
             }
             ,
@@ -53,7 +54,7 @@ export class DefaultMenu implements Menu
             {
                 name: "Form", title: "Form actions", options:
                 [
-                    {name: "clear", action: null},
+                    {name: "clear", action: "clear"},
                     {name: "close", action: "close"},
                 ]
             }

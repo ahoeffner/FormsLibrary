@@ -29,8 +29,8 @@ export class BlockImpl
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
-    private state:FormState = FormState.normal;
     private triggers:Triggers = new Triggers();
+    private state:FormState = FormState.normal;
     private fieldef$:Map<string,FieldDefinition>;
 
 
@@ -38,10 +38,10 @@ export class BlockImpl
     {
         this.dbusage$ =
         {
-            query: false,
-            insert: false,
-            update: false,
-            delete: false
+            query: true,
+            insert: true,
+            update: true,
+            delete: true
         };
     }
 
@@ -113,6 +113,12 @@ export class BlockImpl
     public get form() : FormImpl
     {
         return(this.form$);
+    }
+
+
+    public get querymode() : boolean
+    {
+        return(this.state == FormState.entqry);
     }
 
 
@@ -471,6 +477,9 @@ export class BlockImpl
         }
 
         this.details$.forEach((block) => {block.clear()});
+        this.records[0].current = true;
+        
+        this.records[0].focus();
     }
 
 
