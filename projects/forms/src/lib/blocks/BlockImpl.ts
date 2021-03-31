@@ -572,6 +572,9 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            if (this.form != null)
+                this.form.block = this;
+                
             if (this.state == FormState.entqry)
                 return(true);
 

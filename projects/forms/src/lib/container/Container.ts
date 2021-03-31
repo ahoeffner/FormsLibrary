@@ -136,13 +136,16 @@ export class ContainerBlock
     {
         if (this.rows$ == 0)
         {
+            let rec:ContainerRecord = new ContainerRecord(0);
+            this.records$.set(0,rec);
+
             this.current$.forEach((field) =>
             {
                 field.row = 0;
-                this.add(field);
+                rec.add(field);
             });
 
-            // add record 0
+            this.current$ = [];
         }
         else
         {
