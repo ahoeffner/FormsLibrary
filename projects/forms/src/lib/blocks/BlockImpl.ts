@@ -400,6 +400,7 @@ export class BlockImpl
         if ((+this.row) + (+this.offset) >= this.data.rows)
             this.row = this.data.rows - this.offset - 1;
 
+        if (this.row < 0) this.row = 0;
         if (this.data.rows == 0) this.records[0].clear(true);
         else this.goField(this.row,this.field);
     }
