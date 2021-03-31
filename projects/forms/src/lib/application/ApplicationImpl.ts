@@ -428,7 +428,7 @@ export class ApplicationImpl
             this.formsctl.setFormsDefinitions(forms);
 
         this.instances.setFormsDefinitions(formsmap);
-        let form:string = window.location.pathname;
+        let form:string = decodeURI(window.location.pathname);
 
         if (form.length > 1)
         {

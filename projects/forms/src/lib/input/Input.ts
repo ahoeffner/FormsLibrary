@@ -3,7 +3,6 @@ import { FieldInterface } from "./FieldType";
 
 export class Input implements FieldInterface
 {
-    private enabled$:boolean;
     public element$:HTMLInputElement;
 
 
@@ -35,7 +34,6 @@ export class Input implements FieldInterface
 
     public set enable(flag:boolean)
     {
-        this.enabled$ = flag;
         this.element$.disabled = !flag;
         if (!flag) this.element$.readOnly = true;
     }
@@ -43,11 +41,6 @@ export class Input implements FieldInterface
     public set rdonly(flag:boolean)
     {
         this.element$.readOnly = flag;
-    }
-
-    public get enable() : boolean
-    {
-        return(this.enabled$);
     }
 
     public get value() : any

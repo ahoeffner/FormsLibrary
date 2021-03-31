@@ -19,6 +19,7 @@ import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } fro
 
 export class BlockImpl
 {
+    private name$:string;
     private alias$:string;
     private row$:number = 0;
     private data$:FieldData;
@@ -43,11 +44,14 @@ export class BlockImpl
             update: true,
             delete: true
         };
+
+        this.name$ = block.constructor.name;
+        if (this.name$ == "Block") this.name$ = "anonymous";
     }
 
     public get name() : string
     {
-        return(this.block.constructor.name);
+        return(this.name$);
     }
 
     public set alias(alias:string)
@@ -410,6 +414,9 @@ export class BlockImpl
 
     public async validate() : Promise<boolean>
     {
+        if (this.records.length == 0)
+            return(true);
+
         let rec:Record = this.records[this.row];
         if (!rec.enabled) return(true);
 
@@ -574,7 +581,7 @@ export class BlockImpl
         {
             if (this.form != null)
                 this.form.block = this;
-                
+
             if (this.state == FormState.entqry)
                 return(true);
 

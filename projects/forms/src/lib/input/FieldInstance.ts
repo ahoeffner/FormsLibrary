@@ -23,7 +23,9 @@ export class FieldInstance implements AfterViewInit
     private clazz:FieldInterface;
     private fgroup$:Field = null;
     private case$:Case = Case.mixed;
+    private enabled$:boolean = false;
     private container:HTMLSpanElement;
+    private readonly$:boolean = false;
     private firstchange:boolean = true;
     private options$:FieldOptions = {query: true, insert: true, update: true};
 
@@ -146,7 +148,7 @@ export class FieldInstance implements AfterViewInit
     public blur() : void
     {
         if (this.clazz != null)
-        setTimeout(() => {this.clazz.element.blur()},0);
+            setTimeout(() => {this.clazz.element.blur()},0);
     }
 
     public get current() : boolean
@@ -163,19 +165,18 @@ export class FieldInstance implements AfterViewInit
     public set value(value:any)
     {
         if (this.clazz != null)
-        this.clazz.value = value;
+            this.clazz.value = value;
     }
 
     public get enabled() : boolean
     {
-        if (this.clazz == null) return(false);
-        else return(this.clazz.enable);
+        return(this.enabled$);
     }
 
     public disable() : void
     {
-        if (this.clazz != null)
-        this.clazz.enable = false;
+        this.enabled$ = false;
+        if (this.clazz != null) this.clazz.enable = false;
     }
 
 
@@ -186,14 +187,18 @@ export class FieldInstance implements AfterViewInit
         else if (state == RecordState.qmode && this.options$.query) enable = true;
         else if (state == RecordState.insert && this.options$.insert) enable = true;
         else if (state == RecordState.update && this.options$.update) enable = true;
-        if (enable && this.clazz != null) this.clazz.enable = true;
+        if (enable && this.clazz != null)
+        {
+            this.enabled$ = true;
+            this.clazz.enable = true;
+        }
     }
 
 
     public set readonly(flag:boolean)
     {
-        if (this.enabled && this.clazz != null)
-            this.clazz.rdonly = flag;
+        this.readonly$ = flag;
+        if (this.clazz != null) this.clazz.rdonly = flag;
     }
 
 
@@ -281,6 +286,8 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "keypress" || keypress)
         {
+            if (this.readonly$) return;
+            
             if (this.case$ == Case.lower)
                 setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
 

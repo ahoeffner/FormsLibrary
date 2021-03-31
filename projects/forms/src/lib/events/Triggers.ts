@@ -56,7 +56,7 @@ export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
 
-    
+
     public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
     {
         let keys:string[] = [];
