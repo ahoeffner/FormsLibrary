@@ -40,9 +40,8 @@ export class ColumnDefinitions
 
     public static getIndex(block:string) : Map<string,ColumnDefinition>
     {
-        let index:Map<string,ColumnDefinition> = new Map<string,ColumnDefinition>();
-        let columns:ColumnDefinition[] = ColumnDefinitions.bcols.get(block.toLowerCase());
-        if (columns != null) columns.forEach((column) => {index.set(column.name,column)});
+        let index:Map<string,ColumnDefinition> = ColumnDefinitions.bcidx.get(block.toLowerCase());
+        if (index == null) index = new Map<string,ColumnDefinition>();
         return(index);
     }
 }
