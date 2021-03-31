@@ -2,6 +2,50 @@ import { Field } from "../input/Field";
 import { FieldInstance } from "../input/FieldInstance";
 
 
+export class Container
+{
+    private fields$:FieldInstance[] = [];
+    private blocks:Map<string,ContainerBlock> = new Map<string,ContainerBlock>();
+
+    public register(field:FieldInstance) : void
+    {
+        let bname:string = field.block;
+        let block:ContainerBlock = this.blocks.get(bname);
+
+        if (block == null)
+        {
+            block = new ContainerBlock(bname);
+            this.blocks.set(bname,block);
+        }
+
+        block.add(field);
+        block.fields.push(field);
+        this.fields$.push(field);
+    }
+
+    public get fields() : FieldInstance[]
+    {
+        return(this.fields$);
+    }
+
+    public getBlock(block:string) : ContainerBlock
+    {
+        return(this.blocks.get(block.toLowerCase()));
+    }
+
+    public getBlocks() : ContainerBlock[]
+    {
+        let blocks:ContainerBlock[] = [];
+        this.blocks.forEach((blk) => {blocks.push(blk)});
+        return(blocks);
+    }
+
+    public finish() : void
+    {
+        this.blocks.forEach((block) => {block["finish"]();});
+    }
+}
+
 export class ContainerBlock
 {
     private name$:string;
@@ -97,6 +141,8 @@ export class ContainerBlock
                 field.row = 0;
                 this.add(field);
             });
+
+            // add record 0
         }
         else
         {
@@ -137,50 +183,5 @@ export class ContainerRecord
         }
 
         group.add(field);
-    }
-}
-
-
-export class Container
-{
-    private fields$:FieldInstance[] = [];
-    private blocks:Map<string,ContainerBlock> = new Map<string,ContainerBlock>();
-
-    public register(field:FieldInstance) : void
-    {
-        let bname:string = field.block;
-        let block:ContainerBlock = this.blocks.get(bname);
-
-        if (block == null)
-        {
-            block = new ContainerBlock(bname);
-            this.blocks.set(bname,block);
-        }
-
-        block.add(field);
-        block.fields.push(field);
-        this.fields$.push(field);
-    }
-
-    public get fields() : FieldInstance[]
-    {
-        return(this.fields$);
-    }
-
-    public getBlock(block:string) : ContainerBlock
-    {
-        return(this.blocks.get(block.toLowerCase()));
-    }
-
-    public getBlocks() : ContainerBlock[]
-    {
-        let blocks:ContainerBlock[] = [];
-        this.blocks.forEach((blk) => {blocks.push(blk)});
-        return(blocks);
-    }
-
-    public finish() : void
-    {
-        this.blocks.forEach((block) => {block["finish"]();});
     }
 }

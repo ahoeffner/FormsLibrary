@@ -285,7 +285,7 @@ export class FormImpl
                 block.alias = cb.name;
                 block.setApplication(this.app);
 
-                console.log("Block "+cb.name+" auto created");
+                console.log("Block "+cb.name+" auto-created");
             }
 
             bfields.set(block.alias,cb.fields);
@@ -338,9 +338,7 @@ export class FormImpl
             let fields:string[] = [];
             let sorted:ColumnDefinition[] = [];
 
-            // List of data-fields
-
-            // First pkey
+            // List of data-fields. First pkey
             if (pkey != null)
             {
                 pkey.columns.forEach((part) =>
@@ -394,7 +392,8 @@ export class FormImpl
             fieldidx.forEach((field) => {if (field.column == null) console.log("fields add "+field); if (field.column == null) fields.push(field.name)});
 
             // Set field properties and add undefined fields
-            bfields.get(block.alias).forEach((inst) =>
+            let bfieldlist:FieldInstance[] = bfields.get(block.alias);
+            if (bfieldlist != null) bfieldlist.forEach((inst) =>
             {
                 let fdef:FieldDefinition = fieldidx.get(inst.name);
 
@@ -473,7 +472,10 @@ export class FormImpl
         this.regroup();
 
         this.blocks.forEach((block) =>
-        {block.records[0].enable(0,true);});
+        {
+            if (block.records.length > 0)
+                block.records[0].enable(0,true);
+        });
 
         this.app.newForm(this);
         this.initiated$ = true;

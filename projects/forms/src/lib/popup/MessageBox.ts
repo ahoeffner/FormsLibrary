@@ -73,7 +73,6 @@ export class MessageBox implements Popup, AfterViewInit
     private conf:Config;
     private win:PopupWindow;
     private app: ApplicationImpl;
-    private closed:boolean = false;
     private msg:HTMLDivElement = null;
     private btn:HTMLButtonElement = null;
 
@@ -165,8 +164,6 @@ export class MessageBox implements Popup, AfterViewInit
 
     public close(_cancel: boolean): void
     {
-        this.closed = true;
-
         this.btn.removeEventListener("click",() => {this.close(false)});
         this.btn.removeEventListener("keydown",() => {this.close(false)});
 

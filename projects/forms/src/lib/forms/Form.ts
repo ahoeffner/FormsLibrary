@@ -54,7 +54,7 @@ export class Form implements OnInit, AfterViewInit
 
     public get block() : Block
     {
-        return(this._impl_.block.block);
+        return(this._impl_.block?.block);
     }
 
 

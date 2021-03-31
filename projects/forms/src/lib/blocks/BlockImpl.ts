@@ -137,7 +137,7 @@ export class BlockImpl
     public focus() : void
     {
         if (this.field != null) this.field.focus();
-        else this.records[this.row].focus();
+        else this.records[this.row]?.focus();
     }
 
 
@@ -478,7 +478,7 @@ export class BlockImpl
 
         this.details$.forEach((block) => {block.clear()});
         this.records[0].current = true;
-        
+
         this.records[0].focus();
     }
 
