@@ -424,6 +424,12 @@ export class FormImpl
                     if (iddef != null) fdef = iddef;
                 }
 
+                if (fdef.column != null && !fdef.hasOwnProperty("mandatory"))
+                {
+                    let cdef:ColumnDefinition = colindex.get(""+fdef.column);
+                    fdef.mandatory = cdef.mandatory;
+                }
+
                 if (fdef.type == null)
                     fdef.type = FieldType.input
 
@@ -458,7 +464,9 @@ export class FormImpl
 
         // Get all fields on form
         this.fields$ = container.fields;
-        this.block$ = this.blocks[0];
+
+        if (this.blocks.length > 0)
+            this.block$ = this.blocks[0];
 
         this.regroup();
 

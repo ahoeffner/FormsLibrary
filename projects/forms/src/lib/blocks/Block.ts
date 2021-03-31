@@ -45,6 +45,33 @@ export class Block
         this._impl_.dokey("executequery");
     }
 
+    public nextRecord() : void
+    {
+        this._impl_.dokey("nextrecord");
+    }
+
+    public prevRecord() : void
+    {
+        this._impl_.dokey("prevrecord");
+    }
+
+    public pageUp() : void
+    {
+        this._impl_.dokey("pageup");
+    }
+
+    public pageDown() : void
+    {
+        this._impl_.dokey("pagedown");
+    }
+
+    public createRecord(above?:boolean)
+    {
+        if (above == null) above = false;
+        if (!above) this._impl_.dokey("insertafter");
+        else        this._impl_.dokey("insertbefore");
+    }
+
     public set restrict(usage:DatabaseUsage)
     {
         this._impl_.setDatabaseUsage(usage);

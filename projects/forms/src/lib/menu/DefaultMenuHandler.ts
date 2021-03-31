@@ -68,25 +68,58 @@ export class DefaultMenuHandler extends MenuHandler
 
     public cancel() : void
     {
-        if (this.form != null)
-            this.form.block.cancel();
+        this.form?.block?.cancel();
     }
 
     public enterQuery() : void
     {
-        if (this.form != null)
-            this.form.block.enterQuery();
+        this.form?.block?.enterQuery();
     }
 
     public executeQuery() : void
     {
-        if (this.form != null)
-            this.form.block.executeQuery();
+        this.form?.block?.executeQuery();
+    }
+
+
+    public insertRecordAfter() : void
+    {
+        this.form?.block?.createRecord(false);
+    }
+
+
+    public insertRecordBefore() : void
+    {
+        this.form?.block?.createRecord(true);
+    }
+
+
+    public nextRecord() : void
+    {
+        this.form?.block?.nextRecord();
+    }
+
+
+    public prevRecord() : void
+    {
+        this.form?.block?.prevRecord();
+    }
+
+
+    public pageUp() : void
+    {
+        this.form?.block?.pageUp();
+    }
+
+
+    public pageDown() : void
+    {
+        this.form?.block?.pageDown();
     }
 
     public close() : void
     {
-        this.form.close(false);
+        this.form?.close(false);
         this.init();
     }
 }

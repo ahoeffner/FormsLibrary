@@ -16,7 +16,7 @@ export class DefaultMenu implements Menu
             {
                 name: "Connection", title: "Connection to database", options:
                 [
-                    {name: "connect", action: "connect"},
+                    {name: "connect",    action: "connect"},
                     {name: "disconnect", action: "disconnect"},
                 ]
             }
@@ -24,19 +24,21 @@ export class DefaultMenu implements Menu
             {
                 name: "Query", title: "Query actions", options:
                 [
-                    {name: "enter", action: "enterQuery"},
-                    {name: "execute", action: "executeQuery"},
-                    {name: "cancel", action: "cancel"},
+                    {name: "enter",     action: "enterQuery"},
+                    {name: "execute",   action: "executeQuery"},
+                    {name: "cancel",    action: "cancel"},
                 ]
             }
             ,
             {
                 name: "Record", title: "Record actions", options:
                 [
-                    {name: "insert", action: null},
-                    {name: "delete", action: null},
-                    {name: "undo", action: null},
-                    {name: "clear", action: null},
+                    {name: "insert",    action: "nextrecord"},
+                    {name: "delete",    action: null},
+                    {name: "next",      action: "nextRecord"},
+                    {name: "previous",  action: "prevRecord"},
+                    {name: "pagedown",  action: "pageDown"},
+                    {name: "pageup",    action: "pageUp"},
                 ]
             }
             ,

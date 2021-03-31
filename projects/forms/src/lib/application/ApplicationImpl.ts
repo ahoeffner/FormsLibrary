@@ -230,12 +230,6 @@ export class ApplicationImpl
     }
 
 
-    public sleep(ms:number) : Promise<void>
-    {
-        return(new Promise(resolve => setTimeout(resolve,ms)));
-    }
-
-
     private async postform(impl:FormImpl, destroy:boolean)
     {
         impl.onHide();
