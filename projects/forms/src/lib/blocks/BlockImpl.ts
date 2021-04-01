@@ -308,7 +308,6 @@ export class BlockImpl
 
     private async keyexeqry() : Promise<boolean>
     {
-        console.log("executeqry I")
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
@@ -319,10 +318,7 @@ export class BlockImpl
     public enterqry() : boolean
     {
         if (this.data.database && !this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
             return(false);
-        }
 
         this.clear();
 
@@ -341,10 +337,7 @@ export class BlockImpl
     public async executeqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
             return(false);
-        }
 
         let keys:Key[] = [];
         let fields:Field[] = [];
@@ -380,13 +373,8 @@ export class BlockImpl
 
     public insert(after:boolean) : boolean
     {
-        console.log("insert row = "+this.row);
-
         if (this.data.database && !this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
             return(false);
-        }
 
         let off:number = after ? 1 : 0;
 
@@ -427,10 +415,7 @@ export class BlockImpl
     public delete() : boolean
     {
         if (this.data.database && !this.app.appstate.connected)
-        {
-            this.alert("Not logged on","Database");
             return(false);
-        }
 
         if (!this.data.delete(+this.row + +this.offset))
             return(false);
@@ -616,6 +601,7 @@ export class BlockImpl
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
         if (this.records.length == 0) return(true);
+        if (this.data != null && this.data.database && !this.app.appstate.connected) return(true);
 
         if (type == "focus")
         {
