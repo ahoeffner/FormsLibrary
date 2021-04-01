@@ -33,7 +33,7 @@ export class Table
         this.fetch$ = rows;
         this.columns = columns;
         this.fielddef = fielddef;
-        this.cursor = table.name + Date.now();;
+        this.cursor = table.name + Date.now();
 
         if (this.key == null)
         {
