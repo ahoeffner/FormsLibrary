@@ -24,7 +24,7 @@ export class Condition
         this.column$ = column;
         this.datatype$ = datatype;
 
-        if (this.datatype$ == null)
+        if (this.datatype$ == null && value != null)
         {
             let numeric:boolean = !isNaN(+value);
             if (numeric) this.datatype$ = "number";
@@ -32,8 +32,7 @@ export class Condition
 
         if (value == null)
         {
-            this.value$ = "null";
-            this.operator$ = "is";
+            this.operator$ = "is null";
             return;
         }
 
@@ -184,21 +183,28 @@ export class Condition
         while(nc.prev$ != null) nc = nc.prev$;
 
         if (nc.next$ == null)
-            return("where "+nc.column$+" "+nc.operator$+" :"+nc.column$);
+            return("where "+this.clause(nc.column$,nc.operator$));
 
         let str:string = (nc.level$ == 0) ? "where " : "where (";
-        str += nc.column$+" "+nc.operator$+" :"+nc.column$;
+        str += this.clause(nc.column$,nc.operator$);
         if (nc.next$ != null) str += " "+nc.type$+" ";
 
         while(nc.next$ != null)
         {
             nc = nc.next$;
             if (+nc.level$ > 0) str += "(";
-            str += nc.column$+" "+nc.operator$+" :"+nc.column$;
+            str += this.clause(nc.column$,nc.operator$);
             if (+nc.level$ < 0) str += ")";
             if (nc.next$ != null) str += " "+nc.type$+" ";
         }
 
         return(str);
+    }
+
+
+    private clause(column:string, operator:string) : string
+    {
+        if (operator.startsWith("is")) return(column+" "+operator);
+        else return(column+" "+operator+" :"+column);
     }
 }

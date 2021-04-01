@@ -116,7 +116,7 @@ export class Table
             return(response);
 
         this.addRows(response["rows"]);
-        return(true);
+        return(response);
     }
 
 
@@ -131,7 +131,7 @@ export class Table
             return(response);
 
         this.addRows(response["rows"]);
-        return(true);
+        return(response);
     }
 
 
