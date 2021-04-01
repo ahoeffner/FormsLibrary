@@ -569,7 +569,7 @@ export class BlockImpl
                 }
 
                 this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r));
-                this.data.state(+this.offset+r,RecordState.update);
+                state = this.data.state(+this.offset+r,RecordState.update);
             }
 
             rec.enable(state,false);
@@ -901,6 +901,7 @@ export class BlockImpl
         // Pass event to subscribers, stop if signalled
         if (type == "key")
         {
+            if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (key != null && !await this.invokeTriggers(Trigger.Key,trgevent,key))
