@@ -176,6 +176,7 @@ export class FieldInstance implements AfterViewInit
     public disable() : void
     {
         this.enabled$ = false;
+        console.log("disable")
         if (this.clazz != null) this.clazz.enable = false;
     }
 
@@ -287,7 +288,7 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "keypress" || keypress)
         {
             if (this.readonly$) return;
-            
+
             if (this.case$ == Case.lower)
                 setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
 

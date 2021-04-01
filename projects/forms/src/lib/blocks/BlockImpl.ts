@@ -550,6 +550,14 @@ export class BlockImpl
         let columns:string[] = this.data.fields;
         let rows:any[][] = this.data.get(this.offset,this.rows);
 
+        if (rows.length == 0)
+        {
+            console.log("enable first row");
+            this.records[0]?.enable(RecordState.na,true);
+            this.field?.focus();
+            return;
+        }
+
         for(let r = 0; r < rows.length; r++)
         {
             let rec:Record = this.getRecord(r);
