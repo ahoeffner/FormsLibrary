@@ -57,6 +57,7 @@ export class FieldData
         if (this.table == null)
             return({status: "ok"});
 
+        this.data[row].locked = true;
         return({status: "ok"});
     }
 
@@ -65,6 +66,29 @@ export class FieldData
     {
         if (row < 0 || row >= this.data.length) return(false);
         return(this.data[row].locked);
+    }
+
+
+    public async validate(row:number) : Promise<any>
+    {
+        if (row < 0 || row >= this.data.length)
+            return({status: "failed", message: "row "+row+" does not exist"});
+
+        if (this.data[row].validated)
+            return({status: "ok"});
+
+        if (this.table == null)
+            return({status: "ok"});
+
+        this.data[row].validated = true;
+        return({status: "ok"});
+    }
+
+
+    public validated(row:number) : boolean
+    {
+        if (row < 0 || row >= this.data.length) return(false);
+        return(this.data[row].validated);
     }
 
 
@@ -234,6 +258,7 @@ export class Row
     public scn:number = 0;
     public fields:Column[] = [];
     public locked:boolean = false;
+    public validated:boolean = true;
     public state:RecordState = RecordState.na;
 
 
