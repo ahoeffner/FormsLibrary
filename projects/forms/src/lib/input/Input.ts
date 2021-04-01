@@ -11,6 +11,11 @@ export class Input implements FieldInterface
         return("<input></input>");
     }
 
+    public set size(size:number)
+    {
+        this.element$.size = size;
+    }
+
     public get tabindex() : number
     {
         return(this.element$.tabIndex);

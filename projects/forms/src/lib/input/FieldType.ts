@@ -36,6 +36,7 @@ export interface FieldInterface
 {
     value:any;
     html:string;
+    size:number;
     enable:boolean;
     rdonly:boolean;
     tabindex:number;
