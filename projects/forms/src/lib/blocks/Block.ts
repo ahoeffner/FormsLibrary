@@ -3,6 +3,7 @@ import { BlockImpl } from "./BlockImpl";
 import { Trigger } from "../events/Triggers";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { Statement } from "../database/Statement";
 
 
 export class Block
@@ -82,17 +83,27 @@ export class Block
         else        this._impl_.dokey("insertbefore");
     }
 
+    public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
+    {
+        return(this._impl_.execute(stmt,firstrow,firstcolumn));
+    }
+
     public set restrict(usage:DatabaseUsage)
     {
         this._impl_.setDatabaseUsage(usage);
     }
 
-    public addKeyListener(listener:TriggerFunction, keys?:string|string[]) : void
+    public addTrigger(listener:TriggerFunction, types:Trigger|Trigger[]) : void
+    {
+        this._impl_.addTrigger(this,listener,types);
+    }
+
+    public addKeyTrigger(listener:TriggerFunction, keys:string|string[]) : void
     {
         this._impl_.addKeyTrigger(this,listener,keys);
     }
 
-    public addFieldListener(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
+    public addFieldTrigger(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this._impl_.addFieldTrigger(this,listener,types,fields);
     }

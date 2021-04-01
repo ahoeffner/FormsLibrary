@@ -1,4 +1,5 @@
 import { MessageBox } from "../popup/MessageBox";
+import { SQL, SQLType, Statement } from "./Statement";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 
@@ -100,6 +101,12 @@ export class Connection
 
             setTimeout(() => {this.keepAlive()},this.keepalive*1000);
         }
+    }
+
+
+    public async invokestmt(stmt:Statement) : Promise<any>
+    {
+        return(this.invoke(SQLType[stmt.type],stmt.build()));
     }
 
 

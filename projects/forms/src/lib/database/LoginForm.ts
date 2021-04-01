@@ -44,7 +44,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
     {
         super();
 
-        this.addKeyListener(this.onEvent,
+        this.addKeyTrigger(this.onEvent,
         [
             keymap.enter,
             keymap.escape,

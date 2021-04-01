@@ -12,6 +12,8 @@ import { FormInstance } from "./FormInstance";
 import { FieldType } from "../input/FieldType";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
+import { MessageBox } from "../popup/MessageBox";
+import { Statement } from "../database/Statement";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
@@ -33,7 +35,6 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
-import { field } from "../annotations/field";
 
 
 export class FormImpl
@@ -250,6 +251,35 @@ export class FormImpl
     public getDropDownMenu() : ComponentRef<DropDownMenu>
     {
         return(this.ddmenu);
+    }
+
+
+    public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
+    {
+        let response:any = await this.app.appstate.connection.invokestmt(stmt);
+
+        if (response["status"] == "failed")
+            this.alert(JSON.stringify(response),"Execute SQL Failed");
+
+        let rows:any[] = response["rows"];
+
+        if (rows == null)
+        {
+            if (firstcolumn) return(null);
+            return([]);
+        }
+
+        if (!firstrow) return(rows);
+
+        let row:any = [];
+        if (rows.length > 0) row = rows[0];
+
+        if (!firstcolumn) return(row);
+
+        let columns:string[] = Object.keys(row);
+        if (columns.length == 0) return(null);
+
+        return(row[columns[0]]);
     }
 
 
@@ -933,5 +963,11 @@ export class FormImpl
     public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
     {
         return(await this.triggers.invokeFieldTriggers(type,field,event,key));
+    }
+
+
+    public alert(msg:string, title:string) : void
+    {
+        MessageBox.show(this.app,msg,title);
     }
  }

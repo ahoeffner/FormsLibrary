@@ -236,6 +236,35 @@ export class BlockImpl
     }
 
 
+    public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
+    {
+        let response:any = await this.app.appstate.connection.invokestmt(stmt);
+
+        if (response["status"] == "failed")
+            this.alert(JSON.stringify(response),"Execute SQL Failed");
+
+        let rows:any[] = response["rows"];
+
+        if (rows == null)
+        {
+            if (firstcolumn) return(null);
+            return([]);
+        }
+
+        if (!firstrow) return(rows);
+
+        let row:any = [];
+        if (rows.length > 0) row = rows[0];
+
+        if (!firstcolumn) return(row);
+
+        let columns:string[] = Object.keys(row);
+        if (columns.length == 0) return(null);
+
+        return(row[columns[0]]);
+    }
+
+
     private async keyinsert(after:boolean) : Promise<boolean>
     {
         if (this.data == null) return(false);
@@ -554,13 +583,13 @@ export class BlockImpl
     }
 
 
-    public addTrigger(instance:any, func:TriggerFunction, types?:Trigger|Trigger[]) : void
+    public addTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[]) : void
     {
         this.triggers.addTrigger(instance,func,types)
     }
 
 
-    public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
+    public addKeyTrigger(instance:any, func:TriggerFunction, keys:string|string[]) : void
     {
         this.triggers.addTrigger(instance,func,Trigger.Key,null,keys)
     }

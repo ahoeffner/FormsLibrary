@@ -38,6 +38,7 @@ export {FieldInstance} from './lib/input/FieldInstance';
 export {FieldDefinition, Case} from './lib/input/FieldDefinition';
 
 export {Condition} from './lib/database/Condition';
+export {Statement} from './lib/database/Statement';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'
 export {ColumnDefinition} from './lib/database/ColumnDefinition';
 

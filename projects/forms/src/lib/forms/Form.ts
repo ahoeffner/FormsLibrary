@@ -6,6 +6,7 @@ import { BlockImpl } from "../blocks/BlockImpl";
 import { Container } from "../container/Container";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
+import { Statement } from "../database/Statement";
 
 
 export interface CallBack
@@ -132,6 +133,12 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
+    public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
+    {
+        return(this._impl_.execute(stmt,firstrow,firstcolumn));
+    }
+
+
     public addFieldTrigger(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this._impl_.addFieldTrigger(this,listener,types,fields);
@@ -148,5 +155,12 @@ export class Form implements OnInit, AfterViewInit
         let container:Container = this._impl_.getApplication().getContainer();
         this._impl_.getApplication().dropContainer();
         this._impl_.newForm(container);
+    }
+
+
+    public alert(message:string, title?:string) : void
+    {
+        if (title == null) title = this.name;
+        this._impl_.alert(message,title);
     }
 }

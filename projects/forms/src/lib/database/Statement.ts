@@ -155,6 +155,11 @@ export class Statement
         return(this);
     }
 
+    public where(column:string, value:any, datatype?:string) : Statement
+    {
+        return(this.and(column,value,datatype));
+    }
+
     public and(column:string, value:any, datatype?:string) : Statement
     {
         if (this.condition$ == null)
@@ -201,19 +206,21 @@ export class Statement
     {
         let sql:string = this.sql$;
 
-        if (sql == null && this.type$ != null && this.type$ != SQLType.function)
+        if (sql == null)
+        {
             sql = SQLType[this.type$] + " ";
 
-        if (this.columns$ != null)
-        {
-            for(let i = 0; i < this.columns$.length - 1; i++)
-                sql += this.columns$[i]+", ";
+            if (this.columns$ != null)
+            {
+                for(let i = 0; i < this.columns$.length - 1; i++)
+                    sql += this.columns$[i]+", ";
 
-            sql += this.columns$[this.columns$.length-1];
+                sql += this.columns$[this.columns$.length-1];
+            }
+
+            if (this.table$ != null)
+                sql += " from "+this.table$;
         }
-
-        if (this.table$ != null)
-            sql += " from "+this.table$;
 
         if (this.condition$ != null)
             sql += " "+this.condition$.toString();
