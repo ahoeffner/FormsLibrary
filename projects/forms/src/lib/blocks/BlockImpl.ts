@@ -140,8 +140,17 @@ export class BlockImpl
 
     public focus() : void
     {
-        if (this.field != null) this.field.focus();
-        else this.records[this.row]?.focus();
+        let rec:Record = this.records[this.row];
+
+        if (this.field != null)
+        {
+            let field:FieldInstance = rec?.getFieldByGuid(this.field.name,this.field.guid);
+
+            if (field?.focus()) return;
+            if (this.field?.focus()) return;
+        }
+
+        rec?.focus();
     }
 
 
@@ -312,9 +321,10 @@ export class BlockImpl
 
         if (this.records.length > 0)
         {
+            this.row = 0;
             this.state = FormState.entqry;
             this.records[0].enable(RecordState.qmode,false);
-            this.records[0].focus();
+            this.focus();
         }
 
         return(true);
@@ -351,10 +361,11 @@ export class BlockImpl
             return(false);
         }
 
+        this.row = 0;
         this.display(0);
         this.state = FormState.normal;
         this.records[0].current = true;
-        this.records[0].focus();
+        this.focus();
 
         return(true);
     }
@@ -377,7 +388,7 @@ export class BlockImpl
         if (this.data.rows == 1)
         {
             this.display(this.offset);
-            if (this.field != null) this.field.focus();
+            this.focus();
             return;
         }
 
@@ -398,8 +409,7 @@ export class BlockImpl
         let rec:Record = this.records[+this.row];
         rec.current = true;
 
-        let field:FieldInstance = rec.getFieldByGuid(this.field.name,this.field.guid);
-        if (field != null) field.focus();
+        this.focus();
     }
 
 
@@ -430,8 +440,7 @@ export class BlockImpl
             this.row = this.data.rows - this.offset - 1;
 
         if (this.row < 0) this.row = 0;
-        if (this.data.rows == 0) this.records[0].clear(true);
-        else this.goField(this.row,this.field);
+        this.goField(this.row,this.field);
     }
 
 
@@ -507,6 +516,8 @@ export class BlockImpl
 
     public async clear()
     {
+        if (this.rows == null) return;
+
         for(let r = 0; r < this.rows; r++)
         {
             this.records[r].clear();
@@ -514,9 +525,12 @@ export class BlockImpl
         }
 
         this.details$.forEach((block) => {block.clear()});
-        this.records[0].current = true;
 
-        this.records[0].focus();
+        this.records[0].current = true;
+        this.records[0].enable(RecordState.na,true);
+
+        this.row = 0;
+        this.focus();
     }
 
 
@@ -526,10 +540,8 @@ export class BlockImpl
         if (rec == null || !rec.enabled) return;
 
         rec.current = true;
-
-        let inst:FieldInstance = rec.getFieldByGuid(field.name,field.guid);
-        if (inst != null) inst.focus();
-        else rec.focus();
+        this.row = row;
+        this.focus();
 
         if (field.name == this.field.name && row == this.field.row)
             this.onEvent(null,this.field,"focus");
@@ -552,9 +564,7 @@ export class BlockImpl
 
         if (rows.length == 0)
         {
-            console.log("enable first row");
-            this.records[0]?.enable(RecordState.na,true);
-            this.field?.focus();
+            this.focus();
             return;
         }
 
@@ -707,11 +717,13 @@ export class BlockImpl
             {
                 field.blur();
                 await this.sleep(20);
+
                 this.records[0].disable();
                 this.records[0].clear(true);
                 this.state = FormState.normal;
                 this.records[0].enable(RecordState.na,true);
-                this.field.focus();
+
+                this.focus();
             }
         }
 

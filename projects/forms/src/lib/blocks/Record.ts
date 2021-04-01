@@ -40,7 +40,8 @@ export class Record
 
     public focus() : void
     {
-        this.fields[0].focus();
+        for(let i = 0; i < this.fields.length; i++)
+            if (this.fields[i].focus()) return;
     }
 
     public set current(flag:boolean)

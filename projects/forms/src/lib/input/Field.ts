@@ -10,9 +10,10 @@ export class Field
     private seq:number = 0;;
     private value$:any = "";
     private block$:BlockImpl;
+    private current$:boolean = false;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
-    private current$:FieldInstance[] = [];
+    private currfields$:FieldInstance[] = [];
     private ids:Map<string,FieldInstance> = new Map<string,FieldInstance>();
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
@@ -52,9 +53,9 @@ export class Field
         if (this.fields.length > 0)
             return(this.fields[0]);
 
-        if (this.current && this.current$.length > 0)
+        if (this.current && this.currfields$.length > 0)
         {
-            let inst:FieldInstance = this.current$[0];
+            let inst:FieldInstance = this.currfields$[0];
             inst.row = this.row;
             return(inst);
         }
@@ -62,10 +63,16 @@ export class Field
         return(null);
     }
 
+    public get current() : boolean
+    {
+        return(this.current$);
+    }
+
     public set current(flag:boolean)
     {
-        if (!flag) this.current$.forEach((inst) => {inst.value = null;});
-        else this.current$.forEach((inst) => {inst.field = this; inst.row = this.row; inst.value = this.value$;});
+        this.current$ = flag;
+        if (!flag) this.currfields$.forEach((inst) => {inst.value = null;});
+        else this.currfields$.forEach((inst) => {inst.field = this; inst.row = this.row; inst.value = this.value$;});
     }
 
     public get value() : any
@@ -77,14 +84,35 @@ export class Field
     {
         this.value$ = value;
         this.fields$.forEach((inst) => {inst.value = value;});
-        if (this.current) this.current$.forEach((inst) => {inst.value = value;});
+        if (this.current) this.currfields$.forEach((inst) => {inst.value = value;});
     }
 
-    public focus() : void
+    public get enabled() : boolean
     {
-        if (this.field != null)
+        for (let i = 0; i < this.fields$.length; i++)
+        {
+            if (this.fields$[i].enabled)
+                return(true);
+        }
+
+        if (this.current$)
+        {
+            for (let i = 0; i < this.currfields$.length; i++)
+            {
+                if (this.currfields$[i].enabled)
+                    return(true);
+            }
+        }
+
+        return(false);
+    }
+
+    public focus() : boolean
+    {
+        if (this.field != null && this.field.enabled)
         {
             this.field.focus();
+            return(true);
         }
         else
         {
@@ -93,19 +121,24 @@ export class Field
                 if (this.fields$[i].enabled)
                 {
                     this.fields$[i].focus();
-                    return;
+                    return(true);
                 }
             }
 
-            for (let i = 0; i < this.current$.length; i++)
+            if (this.current$)
             {
-                if (this.current$[i].enabled)
+                for (let i = 0; i < this.currfields$.length; i++)
                 {
-                    this.current$[i].focus();
-                    return;
+                    if (this.currfields$[i].enabled)
+                    {
+                        this.currfields$[i].focus();
+                        return(true);
+                    }
                 }
             }
         }
+
+        return(false);
     }
 
     public add(field:FieldInstance) : void
@@ -114,7 +147,7 @@ export class Field
 
         if (field.row == -2)
         {
-            this.current$.push(field);
+            this.currfields$.push(field);
             if (field.guid == null) field.guid = "c:"+(this.seq++);
         }
         else
@@ -142,11 +175,6 @@ export class Field
         return(this.fields$);
     }
 
-    public get currfields() : FieldInstance[]
-    {
-        return(this.current$);
-    }
-
 
     public setType(type:FieldType, id?:string) : void
     {
@@ -160,8 +188,8 @@ export class Field
             for (let i = 0; i < this.fields$.length; i++)
                 this.fields$[i].type = type;
 
-            for (let i = 0; i < this.current$.length; i++)
-                this.current$[i].type = type;
+            for (let i = 0; i < this.currfields$.length; i++)
+                this.currfields$[i].type = type;
         }
     }
 
@@ -186,12 +214,12 @@ export class Field
                 this.fields$[i].readonly = readonly;
             }
 
-            if (this.current$)
+            if (this.currfields$)
             {
-                for (let i = 0; i < this.current$.length; i++)
+                for (let i = 0; i < this.currfields$.length; i++)
                 {
-                    this.current$[i].enable(state);
-                    this.current$[i].readonly = readonly;
+                    this.currfields$[i].enable(state);
+                    this.currfields$[i].readonly = readonly;
                 }
             }
         }
@@ -210,10 +238,10 @@ export class Field
             for (let i = 0; i < this.fields$.length; i++)
                 this.fields$[i].disable();
 
-            if (this.current$)
+            if (this.currfields$)
             {
-                for (let i = 0; i < this.current$.length; i++)
-                    this.current$[i].disable();
+                for (let i = 0; i < this.currfields$.length; i++)
+                    this.currfields$[i].disable();
             }
         }
     }
@@ -235,7 +263,7 @@ export class Field
         this.fields$.forEach((inst) =>
         {if (inst != field) inst.value = this.value$;});
 
-        this.current$.forEach((inst) =>
+        this.currfields$.forEach((inst) =>
         {if (inst != field) inst.value = this.value$;});
     }
 }

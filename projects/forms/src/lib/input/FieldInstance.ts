@@ -139,10 +139,13 @@ export class FieldInstance implements AfterViewInit
         return(this.options$);
     }
 
-    public focus() : void
+    public focus() : boolean
     {
-        if (this.clazz != null)
-            setTimeout(() => {this.clazz.element.focus()},0);
+        if (!this.enabled) return(false);
+        if (this.clazz == null) return(false);
+
+        setTimeout(() => {this.clazz.element.focus()},0);
+        return(true);
     }
 
     public blur() : void
@@ -176,23 +179,18 @@ export class FieldInstance implements AfterViewInit
     public disable() : void
     {
         this.enabled$ = false;
-        console.log("disable")
         if (this.clazz != null) this.clazz.enable = false;
     }
 
 
     public enable(state:RecordState)
     {
-        let enable:boolean = false;
-        if (state == RecordState.na) enable = true;
-        else if (state == RecordState.qmode && this.options$.query) enable = true;
-        else if (state == RecordState.insert && this.options$.insert) enable = true;
-        else if (state == RecordState.update && this.options$.update) enable = true;
-        if (enable && this.clazz != null)
-        {
-            this.enabled$ = true;
-            this.clazz.enable = true;
-        }
+        this.enabled$ = false;
+        if (state == RecordState.na) this.enabled$ = true;
+        else if (state == RecordState.qmode && this.options$.query) this.enabled$ = true;
+        else if (state == RecordState.insert && this.options$.insert) this.enabled$ = true;
+        else if (state == RecordState.update && this.options$.update) this.enabled$ = true;
+        if (this.clazz != null) this.clazz.enable = this.enabled$;
     }
 
 
