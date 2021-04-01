@@ -3,9 +3,9 @@ import { ColumnDefinitions } from './ColumnDefinitions';
 import { ColumnDefinition } from '../database/ColumnDefinition';
 
 
-export const column = (name:string, type:string) =>
+export const column = (definition:ColumnDefinition) =>
 {
-    function def(comp:any)
+    function define(comp:any)
     {
         let utils:Utils = new Utils();
         let cname:string = utils.getName(comp);
@@ -13,12 +13,12 @@ export const column = (name:string, type:string) =>
 
         if (ctype != "Block")
         {
-            console.log("@column("+name+","+type+") can only be used on blocks");
+            console.log("@column("+definition.name+","+definition.type+") can only be used on blocks");
             return;
         }
 
-        let def:ColumnDefinition = {name: name.toLowerCase(), type: type};
-        ColumnDefinitions.add(cname,def);
+        ColumnDefinitions.add(cname,definition);
+        definition.name = definition.name.toLowerCase();
     }
-    return(def);
+    return(define);
 }
