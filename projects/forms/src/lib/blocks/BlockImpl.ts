@@ -308,6 +308,7 @@ export class BlockImpl
 
     private async keyexeqry() : Promise<boolean>
     {
+        console.log("executeqry I")
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
@@ -488,6 +489,8 @@ export class BlockImpl
     {
         if (field == null) return(true);
         if (this.state == FormState.entqry) return(true);
+
+        console.log("validate "+field.name+"["+field.row+"] => "+field.value);
 
         let previous:any = this.getValue(field.name,field.row);
         if (previous == field.value) return(true);
@@ -702,6 +705,7 @@ export class BlockImpl
 
         if (type == "change")
         {
+            console.log("change "+field.name+"["+field.row+"] = "+field.value)
             await this.validatefield(field,event);
             return(true);
         }
@@ -712,7 +716,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
             {
                 field.blur();
-                await this.sleep(20);
+                await this.sleep(50);
 
                 this.records[0].disable();
                 this.records[0].clear(true);
@@ -738,7 +742,7 @@ export class BlockImpl
                 return(true);
 
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
             return(await this.keyentqry());
         }
 
@@ -754,7 +758,8 @@ export class BlockImpl
                 return(true);
 
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
+            
             return(await this.keyexeqry());
         }
 
@@ -768,7 +773,7 @@ export class BlockImpl
                 return(true);
 
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
             return(await this.keydelete());
         }
 
@@ -785,7 +790,7 @@ export class BlockImpl
                 return(true);
 
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
             return(await this.keyinsert(true));
         }
 
@@ -802,13 +807,16 @@ export class BlockImpl
                 return(true);
 
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
             return(await this.keyinsert(false));
         }
 
         // Next record
         if (type == "key" && key == keymap.nextrecord)
         {
+            if (!await this.validate())
+                return(false);
+
             let row:number = +field.row + 1;
             if (this.data == null) return(false);
 
@@ -824,7 +832,7 @@ export class BlockImpl
                 if (!await this.onEvent(null,this.field,"change")) return(false);
 
                 field.blur();
-                await this.sleep(20);
+                await this.sleep(50);
 
                 this.display(this.offset+1);
             }
@@ -840,6 +848,9 @@ export class BlockImpl
         // Previous record
         if (type == "key" && key == keymap.prevrecord)
         {
+            if (!await this.validate())
+                return(false);
+
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
 
@@ -852,7 +863,7 @@ export class BlockImpl
 
 
                 field.blur();
-                await this.sleep(20);
+                await this.sleep(50);
 
                 this.display(this.offset-1);
             }
@@ -868,6 +879,9 @@ export class BlockImpl
         // Page down
         if (type == "key" && key == keymap.pagedown)
         {
+            if (!await this.validate())
+                return(false);
+
             let offset:number = +this.offset + +field.row;
             let fetched:number = await this.data.fetch(offset,this.rows);
 
@@ -875,8 +889,9 @@ export class BlockImpl
             if (!await this.onEvent(null,this.field,"change")) return(false);
 
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
 
+            console.log("display")
             this.display(+this.offset+this.rows);
             this.focus();
 
@@ -886,8 +901,11 @@ export class BlockImpl
         // Page up
         if (type == "key" && key == keymap.pageup)
         {
+            if (!await this.validate())
+                return(false);
+
             field.blur();
-            await this.sleep(20);
+            await this.sleep(50);
 
             this.display(+this.offset-this.rows);
             this.focus();

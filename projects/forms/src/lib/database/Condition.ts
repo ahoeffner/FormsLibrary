@@ -30,7 +30,7 @@ export class Condition
             if (numeric) this.datatype$ = "number";
         }
 
-        if (value == null)
+        if (value == null || (value+"").length == 0)
         {
             this.operator$ = "is null";
             return;
