@@ -615,6 +615,7 @@ export class BlockImpl
         let delay:number = 10;
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
+        if (this.records.length == 0) return(true);
 
         if (type == "focus")
         {
