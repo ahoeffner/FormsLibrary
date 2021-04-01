@@ -33,6 +33,7 @@ import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { field } from "../annotations/field";
 
 
 export class FormImpl
@@ -389,7 +390,7 @@ export class FormImpl
             columns = sorted;
 
             // Then other defined fields (block or form)
-            fieldidx.forEach((field) => {if (field.column == null) console.log("fields add "+field); if (field.column == null) fields.push(field.name)});
+            fieldidx.forEach((field) => {if (field.column == null) fields.push(field.name)});
 
             // Set field properties and add undefined fields
             let bfieldlist:FieldInstance[] = bfields.get(block.alias);
@@ -410,8 +411,8 @@ export class FormImpl
                         fdef.mandatory = cdef.mandatory;
                     }
 
-                    fields.push(inst.name);
                     fieldidx.set(inst.name,fdef);
+                    if (!fields.includes(inst.name,0)) fields.push(inst.name);
                 }
 
                 if (inst.id.length > 0)
@@ -446,7 +447,7 @@ export class FormImpl
             if (tabdef != null)
             {
                 if (tabdef.name == null) console.log("No table specified for "+block.alias);
-                else table = new Table(this.conn,tabdef,pkey,columns,ffieldidx,rows);
+                else table = new Table(this.conn,tabdef,pkey,columns,fieldidx,rows);
             }
 
             block.fielddef = fieldidx;
