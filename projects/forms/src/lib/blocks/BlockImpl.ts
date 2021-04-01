@@ -373,6 +373,8 @@ export class BlockImpl
 
     public insert(after:boolean) : boolean
     {
+        console.log("insert row = "+this.row);
+
         if (this.data.database && !this.app.appstate.connected)
         {
             this.alert("Not logged on","Database");
@@ -403,12 +405,14 @@ export class BlockImpl
         let move:number = 0;
         if (scroll == 0) move = after ? 1 : 0;
 
+        let row:number = this.row;
         this.display(+this.offset + scroll);
+        this.row = row;
 
         this.row = +this.row + +move;
         let rec:Record = this.records[+this.row];
-        rec.current = true;
 
+        rec.current = true;
         this.focus();
     }
 
@@ -424,8 +428,6 @@ export class BlockImpl
         if (!this.data.delete(+this.row + +this.offset))
             return(false);
 
-        this.clear();
-
         // current view is not full
         if (+this.data.rows - this.offset < this.rows)
         {
@@ -433,7 +435,9 @@ export class BlockImpl
             if (this.offset < 0) this.offset = 0;
         }
 
+        let row:number = this.row;
         this.display(this.offset);
+        this.row = row;
 
         // no records at current position
         if ((+this.row) + (+this.offset) >= this.data.rows)
