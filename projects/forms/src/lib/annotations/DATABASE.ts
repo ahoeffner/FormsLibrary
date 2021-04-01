@@ -4,7 +4,7 @@ import { DatabaseDefinitions } from "./DatabaseDefinitions";
 
 export const database = (usage:DatabaseUsage) =>
 {
-    function def(component:any)
+    function define(component:any)
     {
         let utils:Utils = new Utils();
         let comp:string = utils.getName(component);
@@ -24,5 +24,5 @@ export const database = (usage:DatabaseUsage) =>
 
         console.log("@database can only be used in conjunction with Form or Block");
     }
-    return(def);
+    return(define);
 }

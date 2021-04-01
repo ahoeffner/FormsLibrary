@@ -6,7 +6,7 @@ import { BlockDefinition as BlockDef } from '../blocks/BlockDefinition';
 
 export const block = (definition:BlockDefinition) =>
 {
-    function def(comp:any, prop?:string)
+    function define(comp:any, prop?:string)
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(comp);
@@ -31,5 +31,5 @@ export const block = (definition:BlockDefinition) =>
 
         BlockDefinitions.setBlock(name,def);
     }
-    return(def);
+    return(define);
 }

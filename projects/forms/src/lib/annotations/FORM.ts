@@ -4,7 +4,7 @@ import { FormDefinition } from "../forms/FormsDefinition";
 
 export const form = (component:any, title:string, path:string, navigable?:boolean) =>
 {
-    function def(_comp:any)
+    function define(_comp:any)
     {
         let def:FormDefinition =
         {
@@ -17,5 +17,5 @@ export const form = (component:any, title:string, path:string, navigable?:boolea
 
         FormDefinitions.setForm(def);
     }
-    return(def);
+    return(define);
 }

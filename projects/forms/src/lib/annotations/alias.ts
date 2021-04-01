@@ -4,7 +4,7 @@ import { BlockDefinitions } from './BlockDefinitions';
 
 export const alias = (alias:string) =>
 {
-    function def(comp:any)
+    function define(comp:any)
     {
         let utils:Utils = new Utils();
         let cname:string = utils.getName(comp);
@@ -24,5 +24,5 @@ export const alias = (alias:string) =>
 
         BlockDefinitions.setDefaultAlias(cname,alias.toLowerCase());
     }
-    return(def);
+    return(define);
 }

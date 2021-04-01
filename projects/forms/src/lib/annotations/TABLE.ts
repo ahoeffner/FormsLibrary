@@ -4,7 +4,7 @@ import { TableDefinition } from '../database/TableDefinition';
 
 export const table = (name:string) =>
 {
-    function def(comp:any)
+    function define(comp:any)
     {
         let utils:Utils = new Utils();
         let cname:string = utils.getName(comp);
@@ -19,5 +19,5 @@ export const table = (name:string) =>
         let definition:TableDefinition = {name: name};
         TableDefinitions.set(cname,definition);
     }
-    return(def);
+    return(define);
 }

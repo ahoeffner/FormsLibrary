@@ -4,7 +4,7 @@ import { TableDefinition } from '../database/TableDefinition';
 
 export const orderby = (order:string) =>
 {
-    function def(comp:any)
+    function define(comp:any)
     {
         let utils:Utils = new Utils();
         let cname:string = utils.getName(comp);
@@ -19,5 +19,5 @@ export const orderby = (order:string) =>
         let definition:TableDefinition = {order: order};
         TableDefinitions.set(cname,definition);
     }
-    return(def);
+    return(define);
 }

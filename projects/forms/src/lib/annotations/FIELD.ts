@@ -5,7 +5,7 @@ import { FieldDefinition } from '../input/FieldDefinition';
 
 export const field = (definition:FieldDefinition) =>
 {
-    function def(comp:any)
+    function define(comp:any)
     {
         let form:boolean = false;
         let utils:Utils = new Utils();
@@ -22,5 +22,5 @@ export const field = (definition:FieldDefinition) =>
         FieldDefinitions.add(form,cname,definition);
     }
 
-    return(def);
+    return(define);
 }

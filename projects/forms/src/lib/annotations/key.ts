@@ -5,7 +5,7 @@ import { BlockDefinitions } from './BlockDefinitions';
 
 export const key = (name:string, unique:boolean, columns:string|string[]) =>
 {
-    function def(comp:any)
+    function define(comp:any)
     {
         let utils:Utils = new Utils();
         let cname:string = utils.getName(comp);
@@ -32,5 +32,5 @@ export const key = (name:string, unique:boolean, columns:string|string[]) =>
         let def:KeyDefinition = {name: name, unique: unique, columns: lccols}
         BlockDefinitions.setKey(cname,def);
     }
-    return(def);
+    return(define);
 }
