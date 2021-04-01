@@ -138,8 +138,14 @@ export class BlockImpl
     }
 
 
-    public focus() : void
+    public focus(row?:number) : void
     {
+        if (row != null && row >= 0 && row < this.rows)
+        {
+            this.row = row;
+            this.records[row].current = true;
+        }
+
         let rec:Record = this.records[this.row];
 
         if (this.field != null)
@@ -444,7 +450,7 @@ export class BlockImpl
             this.row = this.data.rows - this.offset - 1;
 
         if (this.row < 0) this.row = 0;
-        this.goField(this.row,this.field);
+        this.focus();
     }
 
 
@@ -535,20 +541,6 @@ export class BlockImpl
 
         this.row = 0;
         this.focus();
-    }
-
-
-    private async goField(row:number, field:FieldInstance) : Promise<boolean>
-    {
-        let rec:Record = this.getRecord(row);
-        if (rec == null || !rec.enabled) return;
-
-        rec.current = true;
-        this.row = row;
-        this.focus();
-
-        if (field.name == this.field.name && row == this.field.row)
-            this.onEvent(null,this.field,"focus");
     }
 
 
@@ -842,7 +834,7 @@ export class BlockImpl
                     return(false);
             }
 
-            this.goField(row,this.field);
+            this.focus(row);
         }
 
         // Previous record
@@ -870,7 +862,7 @@ export class BlockImpl
                 if (!await this.onEvent(null,this.field,"change")) return(false);
             }
 
-            this.goField(row,this.field);
+            this.focus(row);
         }
 
         // Page down
@@ -886,7 +878,7 @@ export class BlockImpl
             await this.sleep(20);
 
             this.display(+this.offset+this.rows);
-            this.goField(0,field);
+            this.focus();
 
             return(true);
         }
@@ -898,7 +890,7 @@ export class BlockImpl
             await this.sleep(20);
 
             this.display(+this.offset-this.rows);
-            this.goField(0,field);
+            this.focus();
 
             return(true);
         }
