@@ -202,24 +202,24 @@ export class Field
 
             if (field != null)
             {
-                field.enable(state);
                 field.readonly = readonly;
+                field.enable(state);
             }
         }
         else
         {
             for (let i = 0; i < this.fields$.length; i++)
             {
-                this.fields$[i].enable(state);
                 this.fields$[i].readonly = readonly;
+                this.fields$[i].enable(state);
             }
 
             if (this.currfields$)
             {
                 for (let i = 0; i < this.currfields$.length; i++)
                 {
-                    this.currfields$[i].enable(state);
                     this.currfields$[i].readonly = readonly;
+                    this.currfields$[i].enable(state);
                 }
             }
         }

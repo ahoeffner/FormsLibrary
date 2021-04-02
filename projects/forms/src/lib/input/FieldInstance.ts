@@ -191,7 +191,17 @@ export class FieldInstance implements AfterViewInit
         else if (state == RecordState.qmode && this.options$.query) this.enabled$ = true;
         else if (state == RecordState.insert && this.options$.insert) this.enabled$ = true;
         else if (state == RecordState.update && this.options$.update) this.enabled$ = true;
-        if (this.clazz != null) this.clazz.enable = this.enabled$;
+
+        if (this.clazz != null)
+        {
+            if (!this.enabled$ && state == RecordState.update)
+            {
+                this.enabled$ = true;
+                this.readonly = true;
+            }
+            
+            this.clazz.enable = this.enabled$;
+        }
     }
 
 

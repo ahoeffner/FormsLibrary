@@ -5,6 +5,6 @@ export interface ColumnDefinition
     case?:Case;
     name:string;
     type:string;
-    default:any;
+    default?:any;
     mandatory?:boolean;
 }
