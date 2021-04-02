@@ -40,10 +40,10 @@ export class BlockImpl
     {
         this.dbusage$ =
         {
-            query: true,
-            insert: true,
-            update: true,
-            delete: true
+            query: false,
+            insert: false,
+            update: false,
+            delete: false
         };
 
         this.name$ = block.constructor.name;

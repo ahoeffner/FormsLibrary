@@ -2,11 +2,13 @@ import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
 import { Block } from "../blocks/Block";
 import { Trigger } from "../events/Triggers";
+import { Theme } from "../application/Themes";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { Statement } from "../database/Statement";
 import { Container } from "../container/Container";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
-import { Statement } from "../database/Statement";
+import { DatabaseUsage } from "../database/DatabaseUsage";
 
 
 export interface CallBack
@@ -58,6 +60,16 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.block?.block);
     }
 
+    public get colors() : Theme
+    {
+        return(this._impl_.getApplication().conf.colors);
+    }
+
+    public setUsage(block:string, usage:DatabaseUsage)
+    {
+        let impl:BlockImpl = this._impl_.getBlock(block);
+        if (impl != null) impl.setDatabaseUsage(usage);
+    }
 
     public getBlock(block:string) : Block
     {
