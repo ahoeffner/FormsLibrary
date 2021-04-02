@@ -111,29 +111,27 @@ export class Field
     {
         if (this.field != null && this.field.enabled)
         {
-            this.field.focus();
-            return(true);
+            if (this.field.focus())
+                return(true);
         }
-        else
-        {
-            for (let i = 0; i < this.fields$.length; i++)
-            {
-                if (this.fields$[i].enabled)
-                {
-                    this.fields$[i].focus();
-                    return(true);
-                }
-            }
 
-            if (this.current$)
+        for (let i = 0; i < this.fields$.length; i++)
+        {
+            if (this.fields$[i].enabled)
             {
-                for (let i = 0; i < this.currfields$.length; i++)
+                if (this.fields$[i].focus())
+                    return(true);
+            }
+        }
+
+        if (this.current$)
+        {
+            for (let i = 0; i < this.currfields$.length; i++)
+            {
+                if (this.currfields$[i].enabled)
                 {
-                    if (this.currfields$[i].enabled)
-                    {
-                        this.currfields$[i].focus();
+                    if (this.currfields$[i].focus())
                         return(true);
-                    }
                 }
             }
         }
@@ -194,34 +192,27 @@ export class Field
     }
 
 
-    public enable(state:RecordState, readonly:boolean, id?:string) : void
+    public enable(state:RecordState, readonly:boolean) : void
     {
-        if (id != null)
+        this.ids.forEach((field) =>
         {
-            let field:FieldInstance = this.ids.get(id.toLowerCase());
+            field.readonly = readonly;
+            field.enable(state);
+        });
 
-            if (field != null)
+        this.fields$.forEach((field) =>
+        {
+            field.readonly = readonly;
+            field.enable(state);
+        });
+
+        if (this.current)
+        {
+            this.currfields$.forEach((field) =>
             {
                 field.readonly = readonly;
                 field.enable(state);
-            }
-        }
-        else
-        {
-            for (let i = 0; i < this.fields$.length; i++)
-            {
-                this.fields$[i].readonly = readonly;
-                this.fields$[i].enable(state);
-            }
-
-            if (this.currfields$)
-            {
-                for (let i = 0; i < this.currfields$.length; i++)
-                {
-                    this.currfields$[i].readonly = readonly;
-                    this.currfields$[i].enable(state);
-                }
-            }
+            });
         }
     }
 

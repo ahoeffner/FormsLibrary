@@ -27,6 +27,7 @@ export class FieldInstance implements AfterViewInit
     private container:HTMLSpanElement;
     private readonly$:boolean = false;
     private firstchange:boolean = true;
+    private state:RecordState = RecordState.na;
     private options$:FieldOptions = {query: true, insert: true, update: true};
 
     @Input("id")    private id$:string = "";
@@ -144,7 +145,6 @@ export class FieldInstance implements AfterViewInit
     {
         if (!this.enabled) return(false);
         if (this.clazz == null) return(false);
-
         setTimeout(() => {this.clazz.element.focus()},0);
         return(true);
     }
@@ -186,6 +186,9 @@ export class FieldInstance implements AfterViewInit
 
     public enable(state:RecordState)
     {
+        this.state = state;
+        if (this.row == 3 && this.name == "location_id")
+            console.log("["+this.id+"] set state "+RecordState[this.state]);
         this.enabled$ = false;
         if (state == RecordState.na) this.enabled$ = true;
         else if (state == RecordState.qmode && this.options$.query) this.enabled$ = true;
@@ -199,7 +202,7 @@ export class FieldInstance implements AfterViewInit
                 this.enabled$ = true;
                 this.readonly = true;
             }
-            
+
             this.clazz.enable = this.enabled$;
         }
     }
@@ -250,6 +253,7 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "focus")
         {
             this.firstchange = true;
+            console.log("["+this.id+"] state: "+RecordState[this.state]+" "+JSON.stringify(this.options$));
             this.fgroup$["onEvent"](event,this,"focus");
         }
 

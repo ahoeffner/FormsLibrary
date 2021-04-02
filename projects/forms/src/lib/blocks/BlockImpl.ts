@@ -150,10 +150,11 @@ export class BlockImpl
 
         if (this.field != null)
         {
-            let field:FieldInstance = rec?.getFieldByGuid(this.field.name,this.field.guid);
+            let field:Field = rec.getField(this.field.name);
+            let inst:FieldInstance = rec.getFieldByGuid(this.field.name,this.field.guid);
 
+            if (inst?.focus()) return;
             if (field?.focus()) return;
-            if (this.field?.focus()) return;
         }
 
         rec?.focus();
