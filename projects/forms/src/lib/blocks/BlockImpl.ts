@@ -285,7 +285,7 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.insert) return(false);
         if (!await this.validate()) return(false);
-        return(this.insert(after));
+        return(await this.insert(after));
     }
 
 
@@ -293,7 +293,7 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
         if (!this.dbusage.delete) return(false);
-        return(this.delete());
+        return(await this.delete());
     }
 
 
@@ -371,7 +371,7 @@ export class BlockImpl
     }
 
 
-    public insert(after:boolean) : boolean
+    public async insert(after:boolean) : Promise<boolean>
     {
         if (this.data.database && !this.app.appstate.connected)
             return(false);
@@ -407,12 +407,15 @@ export class BlockImpl
         this.row = +this.row + +move;
         let rec:Record = this.records[+this.row];
 
+        await this.sleep(10);
+        // make sure focus from clear is done
+
         rec.current = true;
         this.focus();
     }
 
 
-    public delete() : boolean
+    public async delete() : Promise<boolean>
     {
         if (this.data.database && !this.app.appstate.connected)
             return(false);
@@ -436,6 +439,10 @@ export class BlockImpl
             this.row = this.data.rows - this.offset - 1;
 
         if (this.row < 0) this.row = 0;
+
+        await this.sleep(10);
+        // make sure focus from clear is done
+
         this.focus();
     }
 
