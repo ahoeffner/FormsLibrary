@@ -30,6 +30,7 @@ export class BlockImpl
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
+    private fields$:FieldInstance[] = [];
     private triggers:Triggers = new Triggers();
     private state:FormState = FormState.normal;
     private fieldef$:Map<string,FieldDefinition>;
@@ -87,6 +88,18 @@ export class BlockImpl
     public get field() : FieldInstance
     {
         return(this.field$);
+    }
+
+
+    public set fields(fields:FieldInstance[])
+    {
+        this.fields$ = fields;
+    }
+
+
+    public get fields() : FieldInstance[]
+    {
+        return(this.fields$);
     }
 
 
@@ -156,6 +169,9 @@ export class BlockImpl
             if (inst?.focus()) return;
             if (field?.focus()) return;
         }
+
+        for(let i = 0; i < this.fields.length; i++)
+            if (this.fields[i].focus()) return;
 
         rec?.focus();
     }

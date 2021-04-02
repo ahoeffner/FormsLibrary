@@ -866,6 +866,24 @@ export class FormImpl
         });
 
         this.fields$ = this.fields$.sort((a,b) => {return(a.seq - b.seq)});
+
+        let blocks:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
+
+        this.fields$.forEach((field) =>
+        {
+            let fields:FieldInstance[] = blocks.get(field.block);
+
+            if (fields == null)
+            {
+                fields = [];
+                blocks.set(field.block,fields);
+            }
+
+            fields.push(field);
+        });
+
+        blocks.forEach((fields,bname) =>
+        {this.blkindex.get(bname).fields = fields;});
     }
 
 

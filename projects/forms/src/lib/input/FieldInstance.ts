@@ -79,6 +79,14 @@ export class FieldInstance implements AfterViewInit
         return(this.name$);
     }
 
+    public get fname() : string
+    {
+        let name:string = this.block$+"."+this.name;
+        if (this.id.length > 0) name += "."+this.id;
+        name += "["+this.row+"]";
+        return(name);
+    }
+
     public get type() : FieldType
     {
         return(this.type$);
@@ -143,6 +151,7 @@ export class FieldInstance implements AfterViewInit
 
     public focus() : boolean
     {
+        console.log(this.fname+" enabled "+this.enabled);
         if (!this.enabled) return(false);
         if (this.clazz == null) return(false);
         setTimeout(() => {this.clazz.element.focus()},0);
@@ -270,7 +279,6 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "focus")
         {
             this.firstchange = true;
-            console.log("["+this.id+"] state: "+RecordState[this.state$]+" "+JSON.stringify(this.options$));
             this.fgroup$["onEvent"](event,this,"focus");
         }
 
