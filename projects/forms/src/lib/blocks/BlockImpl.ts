@@ -171,7 +171,10 @@ export class BlockImpl
         }
 
         for(let i = 0; i < this.fields.length; i++)
-            if (this.fields[i].focus()) return;
+        {
+            if (this.fields[i].row == this.row)
+                if (this.fields[i].focus()) return;
+        }
 
         rec?.focus();
     }
@@ -302,6 +305,10 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.insert) return(false);
         if (!await this.validate()) return(false);
+
+        if (this.data.database && !this.app.appstate.connected)
+            return(true);
+
         return(await this.insert(after));
     }
 
@@ -310,6 +317,10 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
         if (!this.dbusage.delete) return(false);
+
+        if (this.data.database && !this.app.appstate.connected)
+            return(true);
+
         return(await this.delete());
     }
 
@@ -319,6 +330,10 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
+
+        if (this.data.database && !this.app.appstate.connected)
+            return(true);
+
         return(this.enterqry());
     }
 
@@ -328,6 +343,10 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
+
+        if (this.data.database && !this.app.appstate.connected)
+            return(true);
+
         return(this.executeqry());
     }
 
@@ -474,6 +493,12 @@ export class BlockImpl
 
     public async validate() : Promise<boolean>
     {
+        if (this.data == null)
+            return(true);
+
+        if (this.data.database && !this.app.appstate.connected)
+            return(true);
+
         if (this.records.length == 0)
             return(true);
 
@@ -520,6 +545,9 @@ export class BlockImpl
     private async validaterecord() : Promise<boolean>
     {
         if (this.data == null) return(true);
+        let rec:Record = this.records[this.row];
+        console.log(this.row+" "+RecordState[rec.state])
+        if (rec.state == RecordState.na) return(true);
         if (this.data.validated(+this.row + +this.offset)) return(true);
 
         let trgevent:TriggerEvent = new TriggerEvent(this.row,null);
@@ -528,6 +556,10 @@ export class BlockImpl
             return(false);
 
         this.data.validate(+this.row + +this.offset);
+
+        rec.state = RecordState.update;
+        rec.enable(false);
+
         return(true);
     }
 
@@ -631,7 +663,6 @@ export class BlockImpl
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
         if (this.records.length == 0) return(true);
-        if (this.data != null && this.data.database && !this.app.appstate.connected) return(true);
 
         if (type == "focus")
         {

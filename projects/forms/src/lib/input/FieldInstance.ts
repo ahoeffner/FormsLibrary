@@ -151,7 +151,6 @@ export class FieldInstance implements AfterViewInit
 
     public focus() : boolean
     {
-        console.log(this.fname+" enabled "+this.enabled);
         if (!this.enabled) return(false);
         if (this.clazz == null) return(false);
         setTimeout(() => {this.clazz.element.focus()},0);
