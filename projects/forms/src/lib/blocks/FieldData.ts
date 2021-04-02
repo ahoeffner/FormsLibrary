@@ -85,9 +85,10 @@ export class FieldData
     }
 
 
-    public validated(row:number) : boolean
+    public validated(row:number, flag?:boolean) : boolean
     {
         if (row < 0 || row >= this.data.length) return(false);
+        if (flag != null) this.data[row].validated = flag;
         return(this.data[row].validated);
     }
 

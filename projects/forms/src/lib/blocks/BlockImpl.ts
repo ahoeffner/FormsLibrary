@@ -465,6 +465,7 @@ export class BlockImpl
     private async validatefield(field:FieldInstance, jsevent:any) : Promise<boolean>
     {
         if (field == null) return(true);
+        if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
 
         let previous:any = this.getValue(field.name,field.row);
@@ -472,6 +473,8 @@ export class BlockImpl
 
         this.setDataValue(field.row,field.name,field.value);
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
+
+        this.data.validated(field.row,false);
 
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
             return(false);

@@ -14,6 +14,7 @@ export interface FieldDefinition
 {
     case?:Case;
     name:string;
+    default?:any;
     type?:FieldType;
     mandatory?:boolean;
     column?:boolean|string;

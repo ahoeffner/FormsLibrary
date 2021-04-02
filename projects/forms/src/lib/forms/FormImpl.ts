@@ -461,6 +461,9 @@ export class FormImpl
                 if (fdef.column != null && !fdef.hasOwnProperty("case"))
                     fdef.case = cdef.case;
 
+                if (fdef.column != null && !fdef.hasOwnProperty("default"))
+                    fdef.default = cdef.default;
+
                 if (fdef.column != null && !fdef.hasOwnProperty("mandatory"))
                     fdef.mandatory = cdef.mandatory;
 
