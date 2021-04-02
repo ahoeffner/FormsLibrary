@@ -61,6 +61,7 @@ export class Record
 
     public set state(state:RecordState)
     {
+        this.state$ = state;
         this.fields$.forEach((field) => {field.state = state});
     }
 
