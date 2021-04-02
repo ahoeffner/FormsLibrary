@@ -546,7 +546,6 @@ export class BlockImpl
     {
         if (this.data == null) return(true);
         let rec:Record = this.records[this.row];
-        console.log(this.row+" "+RecordState[rec.state])
         if (rec.state == RecordState.na) return(true);
         if (this.data.validated(+this.row + +this.offset)) return(true);
 
