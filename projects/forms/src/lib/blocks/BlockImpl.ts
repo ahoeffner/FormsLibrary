@@ -390,6 +390,7 @@ export class BlockImpl
         }
 
         let scroll:number = 0;
+        let row:number = this.row;
 
         if (after && this.row == this.rows - 1)
             scroll = 1;
@@ -400,18 +401,16 @@ export class BlockImpl
         let move:number = 0;
         if (scroll == 0) move = after ? 1 : 0;
 
-        let row:number = this.row;
         this.display(+this.offset + scroll);
-        this.row = row;
 
-        this.row = +this.row + +move;
-        let rec:Record = this.records[+this.row];
+        row = +row + +move;
+        let rec:Record = this.records[+row];
 
         await this.sleep(10);
         // make sure focus from clear is done
 
         rec.current = true;
-        this.focus();
+        this.focus(row);
     }
 
 
@@ -432,18 +431,17 @@ export class BlockImpl
 
         let row:number = this.row;
         this.display(this.offset);
-        this.row = row;
 
         // no records at current position
-        if ((+this.row) + (+this.offset) >= this.data.rows)
-            this.row = this.data.rows - this.offset - 1;
+        if ((+row) + (+this.offset) >= this.data.rows)
+            row = this.data.rows - this.offset - 1;
 
-        if (this.row < 0) this.row = 0;
+        if (row < 0) this.row = 0;
 
         await this.sleep(10);
         // make sure focus from clear is done
 
-        this.focus();
+        this.focus(row);
     }
 
 
