@@ -2,7 +2,7 @@ import { Utils } from '../utils/Utils';
 import { TableDefinitions } from './TableDefinitions';
 import { TableDefinition } from '../database/TableDefinition';
 
-export const table = (name:string) =>
+export const table = (definition:TableDefinition) =>
 {
     function define(comp:any)
     {
@@ -12,11 +12,10 @@ export const table = (name:string) =>
 
         if (ctype != "Block")
         {
-            console.log("@table("+name+") can only be used on blocks");
+            console.log("@table("+definition.name+") can only be used on blocks");
             return;
         }
 
-        let definition:TableDefinition = {name: name};
         TableDefinitions.set(cname,definition);
     }
     return(define);

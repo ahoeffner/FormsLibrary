@@ -10,7 +10,6 @@ export {field} from './lib/annotations/field';
 export {column} from './lib/annotations/column';
 export {wizard} from './lib/annotations/wizard';
 export {window} from './lib/annotations/window';
-export {orderby} from './lib/annotations/orderby';
 export {connect} from './lib/annotations/connect';
 export {destroy} from './lib/annotations/destroy';
 export {database} from './lib/annotations/database';

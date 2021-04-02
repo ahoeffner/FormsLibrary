@@ -456,11 +456,13 @@ export class FormImpl
                     if (iddef != null) fdef = iddef;
                 }
 
+                let cdef:ColumnDefinition = colindex.get(""+fdef.column);
+
+                if (fdef.column != null && !fdef.hasOwnProperty("case"))
+                    fdef.case = cdef.case;
+
                 if (fdef.column != null && !fdef.hasOwnProperty("mandatory"))
-                {
-                    let cdef:ColumnDefinition = colindex.get(""+fdef.column);
                     fdef.mandatory = cdef.mandatory;
-                }
 
                 if (fdef.type == null)
                     fdef.type = FieldType.input

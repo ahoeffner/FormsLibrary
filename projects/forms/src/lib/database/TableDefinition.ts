@@ -1,5 +1,5 @@
 export interface TableDefinition
 {
-     name?:string;
+     name:string;
      order?:string;
 }
