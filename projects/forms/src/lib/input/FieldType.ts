@@ -38,7 +38,7 @@ export interface FieldInterface
     html:string;
     size:number;
     enable:boolean;
-    rdonly:boolean;
     tabindex:number;
+    readonly:boolean;
     element:HTMLElement;
 }

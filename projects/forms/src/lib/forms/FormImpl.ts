@@ -4,6 +4,7 @@ import { Utils } from "../utils/Utils";
 import { Block } from "../blocks/Block";
 import { Form, CallBack } from "./Form";
 import { Table } from "../database/Table";
+import { Record } from "../blocks/Record";
 import { keymap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
@@ -18,9 +19,7 @@ import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
-import { TriggerEvent } from "../events/TriggerEvent";
 import { FieldInstance } from "../input/FieldInstance";
-import { Record, RecordState } from "../blocks/Record";
 import { Trigger, Triggers } from "../events/Triggers";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
@@ -34,6 +33,7 @@ import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
+import { KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 
@@ -493,7 +493,7 @@ export class FormImpl
 
             if (rec != null)
             {
-                rec.enable(RecordState.na,true);
+                rec.enable(true);
                 rec.current = true;
                 block.display(0);
             }
@@ -510,7 +510,7 @@ export class FormImpl
         this.blocks.forEach((block) =>
         {
             if (block.records.length > 0)
-                block.records[0].enable(0,true);
+                block.records[0].enable(true);
         });
 
         this.app.newForm(this);
@@ -918,7 +918,7 @@ export class FormImpl
         if (type == "focus")
             this.block = this.blkindex.get(field.block);
 
-        if (type == "key" && key == keymap.prevfield)
+        if (type == "key" && key == keymap.prevfield && event["navigate"])
         {
             let prev:boolean = false;
 
@@ -936,7 +936,7 @@ export class FormImpl
             return;
         }
 
-        if (type == "key" && key == keymap.nextfield)
+        if (type == "key" && key == keymap.nextfield && event["navigate"])
         {
             let next:boolean = false;
 
@@ -954,8 +954,14 @@ export class FormImpl
             return;
         }
 
-        if (event["navigate"])
-            return;
+        if (event["navigate"]) return;
+
+        if (type == "key")
+        {
+            let trgevent:KeyTriggerEvent = new KeyTriggerEvent(field,key,event);
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(false);
+        }
     }
 
 

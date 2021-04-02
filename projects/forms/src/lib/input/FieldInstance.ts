@@ -24,10 +24,10 @@ export class FieldInstance implements AfterViewInit
     private fgroup$:Field = null;
     private case$:Case = Case.mixed;
     private enabled$:boolean = false;
+    private readonly$:boolean = true;
     private container:HTMLSpanElement;
-    private readonly$:boolean = false;
     private firstchange:boolean = true;
-    private state:RecordState = RecordState.na;
+    private state$:RecordState = RecordState.na;
     private options$:FieldOptions = {query: true, insert: true, update: true};
 
     @Input("id")    private id$:string = "";
@@ -180,30 +180,47 @@ export class FieldInstance implements AfterViewInit
     public disable() : void
     {
         this.enabled$ = false;
-        if (this.clazz != null) this.clazz.enable = false;
-    }
-
-
-    public enable(state:RecordState)
-    {
-        this.state = state;
-        if (this.row == 3 && this.name == "location_id")
-            console.log("["+this.id+"] set state "+RecordState[this.state]);
-        this.enabled$ = false;
-        if (state == RecordState.na) this.enabled$ = true;
-        else if (state == RecordState.qmode && this.options$.query) this.enabled$ = true;
-        else if (state == RecordState.insert && this.options$.insert) this.enabled$ = true;
-        else if (state == RecordState.update && this.options$.update) this.enabled$ = true;
+        this.readonly$ = false;
+        this.state = RecordState.na;
 
         if (this.clazz != null)
         {
-            if (!this.enabled$ && state == RecordState.update)
+            this.clazz.enable = false;
+            this.clazz.readonly = false;
+        }
+    }
+
+    public set state(state:RecordState)
+    {
+        this.state$ = state;
+    }
+
+
+    public enable()
+    {
+        this.setInputState();
+    }
+
+
+    private setInputState() : void
+    {
+        this.enabled$ = false;
+
+        if (this.state$ == RecordState.na) this.enabled$ = true;
+        else if (this.state$ == RecordState.qmode && this.options$.query) this.enabled$ = true;
+        else if (this.state$ == RecordState.insert && this.options$.insert) this.enabled$ = true;
+        else if (this.state$ == RecordState.update && this.options$.update) this.enabled$ = true;
+
+        if (this.clazz != null)
+        {
+            if (!this.enabled$ && this.state$ == RecordState.update)
             {
                 this.enabled$ = true;
-                this.readonly = true;
+                this.readonly$ = true;
             }
 
             this.clazz.enable = this.enabled$;
+            this.clazz.readonly = this.readonly$;
         }
     }
 
@@ -211,7 +228,6 @@ export class FieldInstance implements AfterViewInit
     public set readonly(flag:boolean)
     {
         this.readonly$ = flag;
-        if (this.clazz != null) this.clazz.rdonly = flag;
     }
 
 
@@ -239,6 +255,7 @@ export class FieldInstance implements AfterViewInit
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
 
             this.addTriggers();
+            this.setInputState();
         }
     }
 
@@ -253,7 +270,7 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "focus")
         {
             this.firstchange = true;
-            console.log("["+this.id+"] state: "+RecordState[this.state]+" "+JSON.stringify(this.options$));
+            console.log("["+this.id+"] state: "+RecordState[this.state$]+" "+JSON.stringify(this.options$));
             this.fgroup$["onEvent"](event,this,"focus");
         }
 

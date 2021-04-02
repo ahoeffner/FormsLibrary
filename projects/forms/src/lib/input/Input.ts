@@ -34,16 +34,14 @@ export class Input implements FieldInterface
     public set element(element:HTMLElement)
     {
         this.element$ = element as HTMLInputElement;
-        this.enable = false;
     }
 
     public set enable(flag:boolean)
     {
         this.element$.disabled = !flag;
-        if (!flag) this.element$.readOnly = true;
     }
 
-    public set rdonly(flag:boolean)
+    public set readonly(flag:boolean)
     {
         this.element$.readOnly = flag;
     }

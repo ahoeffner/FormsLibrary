@@ -11,9 +11,12 @@ export class Field
     private value$:any = "";
     private block$:BlockImpl;
     private current$:boolean = false;
+    private enabled$:boolean = false;
+    private readonly$:boolean = true;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private currfields$:FieldInstance[] = [];
+    private state$:RecordState = RecordState.na;
     private ids:Map<string,FieldInstance> = new Map<string,FieldInstance>();
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
@@ -63,6 +66,16 @@ export class Field
         return(null);
     }
 
+    public get state() : RecordState
+    {
+        return(this.state$);
+    }
+
+    public get readonly() : boolean
+    {
+        return(this.readonly$);
+    }
+
     public get current() : boolean
     {
         return(this.current$);
@@ -71,8 +84,23 @@ export class Field
     public set current(flag:boolean)
     {
         this.current$ = flag;
-        if (!flag) this.currfields$.forEach((inst) => {inst.value = null;});
-        else this.currfields$.forEach((inst) => {inst.field = this; inst.row = this.row; inst.value = this.value$;});
+
+        if (!flag) this.currfields$.forEach((inst) =>
+        {
+            inst.value = null;
+            inst.disable();
+        });
+        else this.currfields$.forEach((inst) =>
+        {
+            inst.field = this;
+            inst.row = this.row;
+            inst.value = this.value$;
+
+            inst.state = this.state;
+            inst.readonly = this.readonly;
+
+            inst.enable();
+        });
     }
 
     public get value() : any
@@ -89,22 +117,7 @@ export class Field
 
     public get enabled() : boolean
     {
-        for (let i = 0; i < this.fields$.length; i++)
-        {
-            if (this.fields$[i].enabled)
-                return(true);
-        }
-
-        if (this.current$)
-        {
-            for (let i = 0; i < this.currfields$.length; i++)
-            {
-                if (this.currfields$[i].enabled)
-                    return(true);
-            }
-        }
-
-        return(false);
+        return(this.enabled$);
     }
 
     public focus() : boolean
@@ -192,49 +205,32 @@ export class Field
     }
 
 
-    public enable(state:RecordState, readonly:boolean) : void
+    public set state(state:RecordState)
     {
-        this.ids.forEach((field) =>
-        {
-            field.readonly = readonly;
-            field.enable(state);
-        });
-
-        this.fields$.forEach((field) =>
-        {
-            field.readonly = readonly;
-            field.enable(state);
-        });
-
-        if (this.current)
-        {
-            this.currfields$.forEach((field) =>
-            {
-                field.readonly = readonly;
-                field.enable(state);
-            });
-        }
+        this.state$ = state;
+        this.ids.forEach((field) => {field.state = state;});
+        this.fields$.forEach((field) => {field.state = state;});
+        if (this.current) this.currfields$.forEach((field) => {field.state = state;});
     }
 
 
-    public disable(id?:string) : void
+    public enable(readonly:boolean) : void
     {
-        if (id != null)
-        {
-            let field:FieldInstance = this.ids.get(id.toLowerCase());
-            if (field != null) field.disable();
-        }
-        else
-        {
-            for (let i = 0; i < this.fields$.length; i++)
-                this.fields$[i].disable();
+        this.enabled$ = true;
+        this.readonly$ = readonly;
+        this.ids.forEach((field) => {field.readonly = readonly; field.enable();});
+        this.fields$.forEach((field) => {field.readonly = readonly; field.enable();});
+        if (this.current) this.currfields$.forEach((field) => {field.readonly = readonly; field.enable();});
+    }
 
-            if (this.currfields$)
-            {
-                for (let i = 0; i < this.currfields$.length; i++)
-                    this.currfields$[i].disable();
-            }
-        }
+
+    public disable() : void
+    {
+        this.enabled$ = false;
+        this.readonly$ = false;
+        this.ids.forEach((field) => {field.disable()});
+        this.fields$.forEach((field) => {field.disable()});
+        if (this.current) this.currfields$.forEach((field) =>  {field.disable()});
     }
 
 

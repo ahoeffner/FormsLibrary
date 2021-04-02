@@ -326,8 +326,11 @@ export class BlockImpl
         if (this.records.length > 0)
         {
             this.row = 0;
+
             this.state = FormState.entqry;
-            this.records[0].enable(RecordState.qmode,false);
+            this.records[0].state = RecordState.qmode;
+
+            this.records[0].enable(false);
             this.focus();
         }
 
@@ -526,7 +529,8 @@ export class BlockImpl
         this.details$.forEach((block) => {block.clear()});
 
         this.records[0].current = true;
-        this.records[0].enable(RecordState.na,true);
+        this.records[0].state = RecordState.na;
+        this.records[0].enable(true);
 
         this.row = 0;
         this.focus();
@@ -581,7 +585,8 @@ export class BlockImpl
                 state = this.data.state(+this.offset+r,RecordState.update);
             }
 
-            rec.enable(state,false);
+            rec.state = state;
+            rec.enable(false);
         }
     }
 
@@ -708,7 +713,8 @@ export class BlockImpl
                 this.records[0].disable();
                 this.records[0].clear(true);
                 this.state = FormState.normal;
-                this.records[0].enable(RecordState.na,true);
+                this.records[0].state = RecordState.na;
+                this.records[0].enable(true);
 
                 this.focus();
             }
@@ -913,8 +919,8 @@ export class BlockImpl
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (key != null && !await this.invokeTriggers(Trigger.Key,trgevent,key))
-                return(true);
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(false);
         }
 
         // Pass event on to parent (form)

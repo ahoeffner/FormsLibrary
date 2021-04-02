@@ -111,8 +111,8 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
         this.usr.setType(FieldType.input);
         this.pwd.setType(FieldType.password);
 
-        this.usr.enable(RecordState.na,false);
-        this.pwd.enable(RecordState.na,false);
+        this.usr.enable(false);
+        this.pwd.enable(false);
 
         this.usr.focus();
         this.app.dropContainer();

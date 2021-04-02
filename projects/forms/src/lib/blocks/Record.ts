@@ -13,58 +13,77 @@ export enum RecordState
 
 export class Record
 {
-    public row:number = 0;
-    public rec:number = 0;
-    public fields:Field[] = [];
-    public enabled:boolean = false;
-    public index:Map<string,Field> = new Map<string,Field>();
+    private row$:number = 0;
+    private fields$:Field[] = [];
+    private enabled$:boolean = false;
+    private state$:RecordState = RecordState.na;
+    private index:Map<string,Field> = new Map<string,Field>();
 
 
     constructor(row:number, fields:Field[], index:Map<string,Field>)
     {
-        this.row = row;
-        this.rec = row;
+        this.row$ = row;
         this.index = index;
-        this.fields = fields;
+        this.fields$ = fields;
     }
 
-    public set record(rec:number)
+    public set row(row:number)
     {
-        this.rec = rec;
+        this.row$ = row;
     }
 
-    public get record() : number
+    public get row() : number
     {
-        return(this.rec);
+        return(this.row$);
+    }
+
+    public get fields() : Field[]
+    {
+        return(this.fields$);
     }
 
     public focus() : void
     {
-        for(let i = 0; i < this.fields.length; i++)
-            if (this.fields[i].focus()) return;
+        for(let i = 0; i < this.fields$.length; i++)
+            if (this.fields$[i].focus()) return;
     }
 
     public set current(flag:boolean)
     {
-        this.fields.forEach((field) => {field.current = flag});
+        this.fields$.forEach((field) => {field.current = flag});
     }
 
     public clear(current?:boolean) : void
     {
-        this.fields.forEach((field) => {field.value = null; field.disable()});
-        if (current) this.fields.forEach((field) => {field.current = true});
+        this.fields$.forEach((field) => {field.value = null; field.disable()});
+        if (current) this.fields$.forEach((field) => {field.current = true});
+    }
+
+    public set state(state:RecordState)
+    {
+        this.fields$.forEach((field) => {field.state = state});
+    }
+
+    public get state() : RecordState
+    {
+        return(this.state$);
+    }
+
+    public get enabled() : boolean
+    {
+        return(this.enabled$);
+    }
+
+    public enable(readonly?:boolean) : void
+    {
+        this.enabled$ = true;
+        this.fields$.forEach((field) => {field.enable(readonly)});
     }
 
     public disable() : void
     {
-        this.enabled = false;
-        this.fields.forEach((field) => {field.disable()});
-    }
-
-    public enable(state:RecordState, readonly?:boolean) : void
-    {
-        this.enabled = true;
-        this.fields.forEach((field) => {field.enable(state,readonly)});
+        this.enabled$ = false;
+        this.fields$.forEach((field) => {field.disable()});
     }
 
     public getField(name:string) : Field
