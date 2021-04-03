@@ -243,7 +243,7 @@ export class Field
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;
-        if (type == "ichange" || type == "change") this.copy(field);
+        if (type == "cchange" || type == "change") this.copy(field);
         if (this.block$ != null) this.block$.onEvent(event,field,type,key);
     }
 

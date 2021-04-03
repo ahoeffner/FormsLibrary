@@ -743,7 +743,7 @@ export class BlockImpl
             return(true);
         }
 
-        if (type == "ichange")
+        if (type == "cchange")
         {
             if (this.state == FormState.entqry)
                 return(true);

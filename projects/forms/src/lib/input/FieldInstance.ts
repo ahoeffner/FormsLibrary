@@ -175,7 +175,6 @@ export class FieldInstance implements AfterViewInit
 
     public blur() : void
     {
-        console.log(this.fname+" blur");
         if (this.clazz != null)
             setTimeout(() => {this.clazz.element.blur()},0);
     }
@@ -413,7 +412,7 @@ export class FieldInstance implements AfterViewInit
                 this.fgroup$["onEvent"](event,this,"fchange");
             }
 
-            setTimeout(() => {this.fgroup$.onEvent(event,this,"ichange");},1);
+            setTimeout(() => {this.fgroup$.onEvent(event,this,"cchange");},1);
         }
     }
 
@@ -442,7 +441,7 @@ export class FieldInstance implements AfterViewInit
             setTimeout(() =>
             {
                 this.value = value;
-                this.fgroup$.onEvent(event,this,"ichange");
+                this.fgroup$.onEvent(event,this,"cchange");
             }
             ,0);
         }
@@ -473,7 +472,7 @@ export class FieldInstance implements AfterViewInit
             setTimeout(() =>
             {
                 this.value = value;
-                this.fgroup$.onEvent(event,this,"ichange");
+                this.fgroup$.onEvent(event,this,"cchange");
             }
             ,0);
         }
