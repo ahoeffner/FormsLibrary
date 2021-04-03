@@ -10,7 +10,6 @@ import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
 import { FormInstance } from "./FormInstance";
-import { FieldType } from "../input/FieldType";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
 import { MessageBox } from "../popup/MessageBox";
@@ -32,6 +31,7 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
+import { FieldImplementation, FieldType } from "../input/FieldType";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
@@ -468,7 +468,7 @@ export class FormImpl
                     fdef.mandatory = cdef.mandatory;
 
                 if (fdef.type == null)
-                    fdef.type = FieldType.input
+                    fdef.type = FieldImplementation.guess(cdef?.type);
 
                 inst.definition = fdef;
             });
