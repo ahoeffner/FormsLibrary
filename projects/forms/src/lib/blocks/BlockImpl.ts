@@ -546,19 +546,15 @@ export class BlockImpl
         let rec:Record = this.records[this.row];
         if (rec.state == RecordState.na) return(true);
 
-        await this.sleep(1);
-
-        console.log(this.row+" valid: "+rec.valid)
         if (!rec.valid) return(false);
-
         if (this.data.validated(+this.row + +this.offset)) return(true);
+
         let trgevent:TriggerEvent = new TriggerEvent(this.row,null);
 
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
         if (!rec.valid) return(false);
-
         let response:any = await this.data.validate(+this.row + +this.offset);
 
         if (response["status"] == "failed")
@@ -669,7 +665,7 @@ export class BlockImpl
 
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
-        let delay:number = 10;
+        let delay:number = 5;
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
         if (this.records.length == 0) return(true);
@@ -684,7 +680,7 @@ export class BlockImpl
 
             if (this.row != field.row)
             {
-                if (!await this.validaterecord())
+                if (!await this.validate())
                 {
                     this.records[+this.row].current = true;
                     this.field.focus();
@@ -783,6 +779,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
+            await this.sleep(delay);
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
@@ -804,6 +801,7 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
+            await this.sleep(delay);
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
@@ -845,6 +843,7 @@ export class BlockImpl
         // Insert after
         if (type == "key" && key == keymap.insertafter)
         {
+            await this.sleep(delay);
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
 
@@ -868,6 +867,7 @@ export class BlockImpl
         // Insert before
         if (type == "key" && key == keymap.insertbefore)
         {
+            await this.sleep(delay);
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
 
@@ -878,7 +878,6 @@ export class BlockImpl
 
             field.blur();
             await this.sleep(delay);
-
 
             if (!await this.keyinsert(false))
             {
@@ -892,6 +891,8 @@ export class BlockImpl
         // Next record
         if (type == "key" && key == keymap.nextrecord)
         {
+            await this.sleep(delay);
+
             if (!await this.validate())
                 return(false);
 
@@ -926,6 +927,8 @@ export class BlockImpl
         // Previous record
         if (type == "key" && key == keymap.prevrecord)
         {
+            await this.sleep(delay);
+
             if (!await this.validate())
                 return(false);
 
@@ -957,6 +960,8 @@ export class BlockImpl
         // Page down
         if (type == "key" && key == keymap.pagedown)
         {
+            await this.sleep(delay);
+
             if (!await this.validate())
                 return(false);
 
@@ -978,6 +983,8 @@ export class BlockImpl
         // Page up
         if (type == "key" && key == keymap.pageup)
         {
+            await this.sleep(delay);
+
             if (!await this.validate())
                 return(false);
 
