@@ -240,7 +240,7 @@ export class BlockImpl
     }
 
 
-    public setDatabaseUsage(usage:DatabaseUsage) : void
+    public setUsage(usage:DatabaseUsage) : void
     {
         this.dbusage$ = usage;
     }

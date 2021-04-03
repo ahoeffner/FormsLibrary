@@ -68,7 +68,7 @@ export class Form implements OnInit, AfterViewInit
     public setUsage(block:string, usage:DatabaseUsage)
     {
         let impl:BlockImpl = this._impl_.getBlock(block);
-        if (impl != null) impl.setDatabaseUsage(usage);
+        if (impl != null) impl.setUsage(usage);
     }
 
     public getBlock(block:string) : Block

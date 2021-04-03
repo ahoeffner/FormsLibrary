@@ -88,9 +88,9 @@ export class Block
         return(this._impl_.execute(stmt,firstrow,firstcolumn));
     }
 
-    public set restrict(usage:DatabaseUsage)
+    public set usage(usage:DatabaseUsage)
     {
-        this._impl_.setDatabaseUsage(usage);
+        this._impl_.setUsage(usage);
     }
 
     public addTrigger(listener:TriggerFunction, types:Trigger|Trigger[]) : void

@@ -822,7 +822,7 @@ export class FormImpl
         usage = DBUsage.override(fusage,usage);
         usage = DBUsage.complete(usage);
 
-        block.setDatabaseUsage(usage);
+        block.setUsage(usage);
     }
 
 
