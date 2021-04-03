@@ -325,7 +325,7 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "blur")
         {
-            if (this.enabled && !this.readonly && this.mandatory)
+            if (this.enabled && !this.readonly && this.mandatory && !this.firstchange)
             {
                 if (this.value == null || (""+this.value).length == 0)
                     if (this.valid) this.fgroup$.valid = false;
@@ -394,10 +394,10 @@ export class FieldInstance implements AfterViewInit
             if (this.readonly) return;
 
             if (this.def.type == FieldType.number)
-                this.valnumber();
+                this.valnumber(event);
 
             if (this.def.type == FieldType.decimal)
-                this.valdecimal();
+                this.valdecimal(event);
 
             if (this.def.case == Case.lower)
                 setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
@@ -417,52 +417,65 @@ export class FieldInstance implements AfterViewInit
     }
 
 
-    private valnumber(value?:string) : boolean
+    private valnumber(event:any, value?:string) : void
     {
         if (this.state == RecordState.qmode)
-            return(true);
+            return;
 
         if (value == null)
         {
-            setTimeout(() => {this.valnumber(""+this.value)},0);
+            value = this.value+"";
+            setTimeout(() => {this.valnumber(event,value)},0);
             return;
         }
 
-        if (!this.valdecimal(value))
-            return(false);
-
         let nvalue:string = this.value;
 
-        if (nvalue.indexOf("."))
-        {
-            this.value = value;
-            return(false);
-        }
+        if (nvalue.trim().length == 0)
+            return;
 
-        return(true);
+        let numeric:boolean = !isNaN(+nvalue);
+
+        if (!numeric || nvalue.indexOf(".") >= 0)
+        {
+            setTimeout(() =>
+            {
+                this.value = value;
+                this.fgroup$.onEvent(event,this,"ichange");
+            }
+            ,0);
+        }
     }
 
 
-    private valdecimal(value?:string) : boolean
+    private valdecimal(event:any, value?:string) : void
     {
         if (this.state == RecordState.qmode)
-            return(true);
+            return;
 
         if (value == null)
         {
-            setTimeout(() => {this.valdecimal(""+this.value)},0);
+            value = this.value+"";
+            setTimeout(() => {this.valdecimal(event,value)},0);
             return;
         }
 
         let nvalue:string = this.value;
+
+        if (nvalue.trim().length == 0)
+            return;
+
         let numeric:boolean = !isNaN(+nvalue);
+
         if (!numeric)
         {
-            this.value = value;
-            return(false);
+            setTimeout(() =>
+            {
+                this.value = value;
+                this.fgroup$.onEvent(event,this,"ichange");
+            }
+            ,0);
         }
-
-        return(true);
     }
 
 

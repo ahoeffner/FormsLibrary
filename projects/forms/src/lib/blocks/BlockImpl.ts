@@ -155,8 +155,12 @@ export class BlockImpl
     {
         if (row != null && row >= 0 && row < this.rows)
         {
-            this.row = row;
-            this.records[row].current = true;
+            if (this.records[+row]?.enabled)
+            {
+                this.row = row;
+                this.records[+row].current = true;
+            }
+            else console.log("row "+row+" not enabled")
         }
 
         let rec:Record = this.records[this.row];

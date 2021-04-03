@@ -5,8 +5,8 @@ import { Password } from "./Password";
 export class FieldType
 {
     public static input:FieldType = new FieldType("input");
-    public static number:FieldType = new FieldType("input");
-    public static decimal:FieldType = new FieldType("input");
+    public static number:FieldType = new FieldType("number");
+    public static decimal:FieldType = new FieldType("decimal");
     public static password:FieldType = new FieldType("password");
 
     private constructor(public name:string) {};
@@ -23,6 +23,8 @@ export class FieldImplementation
         FieldImplementation.impl = new Map<string,any>();
 
         FieldImplementation.impl.set("input",Input);
+        FieldImplementation.impl.set("number",Input);
+        FieldImplementation.impl.set("decimal",Input);
         FieldImplementation.impl.set("password",Password);
     }
 
