@@ -10,6 +10,7 @@ export class Field
     private seq:number = 0;;
     private value$:any = "";
     private block$:BlockImpl;
+    private valid$:boolean = true;
     private current$:boolean = false;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
@@ -44,6 +45,18 @@ export class Field
     public get block() : BlockImpl
     {
         return(this.block$);
+    }
+
+    public get valid() : boolean
+    {
+        return(this.valid$);
+    }
+
+    public set valid(valid:boolean)
+    {
+        this.valid$ = valid;
+        this.fields$.forEach((inst) => {inst.valid = valid;});
+        if (this.current) this.currfields$.forEach((inst) => {inst.valid = valid;});
     }
 
     public getInstance(guid:string)

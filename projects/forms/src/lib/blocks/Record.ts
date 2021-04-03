@@ -98,4 +98,14 @@ export class Record
         if (field != null) return(field.getInstance(guid));
         return(null);
     }
+
+    public get valid() : boolean
+    {
+        for(let i = 0; i < this.fields.length; i++)
+        {
+            if (!this.fields[i].valid)
+                return(false);
+        }
+        return(true);
+    }
 }

@@ -148,12 +148,15 @@ export class FieldInstance implements AfterViewInit
         this.readonly$ = flag;
     }
 
+    public get readonly() : boolean
+    {
+        return(this.readonly$);
+    }
 
     public get mandatory() : boolean
     {
         return(this.mandatory$);
     }
-
 
     public set mandatory(flag:boolean)
     {
@@ -195,8 +198,12 @@ export class FieldInstance implements AfterViewInit
 
     public set value(value:any)
     {
-        this.valid = true;
         if (this.clazz != null) this.clazz.value = value;
+    }
+
+    public get valid() : boolean
+    {
+        return(this.valid$);
     }
 
     public set valid(flag:boolean)
@@ -204,11 +211,19 @@ export class FieldInstance implements AfterViewInit
         if (flag == this.valid$)
             return;
 
-        this.valid$ = flag;
-
-        if (flag) this.addClass("invalid");
-        else      this.removeClass("invalid");
-
+        if (flag)
+        {
+            this.valid$ = flag;
+            this.removeClass("invalid");
+        }
+        else
+        {
+            if (this.enabled && !this.readonly)
+            {
+                this.valid$ = flag;
+                this.addClass("invalid");
+            }
+        }
     }
 
     public enable()
@@ -218,6 +233,7 @@ export class FieldInstance implements AfterViewInit
 
     public disable() : void
     {
+        this.valid = true;
         this.enabled$ = false;
         this.readonly$ = false;
         this.state = RecordState.na;
@@ -308,17 +324,27 @@ export class FieldInstance implements AfterViewInit
         }
 
         if (event.type == "blur")
+        {
+            if (this.enabled && !this.readonly && this.mandatory)
+            {
+                if (this.value == null || (""+this.value).length == 0)
+                    if (this.valid) this.fgroup$.valid = false;
+            }
+
             this.fgroup$["onEvent"](event,this,"blur");
+        }
 
         if (event.type == "change")
         {
-            this.valid = true;
+            if (this.enabled && !this.readonly)
+            if (!this.valid) this.fgroup$.valid = true;
+
             this.value = this.value.trim();
 
-            if (this.mandatory)
+            if (this.enabled && !this.readonly && this.mandatory)
             {
                 if (this.value == null || (""+this.value).length == 0)
-                    this.valid = false;
+                if (this.valid) this.fgroup$.valid = false;
             }
 
             this.fgroup$["onEvent"](event,this,"change");
@@ -365,7 +391,7 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "keypress" || keypress)
         {
-            if (this.readonly$) return;
+            if (this.readonly) return;
 
             if (this.def.type == FieldType.number)
                 this.valnumber();
@@ -381,8 +407,8 @@ export class FieldInstance implements AfterViewInit
 
             if (this.firstchange)
             {
-                this.valid = true;
                 this.firstchange = false;
+                if (!this.valid) this.fgroup$.valid = true;
                 this.fgroup$["onEvent"](event,this,"fchange");
             }
 

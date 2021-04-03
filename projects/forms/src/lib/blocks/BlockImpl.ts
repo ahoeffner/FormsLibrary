@@ -524,8 +524,6 @@ export class BlockImpl
         this.setDataValue(field.row,field.name,field.value);
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
 
-        this.data.validated(field.row,false);
-
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
             return(false);
 
@@ -547,13 +545,19 @@ export class BlockImpl
         if (this.data == null) return(true);
         let rec:Record = this.records[this.row];
         if (rec.state == RecordState.na) return(true);
-        if (this.data.validated(+this.row + +this.offset)) return(true);
 
+        await this.sleep(1);
+
+        console.log(this.row+" valid: "+rec.valid)
+        if (!rec.valid) return(false);
+
+        if (this.data.validated(+this.row + +this.offset)) return(true);
         let trgevent:TriggerEvent = new TriggerEvent(this.row,null);
 
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
+        if (!rec.valid) return(false);
         this.data.validate(+this.row + +this.offset);
 
         rec.state = RecordState.update;
@@ -814,7 +818,6 @@ export class BlockImpl
         // Delete
         if (type == "key" && key == keymap.delete)
         {
-            if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))

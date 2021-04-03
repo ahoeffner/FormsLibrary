@@ -71,6 +71,8 @@ export class FieldData
 
     public async validate(row:number) : Promise<any>
     {
+        console.log("Fielddata validate "+row+" "+this.data[row].validated);
+
         if (row < 0 || row >= this.data.length)
             return({status: "failed", message: "row "+row+" does not exist"});
 
@@ -81,14 +83,14 @@ export class FieldData
             return({status: "ok"});
 
         this.data[row].validated = true;
+        console.log("Fielddata validated "+row+" true");
         return({status: "ok"});
     }
 
 
-    public validated(row:number, flag?:boolean) : boolean
+    public validated(row:number) : boolean
     {
         if (row < 0 || row >= this.data.length) return(false);
-        if (flag != null) this.data[row].validated = flag;
         return(this.data[row].validated);
     }
 
@@ -204,6 +206,7 @@ export class FieldData
         if (rec.fields[+colno].value$ == value)
             return(false);
 
+        rec.validated = false;
         let scn:number = ++this.scn;
 
         rec.scn = scn;
@@ -279,6 +282,7 @@ export class Row
 
     public setValue(col:number, value:any) : void
     {
+        // Used by table
         this.fields[col].value$ = value;
     }
 
