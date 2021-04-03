@@ -65,8 +65,8 @@ export class MessageBox implements Popup, AfterViewInit
 {
     public top:string    = "20%";
     public left:string   = "25%";
-    public width$:string  = "300px";
-    public height$:string = "150px";
+    public width$:string  = "150px";
+    public height$:string = "125px";
     public title$:string  = "alert";
     public message:string = "the message";
 
