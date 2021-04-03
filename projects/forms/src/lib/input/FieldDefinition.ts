@@ -1,6 +1,5 @@
 import { FieldType } from "./FieldType";
-import { DatabaseUsage } from "../database/DatabaseUsage";
-import { FieldOption, FieldOptions } from "./FieldOptions";
+import { FieldOptions } from "./FieldOptions";
 
 
 export enum Case

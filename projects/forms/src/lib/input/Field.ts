@@ -1,7 +1,7 @@
-import { FieldType } from "./FieldType";
 import { RecordState } from "../blocks/Record";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldInstance } from "./FieldInstance";
+import { FieldDefinition } from "./FieldDefinition";
 
 export class Field
 {
@@ -187,21 +187,13 @@ export class Field
     }
 
 
-    public setType(type:FieldType, id?:string) : void
+    public set definition(def:FieldDefinition)
     {
-        if (id != null)
-        {
-            let field:FieldInstance = this.ids.get(id.toLowerCase());
-            if (field != null) field.type = type;
-        }
-        else
-        {
-            for (let i = 0; i < this.fields$.length; i++)
-                this.fields$[i].type = type;
+        for (let i = 0; i < this.fields$.length; i++)
+            this.fields$[i].definition = def;
 
-            for (let i = 0; i < this.currfields$.length; i++)
-                this.currfields$[i].type = type;
-        }
+        for (let i = 0; i < this.currfields$.length; i++)
+            this.currfields$[i].definition = def;
     }
 
 

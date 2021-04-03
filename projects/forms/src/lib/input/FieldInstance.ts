@@ -1,9 +1,9 @@
 import { Field } from './Field';
-import { Case } from './FieldDefinition';
+import { FieldOptions } from './FieldOptions';
 import { RecordState } from '../blocks/Record';
-import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
 import { Application } from "../application/Application";
-import { FieldOption, FieldOptions } from './FieldOptions';
+import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
+import { Case, FieldDefinition } from './FieldDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
@@ -18,11 +18,10 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 export class FieldInstance implements AfterViewInit
 {
     private guid$:string;
-    private type$:FieldType;
+    private def:FieldDefinition;
     private app:ApplicationImpl;
     private clazz:FieldInterface;
     private fgroup$:Field = null;
-    private case$:Case = Case.mixed;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
     private container:HTMLSpanElement;
@@ -87,16 +86,6 @@ export class FieldInstance implements AfterViewInit
         return(name);
     }
 
-    public get type() : FieldType
-    {
-        return(this.type$);
-    }
-
-    public get dirty() : boolean
-    {
-        return(this.dirty);
-    }
-
     public set guid(guid:string)
     {
         this.guid$ = guid;
@@ -133,17 +122,6 @@ export class FieldInstance implements AfterViewInit
         this.fgroup$ = field;
     }
 
-    public set fieldoptions(options:FieldOptions)
-    {
-        if (options != null)
-        {
-            this.options$ = options;
-            if (!this.options$.hasOwnProperty("query")) options.query = true;
-            if (!this.options$.hasOwnProperty("insert")) options.insert = true;
-            if (!this.options$.hasOwnProperty("update")) options.update = true;
-        }
-    }
-
     public get fieldoptions() : FieldOptions
     {
         return(this.options$);
@@ -166,12 +144,6 @@ export class FieldInstance implements AfterViewInit
     public get current() : boolean
     {
         return(this.guid.startsWith("c"));
-    }
-
-    public set case(type:Case)
-    {
-        this.case$ = type;
-        if (type == null) this.case$ = Case.mixed;
     }
 
     public set value(value:any)
@@ -239,15 +211,26 @@ export class FieldInstance implements AfterViewInit
     }
 
 
-    public set restrict(restrict:FieldOptions)
+    public set definition(def:FieldDefinition)
     {
-        this.options$ = FieldOption.restrict(this.options$,restrict);
+        this.def = def;
+        this.setType(def.type);
+
+        if (!this.def.hasOwnProperty("case"))
+            this.def.case = Case.mixed;
+
+        if (this.def.fieldoptions != null)
+        {
+            this.options$ = this.def.fieldoptions;
+            if (!this.options$.hasOwnProperty("query"))  this.options$.query = true;
+            if (!this.options$.hasOwnProperty("insert")) this.options$.insert = true;
+            if (!this.options$.hasOwnProperty("update")) this.options$.update = true;
+        }
     }
 
 
-    public set type(type:FieldType)
+    private setType(type:FieldType) : void
     {
-        this.type$ = type;
         this.container.innerHTML = null;
         let cname:any = FieldImplementation.getClass(type.name);
 
@@ -330,10 +313,10 @@ export class FieldInstance implements AfterViewInit
         {
             if (this.readonly$) return;
 
-            if (this.case$ == Case.lower)
+            if (this.def.case == Case.lower)
                 setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
 
-            if (this.case$ == Case.upper)
+            if (this.def.case == Case.upper)
                 setTimeout(() => {this.value = (""+this.value).toUpperCase();},0);
 
             if (this.firstchange)

@@ -2,11 +2,12 @@ import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Block } from "../blocks/Block";
 import { keymap } from "../keymap/KeyMap";
+import { Record } from "../blocks/Record";
 import { FieldType } from "../input/FieldType";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
-import { Record, RecordState } from "../blocks/Record";
 import { KeyTriggerEvent } from "../events/TriggerEvent";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, OnInit } from "@angular/core";
 
@@ -108,8 +109,11 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
         this.usr = this["_impl_"].getField(0,"usr");
         this.pwd = this["_impl_"].getField(0,"pwd");
 
-        this.usr.setType(FieldType.input);
-        this.pwd.setType(FieldType.password);
+        let usr:FieldDefinition = {name: "usr", type: FieldType.input};
+        let pwd:FieldDefinition = {name: "pwd", type: FieldType.password};
+
+        this.usr.definition = usr;
+        this.pwd.definition = pwd;
 
         this.usr.enable(false);
         this.pwd.enable(false);

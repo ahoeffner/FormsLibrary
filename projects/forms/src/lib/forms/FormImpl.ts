@@ -470,9 +470,7 @@ export class FormImpl
                 if (fdef.type == null)
                     fdef.type = FieldType.input
 
-                inst.type = fdef.type;
-                inst.case = fdef.case;
-                inst.fieldoptions = fdef.fieldoptions;
+                inst.definition = fdef;
             });
 
             // Create data-backing table
