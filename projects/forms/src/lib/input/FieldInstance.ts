@@ -291,7 +291,7 @@ export class FieldInstance implements AfterViewInit
     private setType(type:FieldType) : void
     {
         this.container.innerHTML = null;
-        let cname:any = FieldImplementation.getClass(type.name);
+        let cname:any = FieldImplementation.getClass(FieldType[type]);
 
         if (cname != null)
         {
@@ -408,7 +408,7 @@ export class FieldInstance implements AfterViewInit
 
     private continious(event:any, value:any) : void
     {
-        if (this.def.type == FieldType.number)
+        if (this.def.type == FieldType.integer)
         {
             if (!this.valnumber(value))
                 return;

@@ -2,16 +2,14 @@ import { Input } from "./Input";
 import { Password } from "./Password";
 
 
-export class FieldType
+export enum FieldType
 {
-    public static date:FieldType = new FieldType("date");
-    public static input:FieldType = new FieldType("input");
-    public static number:FieldType = new FieldType("number");
-    public static decimal:FieldType = new FieldType("decimal");
-    public static datetime:FieldType = new FieldType("datetime");
-    public static password:FieldType = new FieldType("password");
-
-    private constructor(public name:string) {};
+    date,
+    text,
+    integer,
+    decimal,
+    datetime,
+    password
 }
 
 
@@ -24,33 +22,37 @@ export class FieldImplementation
         if (FieldImplementation.impl != null) return;
         FieldImplementation.impl = new Map<string,any>();
 
-        FieldImplementation.impl.set("date",Input);
-        FieldImplementation.impl.set("input",Input);
-        FieldImplementation.impl.set("number",Input);
-        FieldImplementation.impl.set("decimal",Input);
-        FieldImplementation.impl.set("datetime",Input);
-        FieldImplementation.impl.set("password",Password);
+        Object.keys(FieldType).forEach((type) =>
+        {
+            if (isNaN(Number(type)))
+                FieldImplementation.impl.set(type,Input);
+        });
+
+        FieldImplementation.impl.set(FieldType[FieldType.password],Password)
     }
 
     public static getClass(type:string) : any
     {
         FieldImplementation.init();
-        return(FieldImplementation.impl.get(type.toLowerCase()));
+        return(FieldImplementation.impl.get(type));
     }
 
     public static guess(type:string) : FieldType
     {
-        let ftype:FieldType = FieldType.input;
+        let ftype:FieldType = FieldType.text;
 
         if (type != null)
         {
             type = type.toLowerCase();
 
-            if (type.indexOf("int")) ftype = FieldType.number;
+            if (type.indexOf("date")) ftype = FieldType.date;
+            if (type.indexOf("int")) ftype = FieldType.integer;
             if (type.indexOf("float")) ftype = FieldType.decimal;
-            if (type.indexOf("number")) ftype = FieldType.number;
+            if (type.indexOf("number")) ftype = FieldType.integer;
             if (type.indexOf("numeric")) ftype = FieldType.decimal;
             if (type.indexOf("decimal")) ftype = FieldType.decimal;
+            if (type.indexOf("datetime")) ftype = FieldType.datetime;
+            if (type.indexOf("timestamp")) ftype = FieldType.datetime;
         }
 
         return(ftype);

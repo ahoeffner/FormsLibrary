@@ -231,6 +231,7 @@ export class Field
 
     public disable() : void
     {
+        this.valid$ = true;
         this.enabled$ = false;
         this.readonly$ = false;
         this.ids.forEach((field) => {field.disable()});

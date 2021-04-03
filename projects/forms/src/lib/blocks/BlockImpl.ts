@@ -784,15 +784,15 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
+            field.blur();
             await this.sleep(delay);
+            field.focus();
+
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
-
-            field.blur();
-            await this.sleep(delay);
 
             if (!await this.keyentqry())
             {
@@ -806,15 +806,15 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
+
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
-
-            field.blur();
-            await this.sleep(delay);
 
             if (!await this.keyexeqry())
             {
@@ -828,19 +828,17 @@ export class BlockImpl
         // Delete
         if (type == "key" && key == keymap.delete)
         {
+            field.blur();
+            await this.sleep(delay);
+            field.focus();
+
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            field.blur();
-            await this.sleep(delay);
-
             if (!await this.keydelete())
-            {
-                field.focus();
                 return(false);
-            }
 
             return(true);
         }
@@ -848,7 +846,10 @@ export class BlockImpl
         // Insert after
         if (type == "key" && key == keymap.insertafter)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
+
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
 
@@ -856,9 +857,6 @@ export class BlockImpl
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
-
-            field.blur();
-            await this.sleep(delay);
 
             if (!await this.keyinsert(true))
             {
@@ -872,7 +870,10 @@ export class BlockImpl
         // Insert before
         if (type == "key" && key == keymap.insertbefore)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
+
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
 
@@ -880,9 +881,6 @@ export class BlockImpl
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
-
-            field.blur();
-            await this.sleep(delay);
 
             if (!await this.keyinsert(false))
             {
@@ -896,7 +894,9 @@ export class BlockImpl
         // Next record
         if (type == "key" && key == keymap.nextrecord)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
 
             if (!await this.validate())
                 return(false);
@@ -915,9 +915,6 @@ export class BlockImpl
                 if (fetched == 0) return(false);
                 if (!await this.onEvent(null,this.field,"change")) return(false);
 
-                field.blur();
-                await this.sleep(delay);
-
                 this.display(this.offset+1);
             }
             else
@@ -932,7 +929,9 @@ export class BlockImpl
         // Previous record
         if (type == "key" && key == keymap.prevrecord)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
 
             if (!await this.validate())
                 return(false);
@@ -947,16 +946,12 @@ export class BlockImpl
                 if (!await this.onEvent(null,this.field,"change"))
                     return(false);
 
-
-                field.blur();
-                await this.sleep(delay);
-
                 this.display(this.offset-1);
             }
             else
             {
-                if (field.current)
-                if (!await this.onEvent(null,this.field,"change")) return(false);
+                if (field.current && !await this.onEvent(null,this.field,"change"))
+                    return(false);
             }
 
             this.focus(row);
@@ -965,7 +960,9 @@ export class BlockImpl
         // Page down
         if (type == "key" && key == keymap.pagedown)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
 
             if (!await this.validate())
                 return(false);
@@ -976,9 +973,6 @@ export class BlockImpl
             if (fetched == 0) return(false);
             if (!await this.onEvent(null,this.field,"change")) return(false);
 
-            field.blur();
-            await this.sleep(delay);
-
             this.display(+this.offset+this.rows);
             this.focus();
 
@@ -988,13 +982,12 @@ export class BlockImpl
         // Page up
         if (type == "key" && key == keymap.pageup)
         {
+            field.blur();
             await this.sleep(delay);
+            field.focus();
 
             if (!await this.validate())
                 return(false);
-
-            field.blur();
-            await this.sleep(delay);
 
             this.display(+this.offset-this.rows);
             this.focus();
