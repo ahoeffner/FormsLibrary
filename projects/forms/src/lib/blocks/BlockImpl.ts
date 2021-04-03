@@ -307,7 +307,7 @@ export class BlockImpl
         if (!await this.validate()) return(false);
 
         if (this.data.database && !this.app.appstate.connected)
-            return(true);
+            return(false);
 
         return(await this.insert(after));
     }
@@ -319,7 +319,7 @@ export class BlockImpl
         if (!this.dbusage.delete) return(false);
 
         if (this.data.database && !this.app.appstate.connected)
-            return(true);
+            return(false);
 
         return(await this.delete());
     }
@@ -332,7 +332,7 @@ export class BlockImpl
         if (!await this.validate()) return(false);
 
         if (this.data.database && !this.app.appstate.connected)
-            return(true);
+            return(false);
 
         return(this.enterqry());
     }
@@ -345,7 +345,7 @@ export class BlockImpl
         if (!await this.validate()) return(false);
 
         if (this.data.database && !this.app.appstate.connected)
-            return(true);
+            return(false);
 
         return(this.executeqry());
     }
@@ -781,7 +781,13 @@ export class BlockImpl
             field.blur();
             await this.sleep(delay);
 
-            return(await this.keyentqry());
+            if (!await this.keyentqry())
+            {
+                field.focus();
+                return(false);
+            }
+
+            return(true);
         }
 
         // Execute query
@@ -796,7 +802,13 @@ export class BlockImpl
             field.blur();
             await this.sleep(delay);
 
-            return(await this.keyexeqry());
+            if (!await this.keyexeqry())
+            {
+                field.focus();
+                return(false);
+            }
+
+            return(true);
         }
 
         // Delete
@@ -811,7 +823,13 @@ export class BlockImpl
             field.blur();
             await this.sleep(delay);
 
-            return(await this.keydelete());
+            if (!await this.keydelete())
+            {
+                field.focus();
+                return(false);
+            }
+
+            return(true);
         }
 
         // Insert after
@@ -828,7 +846,13 @@ export class BlockImpl
             field.blur();
             await this.sleep(delay);
 
-            return(await this.keyinsert(true));
+            if (!await this.keyinsert(true))
+            {
+                field.focus();
+                return(false);
+            }
+
+            return(true);
         }
 
         // Insert before
@@ -845,7 +869,14 @@ export class BlockImpl
             field.blur();
             await this.sleep(delay);
 
-            return(await this.keyinsert(false));
+
+            if (!await this.keyinsert(false))
+            {
+                field.focus();
+                return(false);
+            }
+
+            return(true);
         }
 
         // Next record

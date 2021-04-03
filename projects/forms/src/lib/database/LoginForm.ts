@@ -109,8 +109,8 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
         this.usr = this["_impl_"].getField(0,"usr");
         this.pwd = this["_impl_"].getField(0,"pwd");
 
-        let usr:FieldDefinition = {name: "usr", type: FieldType.input};
-        let pwd:FieldDefinition = {name: "pwd", type: FieldType.password};
+        let usr:FieldDefinition = {name: "usr", mandatory: true, type: FieldType.input};
+        let pwd:FieldDefinition = {name: "pwd", mandatory: true, type: FieldType.password};
 
         this.usr.definition = usr;
         this.pwd.definition = pwd;

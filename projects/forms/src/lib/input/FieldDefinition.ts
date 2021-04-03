@@ -1,5 +1,4 @@
 import { FieldType } from "./FieldType";
-import { FieldOptions } from "./FieldOptions";
 
 
 export enum Case
@@ -7,6 +6,13 @@ export enum Case
     upper,
     lower,
     mixed
+}
+
+export interface FieldOptions
+{
+    query?:boolean;
+    insert?:boolean;
+    update?:boolean;
 }
 
 export interface FieldDefinition

@@ -1,10 +1,9 @@
 import { Field } from './Field';
-import { FieldOptions } from './FieldOptions';
 import { RecordState } from '../blocks/Record';
 import { Application } from "../application/Application";
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
-import { Case, FieldDefinition } from './FieldDefinition';
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { FieldDefinition, FieldOptions, Case } from './FieldDefinition';
 import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
 
@@ -22,8 +21,10 @@ export class FieldInstance implements AfterViewInit
     private app:ApplicationImpl;
     private clazz:FieldInterface;
     private fgroup$:Field = null;
+    private valid$:boolean = true;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
+    private mandatory$:boolean = true;
     private container:HTMLSpanElement;
     private firstchange:boolean = true;
     private state$:RecordState = RecordState.na;
@@ -127,6 +128,40 @@ export class FieldInstance implements AfterViewInit
         return(this.options$);
     }
 
+    public get enabled() : boolean
+    {
+        return(this.enabled$);
+    }
+
+    public get state() : RecordState
+    {
+        return(this.state$);
+    }
+
+    public set state(state:RecordState)
+    {
+        this.state$ = state;
+    }
+
+    public set readonly(flag:boolean)
+    {
+        this.readonly$ = flag;
+    }
+
+
+    public get mandatory() : boolean
+    {
+        return(this.mandatory$);
+    }
+
+
+    public set mandatory(flag:boolean)
+    {
+        this.mandatory$ = flag;
+        if (flag) this.addClass("mandatory");
+        else      this.removeClass("mandatory");
+    }
+
     public focus() : boolean
     {
         if (!this.enabled) return(false);
@@ -141,6 +176,18 @@ export class FieldInstance implements AfterViewInit
             setTimeout(() => {this.clazz.element.blur()},0);
     }
 
+    public addClass(clazz:string) : void
+    {
+        if (this.clazz != null)
+            this.clazz.element.classList.add(clazz);
+    }
+
+    public removeClass(clazz:string) : void
+    {
+        if (this.clazz != null)
+            this.clazz.element.classList.remove(clazz);
+    }
+
     public get current() : boolean
     {
         return(this.guid.startsWith("c"));
@@ -148,13 +195,25 @@ export class FieldInstance implements AfterViewInit
 
     public set value(value:any)
     {
-        if (this.clazz != null)
-            this.clazz.value = value;
+        this.valid = true;
+        if (this.clazz != null) this.clazz.value = value;
     }
 
-    public get enabled() : boolean
+    public set valid(flag:boolean)
     {
-        return(this.enabled$);
+        if (flag == this.valid$)
+            return;
+
+        this.valid$ = flag;
+
+        if (flag) this.addClass("invalid");
+        else      this.removeClass("invalid");
+
+    }
+
+    public enable()
+    {
+        this.setInputState();
     }
 
     public disable() : void
@@ -169,18 +228,6 @@ export class FieldInstance implements AfterViewInit
             this.clazz.readonly = false;
         }
     }
-
-    public set state(state:RecordState)
-    {
-        this.state$ = state;
-    }
-
-
-    public enable()
-    {
-        this.setInputState();
-    }
-
 
     private setInputState() : void
     {
@@ -204,13 +251,6 @@ export class FieldInstance implements AfterViewInit
         }
     }
 
-
-    public set readonly(flag:boolean)
-    {
-        this.readonly$ = flag;
-    }
-
-
     public set definition(def:FieldDefinition)
     {
         this.def = def;
@@ -218,6 +258,9 @@ export class FieldInstance implements AfterViewInit
 
         if (!this.def.hasOwnProperty("case"))
             this.def.case = Case.mixed;
+
+        if (this.def.hasOwnProperty("mandatory"))
+            this.mandatory = this.def.mandatory;
 
         if (this.def.fieldoptions != null)
         {
@@ -268,7 +311,18 @@ export class FieldInstance implements AfterViewInit
             this.fgroup$["onEvent"](event,this,"blur");
 
         if (event.type == "change")
+        {
+            this.valid = true;
+            this.value = this.value.trim();
+
+            if (this.mandatory)
+            {
+                if (this.value == null || (""+this.value).length == 0)
+                    this.valid = false;
+            }
+
             this.fgroup$["onEvent"](event,this,"change");
+        }
 
         if (event.type == "keydown" && event.keyCode == 8)
             keypress = true;
@@ -313,6 +367,12 @@ export class FieldInstance implements AfterViewInit
         {
             if (this.readonly$) return;
 
+            if (this.def.type == FieldType.number)
+                this.valnumber();
+
+            if (this.def.type == FieldType.decimal)
+                this.valdecimal();
+
             if (this.def.case == Case.lower)
                 setTimeout(() => {this.value = (""+this.value).toLowerCase();},0);
 
@@ -321,12 +381,62 @@ export class FieldInstance implements AfterViewInit
 
             if (this.firstchange)
             {
+                this.valid = true;
                 this.firstchange = false;
                 this.fgroup$["onEvent"](event,this,"fchange");
             }
 
             setTimeout(() => {this.fgroup$.onEvent(event,this,"ichange");},1);
         }
+    }
+
+
+    private valnumber(value?:string) : boolean
+    {
+        if (this.state == RecordState.qmode)
+            return(true);
+
+        if (value == null)
+        {
+            setTimeout(() => {this.valnumber(""+this.value)},0);
+            return;
+        }
+
+        if (!this.valdecimal(value))
+            return(false);
+
+        let nvalue:string = this.value;
+
+        if (nvalue.indexOf("."))
+        {
+            this.value = value;
+            return(false);
+        }
+
+        return(true);
+    }
+
+
+    private valdecimal(value?:string) : boolean
+    {
+        if (this.state == RecordState.qmode)
+            return(true);
+
+        if (value == null)
+        {
+            setTimeout(() => {this.valdecimal(""+this.value)},0);
+            return;
+        }
+
+        let nvalue:string = this.value;
+        let numeric:boolean = !isNaN(+nvalue);
+        if (!numeric)
+        {
+            this.value = value;
+            return(false);
+        }
+
+        return(true);
     }
 
 

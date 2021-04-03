@@ -5,6 +5,8 @@ import { Password } from "./Password";
 export class FieldType
 {
     public static input:FieldType = new FieldType("input");
+    public static number:FieldType = new FieldType("input");
+    public static decimal:FieldType = new FieldType("input");
     public static password:FieldType = new FieldType("password");
 
     private constructor(public name:string) {};
