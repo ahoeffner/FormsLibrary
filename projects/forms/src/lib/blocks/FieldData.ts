@@ -71,8 +71,6 @@ export class FieldData
 
     public async validate(row:number) : Promise<any>
     {
-        console.log("Fielddata validate "+row+" "+this.data[row].validated);
-
         if (row < 0 || row >= this.data.length)
             return({status: "failed", message: "row "+row+" does not exist"});
 
@@ -83,7 +81,6 @@ export class FieldData
             return({status: "ok"});
 
         this.data[row].validated = true;
-        console.log("Fielddata validated "+row+" true");
         return({status: "ok"});
     }
 

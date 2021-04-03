@@ -558,7 +558,14 @@ export class BlockImpl
             return(false);
 
         if (!rec.valid) return(false);
-        this.data.validate(+this.row + +this.offset);
+
+        let response:any = await this.data.validate(+this.row + +this.offset);
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Validate Record");
+            return(false);
+        }
 
         rec.state = RecordState.update;
         rec.enable(false);
