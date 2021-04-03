@@ -175,6 +175,7 @@ export class FieldInstance implements AfterViewInit
 
     public blur() : void
     {
+        console.log(this.fname+" blur");
         if (this.clazz != null)
             setTimeout(() => {this.clazz.element.blur()},0);
     }

@@ -160,7 +160,6 @@ export class BlockImpl
                 this.row = row;
                 this.records[+row].current = true;
             }
-            else console.log("row "+row+" not enabled")
         }
 
         let rec:Record = this.records[this.row];
@@ -454,6 +453,8 @@ export class BlockImpl
 
         rec.current = true;
         this.focus(row);
+
+        return(true);
     }
 
 
