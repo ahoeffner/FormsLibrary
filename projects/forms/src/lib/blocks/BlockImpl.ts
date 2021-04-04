@@ -635,11 +635,12 @@ export class BlockImpl
                 {
                     let field:Field = rec.getField(columns[c]);
 
-                    if (field != null)
-                    {
-                        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+r,field.value,field.value);
-                        this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent);
-                    }
+                    let value:any = rows[r][c];
+                    let fname:string = columns[c];
+                    if (field != null) fname = field.name;
+                    
+                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+r,value,value);
+                    this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
                 }
 
                 this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r));

@@ -32,12 +32,12 @@ export class Statement
     private bindvalues:BindValue[] = [];
 
 
-    constructor(arg:SQLType|string)
+    constructor(sql:string|SQLType)
     {
-        if (arg != null)
+        if (sql != null)
         {
-            if (arg.constructor.name == "String") this.sql$ = ""+arg;
-            else this.type$ = arg as SQLType;
+            if (sql.constructor.name == "String") this.sql$ = ""+sql;
+            else this.type$ = sql as SQLType;
         }
 
         if (this.sql$ != null)
