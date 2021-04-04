@@ -334,12 +334,11 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
-        if (!await this.validate()) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
 
-        return(this.enterqry());
+        return(await this.enterqry());
     }
 
 
@@ -347,18 +346,20 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
         if (!this.dbusage.query) return(false);
-        if (!await this.validate()) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
 
-        return(this.executeqry());
+        return(await this.executeqry());
     }
 
 
-    public enterqry() : boolean
+    public async enterqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
+            return(false);
+
+        if (!await this.validate())
             return(false);
 
         this.clear();
@@ -381,6 +382,9 @@ export class BlockImpl
     public async executeqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
+            return(false);
+
+        if (!await this.validate())
             return(false);
 
         let keys:Key[] = [];
@@ -512,9 +516,11 @@ export class BlockImpl
         let rec:Record = this.records[this.row];
         if (!rec.enabled) return(true);
 
+        console.log("validate field");
         if (!await this.validatefield(this.field,null))
             return(false);
 
+        console.log("validate record");
         return(await this.validaterecord());
     }
 
@@ -678,6 +684,7 @@ export class BlockImpl
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
         let delay:number = 5;
+        let validated:boolean = false;
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
         if (this.records.length == 0) return(true);
@@ -764,12 +771,13 @@ export class BlockImpl
             trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,event);
 
             this.invokeTriggers(Trigger.Typing,trgevent);
+            return(true);
         }
 
         if (type == "change")
         {
             if (field.flushing()) return(true);
-            await this.validatefield(field,event);
+            if (!await this.validatefield(field,event)) return(false);
             return(true);
         }
 
@@ -781,6 +789,7 @@ export class BlockImpl
                 field.blur();
                 await this.sleep(delay);
 
+                validated = true;
                 this.records[0].current = true;
 
                 this.records[0].clear();
@@ -803,17 +812,16 @@ export class BlockImpl
             await this.sleep(delay);
             field.focus(true);
 
-            if (!await this.validate()) return(false);
-            trgevent = new KeyTriggerEvent(field,key,event);
-
-            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
-                return(true);
-
             if (!await this.keyentqry())
             {
                 field.focus();
                 return(false);
             }
+
+            trgevent = new KeyTriggerEvent(field,key,event);
+
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(true);
 
             return(true);
         }
@@ -931,6 +939,7 @@ export class BlockImpl
                 await this.display(this.offset+1);
             }
 
+            validated = true;
             this.focus(row);
         }
 
@@ -944,6 +953,7 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
+            validated = true;
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
 
@@ -1008,7 +1018,7 @@ export class BlockImpl
         // Pass event to subscribers, stop if signalled
         if (type == "key")
         {
-            if (!await this.validate()) return(false);
+            if (!validated && !await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
