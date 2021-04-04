@@ -1,6 +1,7 @@
 import { Theme } from "./Themes";
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
+import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { FormImpl } from "../forms/FormImpl";
@@ -37,9 +38,9 @@ export class Application
         this._impl_.setTitle(title);
     }
 
-    public get AppOrFormTitle() : string
+    public get form() : Form
     {
-        return(this._impl_.getCurrentTitle());
+        return(this._impl_.getCurrentForm()?.form);
     }
 
     public set menu(menu:Menu)

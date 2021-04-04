@@ -677,6 +677,9 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            if (field.flushing())
+                return(true);
+
             if (this.form != null)
                 this.form.block = this;
 
@@ -707,6 +710,8 @@ export class BlockImpl
 
         if (type == "blur")
         {
+            if (field.flushing()) return(true);
+
             if (this.state == FormState.entqry)
                 return(true);
 
@@ -756,6 +761,7 @@ export class BlockImpl
 
         if (type == "change")
         {
+            if (field.flushing()) return(true);
             await this.validatefield(field,event);
             return(true);
         }
@@ -784,9 +790,10 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            field.blur();
+
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
@@ -806,9 +813,9 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
@@ -828,9 +835,9 @@ export class BlockImpl
         // Delete
         if (type == "key" && key == keymap.delete)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             trgevent = new KeyTriggerEvent(field,key,event);
 
@@ -846,9 +853,9 @@ export class BlockImpl
         // Insert after
         if (type == "key" && key == keymap.insertafter)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
@@ -870,9 +877,9 @@ export class BlockImpl
         // Insert before
         if (type == "key" && key == keymap.insertbefore)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
@@ -894,9 +901,9 @@ export class BlockImpl
         // Next record
         if (type == "key" && key == keymap.nextrecord)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate())
                 return(false);
@@ -929,9 +936,9 @@ export class BlockImpl
         // Previous record
         if (type == "key" && key == keymap.prevrecord)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate())
                 return(false);
@@ -960,9 +967,9 @@ export class BlockImpl
         // Page down
         if (type == "key" && key == keymap.pagedown)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate())
                 return(false);
@@ -982,9 +989,9 @@ export class BlockImpl
         // Page up
         if (type == "key" && key == keymap.pageup)
         {
-            field.blur();
+            field.blur(true);
             await this.sleep(delay);
-            field.focus();
+            field.focus(true);
 
             if (!await this.validate())
                 return(false);

@@ -60,6 +60,11 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.block?.block);
     }
 
+    public get popup() : boolean
+    {
+        return(this._impl_.popup);
+    }
+
     public get colors() : Theme
     {
         return(this._impl_.getApplication().conf.colors);

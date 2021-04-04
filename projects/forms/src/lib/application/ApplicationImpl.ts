@@ -97,15 +97,6 @@ export class ApplicationImpl
     }
 
 
-    public getCurrentTitle() : string
-    {
-        if (this.state.form != null)
-            return(this.state.form.title);
-
-        return(this.apptitle);
-    }
-
-
     public close() : void
     {
         this.closeform(this.state.form,true);

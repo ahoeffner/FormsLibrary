@@ -22,6 +22,7 @@ export class FieldInstance implements AfterViewInit
     private clazz:FieldInterface;
     private fgroup$:Field = null;
     private valid$:boolean = true;
+    private flush$:boolean = true;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
     private mandatory$:boolean = true;
@@ -165,18 +166,27 @@ export class FieldInstance implements AfterViewInit
         else      this.removeClass("mandatory");
     }
 
-    public focus() : boolean
+    public flushing() : boolean
     {
+        return(this.flush$);
+    }
+
+    public focus(flush?:boolean) : boolean
+    {
+        if (flush != null)
+            this.flush$ = !flush;
+
         if (!this.enabled) return(false);
         if (this.clazz == null) return(false);
+
         setTimeout(() => {this.clazz.element.focus()},0);
         return(true);
     }
 
-    public blur() : void
+    public blur(flush?:boolean) : void
     {
-        if (this.clazz != null)
-            setTimeout(() => {this.clazz.element.blur()},0);
+        if (flush != null) this.flush$ = flush;
+        setTimeout(() => {this.clazz.element.blur()},0);
     }
 
     public addClass(clazz:string) : void

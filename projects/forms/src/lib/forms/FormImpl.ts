@@ -20,6 +20,7 @@ import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
+import { FieldImplementation } from "../input/FieldType";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { BlockDefinition } from '../blocks/BlockDefinition';
 import { TriggerFunction } from "../events/TriggerFunction";
@@ -31,7 +32,6 @@ import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
-import { FieldImplementation, FieldType } from "../input/FieldType";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
@@ -120,6 +120,12 @@ export class FormImpl
     public get block() : BlockImpl
     {
         return(this.block$);
+    }
+
+
+    public get popup() : boolean
+    {
+        return(this.win != null);
     }
 
 
