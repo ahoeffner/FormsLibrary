@@ -190,7 +190,7 @@ export class BlockImpl
     }
 
 
-    public setValue(column:string, row:number, value:any) : boolean
+    public setValue(row:number, column:string, value:any) : boolean
     {
         if (this.data == null) return(false);
         if (row < 0 || row >= this.rows) return(false);
@@ -638,7 +638,7 @@ export class BlockImpl
                     let value:any = rows[r][c];
                     let fname:string = columns[c];
                     if (field != null) fname = field.name;
-                    
+
                     let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+r,value,value);
                     this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
                 }

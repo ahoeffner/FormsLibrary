@@ -339,9 +339,6 @@ export class ApplicationImpl
         DropDownMenu.setForm(fmenu,formdef.formref.instance);
 
         this.formsctl.display(formdef);
-
-        if (this.formlist != null)
-            this.formlist.open(formdef.path);
     }
 
 

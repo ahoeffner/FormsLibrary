@@ -26,9 +26,9 @@ export class Block
         return(this._impl_.getValue(field,row));
     }
 
-    public setValue(field:string, row:number, value:any) : boolean
+    public setValue(row:number, field:string, value:any) : boolean
     {
-        return(this._impl_.setValue(field,row,value));
+        return(this._impl_.setValue(row,field,value));
     }
 
     public get queryMode() : boolean
