@@ -238,12 +238,14 @@ export class FieldInstance implements AfterViewInit
 
     public enable()
     {
+        this.flush$ = false;
         this.setInputState();
     }
 
     public disable() : void
     {
-        this.valid = true;
+        this.valid$ = true;
+        this.flush$ = false;
         this.enabled$ = false;
         this.readonly$ = false;
         this.state = RecordState.na;

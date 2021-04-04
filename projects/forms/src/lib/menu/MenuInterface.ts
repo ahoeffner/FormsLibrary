@@ -21,7 +21,7 @@ export class MenuInterface
 
     public isConnected() : boolean
     {
-        return(this.app$.appstate.connected);
+        return(this.app$.connected);
     }
 
     public enable(menu?:string)

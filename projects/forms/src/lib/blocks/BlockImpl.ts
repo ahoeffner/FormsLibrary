@@ -309,7 +309,7 @@ export class BlockImpl
         if (!this.dbusage.insert) return(false);
         if (!await this.validate()) return(false);
 
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         return(await this.insert(after));
@@ -321,7 +321,7 @@ export class BlockImpl
         if (this.data == null) return(false);
         if (!this.dbusage.delete) return(false);
 
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         return(await this.delete());
@@ -334,7 +334,7 @@ export class BlockImpl
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
 
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         return(this.enterqry());
@@ -347,7 +347,7 @@ export class BlockImpl
         if (!this.dbusage.query) return(false);
         if (!await this.validate()) return(false);
 
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         return(this.executeqry());
@@ -356,7 +356,7 @@ export class BlockImpl
 
     public enterqry() : boolean
     {
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         this.clear();
@@ -378,7 +378,7 @@ export class BlockImpl
 
     public async executeqry() : Promise<boolean>
     {
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         let keys:Key[] = [];
@@ -415,7 +415,7 @@ export class BlockImpl
 
     public async insert(after:boolean) : Promise<boolean>
     {
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         let off:number = after ? 1 : 0;
@@ -460,7 +460,7 @@ export class BlockImpl
 
     public async delete() : Promise<boolean>
     {
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(false);
 
         if (!this.data.delete(+this.row + +this.offset))
@@ -501,7 +501,7 @@ export class BlockImpl
         if (this.data == null)
             return(true);
 
-        if (this.data.database && !this.app.appstate.connected)
+        if (this.data.database && !this.app.connected)
             return(true);
 
         if (this.records.length == 0)
@@ -677,6 +677,7 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            if (field.flushing()) console.log("flushing")
             if (field.flushing())
                 return(true);
 

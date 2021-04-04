@@ -87,7 +87,7 @@ export class Application
 
     public connect() : void
     {
-        if (!this._impl_.appstate.connected)
+        if (!this._impl_.connected)
         {
             let pinst:PopupInstance = new PopupInstance();
             pinst.display(this._impl_,LoginForm);
@@ -96,9 +96,9 @@ export class Application
 
     public disconnect() : void
     {
-        if (this._impl_.appstate.connected)
+        if (this._impl_.connected)
         {
-            this._impl_.appstate.connection.disconnect();
+            this._impl_.disconnect();
             this._impl_.getCurrentForm()?.clear();
         }
     }

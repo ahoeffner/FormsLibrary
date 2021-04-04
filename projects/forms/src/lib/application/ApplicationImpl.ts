@@ -183,6 +183,18 @@ export class ApplicationImpl
     }
 
 
+    public get connected() : boolean
+    {
+        return(this.appstate.connected);
+    }
+
+
+    public async disconnect() : Promise<void>
+    {
+        return(this.appstate.connection.disconnect());
+    }
+
+
     public async newForm(impl:FormImpl)
     {
         let funcs:string[] = FormDefinitions.getOnInit(impl.name);
