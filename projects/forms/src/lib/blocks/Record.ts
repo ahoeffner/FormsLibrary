@@ -15,6 +15,7 @@ export class Record
 {
     private row$:number = 0;
     private fields$:Field[] = [];
+    private current$:boolean = false;
     private enabled$:boolean = false;
     private state$:RecordState = RecordState.na;
     private index:Map<string,Field> = new Map<string,Field>();
@@ -50,13 +51,14 @@ export class Record
 
     public set current(flag:boolean)
     {
+        this.current$ = flag;
         this.fields$.forEach((field) => {field.current = flag});
     }
 
-    public clear(current?:boolean) : void
+    public clear() : void
     {
         this.fields$.forEach((field) => {field.value = null; field.disable()});
-        if (current) this.fields$.forEach((field) => {field.current = true; field.disable()});
+        if (this.current) this.fields$.forEach((field) => {field.current = true; field.disable()});
     }
 
     public set state(state:RecordState)
@@ -81,6 +83,16 @@ export class Record
         this.fields$.forEach((field) => {field.enable(readonly)});
     }
 
+    public validate() : boolean
+    {
+        for(let i = 0; i < this.fields.length; i++)
+        {
+            if (!this.fields[i].validate())
+                return(false);
+        }
+        return(true);
+    }
+
     public disable() : void
     {
         this.enabled$ = false;
@@ -101,11 +113,12 @@ export class Record
 
     public get valid() : boolean
     {
+        let valid:boolean = true;
         for(let i = 0; i < this.fields.length; i++)
         {
-            if (!this.fields[i].valid)
-                return(false);
+            if (!this.fields[i].validate())
+                valid = false;
         }
-        return(true);
+        return(valid);
     }
 }

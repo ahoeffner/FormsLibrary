@@ -526,7 +526,9 @@ export class BlockImpl
         if (this.state == FormState.entqry) return(true);
 
         let previous:any = this.getValue(+field.row+this.offset,field.name);
+
         if (previous == field.value) return(true);
+        if (!this.field.field.validate()) return(false);
 
         this.setDataValue(field.row,field.name,field.value);
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,jsevent);
@@ -779,8 +781,10 @@ export class BlockImpl
                 field.blur();
                 await this.sleep(delay);
 
+                this.records[0].current = true;
+
+                this.records[0].clear();
                 this.records[0].disable();
-                this.records[0].clear(true);
                 this.state = FormState.normal;
                 this.records[0].state = RecordState.na;
                 this.records[0].enable(true);
@@ -924,14 +928,7 @@ export class BlockImpl
                 let fetched:number = await this.data.fetch(offset,1);
 
                 if (fetched == 0) return(false);
-                if (!await this.onEvent(null,this.field,"change")) return(false);
-
                 await this.display(this.offset+1);
-            }
-            else
-            {
-                if (field.current && !await this.onEvent(null,this.field,"change"))
-                    return(false);
             }
 
             this.focus(row);
@@ -953,19 +950,12 @@ export class BlockImpl
             if (+row < 0)
             {
                 row = 0;
-
-                if (!await this.onEvent(null,this.field,"change"))
-                    return(false);
-
                 this.display(this.offset-1);
             }
             else
             {
-                if (field.current && !await this.onEvent(null,this.field,"change"))
-                    return(false);
+                this.focus(row);
             }
-
-            this.focus(row);
         }
 
         // Page down
@@ -982,7 +972,6 @@ export class BlockImpl
             let fetched:number = await this.data.fetch(offset,this.rows);
 
             if (fetched == 0) return(false);
-            if (!await this.onEvent(null,this.field,"change")) return(false);
 
             this.display(+this.offset+this.rows);
             this.focus();

@@ -225,6 +225,17 @@ export class FieldInstance implements AfterViewInit
         return(this.valid$);
     }
 
+    public validate() : boolean
+    {
+        if (this.enabled && !this.readonly && this.mandatory)
+        {
+            if (this.value == null || (""+this.value).length == 0)
+                return(false);
+        }
+
+        return(true);
+    }
+
     public set valid(flag:boolean)
     {
         if (flag == this.valid$)
@@ -357,7 +368,7 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "blur")
         {
-            if (validate)
+            if (validate && !this.firstchange)
             {
                 if (this.value == null || (""+this.value).length == 0)
                     if (this.valid) this.fgroup$.valid = false;

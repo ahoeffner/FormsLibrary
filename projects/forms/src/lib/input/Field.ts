@@ -213,7 +213,6 @@ export class Field
     public set state(state:RecordState)
     {
         this.state$ = state;
-        this.ids.forEach((field) => {field.state = state;});
         this.fields$.forEach((field) => {field.state = state;});
         if (this.current) this.currfields$.forEach((field) => {field.state = state;});
     }
@@ -223,7 +222,6 @@ export class Field
     {
         this.enabled$ = true;
         this.readonly$ = readonly;
-        this.ids.forEach((field) => {field.readonly = readonly; field.enable();});
         this.fields$.forEach((field) => {field.readonly = readonly; field.enable();});
         if (this.current) this.currfields$.forEach((field) => {field.readonly = readonly; field.enable();});
     }
@@ -234,9 +232,40 @@ export class Field
         this.valid$ = true;
         this.enabled$ = false;
         this.readonly$ = false;
-        this.ids.forEach((field) => {field.disable()});
         this.fields$.forEach((field) => {field.disable()});
         if (this.current) this.currfields$.forEach((field) =>  {field.disable()});
+    }
+
+
+    public validate() : boolean
+    {
+        if (!this.valid$) return(false);
+
+        for(let i = 0; i < this.fields.length; i++)
+        {
+            let ok = this.fields[i].validate();
+
+            if (!ok)
+            {
+                this.valid = false;
+                return(false);
+            }
+        }
+
+        if (this.current)
+        {
+            for(let i = 0; i < this.currfields$.length; i++)
+            {
+                let ok = this.currfields$[i].validate();
+                if (!ok)
+                {
+                    this.valid = false;
+                    return(false);
+                }
+            }
+        }
+
+        return(this.valid$);
     }
 
 
