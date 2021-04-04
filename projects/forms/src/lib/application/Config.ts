@@ -49,6 +49,16 @@ export class Config
         return(true);
     }
 
+    public get dateformat() : string
+    {
+        return("dd-mm-yyyy");
+    }
+
+    public get databasedateformat() : string
+    {
+        return("yyyy-mm-dd");
+    }
+
     public get colors() : Theme
     {
         return(this.colors$);

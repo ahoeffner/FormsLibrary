@@ -52,7 +52,8 @@ export class Table
             this.index.set(column.name,column);
 
             let date:boolean = false;
-            if (column.type.toLowerCase().indexOf("date") >= 0) date = true;
+            if (column.type.toLowerCase().indexOf("date") == 0)
+                date = true;
 
             this.dates.push(date);
         });
@@ -156,12 +157,8 @@ export class Table
             {
                 let val = row[key];
 
-                if (this.dates[col])
-                {
-                    let date = new Date();
-                    date.setTime(+val);
-                    val = date;
-                }
+                if (this.dates[col] && (""+val).length > 0)
+                    val = new Date(+val);
 
                 drow.setValue(col++,val);
                 if (keys.length < klen) keys.push(val);

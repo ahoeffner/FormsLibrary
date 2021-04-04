@@ -1,4 +1,5 @@
 import { Field } from './Field';
+import { DateField } from './DateField';
 import { RecordState } from '../blocks/Record';
 import { Application } from "../application/Application";
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
@@ -112,6 +113,14 @@ export class FieldInstance implements AfterViewInit
     {
         if (this.clazz == null) return("");
         else return(this.clazz.value);
+    }
+
+    public get strvalue() : string
+    {
+        if (this.classname == "DateField")
+            return((this.clazz as DateField).strvalue);
+
+        return(this.value+"");
     }
 
     public get field() : Field
@@ -308,6 +317,9 @@ export class FieldInstance implements AfterViewInit
         if (cname != null)
         {
             this.clazz = new cname();
+
+            if (cname.name == "DateField")
+                (this.clazz as DateField).setConfig(this.app.conf);
 
             this.container.innerHTML = this.clazz.html;
             this.clazz.element = this.container.children[0] as HTMLElement;
@@ -518,5 +530,11 @@ export class FieldInstance implements AfterViewInit
         impl.addEventListener("keydown", (event) => {this.onEvent(event)});
         impl.addEventListener("keypress", (event) => {this.onEvent(event)});
         impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});
+    }
+
+
+    private get classname() : string
+    {
+        return(this.clazz?.constructor.name);
     }
 }
