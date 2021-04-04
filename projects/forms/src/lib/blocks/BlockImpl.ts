@@ -183,22 +183,24 @@ export class BlockImpl
     }
 
 
-    public getValue(column:string, row:number) : any
+    public getValue(row:number, column:string) : any
     {
         if (this.data == null) return(null);
-        return(this.data.getValue(+row+this.offset,column));
+        return(this.data.getValue(+row,column));
     }
 
 
     public setValue(row:number, column:string, value:any) : boolean
     {
         if (this.data == null) return(false);
-        if (row < 0 || row >= this.rows) return(false);
 
-        let field:Field = this.records[row].getField(column);
-        if (field != null) field.value = value;
+        if (+row >= +this.offset && +row < +this.offset+this.rows)
+        {
+            let field:Field = this.records[row-this.offset].getField(column);
+            if (field != null) field.value = value;
+        }
 
-        return(this.data.update(+row+this.offset,column,value));
+        return(this.data.update(+row,column,value));
     }
 
 
@@ -523,11 +525,11 @@ export class BlockImpl
         if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
 
-        let previous:any = this.getValue(field.name,field.row);
+        let previous:any = this.getValue(+field.row+this.offset,field.name);
         if (previous == field.value) return(true);
 
         this.setDataValue(field.row,field.name,field.value);
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.row,field.value,previous,jsevent);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,jsevent);
 
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
             return(false);
@@ -556,13 +558,13 @@ export class BlockImpl
         if (!rec.valid) return(false);
         if (this.data.validated(+this.row + +this.offset)) return(true);
 
-        let trgevent:TriggerEvent = new TriggerEvent(this.row,null);
+        let trgevent:TriggerEvent = new TriggerEvent(+this.row+this.offset,null);
 
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
         if (!rec.valid) return(false);
-        let response:any = await this.data.validate(+this.row + +this.offset);
+        let response:any = await this.data.validate(+this.row+this.offset);
 
         if (response["status"] == "failed")
         {
@@ -639,11 +641,11 @@ export class BlockImpl
                     let fname:string = columns[c];
                     if (field != null) fname = field.name;
 
-                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+r,value,value);
+                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+r+this.offset,value,value);
                     this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
                 }
 
-                this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r));
+                this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r +this.offset));
                 state = this.data.state(+this.offset+r,RecordState.update);
             }
 
@@ -703,7 +705,7 @@ export class BlockImpl
             this.row = field.row;
             this.records$[+field.row].current = true;
 
-            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,field.value,event);
 
             if (!await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent))
                 return(false);
@@ -718,7 +720,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,field.value,event);
 
             if (!await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
                 return(false);
@@ -734,8 +736,8 @@ export class BlockImpl
             if (this.data.locked(+field.row+this.offset))
                 return(false);
 
-            let previous:any = this.getValue(field.name,field.row);
-            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
+            let previous:any = this.getValue(+field.row+this.offset,field.name);
+            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,event);
 
             if (!await this.invokeTriggers(Trigger.Lock,trgevent))
                 return(false);
@@ -756,8 +758,8 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            let previous:any = this.getValue(field.name,field.row);
-            trgevent = new FieldTriggerEvent(field.name,field.row,field.value,previous,event);
+            let previous:any = this.getValue(+field.row+this.offset,field.name);
+            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,event);
 
             this.invokeTriggers(Trigger.Typing,trgevent);
         }
@@ -924,7 +926,7 @@ export class BlockImpl
                 if (fetched == 0) return(false);
                 if (!await this.onEvent(null,this.field,"change")) return(false);
 
-                this.display(this.offset+1);
+                await this.display(this.offset+1);
             }
             else
             {

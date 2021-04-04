@@ -345,7 +345,7 @@ export class FieldInstance implements AfterViewInit
 
         if (this.state != RecordState.qmode)
         {
-            if (this.enabled && !this.readonly && this.mandatory && !this.firstchange)
+            if (this.enabled && !this.readonly && this.mandatory)
                 validate = true;
         }
 
@@ -369,7 +369,7 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "change")
         {
             if (this.enabled && !this.readonly)
-            if (!this.valid) this.fgroup$.valid = true;
+                if (!this.valid) this.fgroup$.valid = true;
 
             this.value = this.value.trim();
 

@@ -12,7 +12,6 @@ export class DateField extends TextField
 
     public setConfig(config:Config) :  void
     {
-        console.log("got config")
         this.format = config.dateformat;
         this.dbformat = config.databasedateformat;
     }

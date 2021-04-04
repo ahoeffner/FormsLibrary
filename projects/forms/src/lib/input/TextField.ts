@@ -53,6 +53,7 @@ export class TextField implements FieldInterface
 
     public set value(value:any)
     {
+        if (value == null) value = "";
         this.element$.value = value;
     }
 }

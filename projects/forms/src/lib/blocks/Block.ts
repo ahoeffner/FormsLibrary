@@ -21,9 +21,9 @@ export class Block
         return(this._impl_.form.form);
     }
 
-    public getValue(field:string, row:number) : any
+    public getValue(row:number, field:string) : any
     {
-        return(this._impl_.getValue(field,row));
+        return(this._impl_.getValue(row,field));
     }
 
     public setValue(row:number, field:string, value:any) : boolean
