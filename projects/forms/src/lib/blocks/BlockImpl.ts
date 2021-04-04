@@ -548,6 +548,8 @@ export class BlockImpl
     private async validaterecord() : Promise<boolean>
     {
         if (this.data == null) return(true);
+        if (this.state == FormState.entqry) return(true);
+
         let rec:Record = this.records[this.row];
         if (rec.state == RecordState.na) return(true);
 
@@ -677,7 +679,6 @@ export class BlockImpl
 
         if (type == "focus")
         {
-            if (field.flushing()) console.log("flushing")
             if (field.flushing())
                 return(true);
 
@@ -790,7 +791,6 @@ export class BlockImpl
         {
             if (this.state == FormState.entqry)
                 return(true);
-
 
             field.blur(true);
             await this.sleep(delay);

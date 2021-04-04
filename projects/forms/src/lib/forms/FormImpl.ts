@@ -426,7 +426,7 @@ export class FormImpl
             columns = sorted;
 
             // Then other defined fields (block or form)
-            fieldidx.forEach((field) => {if (field.column == null) fields.push(field.name)});
+            fieldidx.forEach((field) => {if (!fields.includes(field.name,0)) fields.push(field.name)});
 
             // Set field properties and add undefined fields
             let bfieldlist:FieldInstance[] = bfields.get(block.alias);
@@ -438,14 +438,17 @@ export class FormImpl
                 {
                     // Auto create field definition
                     fdef = {name: inst.name};
-                    let cdef:ColumnDefinition = colindex.get(fdef.name);
-
-                    // Map to column, unless column is mapped otherwise
-                    if (cdef != null && colfields.get(fdef.name) == null)
-                        fdef.column = fdef.name;
-
                     fieldidx.set(inst.name,fdef);
                     if (!fields.includes(inst.name,0)) fields.push(inst.name);
+                }
+
+                if (fdef.column == null)
+                {
+                    // Map to column, unless column is mapped otherwise
+                    let cdef:ColumnDefinition = colindex.get(fdef.name);
+
+                    if (cdef != null && colfields.get(fdef.name) == null)
+                        fdef.column = fdef.name;
                 }
 
                 if (inst.id.length > 0)
