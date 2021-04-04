@@ -18,6 +18,7 @@ export class Table
     private data:any[] = [];
     private cnames:string[];
     private conn:Connection;
+    private dates:boolean[] = [];
     private fielddata$:FieldData;
     private table:TableDefinition;
     private columns:ColumnDefinition[];
@@ -49,6 +50,11 @@ export class Table
         {
             this.cnames.push(column.name);
             this.index.set(column.name,column);
+
+            let date:boolean = false;
+            if (column.type.toLowerCase().indexOf("date") >= 0) date = true;
+
+            this.dates.push(date);
         });
     }
 
@@ -149,6 +155,14 @@ export class Table
             Object.keys(row).forEach((key) =>
             {
                 let val = row[key];
+
+                if (this.dates[col])
+                {
+                    let date = new Date();
+                    date.setTime(+val);
+                    val = date;
+                }
+
                 drow.setValue(col++,val);
                 if (keys.length < klen) keys.push(val);
             });

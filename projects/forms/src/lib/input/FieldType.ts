@@ -46,7 +46,6 @@ export class FieldImplementation
         if (type != null)
         {
             type = type.toLowerCase();
-            console.log("guess "+type);
 
             if (type.indexOf("date")      >= 0) ftype = FieldType.date;
             if (type.indexOf("int")       >= 0) ftype = FieldType.integer;

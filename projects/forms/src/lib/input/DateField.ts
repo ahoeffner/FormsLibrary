@@ -9,8 +9,7 @@ export class DateField extends TextField
 
     public set value(value:any)
     {
-        let date:Date = new Date();
-        date.setTime(value);
-        this.element$.value = ""+date;
+        if (value == null) this.element$.value = null;
+        else               this.element$.value = value;
     }
 }
