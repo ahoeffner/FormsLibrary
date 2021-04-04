@@ -516,11 +516,9 @@ export class BlockImpl
         let rec:Record = this.records[this.row];
         if (!rec.enabled) return(true);
 
-        console.log("validate field");
         if (!await this.validatefield(this.field,null))
             return(false);
 
-        console.log("validate record");
         return(await this.validaterecord());
     }
 
@@ -1018,7 +1016,9 @@ export class BlockImpl
         // Pass event to subscribers, stop if signalled
         if (type == "key")
         {
-            if (!validated && !await this.validate()) return(false);
+            if (!validated && !await this.validatefield(field,event))
+                return(false);
+
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
