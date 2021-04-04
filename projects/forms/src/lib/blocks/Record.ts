@@ -56,7 +56,7 @@ export class Record
     public clear(current?:boolean) : void
     {
         this.fields$.forEach((field) => {field.value = null; field.disable()});
-        if (current) this.fields$.forEach((field) => {field.current = true});
+        if (current) this.fields$.forEach((field) => {field.current = true; field.disable()});
     }
 
     public set state(state:RecordState)

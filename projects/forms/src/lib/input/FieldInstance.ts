@@ -21,8 +21,8 @@ export class FieldInstance implements AfterViewInit
     private app:ApplicationImpl;
     private clazz:FieldInterface;
     private fgroup$:Field = null;
+    private flush:boolean = true;
     private valid$:boolean = true;
-    private flush$:boolean = true;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
     private mandatory$:boolean = true;
@@ -168,13 +168,13 @@ export class FieldInstance implements AfterViewInit
 
     public flushing() : boolean
     {
-        return(this.flush$);
+        return(this.flush);
     }
 
     public focus(flush?:boolean) : boolean
     {
         if (flush != null)
-            this.flush$ = !flush;
+            this.flush = !flush;
 
         if (!this.enabled) return(false);
         if (this.clazz == null) return(false);
@@ -185,7 +185,7 @@ export class FieldInstance implements AfterViewInit
 
     public blur(flush?:boolean) : void
     {
-        if (flush != null) this.flush$ = flush;
+        if (flush != null) this.flush = flush;
         setTimeout(() => {this.clazz.element.blur()},0);
     }
 
@@ -238,14 +238,14 @@ export class FieldInstance implements AfterViewInit
 
     public enable()
     {
-        this.flush$ = false;
+        this.flush = false;
         this.setInputState();
     }
 
     public disable() : void
     {
-        this.valid$ = true;
-        this.flush$ = false;
+        this.valid = true;
+        this.flush = false;
         this.enabled$ = false;
         this.readonly$ = false;
         this.state = RecordState.na;
@@ -262,9 +262,9 @@ export class FieldInstance implements AfterViewInit
         this.enabled$ = false;
 
         if (this.state$ == RecordState.na) this.enabled$ = true;
-        else if (this.state$ == RecordState.qmode && this.options$.query) this.enabled$ = true;
         else if (this.state$ == RecordState.insert && this.options$.insert) this.enabled$ = true;
         else if (this.state$ == RecordState.update && this.options$.update) this.enabled$ = true;
+        else if (this.state$ == RecordState.qmode && this.options$.query) this.enabled$ = true;
 
         if (this.clazz != null)
         {
@@ -329,6 +329,14 @@ export class FieldInstance implements AfterViewInit
         if (this.fgroup$ == null)
             return;
 
+        let validate:boolean = false;
+
+        if (this.state != RecordState.qmode)
+        {
+            if (this.enabled && !this.readonly && this.mandatory && !this.firstchange)
+                validate = true;
+        }
+
         if (event.type == "focus")
         {
             this.firstchange = true;
@@ -337,7 +345,7 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "blur")
         {
-            if (this.enabled && !this.readonly && this.mandatory && !this.firstchange)
+            if (validate)
             {
                 if (this.value == null || (""+this.value).length == 0)
                     if (this.valid) this.fgroup$.valid = false;
@@ -353,7 +361,7 @@ export class FieldInstance implements AfterViewInit
 
             this.value = this.value.trim();
 
-            if (this.enabled && !this.readonly && this.mandatory)
+            if (validate)
             {
                 if (this.value == null || (""+this.value).length == 0)
                 if (this.valid) this.fgroup$.valid = false;

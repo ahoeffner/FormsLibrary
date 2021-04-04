@@ -1,5 +1,6 @@
-import { Input } from "./Input";
 import { Password } from "./Password";
+import { TextField } from "./TextField";
+import { DateField } from "./DateField";
 
 
 export enum FieldType
@@ -25,9 +26,10 @@ export class FieldImplementation
         Object.keys(FieldType).forEach((type) =>
         {
             if (isNaN(Number(type)))
-                FieldImplementation.impl.set(type,Input);
+                FieldImplementation.impl.set(type,TextField);
         });
 
+        FieldImplementation.impl.set(FieldType[FieldType.date],DateField)
         FieldImplementation.impl.set(FieldType[FieldType.password],Password)
     }
 
@@ -44,15 +46,16 @@ export class FieldImplementation
         if (type != null)
         {
             type = type.toLowerCase();
+            console.log("guess "+type);
 
-            if (type.indexOf("date")) ftype = FieldType.date;
-            if (type.indexOf("int")) ftype = FieldType.integer;
-            if (type.indexOf("float")) ftype = FieldType.decimal;
-            if (type.indexOf("number")) ftype = FieldType.integer;
-            if (type.indexOf("numeric")) ftype = FieldType.decimal;
-            if (type.indexOf("decimal")) ftype = FieldType.decimal;
-            if (type.indexOf("datetime")) ftype = FieldType.datetime;
-            if (type.indexOf("timestamp")) ftype = FieldType.datetime;
+            if (type.indexOf("date")      >= 0) ftype = FieldType.date;
+            if (type.indexOf("int")       >= 0) ftype = FieldType.integer;
+            if (type.indexOf("float")     >= 0) ftype = FieldType.decimal;
+            if (type.indexOf("number")    >= 0) ftype = FieldType.integer;
+            if (type.indexOf("numeric")   >= 0) ftype = FieldType.decimal;
+            if (type.indexOf("decimal")   >= 0) ftype = FieldType.decimal;
+            if (type.indexOf("datetime")  >= 0) ftype = FieldType.datetime;
+            if (type.indexOf("timestamp") >= 0) ftype = FieldType.datetime;
         }
 
         return(ftype);

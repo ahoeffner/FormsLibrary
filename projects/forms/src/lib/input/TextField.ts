@@ -1,7 +1,7 @@
 import { FieldInterface } from "./FieldType";
 
 
-export class Input implements FieldInterface
+export class TextField implements FieldInterface
 {
     public element$:HTMLInputElement;
 
