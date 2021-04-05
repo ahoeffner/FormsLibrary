@@ -21,14 +21,14 @@ export class Block
         return(this._impl_.form.form);
     }
 
-    public getValue(row:number, field:string) : any
+    public getValue(record:number, field:string) : any
     {
-        return(this._impl_.getValue(row,field));
+        return(this._impl_.getValue(record,field));
     }
 
-    public setValue(row:number, field:string, value:any) : boolean
+    public setValue(record:number, field:string, value:any) : boolean
     {
-        return(this._impl_.setValue(row,field,value));
+        return(this._impl_.setValue(record,field,value));
     }
 
     public get queryMode() : boolean
