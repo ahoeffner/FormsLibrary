@@ -222,7 +222,6 @@ export class FieldInstance implements AfterViewInit
 
         if (this.enabled && !this.readonly && this.mandatory)
         {
-            console.log("validate from fieldinstance validate")
             if (!this.clazz.validate())
                 return(false);
 

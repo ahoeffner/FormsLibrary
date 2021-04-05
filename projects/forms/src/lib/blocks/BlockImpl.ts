@@ -549,6 +549,8 @@ export class BlockImpl
         if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
 
+        console.log("validate field "+field.fname+" get real value");
+
         let previous:any = this.getValue(+field.row+this.offset,field.name);
 
         if (previous == field.value) return(true);

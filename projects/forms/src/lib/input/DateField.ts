@@ -25,7 +25,6 @@ export class DateField extends TextField
         if (this.strvalue == this.formatted)
             return(this.dateval);
 
-        console.log("validate from DF get value")
         this.validate();
         return(this.dateval);
     }
