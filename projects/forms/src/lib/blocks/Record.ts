@@ -55,6 +55,11 @@ export class Record
         this.fields$.forEach((field) => {field.current = flag});
     }
 
+    public get current() : boolean
+    {
+        return(this.current$);
+    }
+
     public clear() : void
     {
         this.fields$.forEach((field) => {field.value = null; field.disable()});

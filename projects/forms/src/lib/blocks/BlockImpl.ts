@@ -672,7 +672,6 @@ export class BlockImpl
 
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
-        let delay:number = 5;
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
         if (this.records.length == 0) return(true);
