@@ -251,13 +251,13 @@ export class BlockImpl
     }
 
 
-    public setUsage(usage:DatabaseUsage) : void
+    public set usage(usage:DatabaseUsage)
     {
         this.dbusage$ = usage;
     }
 
 
-    public get dbusage() : DatabaseUsage
+    public get usage() : DatabaseUsage
     {
         return(this.dbusage$);
     }
@@ -314,7 +314,7 @@ export class BlockImpl
     private async keyinsert(after:boolean) : Promise<boolean>
     {
         if (this.data == null) return(false);
-        if (!this.dbusage.insert) return(false);
+        if (!this.usage.insert) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
@@ -326,7 +326,7 @@ export class BlockImpl
     private async keydelete() : Promise<boolean>
     {
         if (this.data == null) return(false);
-        if (!this.dbusage.delete) return(false);
+        if (!this.usage.delete) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
@@ -338,7 +338,7 @@ export class BlockImpl
     private async keyentqry() : Promise<boolean>
     {
         if (this.data == null) return(false);
-        if (!this.dbusage.query) return(false);
+        if (!this.usage.query) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
@@ -350,7 +350,7 @@ export class BlockImpl
     private async keyexeqry() : Promise<boolean>
     {
         if (this.data == null) return(false);
-        if (!this.dbusage.query) return(false);
+        if (!this.usage.query) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
@@ -359,7 +359,7 @@ export class BlockImpl
     }
 
 
-    public async enterqry() : Promise<boolean>
+    private async enterqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -384,7 +384,7 @@ export class BlockImpl
     }
 
 
-    public async executeqry() : Promise<boolean>
+    private async executeqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -424,7 +424,22 @@ export class BlockImpl
     }
 
 
-    public async insert(after:boolean) : Promise<boolean>
+    public async createControlRecord() : Promise<number>
+    {
+        if (!this.data.database)
+        {
+            if (this.insert(true))
+            {
+                this.records[+this.row].state = RecordState.update;
+                return(this.record);
+            }
+        }
+
+        return(-1);
+    }
+
+
+    private async insert(after:boolean) : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -469,7 +484,7 @@ export class BlockImpl
     }
 
 
-    public async delete() : Promise<boolean>
+    private async delete() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);

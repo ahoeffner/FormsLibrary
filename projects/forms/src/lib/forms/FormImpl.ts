@@ -476,6 +476,12 @@ export class FormImpl
                 if (fdef.type == null)
                     fdef.type = FieldImplementation.guess(cdef?.type);
 
+                if (fdef.fieldoptions == null)
+                        fdef.fieldoptions = {};
+
+                if (!block.usage.update)
+                    fdef.fieldoptions.update = false;
+
                 inst.definition = fdef;
             });
 
@@ -826,7 +832,7 @@ export class FormImpl
         usage = DBUsage.override(fusage,usage);
         usage = DBUsage.complete(usage);
 
-        block.setUsage(usage);
+        block.usage = usage;
     }
 
 

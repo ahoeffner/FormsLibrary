@@ -81,11 +81,9 @@ export class Block
         return(this.record);
     }
 
-    public async insert(below?:boolean) : Promise<number>
+    public async createControlRecord() : Promise<number>
     {
-        if (below == null) below = true;
-        await this._impl_.insert(!below);
-        return(this._impl_.record);
+        return(await this._impl_.createControlRecord());
     }
 
     public deleteRecord() : void
@@ -107,7 +105,7 @@ export class Block
 
     public set usage(usage:DatabaseUsage)
     {
-        this._impl_.setUsage(usage);
+        this._impl_.usage = usage;
     }
 
     public addTrigger(listener:TriggerFunction, types:Trigger|Trigger[]) : void
