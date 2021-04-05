@@ -6,9 +6,9 @@ import { Theme } from "../application/Themes";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Statement } from "../database/Statement";
 import { Container } from "../container/Container";
+import { DatabaseUsage } from "../database/DatabaseUsage";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
-import { DatabaseUsage } from "../database/DatabaseUsage";
 
 
 export interface CallBack

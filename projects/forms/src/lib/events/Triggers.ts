@@ -170,7 +170,7 @@ export class Triggers
 
     public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
     {
-        event.type = type.name;
+        event["type$"] = type.name;
 
         if (type == Trigger.Key && key != null)
         {
@@ -202,7 +202,7 @@ export class Triggers
         let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
         if (triggers == null) return(true);
 
-        event.type = type.name;
+        event["type$"] = type.name;
 
         if (type == Trigger.Key && key != null)
         {

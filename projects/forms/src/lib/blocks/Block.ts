@@ -1,9 +1,9 @@
 import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
 import { Trigger } from "../events/Triggers";
+import { Statement } from "../database/Statement";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { TriggerFunction } from "../events/TriggerFunction";
-import { Statement } from "../database/Statement";
 
 
 export class Block
@@ -69,6 +69,23 @@ export class Block
     public pageDown() : void
     {
         this._impl_.dokey("pagedown");
+    }
+
+    public get row() : number
+    {
+        return(this.row);
+    }
+
+    public get record() : number
+    {
+        return(this.record);
+    }
+
+    public insert(below?:boolean) : number
+    {
+        if (below == null) below = true;
+        this._impl_.insert(!below);
+        return(this._impl_.record);
     }
 
     public deleteRecord() : void

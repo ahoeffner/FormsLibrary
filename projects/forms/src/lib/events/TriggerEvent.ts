@@ -1,4 +1,3 @@
-import { Trigger } from "./Triggers";
 import { Statement } from "../database/Statement";
 import { Key, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
@@ -6,65 +5,114 @@ import { FieldInstance } from "../input/FieldInstance";
 
 export class TriggerEvent
 {
-    public row:number;
-    public jsevent:any;
-    public type:string;
+    private event$:any;
+    private type$:string;
+    private record$:number;
 
     constructor(row:number, jsevent?:any)
     {
-        this.row = row;
-        this.jsevent = jsevent;
+        this.record$ = row;
+        this.event$ = jsevent;
+    }
+
+    public get type() : string
+    {
+        return(this.type$);
+    }
+
+    public get event() : any
+    {
+        return(this.event$);
+    }
+
+    public get record() : number
+    {
+        return(this.record$);
     }
 }
 
 
 export class KeyTriggerEvent extends TriggerEvent
 {
-    public key:Key;
-    public code:string;
-    public field:string;
+    private key$:Key;
+    private code$:string;
+    private field$:string;
 
     constructor(field:FieldInstance, key:string, jsevent:any)
     {
         super(0,jsevent);
 
-        this.code = key;
-        this.jsevent = jsevent;
-        this.key = KeyMapper.parse(key);
-        this.key.name = KeyMapper.keyname(key);
+        this.code$ = key;
+        this.key$ = KeyMapper.parse(key);
+        this.key$.name = KeyMapper.keyname(key);
 
         if (field != null)
         {
-            this.row = field.row;
-            this.field = field.name;
+            this.field$ = field.name;
+            this["record$"] = field.row;
         }
+    }
+
+    public get key() : Key
+    {
+        return(this.key$);
+    }
+
+    public get code() : string
+    {
+        return(this.code$);
+    }
+
+    public get field() : string
+    {
+        return(this.field$);
     }
 }
 
 
 export class FieldTriggerEvent extends TriggerEvent
 {
-    public value:any;
-    public field:string;
-    public previous:any;
+    private value$:any;
+    private field$:string;
+    private previous$:any;
 
     constructor(field:string, row:number, value:any, previous:any, jsevent?:any)
     {
         super(row,jsevent);
-        this.field = field;
-        this.value = value;
-        this.previous = previous;
+        this.field$ = field;
+        this.value$ = value;
+        this.previous$ = previous;
+    }
+
+    public get value() : any
+    {
+        return(this.value$);
+    }
+
+    public get field() : string
+    {
+        return(this.field$);
+    }
+
+    public get previous() : any
+    {
+        return(this.previous$);
     }
 }
 
 
 export class SQLTriggerEvent extends TriggerEvent
 {
-    public stmt:Statement;
+    private stmt$:Statement;
 
     constructor(row:number,stmt:Statement)
     {
         super(row,null);
-        this.stmt = stmt;
+        this.stmt$ = stmt;
+    }
+
+    public get stmt() : Statement
+    {
+        return(this.stmt$);
     }
 }

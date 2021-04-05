@@ -85,6 +85,12 @@ export class BlockImpl
     }
 
 
+    public get record() : number
+    {
+        return(+this.row+this.offset);
+    }
+
+
     public get field() : FieldInstance
     {
         return(this.field$);
@@ -558,15 +564,15 @@ export class BlockImpl
         if (rec.state == RecordState.na) return(true);
 
         if (!rec.valid) return(false);
-        if (this.data.validated(+this.row + +this.offset)) return(true);
+        if (this.data.validated(this.record)) return(true);
 
-        let trgevent:TriggerEvent = new TriggerEvent(+this.row+this.offset,null);
+        let trgevent:TriggerEvent = new TriggerEvent(this.record,null);
 
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
         if (!rec.valid) return(false);
-        let response:any = await this.data.validate(+this.row+this.offset);
+        let response:any = await this.data.validate(this.record);
 
         if (response["status"] == "failed")
         {

@@ -79,13 +79,13 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 
         if (kevent.code == keymap.nextfield && kevent.field == "pwd")
         {
-            kevent.jsevent.preventDefault();
+            kevent.event.preventDefault();
             this.usr.focus();
         }
 
         if (kevent.code == keymap.prevfield && kevent.field == "usr")
         {
-            kevent.jsevent.preventDefault();
+            kevent.event.preventDefault();
             this.pwd.focus();
         }
 
