@@ -81,10 +81,10 @@ export class Block
         return(this.record);
     }
 
-    public insert(below?:boolean) : number
+    public async insert(below?:boolean) : Promise<number>
     {
         if (below == null) below = true;
-        this._impl_.insert(!below);
+        await this._impl_.insert(!below);
         return(this._impl_.record);
     }
 
