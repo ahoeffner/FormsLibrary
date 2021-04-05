@@ -309,7 +309,6 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
         if (!this.dbusage.insert) return(false);
-        if (!await this.validate()) return(false);
 
         if (this.data.database && !this.app.connected)
             return(false);
@@ -424,6 +423,9 @@ export class BlockImpl
         if (this.data.database && !this.app.connected)
             return(false);
 
+        if (!await this.validate())
+            return(false);
+
         let off:number = after ? 1 : 0;
 
         if (!this.data.insert(+this.row + +this.offset + +off))
@@ -433,8 +435,8 @@ export class BlockImpl
         if (this.data.rows == 1)
         {
             this.display(this.offset);
-            this.focus();
-            return;
+            this.focus(0);
+            return(true);
         }
 
         let scroll:number = 0;
@@ -449,13 +451,10 @@ export class BlockImpl
         let move:number = 0;
         if (scroll == 0) move = after ? 1 : 0;
 
-        this.display(+this.offset + scroll);
+        await this.display(+this.offset + scroll);
 
         row = +row + +move;
         let rec:Record = this.records[+row];
-
-        await this.sleep(10);
-        // make sure focus from clear is done
 
         rec.current = true;
         this.focus(row);
@@ -480,16 +479,13 @@ export class BlockImpl
         }
 
         let row:number = this.row;
-        this.display(this.offset);
+        await this.display(this.offset);
 
         // no records at current position
         if ((+row) + (+this.offset) >= this.data.rows)
             row = this.data.rows - this.offset - 1;
 
         if (row < 0) this.row = 0;
-
-        await this.sleep(10);
-        // make sure focus from clear is done
 
         this.focus(row);
     }
@@ -588,6 +584,7 @@ export class BlockImpl
     public async clear()
     {
         if (this.rows == null) return;
+        this.records[0].current = true;
 
         for(let r = 0; r < this.rows; r++)
         {
@@ -602,13 +599,13 @@ export class BlockImpl
         this.records[0].enable(true);
 
         this.row = 0;
-        this.focus();
     }
 
 
     public async display(start:number) : Promise<void>
     {
-        this.clear();
+        await this.clear();
+
         this.offset = start;
         if (this.data == null) return;
 
@@ -619,12 +616,6 @@ export class BlockImpl
 
         let columns:string[] = this.data.fields;
         let rows:any[][] = this.data.get(this.offset,this.rows);
-
-        if (rows.length == 0)
-        {
-            this.focus();
-            return;
-        }
 
         for(let r = 0; r < rows.length; r++)
         {
@@ -682,16 +673,12 @@ export class BlockImpl
     public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
     {
         let delay:number = 5;
-        let validated:boolean = false;
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
         if (this.records.length == 0) return(true);
 
         if (type == "focus")
         {
-            if (field.flushing())
-                return(true);
-
             if (this.form != null)
                 this.form.block = this;
 
@@ -722,8 +709,6 @@ export class BlockImpl
 
         if (type == "blur")
         {
-            if (field.flushing()) return(true);
-
             if (this.state == FormState.entqry)
                 return(true);
 
@@ -774,8 +759,15 @@ export class BlockImpl
 
         if (type == "change")
         {
-            if (field.flushing()) return(true);
-            if (!await this.validatefield(field,event)) return(false);
+            // Current row field firing after move
+            if (field.row != this.row) return(true);
+
+            if (!await this.validatefield(field,event))
+            {
+                this.field.focus();
+                return(false);
+            }
+
             return(true);
         }
 
@@ -784,10 +776,6 @@ export class BlockImpl
         {
             if (this.state == FormState.entqry)
             {
-                field.blur();
-                await this.sleep(delay);
-
-                validated = true;
                 this.records[0].current = true;
 
                 this.records[0].clear();
@@ -806,10 +794,6 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.keyentqry())
             {
                 field.focus();
@@ -827,10 +811,6 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
@@ -849,10 +829,6 @@ export class BlockImpl
         // Delete
         if (type == "key" && key == keymap.delete)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
@@ -867,10 +843,6 @@ export class BlockImpl
         // Insert after
         if (type == "key" && key == keymap.insertafter)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
 
@@ -891,10 +863,6 @@ export class BlockImpl
         // Insert before
         if (type == "key" && key == keymap.insertbefore)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate()) return(false);
             this.setDataValue(field.row,field.name,field.value);
 
@@ -915,10 +883,6 @@ export class BlockImpl
         // Next record
         if (type == "key" && key == keymap.nextrecord)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate())
                 return(false);
 
@@ -937,21 +901,16 @@ export class BlockImpl
                 await this.display(this.offset+1);
             }
 
-            validated = true;
             this.focus(row);
+            return(true);
         }
 
         // Previous record
         if (type == "key" && key == keymap.prevrecord)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate())
                 return(false);
 
-            validated = true;
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
 
@@ -960,19 +919,14 @@ export class BlockImpl
                 row = 0;
                 this.display(this.offset-1);
             }
-            else
-            {
-                this.focus(row);
-            }
+
+            this.focus(row);
+            return(true);
         }
 
         // Page down
         if (type == "key" && key == keymap.pagedown)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate())
                 return(false);
 
@@ -990,10 +944,6 @@ export class BlockImpl
         // Page up
         if (type == "key" && key == keymap.pageup)
         {
-            field.blur(true);
-            await this.sleep(delay);
-            field.focus(true);
-
             if (!await this.validate())
                 return(false);
 
@@ -1003,31 +953,17 @@ export class BlockImpl
             return(true);
         }
 
-        event["navigate"] = true;
-
         if (type == "key" && key == keymap.prevfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 
         if (type == "key" && key == keymap.nextfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 
-        event["navigate"] = false;
-
-        // Pass event to subscribers, stop if signalled
         if (type == "key")
         {
-            if (!validated && !await this.validatefield(field,event))
-                return(false);
-
             trgevent = new KeyTriggerEvent(field,key,event);
-
-            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
-                return(false);
+            return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
-
-        // Pass event on to parent (form)
-        if (this.form != null)
-            this.form.onEvent(event,field,type,key);
 
         return(true);
     }

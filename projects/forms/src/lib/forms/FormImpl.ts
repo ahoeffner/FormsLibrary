@@ -940,7 +940,7 @@ export class FormImpl
         if (type == "focus")
             this.block = this.blkindex.get(field.block);
 
-        if (type == "key" && key == keymap.prevfield && event["navigate"])
+        if (type == "key" && key == keymap.prevfield)
         {
             let prev:boolean = false;
 
@@ -958,7 +958,7 @@ export class FormImpl
             return;
         }
 
-        if (type == "key" && key == keymap.nextfield && event["navigate"])
+        if (type == "key" && key == keymap.nextfield)
         {
             let next:boolean = false;
 
@@ -974,15 +974,6 @@ export class FormImpl
 
             if (!next) event.preventDefault();
             return;
-        }
-
-        if (event["navigate"]) return;
-
-        if (type == "key")
-        {
-            let trgevent:KeyTriggerEvent = new KeyTriggerEvent(field,key,event);
-            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
-                return(false);
         }
     }
 

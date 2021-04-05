@@ -22,7 +22,6 @@ export class FieldInstance implements AfterViewInit
     private app:ApplicationImpl;
     private clazz:FieldInterface;
     private fgroup$:Field = null;
-    private flush:boolean = true;
     private valid$:boolean = true;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
@@ -85,7 +84,7 @@ export class FieldInstance implements AfterViewInit
     {
         let name:string = this.block$+"."+this.name;
         if (this.id.length > 0) name += "."+this.id;
-        name += "["+this.row+"]";
+        name += "["+this.row+"]("+this.guid+")";
         return(name);
     }
 
@@ -175,26 +174,15 @@ export class FieldInstance implements AfterViewInit
         else      this.removeClass("mandatory");
     }
 
-    public flushing() : boolean
+    public focus() : boolean
     {
-        return(this.flush);
-    }
-
-    public focus(flush?:boolean) : boolean
-    {
-        if (flush != null)
-            this.flush = !flush;
-
         if (!this.enabled) return(false);
-        if (this.clazz == null) return(false);
-
         setTimeout(() => {this.clazz.element.focus()},0);
         return(true);
     }
 
-    public blur(flush?:boolean) : void
+    public blur() : void
     {
-        if (flush != null) this.flush = flush;
         setTimeout(() => {this.clazz.element.blur()},0);
     }
 
@@ -258,14 +246,12 @@ export class FieldInstance implements AfterViewInit
 
     public enable()
     {
-        this.flush = false;
         this.setInputState();
     }
 
     public disable() : void
     {
         this.valid = true;
-        this.flush = false;
         this.enabled$ = false;
         this.readonly$ = false;
         this.state = RecordState.na;
