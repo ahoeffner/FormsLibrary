@@ -269,16 +269,18 @@ export class BlockImpl
     }
 
 
-    public dokey(name:string) : void
+    public dokey(name:string) : boolean
     {
         let key:string = KeyMapper.key(name);
-        this.sendkey(null,key);
+        if (key == null) return(false);
+        return(this.sendkey(null,key));
     }
 
 
-    public sendkey(event:any,key:string) : void
+    public sendkey(event:any,key:string) : boolean
     {
         this.onEvent(event,this.field,"key",key);
+        return(true);
     }
 
 

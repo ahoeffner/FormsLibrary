@@ -24,10 +24,10 @@ export class FieldInstance implements AfterViewInit
     private fgroup$:Field = null;
     private valid$:boolean = true;
     private enabled$:boolean = false;
-    private readonly$:boolean = true;
-    private mandatory$:boolean = true;
-    private container:HTMLSpanElement;
+    private readonly$:boolean = false;
+    private mandatory$:boolean = false;
     private firstchange:boolean = true;
+    private container:HTMLSpanElement = null;
     private state$:RecordState = RecordState.na;
     private options$:FieldOptions = {query: true, insert: true, update: true};
 

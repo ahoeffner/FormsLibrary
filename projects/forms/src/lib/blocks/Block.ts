@@ -2,7 +2,6 @@ import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
 import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
-import { DatabaseUsage } from "../database/DatabaseUsage";
 import { TriggerFunction } from "../events/TriggerFunction";
 
 
@@ -41,16 +40,16 @@ export class Block
         this._impl_.dokey("escape");
     }
 
-    public enterquery(override?:boolean) : void
+    public async enterquery(override?:boolean) : Promise<boolean>
     {
-        if (override) this._impl_.enterqry();
+        if (override) return(this._impl_.enterqry());
         else this._impl_.dokey("enterquery");
     }
 
-    public executequery(override?:boolean) : void
+    public async executequery(override?:boolean) :  Promise<boolean>
     {
-        if (override) this._impl_.executeqry();
-        else this._impl_.dokey("executequery");
+        if (override) return(this._impl_.executeqry());
+        else return(this._impl_.dokey("executequery"));
     }
 
     public nextrecord() : void
@@ -85,23 +84,23 @@ export class Block
 
     public async createControlRecord() : Promise<number>
     {
-        return(await this._impl_.createControlRecord());
+        return(this._impl_.createControlRecord());
     }
 
-    public delete(override?:boolean) : void
+    public async delete(override?:boolean) : Promise<boolean>
     {
-        if (override) this._impl_.delete();
-        else this._impl_.dokey("delete");
+        if (override) return(this._impl_.delete());
+        else return(this._impl_.dokey("delete"));
     }
 
-    public insert(above?:boolean, override?:boolean)
+    public async insert(above?:boolean, override?:boolean) : Promise<boolean>
     {
         if (above == null) above = false;
-        if (override) this._impl_.insert(!above);
+        if (override) return(this._impl_.insert(!above));
         else
         {
-            if (!above) this._impl_.dokey("insertafter");
-            else        this._impl_.dokey("insertbefore");
+            if (!above) return(this._impl_.dokey("insertafter"));
+            else        return(this._impl_.dokey("insertbefore"));
         }
     }
 
