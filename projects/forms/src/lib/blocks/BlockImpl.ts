@@ -431,6 +431,7 @@ export class BlockImpl
             if (await this.insert(true))
             {
                 this.records[+this.row].state = RecordState.update;
+                this.records[+this.row].enable(false);
                 return(this.record);
             }
         }
