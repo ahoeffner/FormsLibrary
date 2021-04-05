@@ -70,6 +70,11 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.getApplication().conf.colors);
     }
 
+    public getCurrentRow(block:string) : number
+    {
+        return(this._impl_.getCurrentRow(block));
+    }
+
     public getBlock(block:string) : Block
     {
         let impl:BlockImpl = this._impl_.getBlock(block);

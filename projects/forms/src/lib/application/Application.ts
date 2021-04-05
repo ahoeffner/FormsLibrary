@@ -78,6 +78,11 @@ export class Application
         return(this.conf.colors);
     }
 
+    public set theme(theme:string)
+    {
+        setTimeout(() => {this.conf.setTheme(theme);},50);
+    }
+
     public closeform(destroy?:boolean) : void
     {
         if (destroy == undefined) destroy = false;

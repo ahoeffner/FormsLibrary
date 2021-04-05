@@ -29,7 +29,7 @@ export class Config
         this.themes.set("default",new defaultTheme());
 
         KeyMapper.index(new MacKeyMap());
-        this.colors$ = this.themes.get("default");
+        this.colors = this.themes.get("default");
     }
 
     private async load()
@@ -51,12 +51,17 @@ export class Config
 
     public get dateformat() : string
     {
-        return("dd-mm-yyyy");
+        return("DD-MM-YYYY");
     }
 
     public get databasedateformat() : string
     {
-        return("yyyy-mm-dd");
+        return("YYYY-MM-DD");
+    }
+
+    public set colors(theme:Theme)
+    {
+        this.colors$ = theme;
     }
 
     public get colors() : Theme
@@ -83,7 +88,7 @@ export class Config
 
         if (ttheme != null)
         {
-            this.colors$ = ttheme;
+            this.colors = ttheme;
             this.notifications.forEach((notify) => {notify.instance[notify.func]()});
         }
     }

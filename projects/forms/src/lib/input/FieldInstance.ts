@@ -116,10 +116,12 @@ export class FieldInstance implements AfterViewInit
 
     public get strvalue() : string
     {
-        if (this.classname == "DateField")
-            return((this.clazz as DateField).strvalue);
+        return(this.clazz.strvalue);
+    }
 
-        return(this.value+"");
+    public set strvalue(value:string)
+    {
+        this.clazz.strvalue = value;
     }
 
     public get field() : Field
@@ -215,8 +217,15 @@ export class FieldInstance implements AfterViewInit
 
     public validate() : boolean
     {
+        if (this.state != RecordState.qmode)
+            return(true);
+
         if (this.enabled && !this.readonly && this.mandatory)
         {
+            console.log("validate from fieldinstance validate")
+            if (!this.clazz.validate())
+                return(false);
+
             if (this.value == null || (""+this.value).length == 0)
                 return(false);
         }
@@ -338,14 +347,6 @@ export class FieldInstance implements AfterViewInit
         if (this.fgroup$ == null)
             return;
 
-        let validate:boolean = false;
-
-        if (this.state != RecordState.qmode)
-        {
-            if (this.enabled && !this.readonly && this.mandatory)
-                validate = true;
-        }
-
         if (event.type == "focus")
         {
             this.firstchange = true;
@@ -354,11 +355,8 @@ export class FieldInstance implements AfterViewInit
 
         if (event.type == "blur")
         {
-            if (validate && !this.firstchange)
-            {
-                if (this.value == null || (""+this.value).length == 0)
-                    if (this.valid) this.fgroup$.valid = false;
-            }
+            if (!this.firstchange && !this.validate() && this.valid)
+                this.fgroup$.valid = false;
 
             this.fgroup$["onEvent"](event,this,"blur");
         }
@@ -368,13 +366,8 @@ export class FieldInstance implements AfterViewInit
             if (this.enabled && !this.readonly)
                 if (!this.valid) this.fgroup$.valid = true;
 
-            this.value = this.value.trim();
-
-            if (validate)
-            {
-                if (this.value == null || (""+this.value).length == 0)
-                if (this.valid) this.fgroup$.valid = false;
-            }
+            if (!this.validate() && this.valid)
+                this.fgroup$.valid = false;
 
             this.fgroup$["onEvent"](event,this,"change");
         }

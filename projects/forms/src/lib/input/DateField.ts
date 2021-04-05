@@ -1,3 +1,4 @@
+import { dates } from "../dates/dates";
 import { TextField } from "./TextField";
 import { Config } from "../application/Config";
 
@@ -5,67 +6,59 @@ import { Config } from "../application/Config";
 export class DateField extends TextField
 {
     private dateval:Date = null;
-    private stringval:string = null;
-
     private format:string = null;
-    private dbformat:string = null;
+    private formatted:string = null;
+
 
     public setConfig(config:Config) :  void
     {
         this.format = config.dateformat;
-        this.dbformat = config.databasedateformat;
     }
-
 
     public get strvalue() : string
     {
         return(this.element$.value);
     }
 
-    public set strvalue(str:string)
-    {
-        this.element$.value = str;
-    }
-
     public get value() : Date
     {
-        let curr:string = this.element$.value;
-        if (curr == this.stringval) return(this.dateval);
-        return(DateField.parse(curr, this.format, this.dateval));
+        if (this.strvalue == this.formatted)
+            return(this.dateval);
+
+        console.log("validate from DF get value")
+        this.validate();
+        return(this.dateval);
     }
 
     public set value(value:Date)
     {
+        if (value == null || value.constructor.name != "Date")
+        {
+            this.dateval = null;
+            this.formatted = null;
+            return;
+        }
+
         this.dateval = value;
-        this.stringval = DateField.format(value,this.format);
-        this.element$.value = this.stringval;
+        this.formatted = dates.format(value,this.format);
+
+        this.element$.value = this.formatted;
     }
 
-
-    public static parse(str:string, format:string, defval:Date) : Date
+    public validate() : boolean
     {
-        return(new Date());
-    }
+        if (this.strvalue == this.formatted)
+            return(true);
 
+        this.formatted = null;
+        this.dateval = dates.parse(this.strvalue,this.format);
 
-    public static format(date:Date, format:string) : string
-    {
-        let parts:any[] = [];
+        if (this.dateval == null && this.strvalue != null)
+            return(false);
 
-        if (date == null || (""+date).length == 0)
-            return(null);
+        if (this.dateval != null)
+            this.formatted = dates.format(this.dateval,this.format);
 
-        parts.push({part: "d", pos: format.indexOf("dd"), value: date.getDate()});
-        parts.push({part: "m", pos: format.indexOf("mm"), value: date.getMonth()+1});
-        parts.push({part: "y", pos: format.indexOf("yyyy"), value: date.getUTCFullYear()});
-
-        parts[0].value = (""+parts[0].value).padStart(2,"0");
-        parts[1].value = (""+parts[1].value).padStart(2,"0");
-        parts[2].value = (""+parts[2].value).padStart(4,"0");
-
-        parts.sort((a,b) => a.pos - b.pos);
-
-        let str = parts[0].value + "-" + parts[1].value + "-" + parts[2].value;
-        return(str);
+        return(true);
     }
 }

@@ -68,7 +68,9 @@ export interface FieldInterface
     html:string;
     size:number;
     enable:boolean;
+    strvalue:string;
     tabindex:number;
     readonly:boolean;
     element:HTMLElement;
+    validate() : boolean;
 }

@@ -129,6 +129,14 @@ export class FormImpl
     }
 
 
+    public getCurrentRow(block:string) : number
+    {
+        let blk:BlockImpl = this.getBlock(block);
+        if (blk == null) return(0);
+        return(blk.row);
+    }
+
+
     public getBlock(bname:string)
     {
         return(this.blkindex.get(bname.toLowerCase()));

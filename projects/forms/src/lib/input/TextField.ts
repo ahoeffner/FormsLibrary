@@ -56,4 +56,19 @@ export class TextField implements FieldInterface
         if (value == null) value = "";
         this.element$.value = value;
     }
+
+    public set strvalue(value:string)
+    {
+        this.value = value;
+    }
+
+    public get strvalue() : string
+    {
+        return(this.value);
+    }
+
+    public validate() : boolean
+    {
+        return(true);
+    }
 }
