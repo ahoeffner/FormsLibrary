@@ -41,8 +41,8 @@ export class BlockImpl
         this.dbusage$ =
         {
             query: false,
+            update: true,
             insert: false,
-            update: false,
             delete: false
         };
 
@@ -440,7 +440,7 @@ export class BlockImpl
     }
 
 
-    private async insert(after:boolean) : Promise<boolean>
+    public async insert(after:boolean) : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -485,7 +485,7 @@ export class BlockImpl
     }
 
 
-    private async delete() : Promise<boolean>
+    public async delete() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -1012,8 +1012,9 @@ export class BlockImpl
     }
 
 
-    public alert(msg:string, title:string) : void
+    public alert(msg:string, title:string, width?:string, height?:string) : void
     {
-        MessageBox.show(this.app,msg,title);
+        if (title == null) title = this.alias;
+        MessageBox.show(this.app,msg,title,width,height);
     }
 }

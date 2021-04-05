@@ -35,22 +35,22 @@ export class Form implements OnInit, AfterViewInit
         return(this.constructor.name);
     }
 
-    public set Title(title:string)
+    public set title(title:string)
     {
         this._impl_.title = title;
     }
 
-    public get Title() : string
+    public get title() : string
     {
         return(this._impl_.title);
     }
 
-    public set Menu(menu:Menu)
+    public set menu(menu:Menu)
     {
         this._impl_.setMenu(menu);
     }
 
-    public get Menu()
+    public get menu()
     {
         return(this._impl_.getMenu());
     }
@@ -68,12 +68,6 @@ export class Form implements OnInit, AfterViewInit
     public get colors() : Theme
     {
         return(this._impl_.getApplication().conf.colors);
-    }
-
-    public setUsage(block:string, usage:DatabaseUsage)
-    {
-        let impl:BlockImpl = this._impl_.getBlock(block);
-        if (impl != null) impl.usage = usage;
     }
 
     public getBlock(block:string) : Block
@@ -108,12 +102,12 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.clearStack();
     }
 
-    public get Parameters() : Map<string,any>
+    public get parameters() : Map<string,any>
     {
         return(this._impl_.getParameters());
     }
 
-    public wasCancelled() : boolean
+    public cancelled() : boolean
     {
         return(this._impl_.wasCancelled());
     }
@@ -175,9 +169,9 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
-    public alert(message:string, title?:string) : void
+    public alert(message:string, title?:string, width?:string, height?:string) : void
     {
         if (title == null) title = this.name;
-        this._impl_.alert(message,title);
+        this._impl_.alert(message,title,width,height);
     }
 }

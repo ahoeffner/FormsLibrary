@@ -996,8 +996,8 @@ export class FormImpl
     }
 
 
-    public alert(msg:string, title:string) : void
+    public alert(msg:string, title:string, width?:string, height?:string) : void
     {
-        MessageBox.show(this.app,msg,title);
+        MessageBox.show(this.app,msg,title,width,height);
     }
  }

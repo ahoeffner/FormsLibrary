@@ -31,7 +31,7 @@ export class Block
         return(this._impl_.setValue(record,field,value));
     }
 
-    public get queryMode() : boolean
+    public get querymode() : boolean
     {
         return(this._impl_.querymode);
     }
@@ -41,32 +41,34 @@ export class Block
         this._impl_.dokey("escape");
     }
 
-    public enterQuery() : void
+    public enterquery(override?:boolean) : void
     {
-        this._impl_.dokey("enterquery");
+        if (override) this._impl_.enterqry();
+        else this._impl_.dokey("enterquery");
     }
 
-    public executeQuery() : void
+    public executequery(override?:boolean) : void
     {
-        this._impl_.dokey("executequery");
+        if (override) this._impl_.executeqry();
+        else this._impl_.dokey("executequery");
     }
 
-    public nextRecord() : void
+    public nextrecord() : void
     {
         this._impl_.dokey("nextrecord");
     }
 
-    public prevRecord() : void
+    public prevrecord() : void
     {
         this._impl_.dokey("prevrecord");
     }
 
-    public pageUp() : void
+    public pageup() : void
     {
         this._impl_.dokey("pageup");
     }
 
-    public pageDown() : void
+    public pagedown() : void
     {
         this._impl_.dokey("pagedown");
     }
@@ -86,26 +88,26 @@ export class Block
         return(await this._impl_.createControlRecord());
     }
 
-    public deleteRecord() : void
+    public delete(override?:boolean) : void
     {
-        this._impl_.dokey("delete");
+        if (override) this._impl_.delete();
+        else this._impl_.dokey("delete");
     }
 
-    public createRecord(above?:boolean)
+    public insert(above?:boolean, override?:boolean)
     {
         if (above == null) above = false;
-        if (!above) this._impl_.dokey("insertafter");
-        else        this._impl_.dokey("insertbefore");
+        if (override) this._impl_.insert(!above);
+        else
+        {
+            if (!above) this._impl_.dokey("insertafter");
+            else        this._impl_.dokey("insertbefore");
+        }
     }
 
     public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
     {
         return(this._impl_.execute(stmt,firstrow,firstcolumn));
-    }
-
-    public set usage(usage:DatabaseUsage)
-    {
-        this._impl_.usage = usage;
     }
 
     public addTrigger(listener:TriggerFunction, types:Trigger|Trigger[]) : void
@@ -121,5 +123,10 @@ export class Block
     public addFieldTrigger(listener:TriggerFunction, types:Trigger|Trigger[], fields?:string|string[]) : void
     {
         this._impl_.addFieldTrigger(this,listener,types,fields);
+    }
+
+    public alert(message:string, title?:string, width?:string, height?:string) : void
+    {
+        this._impl_.alert(message,title,width,height);
     }
 }
