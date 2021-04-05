@@ -335,7 +335,7 @@ export class BlockImpl
     }
 
 
-    private async keyentqry() : Promise<boolean>
+    public async keyentqry() : Promise<boolean>
     {
         if (this.data == null) return(false);
         if (!this.usage.query) return(false);
@@ -359,7 +359,7 @@ export class BlockImpl
     }
 
 
-    private async enterqry() : Promise<boolean>
+    public async enterqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -384,7 +384,7 @@ export class BlockImpl
     }
 
 
-    private async executeqry() : Promise<boolean>
+    public async executeqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -428,7 +428,7 @@ export class BlockImpl
     {
         if (!this.data.database)
         {
-            if (this.insert(true))
+            if (await this.insert(true))
             {
                 this.records[+this.row].state = RecordState.update;
                 return(this.record);
