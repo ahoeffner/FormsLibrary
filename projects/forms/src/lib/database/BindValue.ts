@@ -1,6 +1,8 @@
+import { Column } from "./Column";
+
 export interface BindValue
 {
-    name:string;
-    type:string;
     value:any;
+    name:string;
+    type:Column;
 }

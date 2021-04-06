@@ -34,8 +34,10 @@ export {Block} from './lib/blocks/Block';
 
 export {FieldType} from './lib/input/FieldType';
 export {FieldInstance} from './lib/input/FieldInstance';
-export {FieldDefinition, Case} from './lib/input/FieldDefinition';
+export {FieldDefinition} from './lib/input/FieldDefinition';
 
+export {Case} from './lib/database/Case';
+export {Column} from './lib/database/Column';
 export {Condition} from './lib/database/Condition';
 export {Statement} from './lib/database/Statement';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'

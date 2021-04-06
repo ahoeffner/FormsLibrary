@@ -1,6 +1,7 @@
 import { Password } from "./Password";
 import { TextField } from "./TextField";
 import { DateField } from "./DateField";
+import { Column } from "../database/Column";
 
 
 export enum FieldType
@@ -39,22 +40,16 @@ export class FieldImplementation
         return(FieldImplementation.impl.get(type));
     }
 
-    public static guess(type:string) : FieldType
+    public static guess(type:Column) : FieldType
     {
         let ftype:FieldType = FieldType.text;
 
         if (type != null)
         {
-            type = type.toLowerCase();
-
-            if (type.indexOf("date")      >= 0) ftype = FieldType.date;
-            if (type.indexOf("int")       >= 0) ftype = FieldType.integer;
-            if (type.indexOf("float")     >= 0) ftype = FieldType.decimal;
-            if (type.indexOf("number")    >= 0) ftype = FieldType.integer;
-            if (type.indexOf("numeric")   >= 0) ftype = FieldType.decimal;
-            if (type.indexOf("decimal")   >= 0) ftype = FieldType.decimal;
-            if (type.indexOf("datetime")  >= 0) ftype = FieldType.datetime;
-            if (type.indexOf("timestamp") >= 0) ftype = FieldType.datetime;
+            ftype = FieldType.text;
+            if (type == Column.date) ftype = FieldType.date;
+            if (type == Column.integer) ftype = FieldType.integer;
+            if (type == Column.decimal) ftype = FieldType.decimal;
         }
 
         return(ftype);

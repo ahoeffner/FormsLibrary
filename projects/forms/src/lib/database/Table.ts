@@ -1,3 +1,4 @@
+import { Column } from "./Column";
 import { Key } from "../blocks/Key";
 import { Field } from "../input/Field";
 import { Connection } from "./Connection";
@@ -52,7 +53,7 @@ export class Table
             this.index.set(column.name,column);
 
             let date:boolean = false;
-            if (column.type.toLowerCase().indexOf("date") == 0)
+            if (column.type == Column.date)
                 date = true;
 
             this.dates.push(date);
@@ -85,7 +86,7 @@ export class Table
         {
             key.columns.forEach((part) =>
             {
-                let type:string = this.index.get(part.name).type;
+                let type:Column = this.index.get(part.name).type;
                 stmt.and(part.name,part.value,type);
             });
         });
@@ -98,7 +99,7 @@ export class Table
 
                 if (def.column != null)
                 {
-                    let type:string = this.index.get(""+def.column).type;
+                    let type:Column = this.index.get(""+def.column).type;
                     stmt.and(""+def.column,field.value,type);
                 }
             }

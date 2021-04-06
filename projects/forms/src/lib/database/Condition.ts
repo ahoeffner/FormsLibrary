@@ -1,5 +1,7 @@
+import { Column } from "./Column";
 import { dates } from "../dates/dates";
 import { BindValue } from "./BindValue";
+
 
 export class Condition
 {
@@ -8,7 +10,7 @@ export class Condition
     private column$:string;
     private placeholder:any;
     private operator$:string;
-    private datatype$:string;
+    private datatype$:Column;
     private level$:number = 0;
     private type$:string = "and";
     private prev$:Condition = null;
@@ -16,14 +18,14 @@ export class Condition
     private bindvalues$:BindValue[] = [];
 
 
-    public static where(column:string, value:string, operator?:string) : Condition
+    public static where(column:string, value:string, datatype?:Column) : Condition
     {
-        let where:Condition = new Condition(column,value,operator);
+        let where:Condition = new Condition(column,value,datatype);
         return(where);
     }
 
 
-    constructor(column:string, value:any, datatype?:string)
+    constructor(column:string, value:any, datatype?:Column)
     {
         this.error$ = null;
         this.column$ = column;
@@ -33,11 +35,19 @@ export class Condition
         {
             let type:string = value.constructor.name.toLowerCase();
 
-            if (type == "date" || type == "number" || type == "boolean")
+            if (type == "date")
             {
                 this.value$ = value;
                 this.operator$ = "=";
-                this.datatype$ = type;
+                this.datatype$ = Column.date;
+                return;
+            }
+
+            if (type == "number")
+            {
+                this.value$ = value;
+                this.operator$ = "=";
+                this.datatype$ = Column.decimal;
                 return;
             }
         }
@@ -46,7 +56,7 @@ export class Condition
         {
             value = (value+"").trim();
             let numeric:boolean = !isNaN(+value);
-            if (numeric) this.datatype$ = "number";
+            if (numeric) this.datatype$ = Column.decimal;
         }
 
         if (value == null || (value+"").length == 0)
@@ -56,11 +66,10 @@ export class Condition
         }
 
         if (this.datatype$ == null)
-            this.datatype$ == "varchar";
+            this.datatype$ = Column.varchar;
 
         this.operator$ = "";
         let quoted:boolean = false;
-        this.datatype$ = this.datatype$.toLowerCase();
 
         if (value.startsWith("<")) this.operator$ = "<";
         else if (value.startsWith(">")) this.operator$ = ">";
@@ -99,13 +108,19 @@ export class Condition
 
         this.placeholder = this.column$;
 
-        if (this.datatype$ == "number" && isNaN(+this.value$))
+        if (this.datatype$ == Column.decimal && isNaN(+this.value$))
         {
             this.error$ = "Unable to parse "+this.value$+" as number";
             return;
         }
 
-        if (this.datatype$ == "date")
+        if (this.datatype$ == Column.integer && isNaN(+this.value$))
+        {
+            this.error$ = "Unable to parse "+this.value$+" as number";
+            return;
+        }
+
+        if (this.datatype$ == Column.date)
         {
             let date:Date = dates.parse(this.value$);
 
@@ -129,6 +144,7 @@ export class Condition
                 this.placeholder = [this.column$+"0"+guid,this.column$+"1"+guid];
             }
         }
+
 
         if (this.operator$ != "between")
         {

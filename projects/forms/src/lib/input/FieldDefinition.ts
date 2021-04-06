@@ -1,12 +1,5 @@
+import { Case } from "../database/Case";
 import { FieldType } from "./FieldType";
-
-
-export enum Case
-{
-    upper,
-    lower,
-    mixed
-}
 
 export interface FieldOptions
 {

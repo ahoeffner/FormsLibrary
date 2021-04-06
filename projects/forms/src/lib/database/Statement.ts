@@ -1,3 +1,4 @@
+import { Column } from "./Column";
 import { BindValue } from "./BindValue";
 import { Condition } from "./Condition";
 
@@ -11,12 +12,20 @@ export enum SQLType
 }
 
 
+interface bindvalue
+{
+    value:any;
+    name:string;
+    type:string;
+}
+
+
 export interface SQL
 {
     sql:string;
     rows?:number;
     cursor?:string;
-    bindvalues:BindValue[];
+    bindvalues:bindvalue[];
 }
 
 
@@ -155,12 +164,12 @@ export class Statement
         return(this);
     }
 
-    public where(column:string, value:any, datatype?:string) : Statement
+    public where(column:string, value:any, datatype?:Column) : Statement
     {
         return(this.and(column,value,datatype));
     }
 
-    public and(column:string, value:any, datatype?:string) : Statement
+    public and(column:string, value:any, datatype?:Column) : Statement
     {
         if (this.condition$ == null)
         {
@@ -175,7 +184,7 @@ export class Statement
         return(this);
     }
 
-    public or(column:string, value:any, datatype?:string) : Statement
+    public or(column:string, value:any, datatype?:Column) : Statement
     {
         if (this.condition$ == null)
         {
@@ -190,13 +199,13 @@ export class Statement
         return(this);
     }
 
-    public returnvalue(column:string, datatype?:string) : Statement
+    public returnvalue(column:string, datatype?:Column) : Statement
     {
         this.bindvalues.unshift({name: column, value: null, type: datatype});
         return(this);
     }
 
-    public bind(column:string, value:any, datatype?:string) : Statement
+    public bind(column:string, value:any, datatype?:Column) : Statement
     {
         this.bindvalues.push({name: column, value: value, type: datatype});
         return(this);
@@ -204,7 +213,7 @@ export class Statement
 
     public validate() : string[]
     {
-        let errors:string[];
+        let errors:string[] = [];
 
         if (this.condition$ != null)
             errors = this.condition$.errors();
@@ -240,9 +249,22 @@ export class Statement
             this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
         }
 
+        let bindvals:bindvalue[] = [];
+
+        bindvalues.forEach((bindv) =>
+        {
+            bindvals.push
+            ({
+                name: bindv.name,
+                type: Column[bindv.type].toLowerCase(),
+                value: bindv.value
+            });
+        });
+
+
         if (this.type$ == SQLType.select && this.order$ != null)
             sql += " order by "+this.order$;
 
-        return({sql: sql, bindvalues: bindvalues});
+        return({sql: sql, bindvalues: bindvals});
     }
 }

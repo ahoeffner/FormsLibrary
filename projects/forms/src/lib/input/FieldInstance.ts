@@ -1,9 +1,10 @@
 import { Field } from './Field';
+import { Case } from '../database/Case';
 import { RecordState } from '../blocks/Record';
 import { Application } from "../application/Application";
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
 import { ApplicationImpl } from "../application/ApplicationImpl";
-import { FieldDefinition, FieldOptions, Case } from './FieldDefinition';
+import { FieldDefinition, FieldOptions } from './FieldDefinition';
 import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
 

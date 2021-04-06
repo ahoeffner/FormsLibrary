@@ -407,12 +407,14 @@ export class BlockImpl
         let stmt:Statement = this.data.parseQuery(keys,fields);
 
         let errors:string[] = stmt.validate();
+        console.log("errors: "+errors)
 
         if (errors.length > 0)
         {
-            let msg:string = "";
-            errors.forEach((err) => {msg += err+" "});
-            
+            let msg:string = "<table>";
+            errors.forEach((err) => {msg += "<tr><td>"+err+"</td></tr>"});
+            msg += "</table>";
+
             this.alert(msg,"Query Condition");
             return(false);
         }
