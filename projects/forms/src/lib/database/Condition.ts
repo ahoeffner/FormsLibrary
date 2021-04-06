@@ -28,7 +28,6 @@ export class Condition
         this.error$ = null;
         this.column$ = column;
         this.datatype$ = datatype;
-        console.log("datatype: "+datatype)
 
         if (value != null && this.datatype$ == null)
         {
@@ -112,7 +111,7 @@ export class Condition
 
             if (date == null)
             {
-                this.error$ = "Unable to parse "+this.value$+" as date";
+                this.error$ = "Unable to parse '"+this.value$+"' as date";
                 return;
             }
 
