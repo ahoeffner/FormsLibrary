@@ -31,9 +31,10 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
         .messagebox-msg
         {
             height: 80px;
-            display: block;
+            display: flex;
             text-align: center;
             word-wrap: break-all;
+            justify-content: center;
         }
 
         .messagebox-buttom
