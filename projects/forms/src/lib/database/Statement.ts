@@ -27,6 +27,7 @@ export class Statement
     private order$:string = null;
     private type$:SQLType = null;
     private cursor$:string = null;
+    private errors$:string[] = [];
     private columns$:string[] = [];
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
@@ -202,8 +203,14 @@ export class Statement
         return(this);
     }
 
+    public get errors() : string[]
+    {
+        return(this.errors$);
+    }
+
     public build() : SQL
     {
+        this.errors$ = [];
         let sql:string = this.sql$;
 
         if (sql == null)
@@ -222,23 +229,18 @@ export class Statement
                 sql += " from "+this.table$;
         }
 
-        if (this.condition$ != null)
-            sql += " "+this.condition$.toString();
-
         let bindvalues:BindValue[] = this.bindvalues;
 
         if (this.condition$ != null)
         {
-            this.condition$.bindvalues().forEach((bind) =>
-            {
-                bindvalues.push(bind);
-            });
+            sql += " "+this.condition$.toString();
+            this.errors$ = this.condition$.errors();
+            this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
         }
 
         if (this.type$ == SQLType.select && this.order$ != null)
             sql += " order by "+this.order$;
 
-        console.log(sql);
         return({sql: sql, bindvalues: bindvalues});
     }
 }

@@ -210,6 +210,23 @@ export class Condition
     }
 
 
+    public errors() : string[]
+    {
+        let errors:string[] = [];
+        let cd:Condition = this.first();
+
+        while(cd != null)
+        {
+            if (cd.error$ != null)
+                errors.push(cd.error$);
+
+            cd = cd.next$;
+        }
+
+        return(errors)
+    }
+
+
     public bindvalues() : BindValue[]
     {
         let bindvalues:BindValue[] = [];
@@ -272,7 +289,7 @@ export class Condition
 
         else if (cond.operator$ == "between")
             return(cond.column$+" between :"+cond.placeholder[0]+" and :"+cond.placeholder[1]);
-            
+
         else
             return(cond.column$+" "+cond.operator$+" :"+cond.placeholder);
     }

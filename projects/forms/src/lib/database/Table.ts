@@ -92,15 +92,12 @@ export class Table
 
         fields.forEach((field) =>
         {
-            console.log("cond on "+field.name+" ? value="+field.value);
             if (field.value != null && (""+field.value).trim() != "")
             {
                 let def:FieldDefinition = this.fielddef.get(field.name);
-                console.log("column "+field.name+" "+def.column);
 
                 if (def.column != null)
                 {
-                    console.log("add cond on "+field.name);
                     let type:string = this.index.get(""+def.column).type;
                     stmt.and(""+def.column,field.value,type);
                 }
