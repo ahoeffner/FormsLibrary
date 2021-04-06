@@ -19,13 +19,20 @@ export class Condition
     }
 
 
-    constructor(column:string, value:string, datatype?:string)
+    constructor(column:string, value:any, datatype?:string)
     {
         this.column$ = column;
         this.datatype$ = datatype;
 
+        if (value != null)
+        {
+            let type:string = value.constructor.name.toLowerCase();
+            if (type == "date" || type == "number" || type == "boolean") datatype = type;
+        }
+
         if (this.datatype$ == null && value != null)
         {
+            value = (value+"").trim();
             let numeric:boolean = !isNaN(+value);
             if (numeric) this.datatype$ = "number";
         }
@@ -37,7 +44,6 @@ export class Condition
         }
 
         this.operator$ = "";
-        value = value.trim();
         let quoted:boolean = false;
 
         if (value.startsWith("<")) this.operator$ = "<";

@@ -231,15 +231,37 @@ export class Field
 
     public validate() : boolean
     {
+        let valid:boolean = true;
         let inst:FieldInstance = null;
 
-        if (this.fields.length > 0) inst = this.fields[0];
-        else if (this.current && this.currfields$.length > 0) inst = this.currfields$[0];
+        for (let i = 0;  i < this.fields$.length; i++)
+        {
+            inst = this.fields$[i];
 
-        if (inst == null) return(true);
-        let valid:boolean = inst.validate();
+            if (!this.fields$[i].validate())
+            {
+                valid = false;
+                break;
+            }
+        }
 
-        this.copy(inst);
+        if (valid && this.current)
+        {
+            for (let i = 0;  i < this.currfields$.length; i++)
+            {
+                inst = this.currfields$[i];
+
+                if (!this.currfields$[i].validate())
+                {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        this.valid = valid;
+        if (inst != null) this.copy(inst);
+
         return(valid);
     }
 

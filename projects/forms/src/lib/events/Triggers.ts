@@ -24,7 +24,7 @@ export class Trigger
 
 export class FieldTrigger
 {
-    private static index:Map<string,boolean> = null;
+    private static index:Set<string> = null;
 
     public static Key:Trigger                   = Trigger.Key;
     public static Typing:Trigger                = Trigger.Typing;
@@ -37,14 +37,14 @@ export class FieldTrigger
     {
         if (FieldTrigger.index == null)
         {
-            FieldTrigger.index = new Map<string,boolean>();
+            FieldTrigger.index = new Set<string>();
 
-            FieldTrigger.index.set(Trigger.Key.name,true);
-            FieldTrigger.index.set(Trigger.Typing.name,true);
-            FieldTrigger.index.set(Trigger.PreField.name,true);
-            FieldTrigger.index.set(Trigger.PostField.name,true);
-            FieldTrigger.index.set(Trigger.PostChange.name,true);
-            FieldTrigger.index.set(Trigger.WhenValidateField.name,true);
+            FieldTrigger.index.add(Trigger.Key.name);
+            FieldTrigger.index.add(Trigger.Typing.name);
+            FieldTrigger.index.add(Trigger.PreField.name);
+            FieldTrigger.index.add(Trigger.PostField.name);
+            FieldTrigger.index.add(Trigger.PostChange.name);
+            FieldTrigger.index.add(Trigger.WhenValidateField.name);
         }
 
         return(FieldTrigger.index.has(trigger.name));

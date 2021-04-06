@@ -210,14 +210,11 @@ export class FieldInstance implements AfterViewInit
         if (this.state == RecordState.qmode)
             return(true);
 
-        if (this.enabled && !this.readonly)
-        {
-            if (!this.clazz.validate())
-                return(false);
+        if (!this.clazz.validate())
+            return(false);
 
-            if (this.mandatory && (this.value == null || (""+this.value).length == 0))
-                return(false);
-        }
+        if (this.mandatory && (this.value == null || (""+this.value).length == 0))
+            return(false);
 
         return(true);
     }
@@ -343,20 +340,12 @@ export class FieldInstance implements AfterViewInit
         }
 
         if (event.type == "blur")
-        {
-            if (!this.firstchange && !this.validate() && this.valid)
-                this.fgroup$.valid = false;
-
             this.fgroup$["onEvent"](event,this,"blur");
-        }
 
         if (event.type == "change")
         {
             if (this.enabled && !this.readonly)
                 if (!this.valid) this.fgroup$.valid = true;
-
-            if (!this.validate() && this.valid)
-                this.fgroup$.valid = false;
 
             this.fgroup$["onEvent"](event,this,"change");
         }
