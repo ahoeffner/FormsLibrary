@@ -27,7 +27,6 @@ export class Statement
     private order$:string = null;
     private type$:SQLType = null;
     private cursor$:string = null;
-    private errors$:string[] = [];
     private columns$:string[] = [];
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
@@ -203,14 +202,18 @@ export class Statement
         return(this);
     }
 
-    public get errors() : string[]
+    public validate() : string[]
     {
-        return(this.errors$);
+        let errors:string[];
+
+        if (this.condition$ != null)
+            errors = this.condition$.errors();
+
+        return(errors);
     }
 
     public build() : SQL
     {
-        this.errors$ = [];
         let sql:string = this.sql$;
 
         if (sql == null)
@@ -234,7 +237,6 @@ export class Statement
         if (this.condition$ != null)
         {
             sql += " "+this.condition$.toString();
-            this.errors$ = this.condition$.errors();
             this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
         }
 

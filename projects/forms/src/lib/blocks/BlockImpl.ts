@@ -406,11 +406,15 @@ export class BlockImpl
         this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
 
-        if (stmt.errors.length > 0)
+        let errors:string[] = stmt.validate();
+
+        if (errors.length > 0)
         {
             let msg:string = "";
-            stmt.errors.forEach((err) => {msg+err+" "});
-            this.alert(msg,"Query failed with:");
+            errors.forEach((err) => {msg += err+" "});
+            
+            this.alert(msg,"Query Condition");
+            return(false);
         }
 
         let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);

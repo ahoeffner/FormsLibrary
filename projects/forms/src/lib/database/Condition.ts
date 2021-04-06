@@ -25,9 +25,10 @@ export class Condition
 
     constructor(column:string, value:any, datatype?:string)
     {
-        this.error$ =
+        this.error$ = null;
         this.column$ = column;
         this.datatype$ = datatype;
+        console.log("datatype: "+datatype)
 
         if (value != null && this.datatype$ == null)
         {
@@ -99,13 +100,19 @@ export class Condition
 
         this.placeholder = this.column$;
 
+        if (this.datatype$ == "number" && isNaN(+this.value$))
+        {
+            this.error$ = "Unable to parse "+this.value$+" as number";
+            return;
+        }
+
         if (this.datatype$ == "date")
         {
             let date:Date = dates.parse(this.value$);
 
             if (date == null)
             {
-                this.error$ = "Unable to parse this.value$ as date";
+                this.error$ = "Unable to parse "+this.value$+" as date";
                 return;
             }
 
@@ -217,8 +224,8 @@ export class Condition
 
         while(cd != null)
         {
-            if (cd.error$ != null)
-                errors.push(cd.error$);
+            if (cd.error() != null)
+                errors.push(cd.error());
 
             cd = cd.next$;
         }
