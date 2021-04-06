@@ -1,19 +1,11 @@
 import { dates } from "../dates/dates";
 import { TextField } from "./TextField";
-import { Config } from "../application/Config";
 
 
 export class DateField extends TextField
 {
     private dateval:Date = null;
-    private format:string = null;
     private formatted:string = null;
-
-
-    public setConfig(config:Config) :  void
-    {
-        this.format = config.dateformat;
-    }
 
     public get value() : any
     {
@@ -37,7 +29,7 @@ export class DateField extends TextField
         else
         {
             this.dateval = value;
-            this.formatted = dates.format(value,this.format);
+            this.formatted = dates.format(value);
             this.element$.value = this.formatted;
         }
     }
@@ -50,13 +42,13 @@ export class DateField extends TextField
             return(true);
 
         this.formatted = null;
-        this.dateval = dates.parse(strval,this.format);
+        this.dateval = dates.parse(strval);
 
         if (this.dateval == null && strval != null)
             return(false);
 
         if (this.dateval != null)
-            this.formatted = dates.format(this.dateval,this.format);
+            this.formatted = dates.format(this.dateval);
 
         this.element$.value = this.formatted;
         return(true);

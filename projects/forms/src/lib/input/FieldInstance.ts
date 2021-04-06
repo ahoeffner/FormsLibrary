@@ -1,5 +1,4 @@
 import { Field } from './Field';
-import { DateField } from './DateField';
 import { RecordState } from '../blocks/Record';
 import { Application } from "../application/Application";
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
@@ -309,9 +308,6 @@ export class FieldInstance implements AfterViewInit
         if (cname != null)
         {
             this.clazz = new cname();
-
-            if (cname.name == "DateField")
-                (this.clazz as DateField).setConfig(this.app.conf);
 
             this.container.innerHTML = this.clazz.html;
             this.clazz.element = this.container.children[0] as HTMLElement;

@@ -1,3 +1,4 @@
+import { dates } from "../dates/dates";
 import { KeyMapper } from "../keymap/KeyMap";
 import { Injectable } from "@angular/core";
 import { MacKeyMap } from "../keymap/MacKeyMap";
@@ -13,6 +14,7 @@ import { Theme, Pink, Grey, Yellow, Indigo, defaultTheme } from "./Themes";
 export class Config
 {
     private colors$:Theme;
+    private datefmt$:string;
     private config:any = null;
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
@@ -35,7 +37,14 @@ export class Config
     private async load()
     {
         this.invoker = this.client.get<any>("/assets/config/config.json").toPromise();
-        this.invoker.then(data => {this.config = data;}, error => {this.config = {}; console.log("Loading config failed: "+error)});
+        this.invoker.then(data => {this.loaded(data);}, error => {this.config = {}; console.log("Loading config failed: "+error)});
+    }
+
+    private loaded(config:any) : void
+    {
+        this.config = config;
+        this.datefmt$ = this.config["datefmt"];
+        dates.setFormat(this.datefmt$);
     }
 
     public async ready() : Promise<boolean>
@@ -49,14 +58,9 @@ export class Config
         return(true);
     }
 
-    public get dateformat() : string
+    public get datefmt() : string
     {
-        return("DD-MM-YYYY");
-    }
-
-    public get databasedateformat() : string
-    {
-        return("YYYY-MM-DD");
+        return(this.datefmt$);
     }
 
     public set colors(theme:Theme)

@@ -1,15 +1,19 @@
+import { dates } from "../dates/dates";
 import { BindValue } from "./BindValue";
 
 export class Condition
 {
-    private value$:string;
+    private value$:any;
+    private error$:string;
     private column$:string;
+    private placeholder:any;
     private operator$:string;
     private datatype$:string;
     private level$:number = 0;
     private type$:string = "and";
     private prev$:Condition = null;
     private next$:Condition = null;
+    private bindvalues$:BindValue[] = [];
 
 
     public static where(column:string, value:string, operator?:string) : Condition
@@ -21,13 +25,21 @@ export class Condition
 
     constructor(column:string, value:any, datatype?:string)
     {
+        this.error$ =
         this.column$ = column;
         this.datatype$ = datatype;
 
         if (value != null && this.datatype$ == null)
         {
             let type:string = value.constructor.name.toLowerCase();
-            if (type == "date" || type == "number" || type == "boolean") datatype = type;
+
+            if (type == "date" || type == "number" || type == "boolean")
+            {
+                this.value$ = value;
+                this.operator$ = "=";
+                this.datatype$ = type;
+                return;
+            }
         }
 
         if (value != null && this.datatype$ == null)
@@ -43,8 +55,12 @@ export class Condition
             return;
         }
 
+        if (this.datatype$ == null)
+            this.datatype$ == "varchar";
+
         this.operator$ = "";
         let quoted:boolean = false;
+        this.datatype$ = this.datatype$.toLowerCase();
 
         if (value.startsWith("<")) this.operator$ = "<";
         else if (value.startsWith(">")) this.operator$ = ">";
@@ -56,7 +72,7 @@ export class Condition
         }
 
         if (this.operator$.length == 2)
-            this.value$ = value.substring(1).trim();
+            value = value.substring(1).trim();
 
         if (value.startsWith('"') && value.endsWith('"'))
         {
@@ -80,8 +96,49 @@ export class Condition
 
         this.value$ = value.trim();
         if (this.operator$.length == 0) this.operator$ = "=";
+
+        this.placeholder = this.column$;
+
+        if (this.datatype$ == "date")
+        {
+            let date:Date = dates.parse(this.value$);
+
+            if (date == null)
+            {
+                this.error$ = "Unable to parse this.value$ as date";
+                return;
+            }
+
+            this.value$ = date.getTime();
+
+            if (this.operator$ == "=")
+            {
+                this.operator$ = "between";
+
+                let sdate:number = this.value$;
+                let edate:number = date.getTime() + 60 * 60 * 24 * 1000;
+
+                this.value$ = [sdate,edate];
+                let guid:number = new Date().getTime();
+                this.placeholder = [this.column$+"0"+guid,this.column$+"1"+guid];
+            }
+        }
+
+        if (this.operator$ != "between")
+        {
+            this.bindvalues$.push({name: this.placeholder, value: this.value$, type: this.datatype$});
+        }
+        else
+        {
+            this.bindvalues$.push({name: this.placeholder[0], value: this.value$[0], type: this.datatype$});
+            this.bindvalues$.push({name: this.placeholder[1], value: this.value$[1], type: this.datatype$});
+        }
     }
 
+    public error() : string
+    {
+        return(this.error$)
+    }
 
     public or() : Condition
     {
@@ -160,8 +217,8 @@ export class Condition
 
         while(cd != null)
         {
-            bindvalues.push({name: cd.column$, value: cd.value$, type: cd.datatype$});
-            cd =cd.next$;
+            cd.bindvalues$.forEach((bindvalue) => {bindvalues.push(bindvalue)});
+            cd = cd.next$;
         }
 
         return(bindvalues);
@@ -176,7 +233,7 @@ export class Condition
         while(cd != null)
         {
             conditions.push(cd);
-            cd =cd.next$;
+            cd = cd.next$;
         }
 
         return(conditions);
@@ -189,17 +246,17 @@ export class Condition
         while(nc.prev$ != null) nc = nc.prev$;
 
         if (nc.next$ == null)
-            return("where "+this.clause(nc.column$,nc.operator$));
+            return("where "+this.clause(nc));
 
         let str:string = (nc.level$ == 0) ? "where " : "where (";
-        str += this.clause(nc.column$,nc.operator$);
+        str += this.clause(nc);
         if (nc.next$ != null) str += " "+nc.type$+" ";
 
         while(nc.next$ != null)
         {
             nc = nc.next$;
             if (+nc.level$ > 0) str += "(";
-            str += this.clause(nc.column$,nc.operator$);
+            str += this.clause(nc);
             if (+nc.level$ < 0) str += ")";
             if (nc.next$ != null) str += " "+nc.type$+" ";
         }
@@ -208,9 +265,15 @@ export class Condition
     }
 
 
-    private clause(column:string, operator:string) : string
+    private clause(cond:Condition) : string
     {
-        if (operator.startsWith("is")) return(column+" "+operator);
-        else return(column+" "+operator+" :"+column);
+        if (cond.operator$.startsWith("is"))
+            return(cond.column$+" "+cond.operator$);
+
+        else if (cond.operator$ == "between")
+            return(cond.column$+" between :"+cond.placeholder[0]+" and :"+cond.placeholder[1]);
+            
+        else
+            return(cond.column$+" "+cond.operator$+" :"+cond.placeholder);
     }
 }

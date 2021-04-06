@@ -1,4 +1,12 @@
-import {format as formatimpl, parse as parseimpl} from './fecha'
+import {format as formatimpl, parse as parseimpl} from './fecha';
+
+
+export interface datepart
+{
+    token:string;
+    delim:string;
+}
+
 
 export class dates
 {
@@ -6,77 +14,101 @@ export class dates
     // https://github.com/taylorhakes/fecha/blob/master/README.md
 
 
-    private static tokens:Set<string> = null;
+    private static tokens$:datepart[];
+    private static delim:string = null;
+    private static deffmt:string = null;
+    private static formattokens:Set<string> = null;
 
-    private static init() : void
+    private static init(format:string) : void
     {
-        dates.tokens = new Set<string>();
-        dates.tokens.add("m");
-        dates.tokens.add("d");
-        dates.tokens.add("o");
-        dates.tokens.add("d");
-        dates.tokens.add("y");
-        dates.tokens.add("a");
-        dates.tokens.add("h");
-        dates.tokens.add("s");
-        dates.tokens.add("z");
+        dates.deffmt = format;
+        this.tokens$ = dates.split(format,"-/:. ");
+
+        for(let i = 0; i < this.tokens$.length; i++)
+        {
+            if (this.tokens$[i].delim != " ")
+            {
+                dates.delim = this.tokens$[i].delim;
+                break;
+            }
+        }
+
+        dates.formattokens = new Set<string>();
+        dates.formattokens.add("m");
+        dates.formattokens.add("d");
+        dates.formattokens.add("o");
+        dates.formattokens.add("d");
+        dates.formattokens.add("y");
+        dates.formattokens.add("a");
+        dates.formattokens.add("h");
+        dates.formattokens.add("s");
+        dates.formattokens.add("z");
     }
 
-    public static parse(datestr:string, format:string) : Date
+    public static setFormat(format:string) : void
     {
+        dates.init(format);
+    }
+
+    public static parse(datestr:string, format?:string) : Date
+    {
+        if (format == null) format = dates.deffmt;
+
         if (datestr == null || datestr.trim().length == 0)
             return(null);
 
         let date:Date = parseimpl(datestr,format);
-        if (date == null) datestr = dates.reformat(datestr,format);
+        if (date == null) datestr = dates.reformat(datestr);
 
         if (datestr == null) return(null);
         return(parseimpl(datestr,format));
     }
 
-    public static format(date:Date, format:string) : string
+    public static format(date:Date, format?:string) : string
     {
+        if (format == null) format = dates.deffmt;
         return(formatimpl(date,format));
     }
 
-    private static reformat(datestr:string, format:string) : string
+    private static reformat(datestr:string) : string
     {
-        if (dates.tokens == null)
-            dates.init();
+        let ndate:string = "";
 
-        let delim:string = "-";
-
-        for(let i = 0; i < format.length; i++)
+        if (!isNaN(+datestr))
         {
-            if (!dates.tokens.has((""+format[i]).toLowerCase()))
+            let pos:number = 0;
+
+            for(let i = 0; i < 3; i++)
             {
-                delim = ""+format[i];
-                break;
+                let len:number = dates.tokens$[i].token.length;
+                ndate += datestr.substring(pos,pos+len) + dates.tokens$[i].delim;
+                pos += len;
             }
+
+            return(ndate);
         }
 
-        if (delim != "-") datestr = dates.replaceAll(datestr,"-",delim);
-        if (delim != "/") datestr = dates.replaceAll(datestr,"/",delim);
-        if (delim != ".") datestr = dates.replaceAll(datestr,".",delim);
+        if (dates.delim != "-") datestr = dates.replaceAll(datestr,"-",dates.delim);
+        if (dates.delim != "/") datestr = dates.replaceAll(datestr,"/",dates.delim);
+        if (dates.delim != ".") datestr = dates.replaceAll(datestr,".",dates.delim);
 
-        let parts:any[] = dates.split(datestr,delim+": ");
+        let parts:datepart[] = dates.split(datestr,dates.delim+": ");
 
         for (let i = 0; i < parts.length; i++)
         {
-            let numeric:boolean = !isNaN(+parts[i].part);
-            if (numeric && parts[i].part.length == 1) parts[i].part = "0"+parts[i].part;
+            let numeric:boolean = !isNaN(+parts[i].token);
+            if (numeric && parts[i].token.length == 1) parts[i].token = "0"+parts[i].token;
         }
 
-        let ndate:string = "";
-        parts.forEach((part) => {ndate += part.part+part.delim})
+        parts.forEach((part) => {ndate += part.token+part.delim})
 
         return(ndate);
     }
 
 
-    private static split(str:string, splitter:string) : any[]
+    private static split(str:string, splitter:string) : datepart[]
     {
-        let parts:any[] = [];
+        let parts:datepart[] = [];
         let delimiters:Set<string> = new Set<string>();
 
         for (let i = 0; i < splitter.length; i++)
@@ -88,13 +120,13 @@ export class dates
         {
             if (delimiters.has(str[i]+""))
             {
-                parts.push({part: str.substring(pos,i), delim: str[i]});
+                parts.push({token: str.substring(pos,i), delim: str[i]});
                 pos = i + 1;
             }
         }
 
         if (pos < str.length)
-            parts.push({part: str.substring(pos,str.length), delim: ""});
+            parts.push({token: str.substring(pos,str.length), delim: ""});
 
         return(parts);
     }

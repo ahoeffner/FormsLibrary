@@ -238,6 +238,7 @@ export class Statement
         if (this.type$ == SQLType.select && this.order$ != null)
             sql += " order by "+this.order$;
 
+        console.log(sql);
         return({sql: sql, bindvalues: bindvalues});
     }
 }

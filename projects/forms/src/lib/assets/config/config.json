@@ -1,5 +1,6 @@
 {
     "title": "Demo",
     "theme": "default",
+    "datefmt": "DD-MM-YYYY",
     "backend" : "http://localhost:8001"
 }
