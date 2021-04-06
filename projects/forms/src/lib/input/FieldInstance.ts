@@ -114,16 +114,6 @@ export class FieldInstance implements AfterViewInit
         else return(this.clazz.value);
     }
 
-    public get strvalue() : string
-    {
-        return(this.clazz.strvalue);
-    }
-
-    public set strvalue(value:string)
-    {
-        this.clazz.strvalue = value;
-    }
-
     public get field() : Field
     {
         return(this.fgroup$);
@@ -217,15 +207,15 @@ export class FieldInstance implements AfterViewInit
 
     public validate() : boolean
     {
-        if (this.state != RecordState.qmode)
+        if (this.state == RecordState.qmode)
             return(true);
 
-        if (this.enabled && !this.readonly && this.mandatory)
+        if (this.enabled && !this.readonly)
         {
             if (!this.clazz.validate())
                 return(false);
 
-            if (this.value == null || (""+this.value).length == 0)
+            if (this.mandatory && (this.value == null || (""+this.value).length == 0))
                 return(false);
         }
 

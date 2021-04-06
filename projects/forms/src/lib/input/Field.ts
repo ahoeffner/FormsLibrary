@@ -10,7 +10,6 @@ export class Field
     private seq:number = 0;;
     private value$:any = "";
     private block$:BlockImpl;
-    private valid$:boolean = true;
     private current$:boolean = false;
     private enabled$:boolean = false;
     private readonly$:boolean = true;
@@ -47,14 +46,8 @@ export class Field
         return(this.block$);
     }
 
-    public get valid() : boolean
-    {
-        return(this.valid$);
-    }
-
     public set valid(valid:boolean)
     {
-        this.valid$ = valid;
         this.fields$.forEach((inst) => {inst.valid = valid;});
         if (this.current) this.currfields$.forEach((inst) => {inst.valid = valid;});
     }
@@ -229,7 +222,6 @@ export class Field
 
     public disable() : void
     {
-        this.valid$ = true;
         this.enabled$ = false;
         this.readonly$ = false;
         this.fields$.forEach((field) => {field.disable()});
@@ -239,33 +231,16 @@ export class Field
 
     public validate() : boolean
     {
-        if (!this.valid$) return(false);
+        let inst:FieldInstance = null;
 
-        for(let i = 0; i < this.fields.length; i++)
-        {
-            let ok = this.fields[i].validate();
+        if (this.fields.length > 0) inst = this.fields[0];
+        else if (this.current && this.currfields$.length > 0) inst = this.currfields$[0];
 
-            if (!ok)
-            {
-                this.valid = false;
-                return(false);
-            }
-        }
+        if (inst == null) return(true);
+        let valid:boolean = inst.validate();
 
-        if (this.current)
-        {
-            for(let i = 0; i < this.currfields$.length; i++)
-            {
-                let ok = this.currfields$[i].validate();
-                if (!ok)
-                {
-                    this.valid = false;
-                    return(false);
-                }
-            }
-        }
-
-        return(this.valid$);
+        this.copy(inst);
+        return(valid);
     }
 
 

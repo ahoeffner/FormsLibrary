@@ -15,49 +15,50 @@ export class DateField extends TextField
         this.format = config.dateformat;
     }
 
-    public get strvalue() : string
+    public get value() : any
     {
+        if (this.element$.value == this.formatted)
+            return(this.dateval);
+
         return(this.element$.value);
     }
 
-    public get value() : Date
-    {
-        if (this.strvalue == this.formatted)
-            return(this.dateval);
-
-        this.validate();
-        return(this.dateval);
-    }
-
-    public set value(value:Date)
+    public set value(value:any)
     {
         if (value == null || value.constructor.name != "Date")
         {
-            this.dateval = null;
-            this.formatted = null;
-            return;
+            if (value != this.formatted)
+            {
+                this.dateval = null;
+                this.formatted = value;
+                this.element$.value = value;
+            }
         }
-
-        this.dateval = value;
-        this.formatted = dates.format(value,this.format);
-
-        this.element$.value = this.formatted;
+        else
+        {
+            this.dateval = value;
+            this.formatted = dates.format(value,this.format);
+            this.element$.value = this.formatted;
+        }
     }
 
     public validate() : boolean
     {
-        if (this.strvalue == this.formatted)
+        let strval:string = this.element$.value;
+
+        if (strval == this.formatted)
             return(true);
 
         this.formatted = null;
-        this.dateval = dates.parse(this.strvalue,this.format);
+        this.dateval = dates.parse(strval,this.format);
 
-        if (this.dateval == null && this.strvalue != null)
+        if (this.dateval == null && strval != null)
             return(false);
 
         if (this.dateval != null)
             this.formatted = dates.format(this.dateval,this.format);
 
+        this.element$.value = this.formatted;
         return(true);
     }
 }

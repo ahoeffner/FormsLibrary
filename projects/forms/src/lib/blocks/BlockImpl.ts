@@ -549,8 +549,6 @@ export class BlockImpl
         if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
 
-        console.log("validate field "+field.fname+" get real value");
-
         let previous:any = this.getValue(+field.row+this.offset,field.name);
 
         if (previous == field.value) return(true);
@@ -583,7 +581,7 @@ export class BlockImpl
         let rec:Record = this.records[this.row];
         if (rec.state == RecordState.na) return(true);
 
-        if (!rec.valid) return(false);
+        if (!rec.validate()) return(false);
         if (this.data.validated(this.record)) return(true);
 
         let trgevent:TriggerEvent = new TriggerEvent(this.record,null);
@@ -591,7 +589,6 @@ export class BlockImpl
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
-        if (!rec.valid) return(false);
         let response:any = await this.data.validate(this.record);
 
         if (response["status"] == "failed")
