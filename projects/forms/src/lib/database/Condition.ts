@@ -24,13 +24,13 @@ export class Condition
         this.column$ = column;
         this.datatype$ = datatype;
 
-        if (value != null)
+        if (value != null && this.datatype$ == null)
         {
             let type:string = value.constructor.name.toLowerCase();
             if (type == "date" || type == "number" || type == "boolean") datatype = type;
         }
 
-        if (this.datatype$ == null && value != null)
+        if (value != null && this.datatype$ == null)
         {
             value = (value+"").trim();
             let numeric:boolean = !isNaN(+value);
