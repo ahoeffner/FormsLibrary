@@ -43,6 +43,7 @@ export class ApplicationImpl
     {
         this.enable();
         this.loadConfig();
+        
         this.state = new ApplicationState(this);
         this.contctl = new ContainerControl(builder);
         this.mfactory = new MenuFactory(this.builder);
@@ -50,6 +51,8 @@ export class ApplicationImpl
         this.instances = new InstanceControl(this.formsctl);
         this.setFormsDefinitions(FormDefinitions.getForms());
         this.state.appmenu = this.createmenu(this.state.menu);
+
+        this.showLinkedForm();
     }
 
 
@@ -288,7 +291,7 @@ export class ApplicationImpl
 
     public getCurrentForm() : FormImpl
     {
-        if (!this.ready)
+        if (this.ready != 0)
             return(null);
 
         if (this.state.form == null)
@@ -430,14 +433,26 @@ export class ApplicationImpl
             this.formsctl.setFormsDefinitions(forms);
 
         this.instances.setFormsDefinitions(formsmap);
+    }
+
+
+    private showLinkedForm() : void
+    {
+        if (this.ready != 0)
+        {
+            // Make time for application setup
+            setTimeout(() => {this.showLinkedForm()},200);
+            return;
+        }
+
         let form:string = decodeURI(window.location.pathname);
 
         if (form.length > 1)
-        {
-            let name:string = this.formsctl.findFormByPath(form);
-            if (name == null) return;
+            form = this.formsctl.findFormByPath(form);
 
-            let inst:FormInstance = this.formsctl.getFormsDefinitions().get(name);
+        if (form != null)
+        {
+            let inst:FormInstance = this.formsctl.getFormsDefinitions().get(form);
 
             if (!inst.navigable)
             {
@@ -448,7 +463,7 @@ export class ApplicationImpl
             let params:Map<string,any> = new Map<string,any>();
             let urlparams = new URLSearchParams(window.location.search);
             urlparams.forEach((value,key) => {params.set(key,value)});
-            this.showform(name,false,params);
+            this.showform(form,false,params);
         }
     }
 

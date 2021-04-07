@@ -182,7 +182,7 @@ export class FormImpl
     {
         if (this.app == null)
         {
-            console.log("cannot set menu before init");
+            this.menu$ = menu;
             return;
         }
 
@@ -220,7 +220,10 @@ export class FormImpl
     public setApplication(app:ApplicationImpl) : void
     {
         this.app = app;
-        this.menu$ = new DefaultMenu();
+
+        if (this.menu$ == null)
+            this.menu$ = new DefaultMenu();
+
         this.conn = app.appstate.connection;
         this.ddmenu = app.createmenu(this.menu$);
     }
