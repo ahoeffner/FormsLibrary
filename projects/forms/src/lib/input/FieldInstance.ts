@@ -390,6 +390,9 @@ export class FieldInstance implements AfterViewInit
         {
             if (this.readonly) return;
 
+            if (+event.keyCode >= 16 && +event.keyCode <= 20)
+                return;
+
             if (this.firstchange)
             {
                 this.firstchange = false;
