@@ -52,7 +52,6 @@ export class ContainerBlock
     private rows$:number = 0;
     private fields$:FieldInstance[] = [];
     private current$:FieldInstance[] = [];
-    private unmanaged$:Map<string,Field> = new Map<string,Field>();
     private records$:Map<number,ContainerRecord> = new Map<number,ContainerRecord>();
 
     constructor(name:string)
@@ -76,21 +75,6 @@ export class ContainerBlock
 
         if (field.row == -1)
         {
-            let fgroup:Field = this.unmanaged$.get(field.name);
-
-            if (fgroup == null)
-            {
-                fgroup = new Field(field.name,0);
-                this.unmanaged$.set(field.name,fgroup);
-            }
-
-            field.row = 0;
-            fgroup.add(field);
-            return;
-        }
-
-        if (field.row == -2)
-        {
             this.current$.push(field);
             return;
         }
@@ -112,11 +96,6 @@ export class ContainerBlock
     public get fields() : FieldInstance[]
     {
         return(this.fields$);
-    }
-
-    public get unmanaged() : Map<string,Field>
-    {
-        return(this.unmanaged$);
     }
 
     public get records() : ContainerRecord[]

@@ -9,9 +9,9 @@ export class TriggerEvent
     private type$:string;
     private record$:number;
 
-    constructor(row:number, jsevent?:any)
+    constructor(record:number, jsevent?:any)
     {
-        this.record$ = row;
+        this.record$ = record;
         this.event$ = jsevent;
     }
 

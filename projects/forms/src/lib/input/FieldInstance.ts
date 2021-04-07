@@ -32,7 +32,7 @@ export class FieldInstance implements AfterViewInit
     private options$:FieldOptions = {query: true, insert: true, update: true};
 
     @Input("id")    private id$:string = "";
-    @Input("row")   private row$:number = -2;
+    @Input("row")   private row$:number = -1;
     @Input("name")  private name$:string = "";
     @Input("block") private block$:string = "";
     @Input("group") private group$:string = "";

@@ -196,17 +196,28 @@ export class BlockImpl
     }
 
 
-    public setValue(row:number, column:string, value:any) : boolean
+    public setValue(record:number, column:string, value:any) : boolean
     {
         if (this.data == null) return(false);
 
-        if (+row >= +this.offset && +row < +this.offset+this.rows)
+        if (+record >= +this.offset && +record < +this.offset+this.rows)
         {
-            let field:Field = this.records[row-this.offset].getField(column);
+            let field:Field = this.records[record-this.offset].getField(column);
             if (field != null) field.value = value;
         }
 
-        return(this.data.update(+row,column,value));
+        let previous:any = this.data.getValue(+record,column);
+
+        if (!this.data.update(+record,column,value))
+            return(false);
+
+        let fname:string = column;
+        let field:FieldDefinition = this.fielddef.get(column);
+
+        if (field != null) fname = field.name;
+        console.log("setValue column: "+column+" field: "+field+" value: "+value);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+record,value,previous);
+        this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
     }
 
 
@@ -528,10 +539,25 @@ export class BlockImpl
     }
 
 
-    private setDataValue(row:number, col:string, value:any) : boolean
+    private async lockrecord(record:number) : Promise<boolean>
     {
-        if (this.data == null) return(false);
-        return(this.data.update(+row+this.offset,col,value));
+        if (this.data == null) return(true);
+        if (this.data.locked(record)) return(true);
+
+        let trgevent:TriggerEvent = new TriggerEvent(record,null);
+
+        if (!await this.invokeTriggers(Trigger.Lock,trgevent))
+            return(false);
+
+        let response:any = await this.data.lock(record);
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Lock Record");
+            return(false);
+        }
+
+        return(true);
     }
 
 
@@ -567,7 +593,11 @@ export class BlockImpl
         if (previous == field.value) return(true);
         if (!this.field.field.validate()) return(false);
 
-        this.setDataValue(field.row,field.name,field.value);
+        if (!await this.lockrecord(+field.row+this.offset))
+            return(false);
+
+        this.data.update(+field.row+this.offset,field.name,field.value);
+
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,jsevent);
 
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
@@ -678,7 +708,7 @@ export class BlockImpl
                     this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
                 }
 
-                this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r +this.offset));
+                this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r+this.offset));
                 state = this.data.state(+this.offset+r,RecordState.update);
             }
 
@@ -760,24 +790,7 @@ export class BlockImpl
             if (this.state == FormState.entqry || this.data == null)
                 return(true);
 
-            if (this.data.locked(+field.row+this.offset))
-                return(false);
-
-            let previous:any = this.getValue(+field.row+this.offset,field.name);
-            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,event);
-
-            if (!await this.invokeTriggers(Trigger.Lock,trgevent))
-                return(false);
-
-            let response:any = await this.data.lock(+field.row+this.offset);
-
-            if (response["status"] == "failed")
-            {
-                this.alert(JSON.stringify(response),"Lock Record");
-                return(false);
-            }
-
-            return(true);
+            return(await this.lockrecord(field.row+this.offset));
         }
 
         if (type == "cchange")
@@ -879,7 +892,6 @@ export class BlockImpl
         if (type == "key" && key == keymap.insertafter)
         {
             if (!await this.validate()) return(false);
-            this.setDataValue(field.row,field.name,field.value);
 
             trgevent = new KeyTriggerEvent(field,key,event);
 
@@ -899,7 +911,6 @@ export class BlockImpl
         if (type == "key" && key == keymap.insertbefore)
         {
             if (!await this.validate()) return(false);
-            this.setDataValue(field.row,field.name,field.value);
 
             trgevent = new KeyTriggerEvent(field,key,event);
 

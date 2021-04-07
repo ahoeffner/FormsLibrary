@@ -15,7 +15,7 @@ export class Field
     private readonly$:boolean = true;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
-    private currfields$:FieldInstance[] = [];
+    private cfields$:FieldInstance[] = [];
     private state$:RecordState = RecordState.na;
     private ids:Map<string,FieldInstance> = new Map<string,FieldInstance>();
     private index:Map<string,FieldInstance> = new Map<string,FieldInstance>();
@@ -46,10 +46,21 @@ export class Field
         return(this.block$);
     }
 
+    public get fields() : FieldInstance[]
+    {
+        return(this.fields$);
+    }
+
+
+    public get cfields() : FieldInstance[]
+    {
+        return(this.cfields$);
+    }
+
     public set valid(valid:boolean)
     {
-        this.fields$.forEach((inst) => {inst.valid = valid;});
-        if (this.current) this.currfields$.forEach((inst) => {inst.valid = valid;});
+        this.fields.forEach((inst) => {inst.valid = valid;});
+        if (this.current) this.cfields.forEach((inst) => {inst.valid = valid;});
     }
 
     public getInstance(guid:string)
@@ -62,9 +73,9 @@ export class Field
         if (this.fields.length > 0)
             return(this.fields[0]);
 
-        if (this.current && this.currfields$.length > 0)
+        if (this.current && this.cfields.length > 0)
         {
-            let inst:FieldInstance = this.currfields$[0];
+            let inst:FieldInstance = this.cfields[0];
             inst.row = this.row;
             return(inst);
         }
@@ -91,12 +102,12 @@ export class Field
     {
         this.current$ = flag;
 
-        if (!flag) this.currfields$.forEach((inst) =>
+        if (!flag) this.cfields.forEach((inst) =>
         {
             inst.value = null;
             inst.disable();
         });
-        else this.currfields$.forEach((inst) =>
+        else this.cfields.forEach((inst) =>
         {
             inst.field = this;
             inst.row = this.row;
@@ -117,8 +128,8 @@ export class Field
     public set value(value:any)
     {
         this.value$ = value;
-        this.fields$.forEach((inst) => {inst.value = value;});
-        if (this.current) this.currfields$.forEach((inst) => {inst.value = value;});
+        this.fields.forEach((inst) => {inst.value = value;});
+        if (this.current) this.cfields.forEach((inst) => {inst.value = value;});
     }
 
     public get enabled() : boolean
@@ -134,22 +145,22 @@ export class Field
                 return(true);
         }
 
-        for (let i = 0; i < this.fields$.length; i++)
+        for (let i = 0; i < this.fields.length; i++)
         {
-            if (this.fields$[i].enabled)
+            if (this.fields[i].enabled)
             {
-                if (this.fields$[i].focus())
+                if (this.fields[i].focus())
                     return(true);
             }
         }
 
         if (this.current$)
         {
-            for (let i = 0; i < this.currfields$.length; i++)
+            for (let i = 0; i < this.cfields.length; i++)
             {
-                if (this.currfields$[i].enabled)
+                if (this.cfields[i].enabled)
                 {
-                    if (this.currfields$[i].focus())
+                    if (this.cfields[i].focus())
                         return(true);
                 }
             }
@@ -162,14 +173,14 @@ export class Field
     {
         field.field = this;
 
-        if (field.row == -2)
+        if (field.row == -1)
         {
-            this.currfields$.push(field);
+            this.cfields.push(field);
             if (field.guid == null) field.guid = "c:"+(this.seq++);
         }
         else
         {
-            this.fields$.push(field);
+            this.fields.push(field);
             field.guid = "f:"+(this.seq++);
         }
 
@@ -187,27 +198,21 @@ export class Field
         }
     }
 
-    public get fields() : FieldInstance[]
-    {
-        return(this.fields$);
-    }
-
-
     public set definition(def:FieldDefinition)
     {
-        for (let i = 0; i < this.fields$.length; i++)
-            this.fields$[i].definition = def;
+        for (let i = 0; i < this.fields.length; i++)
+            this.fields[i].definition = def;
 
-        for (let i = 0; i < this.currfields$.length; i++)
-            this.currfields$[i].definition = def;
+        for (let i = 0; i < this.cfields.length; i++)
+            this.cfields[i].definition = def;
     }
 
 
     public set state(state:RecordState)
     {
         this.state$ = state;
-        this.fields$.forEach((field) => {field.state = state;});
-        if (this.current) this.currfields$.forEach((field) => {field.state = state;});
+        this.fields.forEach((field) => {field.state = state;});
+        if (this.current) this.cfields.forEach((field) => {field.state = state;});
     }
 
 
@@ -215,8 +220,8 @@ export class Field
     {
         this.enabled$ = true;
         this.readonly$ = readonly;
-        this.fields$.forEach((field) => {field.readonly = readonly; field.enable();});
-        if (this.current) this.currfields$.forEach((field) => {field.readonly = readonly; field.enable();});
+        this.fields.forEach((field) => {field.readonly = readonly; field.enable();});
+        if (this.current) this.cfields.forEach((field) => {field.readonly = readonly; field.enable();});
     }
 
 
@@ -224,8 +229,8 @@ export class Field
     {
         this.enabled$ = false;
         this.readonly$ = false;
-        this.fields$.forEach((field) => {field.disable()});
-        if (this.current) this.currfields$.forEach((field) =>  {field.disable()});
+        this.fields.forEach((field) => {field.disable()});
+        if (this.current) this.cfields.forEach((field) =>  {field.disable()});
     }
 
 
@@ -234,11 +239,11 @@ export class Field
         let valid:boolean = true;
         let inst:FieldInstance = null;
 
-        for (let i = 0;  i < this.fields$.length; i++)
+        for (let i = 0;  i < this.fields.length; i++)
         {
-            inst = this.fields$[i];
+            inst = this.fields[i];
 
-            if (!this.fields$[i].validate())
+            if (!this.fields[i].validate())
             {
                 valid = false;
                 break;
@@ -247,11 +252,11 @@ export class Field
 
         if (valid && this.current)
         {
-            for (let i = 0;  i < this.currfields$.length; i++)
+            for (let i = 0;  i < this.cfields.length; i++)
             {
-                inst = this.currfields$[i];
+                inst = this.cfields[i];
 
-                if (!this.currfields$[i].validate())
+                if (!this.cfields[i].validate())
                 {
                     valid = false;
                     break;
@@ -279,10 +284,10 @@ export class Field
     {
         this.value$ = field.value;
 
-        this.fields$.forEach((inst) =>
+        this.fields.forEach((inst) =>
         {if (inst != field) inst.value = this.value$;});
 
-        this.currfields$.forEach((inst) =>
+        this.cfields.forEach((inst) =>
         {if (inst != field) inst.value = this.value$;});
     }
 }

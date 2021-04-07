@@ -43,7 +43,7 @@ export class ApplicationImpl
     {
         this.enable();
         this.loadConfig();
-        
+
         this.state = new ApplicationState(this);
         this.contctl = new ContainerControl(builder);
         this.mfactory = new MenuFactory(this.builder);
@@ -447,14 +447,14 @@ export class ApplicationImpl
 
         let form:string = decodeURI(window.location.pathname);
 
-        if (form.length > 1)
+        if (form.length > 0)
             form = this.formsctl.findFormByPath(form);
 
         if (form != null)
         {
             let inst:FormInstance = this.formsctl.getFormsDefinitions().get(form);
 
-            if (!inst.navigable)
+            if (inst == null || !inst.navigable)
             {
                 this.showPath("","");
                 return;

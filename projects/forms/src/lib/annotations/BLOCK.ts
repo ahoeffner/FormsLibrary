@@ -12,7 +12,7 @@ export const block = (definition:BlockDefinition) =>
         let name:string = utils.getName(comp);
         let type:string = utils.getType(comp);
 
-        if (type != "Form")
+        if (type != "Form" && prop == null)
         {
             console.log("@block can only be used with forms");
             return;
