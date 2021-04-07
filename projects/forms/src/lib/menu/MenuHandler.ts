@@ -49,9 +49,14 @@ export abstract class MenuHandler
     }
 
 
+    // For overwrite by application menus
+    public onFormChange(form:Form) : void
+    {
+    }
+
+
     abstract onInit() : void;
     abstract onConnect() : void;
     abstract onDisconnect() : void;
-    abstract onFormChange(form:Form) : void;
     abstract onTransactionChange() : void;
 }
