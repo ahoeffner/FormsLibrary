@@ -37,6 +37,7 @@ export class Statement
     private type$:SQLType = null;
     private cursor$:string = null;
     private columns$:string[] = [];
+    private errors:string[] = null;
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
 
@@ -213,12 +214,15 @@ export class Statement
 
     public validate() : string[]
     {
-        let errors:string[] = [];
+        if (this.errors != null)
+            return(this.errors);
+
+        this.errors = [];
 
         if (this.condition$ != null)
-            errors = this.condition$.errors();
+        this.errors = this.condition$.errors();
 
-        return(errors);
+        return(this.errors);
     }
 
     public build() : SQL

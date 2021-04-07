@@ -211,13 +211,8 @@ export class BlockImpl
         if (!this.data.update(+record,column,value))
             return(false);
 
-        let fname:string = column;
-        let field:FieldDefinition = this.fielddef.get(column);
-
-        if (field != null) fname = field.name;
-        console.log("setValue column: "+column+" field: "+field+" value: "+value);
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+record,value,previous);
-        this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,+record,value,previous);
+        this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
     }
 
 
@@ -297,6 +292,18 @@ export class BlockImpl
 
     public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
     {
+        let errors:string[] = stmt.validate();
+
+        if (errors.length > 0)
+        {
+            let msg:string = "<table>";
+            errors.forEach((err) => {msg += "<tr><td>"+err+"</td></tr>"});
+            msg += "</table>";
+
+            this.alert(msg,"Execute");
+            return(null);
+        }
+
         let response:any = await this.app.appstate.connection.invokestmt(stmt);
 
         if (response["status"] == "failed")

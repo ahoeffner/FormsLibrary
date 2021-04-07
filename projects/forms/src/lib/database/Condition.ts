@@ -29,7 +29,14 @@ export class Condition
     {
         this.error$ = null;
         this.column$ = column;
+        this.placeholder = column;
         this.datatype$ = datatype;
+
+        if (this.column$ == null)
+        {
+            this.error$ = "cannot construct condition on unspecified column. Value = "+value;
+            return;
+        }
 
         if (value != null && this.datatype$ == null)
         {
@@ -37,9 +44,10 @@ export class Condition
 
             if (type == "date")
             {
-                this.value$ = value;
                 this.operator$ = "=";
                 this.datatype$ = Column.date;
+                this.value$ = (value as Date).getTime();
+                this.bindvalues$.push({name: this.placeholder, value: this.value$, type: this.datatype$});
                 return;
             }
 
@@ -48,6 +56,7 @@ export class Condition
                 this.value$ = value;
                 this.operator$ = "=";
                 this.datatype$ = Column.decimal;
+                this.bindvalues$.push({name: this.placeholder, value: this.value$, type: this.datatype$});
                 return;
             }
         }
@@ -105,8 +114,6 @@ export class Condition
 
         this.value$ = value.trim();
         if (this.operator$.length == 0) this.operator$ = "=";
-
-        this.placeholder = this.column$;
 
         if (this.datatype$ == Column.decimal && isNaN(+this.value$))
         {

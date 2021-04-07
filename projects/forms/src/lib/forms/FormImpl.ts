@@ -508,10 +508,7 @@ export class FormImpl
             let rows:number = block.records.length;
 
             if (tabdef != null)
-            {
-                if (tabdef.name == null) console.log("No table specified for "+block.alias);
-                else table = new Table(this.conn,tabdef,pkey,columns,fieldidx,rows);
-            }
+                table = new Table(this.conn,tabdef,pkey,columns,fieldidx,rows);
 
             block.fielddef = fieldidx;
             block.data = new FieldData(block,table,fields);
