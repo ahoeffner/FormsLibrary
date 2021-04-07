@@ -180,8 +180,15 @@ export class FormImpl
 
     public setMenu(menu:Menu) : void
     {
+        if (this.app == null)
+        {
+            console.log("cannot set menu before init");
+            return;
+        }
+
         this.app.deletemenu(this.menu$);
         this.ddmenu = this.app.createmenu(menu);
+        this.app.showMenu(this.ddmenu);
         this.menu$ = menu;
     }
 

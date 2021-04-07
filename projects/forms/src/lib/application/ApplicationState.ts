@@ -48,8 +48,11 @@ export class ApplicationState
 
     public dropMenu(menu:Menu) : void
     {
-        let mhdl:MenuHandler = menu.getHandler();
-        this.menus.delete(mhdl.guid);
+        if (menu != null)
+        {
+            let mhdl:MenuHandler = menu.getHandler();
+            this.menus.delete(mhdl.guid);
+        }
     }
 
 

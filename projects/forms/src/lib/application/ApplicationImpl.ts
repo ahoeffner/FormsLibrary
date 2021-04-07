@@ -27,9 +27,9 @@ import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 export class ApplicationImpl
 {
+    private ready:number = 2;
     private config:any = null;
     private marea:MenuArea = null;
-    private ready:boolean = false;
     private apptitle:string = null;
     private formlist:FormList = null;
     private mfactory:MenuFactory = null;
@@ -63,6 +63,8 @@ export class ApplicationImpl
 
         if (this.config.hasOwnProperty("theme"))
             this.conf.setTheme(this.config["theme"]);
+
+        this.ready--;
     }
 
 
@@ -161,7 +163,7 @@ export class ApplicationImpl
     public setFormArea(area:FormArea) : void
     {
         this.formsctl.setFormArea(area);
-        this.ready = true;
+        this.ready--;
     }
 
 
@@ -264,7 +266,7 @@ export class ApplicationImpl
 
     public async callform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
-        if (!this.ready)
+        if (this.ready != 0)
         {
             setTimeout(() => {this.callform(form,destroy,parameters);},10);
             return;
@@ -298,7 +300,7 @@ export class ApplicationImpl
 
     public async showform(form:any, destroy:boolean, parameters?:Map<string,any>)
     {
-        if (!this.ready)
+        if (this.ready != 0)
         {
             setTimeout(() => {this.showform(form,destroy,parameters);},10);
             return;
@@ -344,7 +346,7 @@ export class ApplicationImpl
 
     public showinstance(inst:FormInstance) : void
     {
-        if (this.ready) this.formsctl.display(inst);
+        if (this.ready == 0) this.formsctl.display(inst);
         else setTimeout(() => {this.showinstance(inst);},10);
     }
 
@@ -391,7 +393,7 @@ export class ApplicationImpl
     }
 
 
-    private showMenu(menu:ComponentRef<DropDownMenu>) : void
+    public showMenu(menu:ComponentRef<DropDownMenu>) : void
     {
         if (this.marea != null)
             this.marea.display(menu);
