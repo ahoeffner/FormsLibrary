@@ -1,7 +1,7 @@
 import { Field } from './Field';
 import { Case } from '../database/Case';
 import { RecordState } from '../blocks/Record';
-import { Application } from "../application/Application";
+import { Context } from '../application/Context';
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldDefinition, FieldOptions } from './FieldDefinition';
@@ -43,9 +43,9 @@ export class FieldInstance implements AfterViewInit
     @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
 
 
-    constructor(app:Application)
+    constructor(ctx:Context)
     {
-        this.app = app["_impl_"];
+        this.app = ctx.app["_impl_"];
     }
 
     public get id() : string

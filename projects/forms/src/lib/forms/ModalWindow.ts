@@ -2,6 +2,7 @@ import { Form } from "./Form";
 import { FormImpl } from "./FormImpl";
 import { FormInstance } from './FormInstance';
 import { Config } from "../application/Config";
+import { Context } from "../application/Context";
 import { DropDownMenu } from "../menu/DropDownMenu";
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { WindowListener, onEventListener } from "../events/WindowListener";
@@ -126,10 +127,11 @@ changeDetection: ChangeDetectionStrategy.OnPush
 
 export class ModalWindow implements onEventListener, AfterViewInit
 {
+	private conf:Config;
 	private form:FormInstance;
 	private app:ApplicationImpl;
 	private element:HTMLElement;
-    private menu:HTMLDivElement;
+	private menu:HTMLDivElement;
 	private menuelem:HTMLElement;
     private window:HTMLDivElement;
     private topbar:HTMLDivElement;
@@ -167,8 +169,9 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private resizey:boolean = false;
 
 
-	constructor(private conf:Config, private change:ChangeDetectorRef)
+	constructor(ctx:Context, private change:ChangeDetectorRef)
 	{
+		this.conf = ctx.conf;
 	}
 
 	public get tcolor() : string

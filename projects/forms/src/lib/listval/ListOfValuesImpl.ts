@@ -1,11 +1,12 @@
 import { Popup } from "../popup/Popup";
 import { ListOfValues } from "./ListOfValues";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { Context } from "../application/Context";
 import { Container } from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
+import { PopupInstance } from "../popup/PopupInstance";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { OnInit, AfterViewInit, Component } from "@angular/core";
-import { Context } from "../application/Context";
 
 
 @Component({
@@ -30,6 +31,18 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     public title:   string = null;
 
 
+    public static show(app:ApplicationImpl, impl:BlockImpl, lov:ListOfValues)
+    {
+        let pinst:PopupInstance = new PopupInstance();
+        pinst.display(app,ListOfValuesImpl);
+
+        let lovwin:ListOfValuesImpl = pinst.popup() as ListOfValuesImpl;
+
+        lovwin.setDefinition(lov);
+        lovwin.setBlockImpl(impl);
+    }
+
+
     constructor(ctx:Context)
     {
         this.app = ctx.app["_impl_"];
@@ -41,6 +54,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.title = lov.title;
         this.width = lov.width;
         this.height = lov.height;
+
+        this.win.title = this.title;
+        this.win.width = this.width;
+        this.win.height = this.height;
     }
 
 
@@ -73,9 +90,8 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public ngAfterViewInit(): void
     {
+        console.log("title "+this.title)
         let container:Container = this.app.getContainer();
         container.finish();
-
-        console.log("impl "+this.impl)
     }
 }

@@ -1,6 +1,6 @@
 import { Config } from '../application/Config';
+import { Context } from '../application/Context';
 import { FormInstance } from '../forms/FormInstance';
-import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 
@@ -24,6 +24,7 @@ interface Form
 export class FormList implements AfterViewInit
 {
 	private root:Folder;
+	private conf:Config;
 	private page:string = "";
 	private app:ApplicationImpl;
 	private html:HTMLDivElement;
@@ -33,9 +34,10 @@ export class FormList implements AfterViewInit
     @Input('root') name: string = "/";
     @ViewChild("html", {read: ElementRef}) private elem: ElementRef;
 
-    constructor(private conf:Config, app:Application)
+    constructor(ctx:Context)
     {
-		this.app = app["_impl_"];
+		this.conf = ctx.conf;
+		this.app = ctx.app["_impl_"];
 		this.root = new Folder(this.name);
 		this.conf.notify(this,"setColors");
 

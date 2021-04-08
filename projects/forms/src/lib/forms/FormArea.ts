@@ -1,3 +1,4 @@
+import { Context } from '../application/Context';
 import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
@@ -12,10 +13,12 @@ import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 export class FormArea implements AfterViewInit
 {
+	private app:Application = null;
 	@ViewChild("formarea", {read: ElementRef}) private formarea: ElementRef;
 
-	constructor(private app:Application)
+	constructor(ctx:Context)
 	{
+		this.app = ctx.app;
 	}
 
 	public getFormsArea() : HTMLElement

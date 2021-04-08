@@ -8,6 +8,7 @@ import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { WindowListener, onEventListener } from '../events/WindowListener';
 import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Context } from '../application/Context';
 
 @Component({
     selector: '',
@@ -18,6 +19,7 @@ import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@
 export class DropDownMenu implements onEventListener, AfterViewInit
 {
     private menu:Menu;
+    private conf:Config;
     private instance:string;
     private app$:ApplicationImpl;
     private html:HTMLDivElement;
@@ -41,8 +43,9 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     }
 
 
-    constructor(private conf:Config)
+    constructor(ctx:Context)
     {
+        this.conf = ctx.conf;
         this.instance = "DropDownMenu-"+(DropDownMenu.instances++);
     }
 

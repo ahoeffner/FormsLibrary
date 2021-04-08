@@ -8,7 +8,6 @@ import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
 import { keymap, KeyMapper } from "../keymap/KeyMap";
-import { PopupInstance } from "../popup/PopupInstance";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
@@ -361,13 +360,7 @@ export class BlockImpl
 
     public showListOfValues(lov:ListOfValues) : void
     {
-        let pinst:PopupInstance = new PopupInstance();
-        pinst.display(this.app,ListOfValuesImpl);
-
-        let lovwin:ListOfValuesImpl = pinst.popup() as ListOfValuesImpl;
-
-        lovwin.setDefinition(lov);
-        lovwin.setBlockImpl(new BlockImpl());
+        ListOfValuesImpl.show(this.app,new BlockImpl(),lov);
     }
 
 

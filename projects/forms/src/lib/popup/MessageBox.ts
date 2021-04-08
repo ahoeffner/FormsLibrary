@@ -79,7 +79,7 @@ export class MessageBox implements Popup, AfterViewInit
     @ViewChild("msg", {read: ElementRef}) private msgelem: ElementRef;
     @ViewChild("accept", {read: ElementRef}) private acceptelem: ElementRef;
 
-
+    
     public static show(app:ApplicationImpl, message:string, title?:string, width?:string, height?:string)
     {
         let pinst:PopupInstance = new PopupInstance();
