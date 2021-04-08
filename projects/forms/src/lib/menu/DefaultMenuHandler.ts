@@ -29,6 +29,8 @@ export class DefaultMenuHandler extends MenuHandler
 
     public onTransactionChange(): void
     {
+        if (this.transaction) this.enable("/transaction");
+        else                  this.disable("/transaction");
     }
 
     private init() : void

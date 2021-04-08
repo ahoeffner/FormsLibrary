@@ -55,6 +55,11 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.getMenu());
     }
 
+    public focus() : void
+    {
+        this._impl_.focus();
+    }
+
     public get block() : Block
     {
         return(this._impl_.block?.block);
@@ -70,9 +75,20 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.getApplication().conf.colors);
     }
 
+    public getRowIndicator(block:string, row:number) : string
+    {
+        if (row == this.getCurrentRow(block)) return(this.colors.rowindicator);
+        return("");
+    }
+
     public getCurrentRow(block:string) : number
     {
         return(this._impl_.getCurrentRow(block));
+    }
+
+    public getCurrentRecord(block:string) : number
+    {
+        return(this._impl_.getCurrentRecord(block));
     }
 
     public getBlock(block:string) : Block

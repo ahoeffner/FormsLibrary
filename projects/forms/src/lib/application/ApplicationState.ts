@@ -72,8 +72,11 @@ export class ApplicationState
 
     public transactionChange(trans:boolean) : void
     {
-        this.transaction = trans;
-        this.menus.forEach((mhdl) => {mhdl.onTransactionChange()});
+        if (trans+"" != this.transaction+"")
+        {
+            this.transaction = trans;
+            this.menus.forEach((mhdl) => {mhdl.onTransactionChange()});
+        }
     }
 
 

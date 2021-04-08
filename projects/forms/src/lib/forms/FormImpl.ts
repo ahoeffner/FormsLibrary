@@ -137,6 +137,14 @@ export class FormImpl
     }
 
 
+    public getCurrentRecord(block:string) : number
+    {
+        let blk:BlockImpl = this.getBlock(block);
+        if (blk == null) return(0);
+        return(blk.record);
+    }
+
+
     public getBlock(bname:string)
     {
         return(this.blkindex.get(bname.toLowerCase()));
@@ -514,14 +522,7 @@ export class FormImpl
             block.data = new FieldData(block,table,fields);
 
             // Start form
-            let rec:Record = block.getRecord(0);
-
-            if (rec != null)
-            {
-                rec.enable(true);
-                rec.current = true;
-                block.display(0);
-            }
+            block.ready = true;
         });
 
         // Get all fields on form

@@ -40,6 +40,11 @@ export class Block
         this._impl_.dokey("escape");
     }
 
+    public get ready() : boolean
+    {
+        return(this._impl_.ready)
+    }
+
     public async enterquery(override?:boolean) : Promise<boolean>
     {
         if (override) return(this._impl_.enterqry());
@@ -74,12 +79,12 @@ export class Block
 
     public get row() : number
     {
-        return(this.row);
+        return(this._impl_.row);
     }
 
     public get record() : number
     {
-        return(this.record);
+        return(this._impl_.record);
     }
 
     public async createControlRecord() : Promise<number>

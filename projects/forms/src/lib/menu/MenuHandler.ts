@@ -48,6 +48,10 @@ export abstract class MenuHandler
         return(this.__menu__.isConnected());
     }
 
+    public get transaction() : boolean
+    {
+        return(this.app.transaction);
+    }
 
     // For overwrite by application menus
     public onFormChange(form:Form) : void

@@ -10,11 +10,14 @@ import { Statement } from "../database/Statement";
 import { keymap, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
+import { ListOfValues } from "../listval/ListOfValues";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
+import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
+import { PopupInstance } from "../popup/PopupInstance";
 
 
 export class BlockImpl
@@ -27,6 +30,7 @@ export class BlockImpl
     private app:ApplicationImpl;
     private field$:FieldInstance;
     private form$:FormImpl = null;
+    private ready$:boolean = false;
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
     private details$:BlockImpl[] = [];
@@ -82,6 +86,25 @@ export class BlockImpl
     public get rows() : number
     {
         return(this.records$.length);
+    }
+
+
+    public get ready()
+    {
+        return(this.ready$);
+    }
+
+
+    public set ready(ready:boolean)
+    {
+        this.ready$ = ready;
+        let rec:Record = this.getRecord(0);
+
+        if (rec != null)
+        {
+            rec.enable(true);
+            rec.current = true;
+        }
     }
 
 
@@ -331,6 +354,18 @@ export class BlockImpl
     }
 
 
+    public showListOfValues(lov:ListOfValues) : void
+    {
+        /*
+        let pinst:PopupInstance = new PopupInstance();
+        pinst.display(this.app,ListOfValuesImpl);
+
+        let lovwin = pinst.popup;
+        console.log(lovwin.constructor.name);
+        */
+    }
+
+
     private async keyinsert(after:boolean) : Promise<boolean>
     {
         if (this.data == null) return(false);
@@ -564,6 +599,7 @@ export class BlockImpl
             return(false);
         }
 
+        this.app.appstate.transactionChange(true);
         return(true);
     }
 
@@ -797,7 +833,7 @@ export class BlockImpl
             if (this.state == FormState.entqry || this.data == null)
                 return(true);
 
-            return(await this.lockrecord(field.row+this.offset));
+            return(await this.lockrecord(+field.row+this.offset));
         }
 
         if (type == "cchange")

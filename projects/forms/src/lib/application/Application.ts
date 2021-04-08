@@ -9,6 +9,7 @@ import { HttpClient } from "@angular/common/http";
 import { LoginForm } from "../database/LoginForm";
 import { ApplicationImpl } from "./ApplicationImpl";
 import { PopupInstance } from "../popup/PopupInstance";
+import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 
 
 @Injectable({
@@ -96,6 +97,15 @@ export class Application
         {
             let pinst:PopupInstance = new PopupInstance();
             pinst.display(this._impl_,LoginForm);
+        }
+    }
+
+    public cxxx() : void
+    {
+        if (!this._impl_.connected)
+        {
+            let pinst:PopupInstance = new PopupInstance();
+            pinst.display(this._impl_,ListOfValuesImpl);
         }
     }
 

@@ -9,6 +9,7 @@ export interface Theme
     foldertree:string;
     buttontext:string;
     menuoption:string;
+    rowindicator:string;
 }
 
 export class defaultTheme implements Theme
@@ -23,6 +24,7 @@ export class defaultTheme implements Theme
     public menuoption:string = "white";
     public buttontext:string = "white";
     public foldertree:string = "#303f9f";
+    public rowindicator:string = "#303f9f";
 }
 
 
@@ -38,6 +40,7 @@ export class Grey extends defaultTheme
     public link:string = "grey";
     public topbar:string = "grey";
     public foldertree:string = "grey";
+    public rowindicator:string = "grey";
 }
 
 
@@ -47,6 +50,7 @@ export class Pink extends defaultTheme
     public link:string = "#ff4081";
     public topbar:string = "#ff4081";
     public foldertree:string = "#ff4081";
+    public rowindicator:string = "#ff4081";
 }
 
 
@@ -62,4 +66,5 @@ export class Yellow implements Theme
     public disabled:string = "silver";
     public menuoption:string = "black";
     public buttontext:string = "black";
+    public rowindicator:string = "yellow";
 }

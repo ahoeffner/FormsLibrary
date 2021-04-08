@@ -65,7 +65,7 @@ export class FieldData
     public locked(row:number) : boolean
     {
         if (row < 0 || row >= this.data.length) return(false);
-        return(this.data[row].locked);
+        return(this.data[+row].locked);
     }
 
 
@@ -74,13 +74,13 @@ export class FieldData
         if (row < 0 || row >= this.data.length)
             return({status: "failed", message: "row "+row+" does not exist"});
 
-        if (this.data[row].validated)
+        if (this.data[+row].validated)
             return({status: "ok"});
 
         if (this.table == null)
             return({status: "ok"});
 
-        this.data[row].validated = true;
+        this.data[+row].validated = true;
         return({status: "ok"});
     }
 
@@ -88,7 +88,7 @@ export class FieldData
     public validated(row:number) : boolean
     {
         if (row < 0 || row >= this.data.length) return(false);
-        return(this.data[row].validated);
+        return(this.data[+row].validated);
     }
 
 

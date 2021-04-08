@@ -1,5 +1,5 @@
 import { MessageBox } from "../popup/MessageBox";
-import { SQL, SQLType, Statement } from "./Statement";
+import { SQLType, Statement } from "./Statement";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 
