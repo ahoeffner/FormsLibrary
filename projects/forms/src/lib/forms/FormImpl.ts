@@ -518,7 +518,6 @@ export class FormImpl
             if (tabdef != null)
                 table = new Table(this.conn,tabdef,pkey,columns,fieldidx,rows);
 
-            block.fielddef = fieldidx;
             block.data = new FieldData(block,table,fields);
 
             // Start form

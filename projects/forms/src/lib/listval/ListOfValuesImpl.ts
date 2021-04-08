@@ -13,8 +13,31 @@ import { OnInit, AfterViewInit, Component } from "@angular/core";
     selector: '',
     template:
     `
-    Hello
+        <div class="lov">
+        <table>
+            <tr>
+                <td><field size="20" name="filter" row="{{row}}" block="lov"></field></td>
+            </tr>
+
+            <tr class="spacer"></tr>
+
+            <tr *ngFor="let item of [].constructor(15); let row = index">
+                <td><field size="20" name="descriptor" row="{{row}}" block="lov"></field></td>
+            </tr>
+
+            <tr class="spacer"></tr>
+        </table>
+        </div>
+    `,
+    styles:
+    [
     `
+        .spacer
+        {
+            height: 8px;
+        }
+    `
+    ]
 })
 
 
@@ -90,8 +113,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public ngAfterViewInit(): void
     {
-        console.log("title "+this.title)
         let container:Container = this.app.getContainer();
         container.finish();
+
+        this.app.dropContainer();
     }
 }

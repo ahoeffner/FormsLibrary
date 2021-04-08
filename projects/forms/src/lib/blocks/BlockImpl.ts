@@ -12,7 +12,6 @@ import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
 import { DatabaseUsage } from "../database/DatabaseUsage";
-import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -36,7 +35,6 @@ export class BlockImpl
     private fields$:FieldInstance[] = [];
     private triggers:Triggers = new Triggers();
     private state:FormState = FormState.normal;
-    private fieldef$:Map<string,FieldDefinition>;
 
 
     constructor(public block?:Block)
@@ -169,18 +167,6 @@ export class BlockImpl
     public get querymode() : boolean
     {
         return(this.state == FormState.entqry);
-    }
-
-
-    public set fielddef(fielddef:Map<string,FieldDefinition>)
-    {
-        this.fieldef$ = fielddef;
-    }
-
-
-    public get fielddef() : Map<string,FieldDefinition>
-    {
-        return(this.fieldef$);
     }
 
 
