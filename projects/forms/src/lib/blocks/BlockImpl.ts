@@ -134,6 +134,7 @@ export class BlockImpl
 
     public get clazz() : string
     {
+        if (this.block == null) return(null);
         return(this.block.constructor.name.toLowerCase());
     }
 

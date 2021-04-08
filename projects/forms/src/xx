@@ -7,7 +7,7 @@ annotations/window.ts:        if (width != null && width.constructor.name == "Nu
 annotations/window.ts:        if (height != null && height.constructor.name == "Number") height += "px";
 application/Application.ts:    constructor(ctx:Context, private conf:Config, client:HttpClient, builder:Builder)
 application/ApplicationState.ts:    constructor(private app:ApplicationImpl)
-application/ApplicationImpl.ts:    constructor(public conf:Config, private app:Application, public client:HttpClient, public builder:Builder)
+application/ApplicationImpl.ts:    constructor(ctx:Context, public client:HttpClient, public builder:Builder)
 application/Config.ts:    constructor(private client:HttpClient)
 blocks/BlockImpl.ts:    constructor(public block:Block)
 blocks/BlockImpl.ts:        this.name$ = block.constructor.name;
