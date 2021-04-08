@@ -135,8 +135,8 @@ export class PopupWindow implements onEventListener, AfterViewInit
     private titlebar:HTMLDivElement;
 	private winref:ComponentRef<any>;
 
-    public top : string = "5vh";
-    public left : string = "10vw";
+    public top : string = null;
+    public left : string = null;
     public width : string = "40vw";
     public height : string = "30vh";
     public tmargin : string = "1vh";
@@ -282,6 +282,18 @@ export class PopupWindow implements onEventListener, AfterViewInit
 			resize = true;
 			this.sizey = this.minh;
 			this.height = this.sizey+"px";
+		}
+
+		if (this.top == null || this.top.trim.length == 0)
+		{
+			resize = true;
+			this.top = ((+window.innerHeight - this.sizey)/3)+"px";
+		}
+
+		if (this.left == null || this.left.trim.length == 0)
+		{
+			resize = true;
+			this.left = ((+window.innerWidth - this.sizex)/3)+"px";
 		}
 
 		if (resize) this.change.detectChanges();

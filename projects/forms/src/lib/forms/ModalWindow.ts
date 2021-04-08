@@ -139,8 +139,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 	private winref:ComponentRef<any>;
 	private menuref:ComponentRef<any>;
 
-    public top : string = "";
-    public left : string = "";
+    public top : string = null;
+    public left : string = null;
     public width : string = "99vw";
     public height : string = "98vh";
     public tmargin : string = "1vh";
@@ -332,6 +332,18 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			resize = true;
 			this.sizey = this.minh;
 			this.height = this.sizey+"px";
+		}
+
+		if (this.top == null || this.top.trim.length == 0)
+		{
+			resize = true;
+			this.top = ((+window.innerHeight - this.sizey)/3)+"px";
+		}
+
+		if (this.left == null || this.left.trim.length == 0)
+		{
+			resize = true;
+			this.left = ((+window.innerWidth - this.sizex)/3)+"px";
 		}
 
 		if (resize) this.change.detectChanges();
