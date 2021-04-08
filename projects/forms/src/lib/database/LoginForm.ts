@@ -4,6 +4,7 @@ import { Block } from "../blocks/Block";
 import { keymap } from "../keymap/KeyMap";
 import { Record } from "../blocks/Record";
 import { FieldType } from "../input/FieldType";
+import { Context } from "../application/Context";
 import { Container} from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { KeyTriggerEvent } from "../events/TriggerEvent";
@@ -41,9 +42,11 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
     public height:string = "150px";
     public title:string  = "Login";
 
-    constructor()
+    constructor(ctx:Context)
     {
         super();
+
+        this.app = ctx.app["_impl_"];
 
         this.addKeyTrigger(this.onEvent,
         [
@@ -57,11 +60,6 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
     public setWin(win:PopupWindow): void
     {
         this.win = win;
-    }
-
-    public setApp(app:ApplicationImpl) : void
-    {
-        this.app = app;
     }
 
     public close(cancel:boolean) : void

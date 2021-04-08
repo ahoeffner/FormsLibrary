@@ -1,5 +1,6 @@
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
+import { Context } from "./Context";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
 import { FormList } from "../menu/FormList";
@@ -27,8 +28,9 @@ import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 
 export class ApplicationImpl
 {
+    private app:Application;
     private ready:number = 2;
-    private config:any = null;
+    private config$:Config = null;
     private marea:MenuArea = null;
     private apptitle:string = null;
     private formlist:FormList = null;
@@ -39,8 +41,11 @@ export class ApplicationImpl
     private instances:InstanceControl = null;
 
 
-    constructor(public conf:Config, private app:Application, public client:HttpClient, public builder:Builder)
+    constructor(ctx:Context, public client:HttpClient, public builder:Builder)
     {
+        this.app = ctx.app;
+        this.config$ = ctx.conf;
+
         this.enable();
         this.loadConfig();
 
@@ -58,16 +63,21 @@ export class ApplicationImpl
 
     private async loadConfig()
     {
-        await this.conf.ready();
-        this.config = this.conf.others;
+        await this.config$.ready();
 
-        if (this.config.hasOwnProperty("title"))
-            this.setTitle(this.config["title"]);
+        if (this.config$.others.hasOwnProperty("title"))
+            this.setTitle(this.config$.others["title"]);
 
-        if (this.config.hasOwnProperty("theme"))
-            this.conf.setTheme(this.config["theme"]);
+        if (this.config$.others.hasOwnProperty("theme"))
+            this.config$.setTheme(this.config$.others["theme"]);
 
         this.ready--;
+    }
+
+
+    public get config() : Config
+    {
+        return(this.config$);
     }
 
 

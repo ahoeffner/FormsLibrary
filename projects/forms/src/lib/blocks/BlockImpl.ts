@@ -356,13 +356,11 @@ export class BlockImpl
 
     public showListOfValues(lov:ListOfValues) : void
     {
-        /*
         let pinst:PopupInstance = new PopupInstance();
         pinst.display(this.app,ListOfValuesImpl);
 
-        let lovwin = pinst.popup;
+        let lovwin = pinst.popup();
         console.log(lovwin.constructor.name);
-        */
     }
 
 

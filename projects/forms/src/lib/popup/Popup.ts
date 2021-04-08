@@ -1,4 +1,3 @@
-import { ApplicationImpl } from "../application/ApplicationImpl";
 import { PopupWindow } from "./PopupWindow";
 
 export interface Popup
@@ -12,5 +11,4 @@ export interface Popup
 
     close(cancel:boolean) : void;
     setWin(win:PopupWindow) : void;
-    setApp(app:ApplicationImpl) : void;
 }

@@ -10,12 +10,10 @@ export class PopupInstance
     public display(app:ApplicationImpl, popup:any) : void
     {
         this.popupref = app.builder.createComponent(popup);
-        this.popupref.instance.setApp(app);
 
         let winref:ComponentRef<any> = app.builder.createComponent(PopupWindow);
         let win:PopupWindow = winref.instance;
 
-        win.setApp(app);
         win.setPopup(this);
         win.setWinRef(winref);
 
@@ -26,7 +24,7 @@ export class PopupInstance
     }
 
 
-    public get popup() : Popup
+    public popup() : Popup
     {
         return(this.popupref.instance);
     }

@@ -14,9 +14,9 @@ export class dates
     // https://github.com/taylorhakes/fecha/blob/master/README.md
 
 
-    private static tokens$:datepart[];
     private static delim:string = null;
     private static deffmt:string = null;
+    private static tokens$:datepart[] = null;
     private static formattokens:Set<string> = null;
 
     private static init(format:string) : void

@@ -1,6 +1,6 @@
 import { Popup } from './Popup';
-import { Config } from '../application/Config';
 import { PopupInstance } from './PopupInstance';
+import { Context } from '../application/Context';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { WindowListener, onEventListener } from "../events/WindowListener";
 import { Component, ViewChild, ElementRef, AfterViewInit, EmbeddedViewRef, ChangeDetectionStrategy, ChangeDetectorRef, ComponentRef } from '@angular/core';
@@ -165,33 +165,28 @@ export class PopupWindow implements onEventListener, AfterViewInit
 	private resizey:boolean = false;
 
 
-	constructor(private conf:Config, private change:ChangeDetectorRef)
+	constructor(ctx:Context, private change:ChangeDetectorRef)
     {
+		this.app = ctx.app["_impl_"];
     }
 
 
 	public get tcolor() : string
 	{
-		return(this.conf.colors.title);
+		return(this.app.config.colors.title);
 	}
 
 
 	public get bcolor() : string
 	{
-		return(this.conf.colors.topbar);
+		return(this.app.config.colors.topbar);
 	}
 
 
 	public get btncolor() : string
 	{
-		return(this.conf.colors.buttontext);
+		return(this.app.config.colors.buttontext);
 	}
-
-
-    public setApp(app:ApplicationImpl) : void
-    {
-        this.app = app;
-    }
 
 
 	public set title(title:string)

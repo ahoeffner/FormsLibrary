@@ -1,6 +1,7 @@
 import { Theme } from "./Themes";
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
+import { Context } from "./Context";
 import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
@@ -23,9 +24,11 @@ export class Application
     // dont rename impl as it is read behind the scenes
 
 
-    constructor(private conf:Config, client:HttpClient, builder:Builder)
+    constructor(ctx:Context, private conf:Config, client:HttpClient, builder:Builder)
     {
-        this._impl_ = new ApplicationImpl(conf,this,client,builder);
+        ctx.app = this;
+        ctx.conf = conf;
+        this._impl_ = new ApplicationImpl(ctx,client,builder);
     }
 
     public get title() : string

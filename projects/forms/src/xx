@@ -1,0 +1,71 @@
+annotations/FieldDefinitions.ts:            if (def.column.constructor.name == "Boolean")
+annotations/FieldDefinitions.ts:            if (def.column.constructor.name == "Boolean")
+annotations/key.ts:        if (columns.constructor.name == "String")
+annotations/window.ts:        if (top != null && top.constructor.name == "Number") top += "px";
+annotations/window.ts:        if (left != null && left.constructor.name == "Number") left += "px";
+annotations/window.ts:        if (width != null && width.constructor.name == "Number") width += "px";
+annotations/window.ts:        if (height != null && height.constructor.name == "Number") height += "px";
+application/Application.ts:    constructor(ctx:Context, private conf:Config, client:HttpClient, builder:Builder)
+application/ApplicationState.ts:    constructor(private app:ApplicationImpl)
+application/ApplicationImpl.ts:    constructor(public conf:Config, private app:Application, public client:HttpClient, public builder:Builder)
+application/Config.ts:    constructor(private client:HttpClient)
+blocks/BlockImpl.ts:    constructor(public block:Block)
+blocks/BlockImpl.ts:        this.name$ = block.constructor.name;
+blocks/BlockImpl.ts:        return(this.block.constructor.name.toLowerCase());
+blocks/BlockImpl.ts:        console.log(lovwin.constructor.name);
+blocks/Block.ts:    constructor()
+blocks/Record.ts:    constructor(row:number, fields:Field[], index:Map<string,Field>)
+blocks/FieldData.ts:    public constructor(block:BlockImpl, table:Table, fields:string[])
+blocks/FieldData.ts:    constructor(scn:number, table:FieldData, values?:any[])
+blocks/FieldData.ts:    constructor(scn:number, value?:any)
+blocks/Key.ts:    constructor(public name:string) {}
+blocks/Key.ts:        if (part.constructor.name == "String")
+container/ContainerControl.ts:    constructor(private builder:Builder) {}
+container/Container.ts:    constructor(name:string)
+container/Container.ts:    constructor(row:number)
+database/Table.ts:    constructor(conn:Connection, table:TableDefinition, key:Key, columns:ColumnDefinition[], fielddef:Map<string,FieldDefinition>, rows:number)
+database/Condition.ts:    constructor(column:string, value:any, datatype?:Column)
+database/Condition.ts:            let type:string = value.constructor.name.toLowerCase();
+database/Connection.ts:    public constructor(private app:ApplicationImpl)
+database/LoginForm.ts:    constructor(ctx:Context)
+database/Statement.ts:    constructor(sql:string|SQLType)
+database/Statement.ts:            if (sql.constructor.name == "String") this.sql$ = ""+sql;
+database/Statement.ts:        if (columns.constructor.name == "String")
+database/Statement.ts:        if (condition.constructor.name == "Array")
+events/TriggerEvent.ts:    constructor(record:number, jsevent?:any)
+events/TriggerEvent.ts:    constructor(field:FieldInstance, key:string, jsevent:any)
+events/TriggerEvent.ts:    constructor(field:string, row:number, value:any, previous:any, jsevent?:any)
+events/TriggerEvent.ts:    constructor(row:number,stmt:Statement)
+events/WindowListener.ts:    private constructor() {}
+events/Triggers.ts:    private constructor(public name:string) {};
+events/Triggers.ts:        if (ttypes.constructor.name == "Array") tasa = true;
+events/Triggers.ts:            if (tfields.constructor.name == "Array") fasa = true;
+events/Triggers.ts:            if (tkeys.constructor.name == "Array") kasa = true;
+forms/FormArea.ts:	constructor(private app:Application)
+forms/FormImpl.ts:    constructor(private form$:Form)
+forms/FormImpl.ts:            alias = block.constructor.name;
+forms/Form.ts:    constructor()
+forms/Form.ts:        return(this.constructor.name);
+forms/InstanceControl.ts:    constructor(private ctrl:FormsControl) {}
+forms/FormsControl.ts:    constructor(private app:ApplicationImpl, private builder:Builder) {}
+forms/FormsControl.ts:            let name:string = ref.instance.constructor.name;
+forms/ModalWindow.ts:	constructor(private conf:Config, private change:ChangeDetectorRef)
+input/DateField.ts:        if (value == null || value.constructor.name != "Date")
+input/Field.ts:    constructor(name:string, row:number)
+input/FieldInstance.ts:    constructor(app:Application)
+input/FieldInstance.ts:        return(this.clazz?.constructor.name);
+listval/ListOfValuesImpl.ts:    public constructor()
+menu/MenuInterface.ts:    constructor(menu:DropDownMenu)
+menu/MenuHandler.ts:    constructor()
+menu/DropDownMenu.ts:    constructor(private conf:Config)
+menu/DropDownMenu.ts:    constructor(elem:Element)
+menu/DropDownMenu.ts:    constructor(option:MenuEntry)
+menu/MenuFactory.ts:    constructor(private builder:Builder) {}
+menu/MenuArea.ts:    constructor(app:Application, private change:ChangeDetectorRef)
+menu/FormList.ts:    constructor(private conf:Config, app:Application)
+menu/FormList.ts:	constructor(name:string)
+menu/DefaultMenu.ts:    constructor()
+popup/PopupWindow.ts:	constructor(ctx:Context, private change:ChangeDetectorRef)
+popup/MessageBox.ts:    public constructor(ctx:Context)
+utils/Utils.ts:        let name:string = component.constructor.name;
+utils/Builder.ts:    constructor(private resolver:ComponentFactoryResolver, private injector:Injector, private app:ApplicationRef) {}

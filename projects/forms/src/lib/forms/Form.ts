@@ -72,7 +72,7 @@ export class Form implements OnInit, AfterViewInit
 
     public get colors() : Theme
     {
-        return(this._impl_.getApplication().conf.colors);
+        return(this._impl_.getApplication().config.colors);
     }
 
     public getRowIndicator(block:string, row:number) : string

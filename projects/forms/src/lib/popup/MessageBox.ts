@@ -1,7 +1,7 @@
 import { Popup } from "./Popup";
 import { PopupWindow } from "./PopupWindow";
-import { Config } from "../application/Config";
 import { PopupInstance } from "./PopupInstance";
+import { Context } from "../application/Context";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 
@@ -71,7 +71,6 @@ export class MessageBox implements Popup, AfterViewInit
     public title$:string  = "alert";
     public message:string = "the message";
 
-    private conf:Config;
     private win:PopupWindow;
     private app: ApplicationImpl;
     private msg:HTMLDivElement = null;
@@ -86,7 +85,7 @@ export class MessageBox implements Popup, AfterViewInit
         let pinst:PopupInstance = new PopupInstance();
 
         pinst.display(app,MessageBox);
-        let mbox:MessageBox = pinst.popup as MessageBox;
+        let mbox:MessageBox = pinst.popup() as MessageBox;
 
         mbox.title = title;
         mbox.message = message;
@@ -96,21 +95,21 @@ export class MessageBox implements Popup, AfterViewInit
     }
 
 
-    public constructor(conf:Config)
+    public constructor(ctx:Context)
     {
-        this.conf = conf;
+        this.app = ctx.app["_impl_"];
     }
 
 
 	public get bcolor() : string
 	{
-		return(this.conf.colors.topbar);
+		return(this.app.config.colors.topbar);
 	}
 
 
 	public get tcolor() : string
 	{
-		return(this.conf.colors.buttontext);
+		return(this.app.config.colors.buttontext);
 	}
 
 
@@ -154,12 +153,6 @@ export class MessageBox implements Popup, AfterViewInit
     public setWin(win:PopupWindow): void
     {
         this.win = win;
-    }
-
-
-    public setApp(app: ApplicationImpl): void
-    {
-        this.app = app;
     }
 
 
