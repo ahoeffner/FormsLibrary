@@ -8,16 +8,16 @@ import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
 import { keymap, KeyMapper } from "../keymap/KeyMap";
+import { PopupInstance } from "../popup/PopupInstance";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
-import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
-import { PopupInstance } from "../popup/PopupInstance";
 
 
 export class BlockImpl
@@ -40,7 +40,8 @@ export class BlockImpl
     private fieldef$:Map<string,FieldDefinition>;
 
 
-    constructor(public block:Block)
+    constructor(public block?:Block)
+    // Can be used as standalone (null)
     {
         this.dbusage$ =
         {
@@ -50,8 +51,11 @@ export class BlockImpl
             delete: false
         };
 
-        this.name$ = block.constructor.name;
-        if (this.name$ == "Block") this.name$ = "anonymous";
+        if (block != null)
+        {
+            this.name$ = block.constructor.name;
+            if (this.name$ == "Block") this.name$ = "anonymous";
+        }
     }
 
     public get name() : string
@@ -360,8 +364,10 @@ export class BlockImpl
         let pinst:PopupInstance = new PopupInstance();
         pinst.display(this.app,ListOfValuesImpl);
 
-        let lovwin = pinst.popup();
-        console.log(lovwin.constructor.name);
+        let lovwin:ListOfValuesImpl = pinst.popup() as ListOfValuesImpl;
+
+        lovwin.setDefinition(lov);
+        lovwin.setBlockImpl(new BlockImpl());
     }
 
 

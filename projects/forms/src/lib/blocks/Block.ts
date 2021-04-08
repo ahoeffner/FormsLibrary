@@ -2,6 +2,7 @@ import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
 import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
+import { ListOfValues } from "../listval/ListOfValues";
 import { TriggerFunction } from "../events/TriggerFunction";
 
 
@@ -96,6 +97,11 @@ export class Block
     {
         if (override) return(this._impl_.delete());
         else return(this._impl_.dokey("delete"));
+    }
+
+    public showListOfValues(lov:ListOfValues) : void
+    {
+        this._impl_.showListOfValues(lov);
     }
 
     public async insert(above?:boolean, override?:boolean) : Promise<boolean>
