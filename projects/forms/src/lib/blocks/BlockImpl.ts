@@ -346,7 +346,7 @@ export class BlockImpl
 
     public showListOfValues(lov:ListOfValues) : void
     {
-        ListOfValuesImpl.show(this.app,new BlockImpl(),lov);
+        ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
     }
 
 
@@ -462,6 +462,7 @@ export class BlockImpl
 
         if (response["status"] == "failed")
         {
+            this.clear();
             this.alert(JSON.stringify(response),"Database Query");
             return(false);
         }

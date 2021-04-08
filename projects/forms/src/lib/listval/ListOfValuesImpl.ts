@@ -1,10 +1,14 @@
 import { Popup } from "../popup/Popup";
+import { Field } from "../input/Field";
+import { Record } from "../blocks/Record";
 import { ListOfValues } from "./ListOfValues";
+import { FieldType } from "../input/FieldType";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Context } from "../application/Context";
 import { Container } from "../container/Container";
 import { PopupWindow } from "../popup/PopupWindow";
 import { PopupInstance } from "../popup/PopupInstance";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { OnInit, AfterViewInit, Component } from "@angular/core";
 
@@ -22,7 +26,7 @@ import { OnInit, AfterViewInit, Component } from "@angular/core";
             <tr class="spacer"></tr>
 
             <tr *ngFor="let item of [].constructor(15); let row = index">
-                <td><field size="20" name="descriptor" row="{{row}}" block="list"></field></td>
+                <td><field size="20" name="description" row="{{row}}" block="result"></field></td>
             </tr>
 
             <tr class="spacer"></tr>
@@ -43,8 +47,11 @@ import { OnInit, AfterViewInit, Component } from "@angular/core";
 
 export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 {
-    private impl:BlockImpl;
+    private search:Field;
+    private description:Field;
+
     private win:PopupWindow;
+    private impl:BlockImpl[];
     private app:ApplicationImpl;
 
     public top:     string = null;
@@ -54,7 +61,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     public title:   string = null;
 
 
-    public static show(app:ApplicationImpl, impl:BlockImpl, lov:ListOfValues)
+    public static show(app:ApplicationImpl, impl:BlockImpl[], lov:ListOfValues)
     {
         let pinst:PopupInstance = new PopupInstance();
         pinst.display(app,ListOfValuesImpl);
@@ -77,6 +84,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.title = lov.title;
         this.width = lov.width;
         this.height = lov.height;
+        this.height = "500px";
 
         this.win.title = this.title;
         this.win.width = this.width;
@@ -84,7 +92,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     }
 
 
-    public setBlockImpl(impl:BlockImpl) : void
+    public setBlockImpl(impl:BlockImpl[]) : void
     {
         this.impl = impl;
     }
@@ -115,6 +123,29 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     {
         let container:Container = this.app.getContainer();
         container.finish();
+
+        container.getBlock("search").records.forEach((rec) =>
+        {
+            this.impl[0].addRecord(new Record(rec.row,rec.fields,rec.index));
+
+            this.search = this.impl[0].getField(rec.row,"filter");
+            let search:FieldDefinition = {name: "filter", type: FieldType.text};
+
+            this.search.definition = search;
+            this.search.enable(false);
+
+        })
+
+        container.getBlock("result").records.forEach((rec) =>
+        {
+            this.impl[1].addRecord(new Record(rec.row,rec.fields,rec.index));
+
+            this.description = this.impl[1].getField(rec.row,"description");
+            let description:FieldDefinition = {name: "description", type: FieldType.text};
+
+            this.description.definition = description;
+            this.description.enable(true);
+        });
 
         this.app.dropContainer();
     }

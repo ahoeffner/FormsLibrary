@@ -20,8 +20,9 @@ export class Condition
 
     public static where(column:string, value:string, datatype?:Column) : Condition
     {
-        let where:Condition = new Condition(column,value,datatype);
-        return(where);
+        let condition:Condition = new Condition(column,value,datatype);
+        condition.type$ = "where";
+        return(condition);
     }
 
 
@@ -182,6 +183,12 @@ export class Condition
         return(this);
     }
 
+    public where() : Condition
+    {
+        this.type$ = "where";
+        return(this);
+    }
+
 
     public next(next?:Condition) : Condition
     {
@@ -292,7 +299,7 @@ export class Condition
         while(nc.prev$ != null) nc = nc.prev$;
 
         if (nc.next$ == null)
-            return("where "+this.clause(nc));
+            return(nc.type$+" "+this.clause(nc));
 
         let str:string = (nc.level$ == 0) ? "where " : "where (";
         str += this.clause(nc);

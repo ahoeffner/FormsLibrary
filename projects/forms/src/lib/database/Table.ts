@@ -82,12 +82,18 @@ export class Table
         stmt.table = this.table.name;
         stmt.order = this.table.order;
 
+        let where:boolean = true;
+
         keys.forEach((key) =>
         {
             key.columns.forEach((part) =>
             {
                 let type:Column = this.index.get(part.name).type;
-                stmt.and(part.name,part.value,type);
+
+                if (!where) stmt.and(part.name,part.value,type);
+                else        stmt.where(part.name,part.value,type);
+
+                where = false;
             });
         });
 
@@ -100,7 +106,11 @@ export class Table
                 if (def.column != null)
                 {
                     let type:Column = this.index.get(""+def.column).type;
-                    stmt.and(""+def.column,field.value,type);
+
+                    if (!where) stmt.and(""+def.column,field.value,type);
+                    else        stmt.where(""+def.column,field.value,type);
+
+                    where = false;
                 }
             }
         });

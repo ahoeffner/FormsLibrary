@@ -167,7 +167,18 @@ export class Statement
 
     public where(column:string, value:any, datatype?:Column) : Statement
     {
-        return(this.and(column,value,datatype));
+        if (this.condition$ == null)
+        {
+            this.condition$ = new Condition(column,value,datatype);
+            this.condition$.where();
+        }
+        else
+        {
+            let cd:Condition = new Condition(column,value,datatype);
+            this.condition$ = this.condition$.where().next(cd);
+        }
+
+        return(this);
     }
 
     public and(column:string, value:any, datatype?:Column) : Statement
@@ -208,6 +219,34 @@ export class Statement
 
     public bind(column:string, value:any, datatype?:Column) : Statement
     {
+        if (value != null && datatype == null)
+        {
+            let type:string = value.constructor.name.toLowerCase();
+
+            if (type == "date")
+            {
+                datatype = Column.date;
+                value = (value as Date).getTime();
+                return;
+            }
+
+            if (type == "number")
+            {
+                datatype = Column.decimal;
+                return;
+            }
+        }
+
+        if (value != null && datatype == null)
+        {
+            value = (value+"").trim();
+            let numeric:boolean = !isNaN(+value);
+            if (numeric) datatype = Column.decimal;
+        }
+
+        if (datatype == null)
+            datatype = Column.varchar;
+
         this.bindvalues.push({name: column, value: value, type: datatype});
         return(this);
     }
