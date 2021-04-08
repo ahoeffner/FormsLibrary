@@ -16,13 +16,13 @@ import { OnInit, AfterViewInit, Component } from "@angular/core";
         <div class="lov">
         <table>
             <tr>
-                <td><field size="20" name="filter" row="{{row}}" block="lov"></field></td>
+                <td><field size="20" name="filter" block="search"></field></td>
             </tr>
 
             <tr class="spacer"></tr>
 
             <tr *ngFor="let item of [].constructor(15); let row = index">
-                <td><field size="20" name="descriptor" row="{{row}}" block="lov"></field></td>
+                <td><field size="20" name="descriptor" row="{{row}}" block="list"></field></td>
             </tr>
 
             <tr class="spacer"></tr>
