@@ -1,23 +1,22 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
 import { Record } from "../blocks/Record";
+import { Table } from "../database/Table";
+import { Trigger } from "../events/Triggers";
 import { ListOfValues } from "./ListOfValues";
 import { FieldType } from "../input/FieldType";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { FieldData } from "../blocks/FieldData";
 import { Context } from "../application/Context";
-import { Container } from "../container/Container";
+import { Statement } from "../database/Statement";
 import { PopupWindow } from "../popup/PopupWindow";
+import { Container } from "../container/Container";
+import { Connection } from "../database/Connection";
 import { PopupInstance } from "../popup/PopupInstance";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { OnInit, AfterViewInit, Component } from "@angular/core";
-import { Table } from "../database/Table";
-import { Connection } from "../database/Connection";
-import { FieldData } from "../blocks/FieldData";
-import { Trigger } from "../events/Triggers";
 import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
-import { Statement } from "../database/Statement";
-import { StmtModifier } from "@angular/compiler";
 
 
 @Component({
