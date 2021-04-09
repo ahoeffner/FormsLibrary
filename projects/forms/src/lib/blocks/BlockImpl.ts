@@ -31,6 +31,7 @@ export class BlockImpl
     private ready$:boolean = false;
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
+    private navigable$:boolean = true;
     private details$:BlockImpl[] = [];
     private fields$:FieldInstance[] = [];
     private triggers:Triggers = new Triggers();
@@ -109,6 +110,18 @@ export class BlockImpl
     }
 
 
+    public get navigable()
+    {
+        return(this.navigable$);
+    }
+
+
+    public set navigable(navigable:boolean)
+    {
+        this.navigable$ = navigable;
+    }
+
+
     public get record() : number
     {
         return(+this.row+this.offset);
@@ -172,6 +185,8 @@ export class BlockImpl
 
     public focus(row?:number) : void
     {
+        if (!this.navigable) return;
+
         if (row != null && row >= 0 && row < this.rows)
         {
             if (this.records[+row]?.enabled)
@@ -965,6 +980,11 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
+            trgevent = new KeyTriggerEvent(field,key,event);
+
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(true);
+
             let row:number = +field.row + 1;
             if (this.data == null) return(false);
 
@@ -990,6 +1010,11 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
+            trgevent = new KeyTriggerEvent(field,key,event);
+
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(true);
+
             let row:number = +field.row - 1;
             if (this.data == null) return(false);
 
@@ -1009,6 +1034,11 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
+            trgevent = new KeyTriggerEvent(field,key,event);
+
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(true);
+
             let offset:number = +this.offset + +field.row;
             let fetched:number = await this.data.fetch(offset,this.rows);
 
@@ -1025,6 +1055,11 @@ export class BlockImpl
         {
             if (!await this.validate())
                 return(false);
+
+            trgevent = new KeyTriggerEvent(field,key,event);
+
+            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                return(true);
 
             this.display(+this.offset-this.rows);
             this.focus();

@@ -1,4 +1,5 @@
 import { Listener } from "./Listener";
+import { KeyMapper } from "../keymap/KeyMap";
 import { TriggerEvent } from "./TriggerEvent";
 import { TriggerEvents } from "./TriggerEvents";
 import { TriggerFunction } from "./TriggerFunction";
@@ -56,7 +57,6 @@ export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
 
-
     public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
     {
         let keys:string[] = [];
@@ -85,6 +85,12 @@ export class Triggers
 
             if (kasa) keys = tkeys as string[];
             else      keys.push(tkeys as string);
+
+            keys.forEach((key) =>
+            {
+                if (!KeyMapper.ismap(key))
+                    console.log("key '"+key+"' is not a key. use keymap.<keytype>");
+            });
         }
 
         if (fields.length > 0)

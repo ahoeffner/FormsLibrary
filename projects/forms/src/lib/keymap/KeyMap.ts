@@ -163,4 +163,15 @@ export class KeyMapper
         let code:number = +key.substring(0,pos);
         return({code: code, shift: shf, ctrl: ctl, alt: alt, meta: mta});
     }
+
+
+    public static ismap(key:string) : boolean
+    {
+        let pos:number = key.indexOf(":");
+
+        if (pos > 0 && key.length-pos-1 == 4)
+            return(true);
+
+        return(false);
+    }
 }

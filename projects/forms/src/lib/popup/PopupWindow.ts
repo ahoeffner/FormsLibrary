@@ -293,7 +293,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
 		if (this.left == null || this.left.trim.length == 0)
 		{
 			resize = true;
-			this.left = ((+window.innerWidth - this.sizex)/3)+"px";
+			this.left = ((+window.innerWidth - this.sizex)/1.5)+"px";
 		}
 
 		if (resize)

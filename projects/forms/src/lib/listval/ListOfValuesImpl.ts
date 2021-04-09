@@ -1,5 +1,6 @@
 import { Popup } from "../popup/Popup";
 import { Field } from "../input/Field";
+import { keymap } from "../keymap/KeyMap";
 import { Record } from "../blocks/Record";
 import { Table } from "../database/Table";
 import { Trigger } from "../events/Triggers";
@@ -16,7 +17,7 @@ import { PopupInstance } from "../popup/PopupInstance";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { OnInit, AfterViewInit, Component } from "@angular/core";
-import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
+import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
 
 
 @Component({
@@ -26,7 +27,7 @@ import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
         <div class="lov">
         <table>
             <tr>
-                <th><field class="lov-search" size="15" name="filter" block="search"></field></th>
+                <td class="lov-center"><field class="lov-search" size="15" name="filter" block="search"></field></td>
             </tr>
 
             <tr class="lov-spacer"></tr>
@@ -38,7 +39,22 @@ import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
             <tr class="lov-spacer"></tr>
         </table>
         </div>
-    `
+    `,
+    styles:[
+        `
+            .lov-spacer
+            {
+                height: 8px;
+            }
+
+            .lov-center
+            {
+                border: none;
+                display: flex;
+                justify-content: center;
+            }
+        `
+    ]
 })
 
 
@@ -165,7 +181,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         })
 
-        let def:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {navigable: false, insert: false, update: false,  query:false}};
+        let def:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {update: false}};
 
         container.getBlock("result").records.forEach((rec) =>
         {
@@ -186,14 +202,28 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.app.dropContainer();
 
+        let keys:string[] =
+        [
+            keymap.enter,
+            keymap.escape,
+            keymap.nextrecord,
+            keymap.prevrecord,
+            keymap.nextfield,
+            keymap.prevfield
+        ];
+
+        this.sblock.addKeyTrigger(this,this.onkey,keys);
+        this.rblock.addKeyTrigger(this,this.onkey,keys);
+
         this.sblock.addTrigger(this,this.search,Trigger.Typing);
         this.rblock.addTrigger(this,this.prequery,Trigger.PreQuery);
 
+        this.rblock.navigable = false;
         this.filter.focus();
     }
 
 
-    private async search(trigger:FieldTriggerEvent) : Promise<boolean>
+    private async search(event:FieldTriggerEvent) : Promise<boolean>
     {
         this.execute();
         return(true);
@@ -221,18 +251,25 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     }
 
 
-    private async prequery(trigger:SQLTriggerEvent) : Promise<boolean>
+    private async prequery(event:SQLTriggerEvent) : Promise<boolean>
     {
         let stmt:Statement = new Statement(this.lov.sql);
 
-        stmt.cursor = trigger.stmt.cursor;
+        stmt.cursor = event.stmt.cursor;
 
         if (this.lov.bindvalues != null)
             this.lov.bindvalues.forEach((bv) => {stmt.bind(bv.name,bv.value,bv.type)});
 
         stmt.bind("filter",this.prefix+this.filter.value+this.postfix);
 
-        trigger.stmt = stmt;
+        event.stmt = stmt;
+        return(true);
+    }
+
+
+    public async onkey(event:KeyTriggerEvent) : Promise<boolean>
+    {
+        console.log("field: "+event.field+" key: "+event.key.name);
         return(true);
     }
 }
