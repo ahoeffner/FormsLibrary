@@ -26,13 +26,13 @@ import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
         <div class="lov">
         <table>
             <tr>
-                <td><field size="20" name="filter" block="search"></field></td>
+                <th><field size="10" name="filter" block="search"></field></th>
             </tr>
 
             <tr class="spacer"></tr>
 
             <tr *ngFor="let item of [].constructor(rows); let row = index">
-                <td><field size="20" name="description" row="{{row}}" block="result"></field></td>
+                <td><field size="{{size}}" name="description" row="{{row}}" block="result"></field></td>
             </tr>
 
             <tr class="spacer"></tr>
@@ -57,14 +57,21 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     private filter:Field;
     private description:Field;
     private lov:ListOfValues;
+
+    private last:string = "";
+    private minlen:number = 0;
     private prefix:string = "";
     private postfix:string = "";
+    private wait:boolean = false;
 
     private win:PopupWindow;
-    private impl:BlockImpl[];
+    private iblock:BlockImpl;
+    private sblock:BlockImpl;
+    private rblock:BlockImpl;
     private app:ApplicationImpl;
 
     public rows:    number = 10;
+    public size:    number = 20;
     public top:     string = null;
     public left:    string = null;
     public width:   string = null;
@@ -96,20 +103,28 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.title = lov.title;
         this.width = lov.width;
         this.height = lov.height;
-        this.height = "200px";
+
+        if (this.size == null) this.size = 20;
+        if (this.width == null) this.width = "200px";
+        if (this.height == null) this.height = "250px";
 
         this.win.title = this.title;
         this.win.width = this.width;
         this.win.height = this.height;
 
-        this.rows = lov.rows ? lov.rows : 10;
-        this.fetch = lov.rows ? 2 * lov.rows : 10;
+        this.rows = lov.rows ? lov.rows : 15;
+        this.fetch = lov.rows ? lov.rows : 15;
+
+        if (this.lov.minlen != null) this.minlen = this.lov.minlen;
+        if (this.lov.prefix != null) this.prefix = this.lov.prefix;
+        if (this.lov.postfix != null) this.postfix = this.lov.postfix;
     }
 
 
     public setBlockImpl(impl:BlockImpl[]) : void
     {
-        this.impl = impl;
+        this.sblock = impl[0];
+        this.rblock = impl[1];
     }
 
 
@@ -139,14 +154,14 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
         container.finish();
 
-        this.impl[0].fields = container.getBlock("search").fields;
-        this.impl[1].fields = container.getBlock("result").fields;
+        this.sblock.fields = container.getBlock("search").fields;
+        this.rblock.fields = container.getBlock("result").fields;
 
         container.getBlock("search").records.forEach((rec) =>
         {
-            this.impl[0].addRecord(new Record(rec.row,rec.fields,rec.index));
+            this.sblock.addRecord(new Record(rec.row,rec.fields,rec.index));
 
-            this.filter = this.impl[0].getField(rec.row,"filter");
+            this.filter = this.sblock.getField(rec.row,"filter");
             let filter:FieldDefinition = {name: "filter", type: FieldType.text};
 
             if (this.lov.case != null) filter.case = this.lov.case;
@@ -159,8 +174,8 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         container.getBlock("result").records.forEach((rec) =>
         {
-            this.impl[1].addRecord(new Record(rec.row,rec.fields,rec.index));
-            this.description = this.impl[1].getField(rec.row,"description");
+            this.rblock.addRecord(new Record(rec.row,rec.fields,rec.index));
+            this.description = this.rblock.getField(rec.row,"description");
 
             this.description.definition = def;
             this.description.enable(true);
@@ -171,16 +186,13 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
 
-        this.impl[1].setApplication(this.app);
-        this.impl[1].data = new FieldData(this.impl[1],table,["description"]);
+        this.rblock.setApplication(this.app);
+        this.rblock.data = new FieldData(this.rblock,table,["description"]);
 
         this.app.dropContainer();
 
-        if (this.lov.prefix != null) this.prefix = this.lov.prefix;
-        if (this.lov.postfix != null) this.prefix = this.lov.postfix;
-
-        this.impl[0].addTrigger(this,this.search,Trigger.Typing);
-        this.impl[1].addTrigger(this,this.prequery,Trigger.PreQuery);
+        this.sblock.addTrigger(this,this.search,Trigger.Typing);
+        this.rblock.addTrigger(this,this.prequery,Trigger.PreQuery);
 
         this.filter.focus();
     }
@@ -188,8 +200,29 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     private async search(trigger:FieldTriggerEvent) : Promise<boolean>
     {
-        setTimeout(() => {this.impl[1].executeqry();},200);
+        this.execute();
         return(true);
+    }
+
+
+    private async execute() : Promise<void>
+    {
+        if (this.wait)
+        {
+            setTimeout(() => {this.execute();},200);
+            return;
+        }
+
+        if (this.filter.value == this.last)
+            return;
+
+        this.wait = true;
+        this.last = this.filter.value;
+
+        if (this.last.length < this.minlen) this.rblock.clear();
+        else                                await this.rblock.executeqry();
+
+        this.wait = false;
     }
 
 
@@ -202,7 +235,6 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         if (this.lov.bindvalues != null)
             this.lov.bindvalues.forEach((bv) => {stmt.bind(bv.name,bv.value,bv.type)});
 
-        console.log("filter: "+this.prefix+this.filter.value+this.postfix)
         stmt.bind("filter",this.prefix+this.filter.value+this.postfix);
 
         trigger.stmt = stmt;
