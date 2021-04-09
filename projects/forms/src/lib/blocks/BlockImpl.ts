@@ -128,6 +128,13 @@ export class BlockImpl
     }
 
 
+    public get fetched() : number
+    {
+        if (this.data == null) return(0);
+        return(this.data.fetched);
+    }
+
+
     public get field() : FieldInstance
     {
         return(this.field$);
@@ -217,10 +224,10 @@ export class BlockImpl
     }
 
 
-    public getValue(row:number, column:string) : any
+    public getValue(record:number, column:string) : any
     {
         if (this.data == null) return(null);
-        return(this.data.getValue(+row,column));
+        return(this.data.getValue(+record,column));
     }
 
 

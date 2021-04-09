@@ -72,16 +72,16 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 
     public async onEvent(kevent:KeyTriggerEvent) : Promise<boolean>
     {
-        if (kevent.code == keymap.enter) this.close(false);
-        if (kevent.code == keymap.escape) this.close(true);
+        if (kevent.keymap == keymap.enter) this.close(false);
+        if (kevent.keymap == keymap.escape) this.close(true);
 
-        if (kevent.code == keymap.nextfield && kevent.field == "pwd")
+        if (kevent.keymap == keymap.nextfield && kevent.field == "pwd")
         {
             kevent.event.preventDefault();
             this.usr.focus();
         }
 
-        if (kevent.code == keymap.prevfield && kevent.field == "usr")
+        if (kevent.keymap == keymap.prevfield && kevent.field == "usr")
         {
             kevent.event.preventDefault();
             this.pwd.focus();

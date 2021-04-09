@@ -269,7 +269,44 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public async onkey(event:KeyTriggerEvent) : Promise<boolean>
     {
-        console.log("field: "+event.field+" key: "+event.key.name);
+        if (event.field == "filter")
+        {
+            if (event.keymap == keymap.prevfield)
+                event.event.preventDefault();
+
+            if (event.keymap == keymap.nextfield || event.keymap == keymap.nextrecord)
+            {
+                this.rblock.navigable = true;
+                this.rblock.focus(0);
+            }
+        }
+
+        if (event.field == "description")
+        {
+            if (event.keymap == keymap.nextfield || event.keymap == keymap.prevfield)
+            {
+                this.sblock.focus();
+                event.event.preventDefault();
+                this.rblock.navigable = false;
+            }
+        }
+
+        if (event.keymap == keymap.enter)
+        {
+            let record:number = -1;
+
+            if (event.field == "filter" && this.rblock.fetched == 1)
+                record = 0;
+
+            if (event.field == "description")
+                record = event.record;
+
+            if (record >= 0)
+            {
+                console.log("chose "+this.rblock.getValue(record,"description"));
+            }
+        }
+
         return(true);
     }
 }

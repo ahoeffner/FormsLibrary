@@ -58,7 +58,7 @@ export class KeyTriggerEvent extends TriggerEvent
         return(this.key$);
     }
 
-    public get code() : string
+    public get keymap() : string
     {
         return(this.code$);
     }

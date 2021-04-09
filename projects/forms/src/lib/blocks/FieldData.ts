@@ -52,6 +52,12 @@ export class FieldData
     }
 
 
+    public get fetched() : number
+    {
+        return(this.data.length);
+    }
+
+
     public async lock(row:number) : Promise<any>
     {
         if (row < 0 || row >= this.data.length)
