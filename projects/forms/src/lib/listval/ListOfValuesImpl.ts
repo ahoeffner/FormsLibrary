@@ -26,28 +26,19 @@ import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
         <div class="lov">
         <table>
             <tr>
-                <th><field size="10" name="filter" block="search"></field></th>
+                <th><field class="lov-search" size="15" name="filter" block="search"></field></th>
             </tr>
 
-            <tr class="spacer"></tr>
+            <tr class="lov-spacer"></tr>
 
             <tr *ngFor="let item of [].constructor(rows); let row = index">
-                <td><field size="{{size}}" name="description" row="{{row}}" block="result"></field></td>
+                <td><field class="lov-result" size="{{size}}" name="description" row="{{row}}" block="result"></field></td>
             </tr>
 
-            <tr class="spacer"></tr>
+            <tr class="lov-spacer"></tr>
         </table>
         </div>
-    `,
-    styles:
-    [
     `
-        .spacer
-        {
-            height: 8px;
-        }
-    `
-    ]
 })
 
 
@@ -104,16 +95,20 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.width = lov.width;
         this.height = lov.height;
 
-        if (this.size == null) this.size = 20;
-        if (this.width == null) this.width = "200px";
-        if (this.height == null) this.height = "250px";
+        this.rows = lov.rows ? lov.rows : 12;
+        this.fetch = lov.rows ? lov.rows : 12;
+
+        if (this.size == null) this.size = 25;
+
+        let width:number = this.size*10;
+        let height:number = this.rows*28+10;
+
+        if (this.width == null) this.width = width+"px";
+        if (this.height == null) this.height = height+"px";
 
         this.win.title = this.title;
         this.win.width = this.width;
         this.win.height = this.height;
-
-        this.rows = lov.rows ? lov.rows : 15;
-        this.fetch = lov.rows ? lov.rows : 15;
 
         if (this.lov.minlen != null) this.minlen = this.lov.minlen;
         if (this.lov.prefix != null) this.prefix = this.lov.prefix;

@@ -4,7 +4,7 @@ import { BindValue } from "../database/BindValue";
 
 export interface ListOfValues
 {
-    size:number;
+    size?:number;
     title?:string;
     width?:string;
     height?:string;

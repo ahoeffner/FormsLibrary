@@ -75,11 +75,6 @@ export class FieldInstance implements AfterViewInit
         else return(this.clazz.tabindex);
     }
 
-    public set name(name:string)
-    {
-        this.name$ = name;
-    }
-
     public get name() : string
     {
         return(this.name$);
