@@ -11,6 +11,13 @@ import { PopupInstance } from "../popup/PopupInstance";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { OnInit, AfterViewInit, Component } from "@angular/core";
+import { Table } from "../database/Table";
+import { Connection } from "../database/Connection";
+import { FieldData } from "../blocks/FieldData";
+import { Trigger } from "../events/Triggers";
+import { FieldTriggerEvent, SQLTriggerEvent } from "../events/TriggerEvent";
+import { Statement } from "../database/Statement";
+import { StmtModifier } from "@angular/compiler";
 
 
 @Component({
@@ -25,7 +32,7 @@ import { OnInit, AfterViewInit, Component } from "@angular/core";
 
             <tr class="spacer"></tr>
 
-            <tr *ngFor="let item of [].constructor(15); let row = index">
+            <tr *ngFor="let item of [].constructor(rows); let row = index">
                 <td><field size="20" name="description" row="{{row}}" block="result"></field></td>
             </tr>
 
@@ -47,13 +54,16 @@ import { OnInit, AfterViewInit, Component } from "@angular/core";
 
 export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 {
-    private search:Field;
+    private fetch:number;
+    private filter:Field;
     private description:Field;
+    private lov:ListOfValues;
 
     private win:PopupWindow;
     private impl:BlockImpl[];
     private app:ApplicationImpl;
 
+    public rows:    number = 10;
     public top:     string = null;
     public left:    string = null;
     public width:   string = null;
@@ -81,14 +91,18 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public setDefinition(lov:ListOfValues) : void
     {
+        this.lov = lov;
         this.title = lov.title;
         this.width = lov.width;
         this.height = lov.height;
-        this.height = "500px";
+        this.height = "200px";
 
         this.win.title = this.title;
         this.win.width = this.width;
         this.win.height = this.height;
+
+        this.rows = lov.rows ? lov.rows : 10;
+        this.fetch = lov.rows ? 2 * lov.rows : 10;
     }
 
 
@@ -128,11 +142,11 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         {
             this.impl[0].addRecord(new Record(rec.row,rec.fields,rec.index));
 
-            this.search = this.impl[0].getField(rec.row,"filter");
-            let search:FieldDefinition = {name: "filter", type: FieldType.text};
+            this.filter = this.impl[0].getField(rec.row,"filter");
+            let filter:FieldDefinition = {name: "filter", type: FieldType.text};
 
-            this.search.definition = search;
-            this.search.enable(false);
+            this.filter.definition = filter;
+            this.filter.enable(false);
 
         })
 
@@ -141,12 +155,40 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             this.impl[1].addRecord(new Record(rec.row,rec.fields,rec.index));
 
             this.description = this.impl[1].getField(rec.row,"description");
-            let description:FieldDefinition = {name: "description", type: FieldType.text};
+            let description:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {navigable: false, insert: false, update: false,  query:false}};
 
             this.description.definition = description;
             this.description.enable(true);
         });
 
+        let conn:Connection = this.app.appstate.connection;
+        conn.connect("demo","Manager1");
+
+        let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
+
+        this.impl[1].setApplication(this.app);
+        this.impl[1].data = new FieldData(this.impl[1],table,[]);
+
         this.app.dropContainer();
+
+        this.filter.focus();
+        this.impl[0].addTrigger(this,this.search,Trigger.Typing);
+        this.impl[1].addTrigger(this,this.prequery,Trigger.PreQuery);
+    }
+
+
+    private async search(trigger:FieldTriggerEvent) : Promise<boolean>
+    {
+        this.impl[1].executeqry();
+        return(true);
+    }
+
+
+    private async prequery(trigger:SQLTriggerEvent) : Promise<boolean>
+    {
+        let stmt:Statement = new Statement(this.lov.sql);
+        stmt.cursor = trigger.stmt.cursor;
+        trigger.stmt = stmt;
+        return(true);
     }
 }

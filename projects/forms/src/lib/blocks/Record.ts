@@ -106,6 +106,7 @@ export class Record
 
     public getField(name:string) : Field
     {
+        if (name == null) return(null);
         return(this.index.get(name.toLowerCase()));
     }
 

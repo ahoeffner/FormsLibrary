@@ -458,6 +458,7 @@ export class BlockImpl
         let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
         if (!await this.invokeTriggers(Trigger.PreQuery,event)) return(false);
 
+        stmt = event.stmt; // could be replaced by trigger
         let response:any = await this.data.executequery(stmt);
 
         if (response["status"] == "failed")

@@ -4,6 +4,7 @@ import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
 import { Statement } from "../database/Statement";
+import { field } from "../annotations/field";
 
 
 export class FieldData
@@ -43,6 +44,12 @@ export class FieldData
     public get fields() : string[]
     {
         return(this.fields$);
+    }
+
+
+    public set fields(fields:string[])
+    {
+        this.fields$ = fields;
     }
 
 

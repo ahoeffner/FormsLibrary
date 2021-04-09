@@ -115,4 +115,9 @@ export class SQLTriggerEvent extends TriggerEvent
     {
         return(this.stmt$);
     }
+
+    public set stmt(stmt:Statement)
+    {
+        this.stmt$ = stmt;
+    }
 }

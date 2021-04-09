@@ -29,7 +29,7 @@ export class FieldInstance implements AfterViewInit
     private firstchange:boolean = true;
     private container:HTMLSpanElement = null;
     private state$:RecordState = RecordState.na;
-    private options$:FieldOptions = {query: true, insert: true, update: true};
+    private options$:FieldOptions = {query: true, insert: true, update: true, navigable: true};
 
     @Input("id")    private id$:string = "";
     @Input("row")   private row$:number = -1;
@@ -262,6 +262,14 @@ export class FieldInstance implements AfterViewInit
     {
         this.enabled$ = false;
 
+        if (!this.options$.navigable)
+        {
+            if (this.clazz != null)
+                this.clazz.enable = this.enabled$;
+
+            return;
+        }
+
         if (this.state$ == RecordState.na) this.enabled$ = true;
         else if (this.state$ == RecordState.insert && this.options$.insert) this.enabled$ = true;
         else if (this.state$ == RecordState.update && this.options$.update) this.enabled$ = true;
@@ -297,6 +305,7 @@ export class FieldInstance implements AfterViewInit
             if (!this.options$.hasOwnProperty("query"))  this.options$.query = true;
             if (!this.options$.hasOwnProperty("insert")) this.options$.insert = true;
             if (!this.options$.hasOwnProperty("update")) this.options$.update = true;
+            if (!this.options$.hasOwnProperty("navigable")) this.options$.navigable = true;
         }
     }
 

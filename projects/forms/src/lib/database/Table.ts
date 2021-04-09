@@ -160,6 +160,14 @@ export class Table
 
         rows.forEach((row) =>
         {
+            // Table is not defined
+            if (this.cnames.length == 0 && this.fielddata.fields.length == 0)
+            {
+                Object.keys(row).forEach((key) =>
+                {this.cnames.push(key.toLowerCase());});
+                this.fielddata.fields = this.cnames;
+            }
+
             let col:number = 0;
             let keys:any[] = [];
             let drow:Row = this.fielddata.newrow();

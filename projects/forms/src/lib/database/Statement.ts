@@ -267,6 +267,7 @@ export class Statement
     public build() : SQL
     {
         let sql:string = this.sql$;
+        console.log("building ")
 
         if (sql == null)
         {
