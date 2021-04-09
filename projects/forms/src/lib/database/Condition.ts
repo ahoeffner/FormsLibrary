@@ -62,14 +62,14 @@ export class Condition
             }
         }
 
-        if (value != null && this.datatype$ == null)
+        if (value != null && (value+"").trim().length > 0 && this.datatype$ == null)
         {
             value = (value+"").trim();
             let numeric:boolean = !isNaN(+value);
             if (numeric) this.datatype$ = Column.decimal;
         }
 
-        if (value == null || (value+"").length == 0)
+        if (value == null)
         {
             this.operator$ = "is null";
             return;

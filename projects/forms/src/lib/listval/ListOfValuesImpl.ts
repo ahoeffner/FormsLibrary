@@ -57,6 +57,8 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     private filter:Field;
     private description:Field;
     private lov:ListOfValues;
+    private prefix:string = "";
+    private postfix:string = "";
 
     private win:PopupWindow;
     private impl:BlockImpl[];
@@ -147,6 +149,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             this.filter = this.impl[0].getField(rec.row,"filter");
             let filter:FieldDefinition = {name: "filter", type: FieldType.text};
 
+            if (this.lov.case != null) filter.case = this.lov.case;
             this.filter.definition = filter;
             this.filter.enable(false);
 
@@ -173,15 +176,19 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.app.dropContainer();
 
-        this.filter.focus();
+        if (this.lov.prefix != null) this.prefix = this.lov.prefix;
+        if (this.lov.postfix != null) this.prefix = this.lov.postfix;
+
         this.impl[0].addTrigger(this,this.search,Trigger.Typing);
         this.impl[1].addTrigger(this,this.prequery,Trigger.PreQuery);
+
+        this.filter.focus();
     }
 
 
     private async search(trigger:FieldTriggerEvent) : Promise<boolean>
     {
-        this.impl[1].executeqry();
+        setTimeout(() => {this.impl[1].executeqry();},200);
         return(true);
     }
 
@@ -189,8 +196,15 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     private async prequery(trigger:SQLTriggerEvent) : Promise<boolean>
     {
         let stmt:Statement = new Statement(this.lov.sql);
+
         stmt.cursor = trigger.stmt.cursor;
-        stmt.bind("filter",this.filter.value+"%");
+
+        if (this.lov.bindvalues != null)
+            this.lov.bindvalues.forEach((bv) => {stmt.bind(bv.name,bv.value,bv.type)});
+
+        console.log("filter: "+this.prefix+this.filter.value+this.postfix)
+        stmt.bind("filter",this.prefix+this.filter.value+this.postfix);
+
         trigger.stmt = stmt;
         return(true);
     }

@@ -237,7 +237,7 @@ export class Statement
             }
         }
 
-        if (value != null && datatype == null)
+        if (value != null && (value+"").trim().length > 0 && datatype == null)
         {
             value = (value+"").trim();
             let numeric:boolean = !isNaN(+value);

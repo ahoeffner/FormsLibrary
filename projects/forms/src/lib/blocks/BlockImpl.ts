@@ -344,8 +344,12 @@ export class BlockImpl
     }
 
 
-    public showListOfValues(lov:ListOfValues) : void
+    public showListOfValues(lov:ListOfValues, row?:number) : void
     {
+        if (row == null) row = this.row;
+        if (!this.records[row].enabled) return;
+
+        let record:number = +row+this.offset;
         ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
     }
 

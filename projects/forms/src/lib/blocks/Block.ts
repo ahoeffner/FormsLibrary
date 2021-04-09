@@ -99,7 +99,7 @@ export class Block
         else return(this._impl_.dokey("delete"));
     }
 
-    public showListOfValues(lov:ListOfValues) : void
+    public showListOfValues(lov:ListOfValues, row?:number) : void
     {
         this._impl_.showListOfValues(lov);
     }
