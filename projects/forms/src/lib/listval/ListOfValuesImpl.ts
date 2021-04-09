@@ -168,7 +168,6 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
 
-        //this.impl[1].dynamic = true;
         this.impl[1].setApplication(this.app);
         this.impl[1].data = new FieldData(this.impl[1],table,["description"]);
 
@@ -177,9 +176,6 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.filter.focus();
         this.impl[0].addTrigger(this,this.search,Trigger.Typing);
         this.impl[1].addTrigger(this,this.prequery,Trigger.PreQuery);
-
-        this.impl[1].setValue(2,"test","test");
-        this.impl[1].setValue(0,"description","description");
     }
 
 
@@ -194,6 +190,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     {
         let stmt:Statement = new Statement(this.lov.sql);
         stmt.cursor = trigger.stmt.cursor;
+        stmt.bind("filter",this.filter.value+"%");
         trigger.stmt = stmt;
         return(true);
     }
