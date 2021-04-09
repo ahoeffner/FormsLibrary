@@ -31,6 +31,7 @@ export class BlockImpl
     private ready$:boolean = false;
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
+    private dynamic$:boolean = false;
     private details$:BlockImpl[] = [];
     private fields$:FieldInstance[] = [];
     private triggers:Triggers = new Triggers();
@@ -75,6 +76,18 @@ export class BlockImpl
     public set row(row:number)
     {
         this.row$ = row;
+    }
+
+
+    public set dynamic(dynamic:boolean)
+    {
+        this.dynamic$ = dynamic;
+    }
+
+
+    public get dynamic() : boolean
+    {
+        return(this.dynamic$);
     }
 
 
@@ -466,6 +479,15 @@ export class BlockImpl
             this.clear();
             this.alert(JSON.stringify(response),"Database Query");
             return(false);
+        }
+
+        if (this.dynamic)
+        {
+            console.log("dynamic block "+this.data.fields);
+            this.fields.forEach((fld) =>
+            {
+
+            });
         }
 
         this.row = 0;

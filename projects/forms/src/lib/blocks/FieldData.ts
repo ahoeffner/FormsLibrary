@@ -4,7 +4,6 @@ import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
 import { Statement } from "../database/Statement";
-import { field } from "../annotations/field";
 
 
 export class FieldData

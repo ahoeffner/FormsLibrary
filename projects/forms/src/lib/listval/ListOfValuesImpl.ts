@@ -138,6 +138,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
         container.finish();
 
+        this.impl[0].fields = container.getBlock("search").fields;
+        this.impl[1].fields = container.getBlock("result").fields;
+
         container.getBlock("search").records.forEach((rec) =>
         {
             this.impl[0].addRecord(new Record(rec.row,rec.fields,rec.index));
@@ -166,6 +169,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
 
+        this.impl[1].dynamic = true;
         this.impl[1].setApplication(this.app);
         this.impl[1].data = new FieldData(this.impl[1],table,[]);
 
