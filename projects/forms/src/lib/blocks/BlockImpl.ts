@@ -56,6 +56,7 @@ export class BlockImpl
         }
     }
 
+
     public get name() : string
     {
         return(this.name$);
@@ -88,6 +89,13 @@ export class BlockImpl
     public get rows() : number
     {
         return(this.records$.length);
+    }
+
+
+    public get columns() : string[]
+    {
+        if (this.data == null) return(null);
+        else return(this.data.columns);
     }
 
 
@@ -141,15 +149,16 @@ export class BlockImpl
     }
 
 
-    public set fields(fields:FieldInstance[])
+    public setFields(fields:FieldInstance[])
     {
         this.fields$ = fields;
     }
 
 
-    public get fields() : FieldInstance[]
+    public get fields() : string[]
     {
-        return(this.fields$);
+        if (this.data == null) return(null);
+        else return(this.data.fields);
     }
 
 
@@ -214,10 +223,10 @@ export class BlockImpl
             if (field?.focus()) return;
         }
 
-        for(let i = 0; i < this.fields.length; i++)
+        for(let i = 0; i < this.fields$.length; i++)
         {
-            if (this.fields[i].row == this.row)
-                if (this.fields[i].focus()) return;
+            if (this.fields$[i].row == this.row)
+                if (this.fields$[i].focus()) return;
         }
 
         rec?.focus();

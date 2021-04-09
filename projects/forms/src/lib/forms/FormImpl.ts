@@ -908,7 +908,7 @@ export class FormImpl
         });
 
         blocks.forEach((fields,bname) =>
-        {this.blkindex.get(bname).fields = fields;});
+        {this.blkindex.get(bname).setFields(fields);});
     }
 
 

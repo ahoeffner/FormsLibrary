@@ -52,6 +52,13 @@ export class FieldData
     }
 
 
+    public get columns() : string[]
+    {
+        if (this.table == null) return(null);
+        else return(this.table.describe());
+    }
+
+
     public get fetched() : number
     {
         return(this.data.length);

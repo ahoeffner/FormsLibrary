@@ -165,8 +165,8 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         let container:Container = this.app.getContainer();
         container.finish();
 
-        this.sblock.fields = container.getBlock("search").fields;
-        this.rblock.fields = container.getBlock("result").fields;
+        this.sblock.setFields(container.getBlock("search").fields);
+        this.rblock.setFields(container.getBlock("result").fields);
 
         container.getBlock("search").records.forEach((rec) =>
         {
@@ -304,6 +304,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             if (record >= 0)
             {
                 console.log("chose "+this.rblock.getValue(record,"description"));
+                console.log("fields: "+this.rblock.fields);
+                console.log("columns: "+this.rblock.columns);
+                this.close(false);
             }
         }
 

@@ -61,6 +61,12 @@ export class Table
     }
 
 
+    public describe() : string[]
+    {
+        return(this.cnames);
+    }
+
+
     public set fielddata(fielddata:FieldData)
     {
         this.fielddata$ = fielddata;
@@ -166,11 +172,13 @@ export class Table
                 let keys:string[] = Object.keys(row);
                 let flds:string[] = this.fielddata.fields;
 
-                for(let i = 0; i < keys.length - flds.length; i++)
+                for(let i = 0; i < keys.length; i++)
                     this.cnames.push(keys[i]);
 
-                flds.forEach((fld) => {this.cnames.push(fld)});
-                this.fielddata.fields = this.cnames;
+                for(let i = 0; i < keys.length - flds.length; i++)
+                    flds.unshift(keys[i]);
+
+                this.fielddata.fields = flds;
             }
 
             let col:number = 0;
