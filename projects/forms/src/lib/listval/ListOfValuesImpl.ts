@@ -152,14 +152,14 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         })
 
+        let def:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {navigable: false, insert: false, update: false,  query:false}};
+
         container.getBlock("result").records.forEach((rec) =>
         {
             this.impl[1].addRecord(new Record(rec.row,rec.fields,rec.index));
-
             this.description = this.impl[1].getField(rec.row,"description");
-            let description:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {navigable: false, insert: false, update: false,  query:false}};
 
-            this.description.definition = description;
+            this.description.definition = def;
             this.description.enable(true);
         });
 
@@ -168,15 +168,18 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
 
-        this.impl[1].dynamic = true;
+        //this.impl[1].dynamic = true;
         this.impl[1].setApplication(this.app);
-        this.impl[1].data = new FieldData(this.impl[1],table,[]);
+        this.impl[1].data = new FieldData(this.impl[1],table,["description"]);
 
         this.app.dropContainer();
 
         this.filter.focus();
         this.impl[0].addTrigger(this,this.search,Trigger.Typing);
         this.impl[1].addTrigger(this,this.prequery,Trigger.PreQuery);
+
+        this.impl[1].setValue(2,"test","test");
+        this.impl[1].setValue(0,"description","description");
     }
 
 

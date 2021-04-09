@@ -161,15 +161,20 @@ export class Table
         rows.forEach((row) =>
         {
             // Table is not defined
-            if (this.cnames.length == 0 && this.fielddata.fields.length == 0)
+            if (this.cnames.length == 0)
             {
-                Object.keys(row).forEach((key) =>
-                {this.cnames.push(key.toLowerCase());});
+                let keys:string[] = Object.keys(row);
+                let flds:string[] = this.fielddata.fields;
+
+                for(let i = 0; i < keys.length - flds.length; i++)
+                    this.cnames.push(keys[i]);
+
+                flds.forEach((fld) => {this.cnames.push(fld)});
                 this.fielddata.fields = this.cnames;
             }
 
             let col:number = 0;
-            let keys:any[] = [];
+            let keyval:any[] = [];
             let drow:Row = this.fielddata.newrow();
 
             Object.keys(row).forEach((key) =>
@@ -180,10 +185,10 @@ export class Table
                     val = new Date(+val);
 
                 drow.setValue(col++,val);
-                if (keys.length < klen) keys.push(val);
+                if (keyval.length < klen) keyval.push(val);
             });
 
-            this.data.push(keys);
+            this.data.push(keyval);
             this.fielddata.add(drow);
         });
     }

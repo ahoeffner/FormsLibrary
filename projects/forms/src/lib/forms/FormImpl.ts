@@ -329,7 +329,7 @@ export class FormImpl
 
         container.finish();
 
-        // Hold all fields per block
+        // Get all fields per block
         let bfields:Map<string,FieldInstance[]> = new Map<string,FieldInstance[]>();
 
         container.getBlocks().forEach((cb) =>
