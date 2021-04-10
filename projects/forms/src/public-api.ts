@@ -10,7 +10,7 @@ export {field} from './lib/annotations/field';
 export {column} from './lib/annotations/column';
 export {wizard} from './lib/annotations/wizard';
 export {window} from './lib/annotations/window';
-export {connect} from './lib/annotations/connect';
+export {connect} from './lib/annotations/CONNECTx';
 export {destroy} from './lib/annotations/destroy';
 export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
