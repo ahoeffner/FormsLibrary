@@ -36,6 +36,7 @@ import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 import { LOVDefinition, LOVDefinitions } from "../annotations/LOVDefinitions";
+import { TriggerDefinition, TriggerDefinitions } from "../annotations/TriggerDefinitions";
 
 
 export class FormImpl
@@ -545,19 +546,25 @@ export class FormImpl
             let idlovs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
 
             def = LOVDefinitions.getblock(block.name);
-            if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
+            def.forEach((lov,fld) => {lovs.set(fld,lov)});
 
             def = LOVDefinitions.getblockid(block.name);
-            if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
+            def.forEach((lov,fld) => {lovs.set(fld,lov)});
 
             ovf = LOVDefinitions.getform(this.name,block.alias);
-            if (ovf != null) ovf.forEach((lov,fld) => {lovs.set(fld,lov)});
+            ovf.forEach((lov,fld) => {lovs.set(fld,lov)});
 
             ovf = LOVDefinitions.getidform(this.name,block.alias);
-            if (ovf != null) ovf.forEach((lov,fld) => {idlovs.set(fld,lov)});
+            ovf.forEach((lov,fld) => {idlovs.set(fld,lov)});
 
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);
+
+            let btriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getTriggers(block.name);
+            let ftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormTriggers(this.name,block.alias);
+
+            ftriggers.forEach((def,trg) => {btriggers.set(trg,def)});
+            btriggers.forEach((def) => {block["triggers"].addTrigger(def.inst, def.func, def.trigger, def.field);});
 
             // Create data-backing table
             let table:Table = null;

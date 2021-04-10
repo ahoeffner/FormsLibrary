@@ -2,7 +2,7 @@ import { Utils } from "../utils/Utils";
 import { Trigger } from "../events/Triggers";
 import { TriggerDefinition, TriggerDefinitions } from "./TriggerDefinitions";
 
-export const validate = (field:string|string[]) =>
+export const trigger = (trigger:Trigger,field:string|string[]) =>
 {
     function define(comp:any, func?:string)
     {
@@ -38,7 +38,7 @@ export const validate = (field:string|string[]) =>
                 field: fld,
                 params: params,
                 func: comp[func],
-                trigger: Trigger.WhenValidateField
+                trigger: trigger
             }
 
             TriggerDefinitions.add(block,cname,trg);

@@ -139,13 +139,13 @@ export class LOVDefinitions
 
     public static getblock(block:string) : Map<string,LOVDefinition>
     {
-        return(LOVDefinitions.bdefs.get(block.toLowerCase()));
+        return(new Map(LOVDefinitions.bdefs.get(block.toLowerCase())));
     }
 
 
     public static getblockid(block:string) : Map<string,LOVDefinition>
     {
-        return(LOVDefinitions.biddefs.get(block.toLowerCase()));
+        return(new Map(LOVDefinitions.biddefs.get(block.toLowerCase())));
     }
 
 
@@ -153,16 +153,16 @@ export class LOVDefinitions
     public static getform(form:string, block:string) : Map<string,LOVDefinition>
     {
         let fdefs:Map<string,Map<string,LOVDefinition>> = LOVDefinitions.fdefs.get(form.toLowerCase());
-        if (fdefs != null) return(fdefs.get(block.toLowerCase()));
-        return(null);
+        if (fdefs != null) return(new Map(fdefs.get(block.toLowerCase())));
+        return(new Map());
     }
 
 
     public static getidform(form:string, block:string) : Map<string,LOVDefinition>
     {
         let fdefs:Map<string,Map<string,LOVDefinition>> = LOVDefinitions.fiddefs.get(form.toLowerCase());
-        if (fdefs != null) return(fdefs.get(block.toLowerCase()));
-        return(null);
+        if (fdefs != null) return(new Map(fdefs.get(block.toLowerCase())));
+        return(new Map());
     }
 
 
