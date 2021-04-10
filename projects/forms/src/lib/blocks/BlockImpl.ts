@@ -12,8 +12,8 @@ import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
 import { DatabaseUsage } from "../database/DatabaseUsage";
-import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { LOVDefinition } from "../annotations/LOVDefinitions";
 import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
@@ -35,6 +35,8 @@ export class BlockImpl
     private navigable$:boolean = true;
     private details$:BlockImpl[] = [];
     private fields$:FieldInstance[] = [];
+    private lovs:Map<string,LOVDefinition>;
+    private idlovs:Map<string,LOVDefinition>;
     private triggers:Triggers = new Triggers();
     private state:FormState = FormState.normal;
 
@@ -191,6 +193,18 @@ export class BlockImpl
     public get form() : FormImpl
     {
         return(this.form$);
+    }
+
+
+    public setListOfValues(lovs:Map<string,LOVDefinition>) : void
+    {
+        this.lovs = lovs;
+    }
+
+
+    public setIdListOfValues(lovs:Map<string,LOVDefinition>) : void
+    {
+        this.idlovs = lovs;
     }
 
 
@@ -386,32 +400,26 @@ export class BlockImpl
 
         if (!this.records[row].enabled) return;
 
-        /*
-        let comp:any = null;
-        let fdef:FieldDefinition = null;
-
+        let ldef:LOVDefinition = null;
         field = field.trim().toLowerCase();
 
-        if (id == null || id.trim().length == 0)
+        if (id != null && id.trim().length > 0)
         {
-            fdef = this.fielddef.get(field);
-            comp = this.defclasses.get(field);
+            id = id.trim().toLowerCase();
+            ldef = this.idlovs.get(field+"."+id);
         }
         else
         {
-            id = id.trim().toLowerCase();
-            fdef = this.fieldiddef.get(field);
-            comp = this.defidclasses.get(field+"."+id);
+            ldef = this.idlovs.get(field);
         }
 
-        if (fdef == null || fdef.lov == null)
-            return;
-
+        let lov:ListOfValues = null;
         let record:number = +row+this.offset;
-        let lov:ListOfValues = comp[fdef.lov.name](record);
+
+        if (ldef.params.length == 0) lov = ldef.inst[ldef.func]();
+        else                         lov = ldef.inst[ldef.func](record);
 
         ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
-        */
     }
 
 

@@ -18,6 +18,7 @@ import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { TriggerEvent } from "../events/TriggerEvent";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { FieldImplementation } from "../input/FieldType";
@@ -33,8 +34,8 @@ import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
 import { FieldDefinitions } from "../annotations/FieldDefinitions";
 import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
-import { KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { LOVDefinition, LOVDefinitions } from "../annotations/LOVDefinitions";
 
 
 export class FormImpl
@@ -537,6 +538,12 @@ export class FormImpl
 
                 inst.definition = fdef;
             });
+
+            let lovs:Map<string,LOVDefinition> = LOVDefinitions.get(block.name);
+            let idlovs:Map<string,LOVDefinition> = LOVDefinitions.getid(block.name);
+
+            block.setListOfValues(lovs);
+            block.setIdListOfValues(idlovs);
 
             // Create data-backing table
             let table:Table = null;
