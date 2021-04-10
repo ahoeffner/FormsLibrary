@@ -421,7 +421,9 @@ export class BlockImpl
             if (ldef.params.length == 0) lov = ldef.inst[ldef.func]();
             else                         lov = ldef.inst[ldef.func](record);
 
-            ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
+            let blocks:BlockImpl[] = [this,new BlockImpl(),new BlockImpl()];
+
+            ListOfValuesImpl.show(this.app,blocks,lov);
         }
     }
 
@@ -1142,13 +1144,13 @@ export class BlockImpl
             return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
 
-        if (type == "onclick")
+        if (type == "click")
         {
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
             return(await this.invokeTriggers(Trigger.MouseClick,trgevent,key));
         }
 
-        if (type == "ondblclick")
+        if (type == "dblclick")
         {
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
             return(await this.invokeTriggers(Trigger.MouseDoubleClick,trgevent,key));

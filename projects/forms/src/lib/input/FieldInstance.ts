@@ -348,7 +348,7 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "blur")
             this.fgroup$["onEvent"](event,this,"blur");
 
-        if (event.type == "onclick" || event.type == "ondblclick")
+        if (event.type == "click" || event.type == "dblclick")
             this.fgroup$["onEvent"](event,this,event.type);
 
         if (event.type == "change")
@@ -506,9 +506,9 @@ export class FieldInstance implements AfterViewInit
         impl.addEventListener("blur", (event) => {this.onEvent(event)});
         impl.addEventListener("focus", (event) => {this.onEvent(event)});
         impl.addEventListener("change", (event) => {this.onEvent(event)});
-        impl.addEventListener("onclick", (event) => {this.onEvent(event)});
+        impl.addEventListener("click", (event) => {this.onEvent(event)});
         impl.addEventListener("keydown", (event) => {this.onEvent(event)});
         impl.addEventListener("keypress", (event) => {this.onEvent(event)});
-        impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});
+        impl.addEventListener("dblclick", (event) => {this.onEvent(event)});
     }
 }

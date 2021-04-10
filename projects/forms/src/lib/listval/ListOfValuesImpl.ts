@@ -134,8 +134,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public setBlockImpl(impl:BlockImpl[]) : void
     {
-        this.sblock = impl[0];
-        this.rblock = impl[1];
+        this.iblock = impl[0];
+        this.sblock = impl[1];
+        this.rblock = impl[2];
     }
 
 
@@ -193,8 +194,6 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         });
 
         let conn:Connection = this.app.appstate.connection;
-        conn.connect("demo","Manager1");
-
         let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
 
         this.rblock.setApplication(this.app);
@@ -217,6 +216,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.sblock.addTrigger(this,this.search,Trigger.Typing);
         this.rblock.addTrigger(this,this.prequery,Trigger.PreQuery);
+
+        this.rblock.addTrigger(this,this.search,Trigger.MouseClick);
+        this.rblock.addTrigger(this,this.search,Trigger.MouseDoubleClick);
 
         this.rblock.navigable = false;
         this.filter.focus();
@@ -269,7 +271,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public async onkey(event:KeyTriggerEvent) : Promise<boolean>
     {
-        if (event.field == "filter")
+        console.log("event "+event.type);
+        
+        if (event.type == "key" && event.field == "filter")
         {
             if (event.keymap == keymap.prevfield)
                 event.event.preventDefault();
@@ -281,7 +285,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             }
         }
 
-        if (event.field == "description")
+        if (event.type == "key" && event.field == "description")
         {
             if (event.keymap == keymap.nextfield || event.keymap == keymap.prevfield)
             {
@@ -291,7 +295,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             }
         }
 
-        if (event.keymap == keymap.enter)
+        if (event.type == "key" && event.keymap == keymap.escape)
+            this.close(false);
+
+        if (event.type == "key" && event.keymap == keymap.enter)
         {
             let record:number = -1;
 
@@ -311,5 +318,25 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         }
 
         return(true);
+    }
+
+
+    private picked(event:KeyTriggerEvent) : void
+    {
+        let record:number = -1;
+
+        if (event.field == "filter" && this.rblock.fetched == 1)
+            record = 0;
+
+        if (event.field == "description")
+            record = event.record;
+
+        if (record >= 0)
+        {
+            console.log("chose "+this.rblock.getValue(record,"description"));
+            console.log("fields: "+this.rblock.fields);
+            console.log("columns: "+this.rblock.columns);
+            this.close(false);
+        }
     }
 }
