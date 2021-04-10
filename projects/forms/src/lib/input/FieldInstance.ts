@@ -348,6 +348,9 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "blur")
             this.fgroup$["onEvent"](event,this,"blur");
 
+        if (event.type == "onclick" || event.type == "ondblclick")
+            this.fgroup$["onEvent"](event,this,event.type);
+
         if (event.type == "change")
         {
             if (this.enabled && !this.readonly)
@@ -507,11 +510,5 @@ export class FieldInstance implements AfterViewInit
         impl.addEventListener("keydown", (event) => {this.onEvent(event)});
         impl.addEventListener("keypress", (event) => {this.onEvent(event)});
         impl.addEventListener("ondblclick", (event) => {this.onEvent(event)});
-    }
-
-
-    private get classname() : string
-    {
-        return(this.clazz?.constructor.name);
     }
 }

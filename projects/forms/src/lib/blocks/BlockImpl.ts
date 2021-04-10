@@ -1131,6 +1131,18 @@ export class BlockImpl
             return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
 
+        if (type == "onclick")
+        {
+            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
+            return(await this.invokeTriggers(Trigger.MouseClick,trgevent,key));
+        }
+
+        if (type == "ondblclick")
+        {
+            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
+            return(await this.invokeTriggers(Trigger.MouseDoubleClick,trgevent,key));
+        }
+
         return(true);
     }
 

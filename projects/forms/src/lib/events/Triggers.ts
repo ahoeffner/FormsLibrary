@@ -10,6 +10,8 @@ export class Trigger
     public static Key:Trigger                   = new Trigger("Key");
     public static Lock:Trigger                  = new Trigger("Lock");
     public static Typing:Trigger                = new Trigger("Typing");
+    public static MouseClick:Trigger            = new Trigger("Key");
+    public static MouseDoubleClick:Trigger      = new Trigger("Key");
     public static PreField:Trigger              = new Trigger("PreField");
     public static PostField:Trigger             = new Trigger("PostField");
     public static PostChange:Trigger            = new Trigger("PostChange");
