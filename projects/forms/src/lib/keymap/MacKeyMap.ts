@@ -6,7 +6,7 @@ export class MacKeyMap implements KeyMap
     enter:string = KeyMapper.map({code: KeyCodes.enter});
     escape:string = KeyMapper.map({code: KeyCodes.escape});
 
-    listval:string = KeyMapper.map({code: 76, ctrl: true});
+    listval:string = KeyMapper.map({code: 76, shift: true, ctrl: true});
 
     clearblock:string = KeyMapper.map({code: KeyCodes.escape, ctrl: true});;
     clearform:string = KeyMapper.map({code: KeyCodes.escape, shift: true, ctrl: true});

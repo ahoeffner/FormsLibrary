@@ -947,6 +947,7 @@ export class BlockImpl
         // ListOfValues / Datepicker
         if (type == "key" && key == keymap.listval)
         {
+            console.log("LOV")
             this.showListOfValues(field.name,field.id,this.row);
             return(true);
         }
