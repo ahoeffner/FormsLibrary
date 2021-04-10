@@ -99,9 +99,9 @@ export class Block
         else return(this._impl_.dokey("delete"));
     }
 
-    public showListOfValues(lov:ListOfValues, row?:number) : void
+    public showListOfValues(field:string, id?:string, row?:number) : void
     {
-        this._impl_.showListOfValues(lov);
+        this._impl_.showListOfValues(field,id,row);
     }
 
     public async insert(above?:boolean, override?:boolean) : Promise<boolean>

@@ -420,7 +420,16 @@ export class FormImpl
             let columns:ColumnDefinition[] = ColumnDefinitions.get(block.clazz);
             let fieldidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
             let ffieldidx:Map<string,FieldDefinition> = FieldDefinitions.getFormFieldIndex(this.name,block.alias);
-            ffieldidx.forEach((def,fld) => {fieldidx.set(fld,def)});
+
+            // Index defining class
+            let compidx:Map<string,any> = new Map<string,any>();
+
+            // Override by form
+            ffieldidx.forEach((def,fld) =>
+            {
+                fieldidx.set(fld,def);
+                compidx.set(fld,this);
+            });
 
             columns.forEach((column) =>
             {
@@ -455,6 +464,7 @@ export class FormImpl
             fieldidx.forEach((field) => {if (!fields.includes(field.name,0)) fields.push(field.name)});
 
             // Field overrides
+            let ovcompidx:Map<string,any> = new Map<string,any>();
             let overideidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
 
             // Set field properties and add undefined fields
@@ -482,15 +492,25 @@ export class FormImpl
 
                 if (inst.id.length > 0)
                 {
+                    let comp:any = null;
                     let id:string = inst.name+"."+inst.id;
                     let iddef:FieldDefinition = FieldDefinitions.getFormFieldOverride(this.name,block.alias,id);
 
-                    if (iddef != null) fdef = iddef;
-                    else iddef = FieldDefinitions.getFieldOverride(block.clazz,id);
+                    if (iddef != null)
+                    {
+                        comp = block;
+                        fdef = iddef;
+                    }
+                    else
+                    {
+                        comp = this;
+                        iddef = FieldDefinitions.getFieldOverride(block.clazz,id);
+                    }
 
                     if (iddef != null)
                     {
                         fdef = iddef;
+                        ovcompidx.set(id,comp);
                         overideidx.set(id,iddef);
                     }
                 }
@@ -517,10 +537,6 @@ export class FormImpl
 
                 inst.definition = fdef;
             });
-
-            // Set all field definitions
-            block.setFieldDefinitions(fieldidx);
-            block.setFieldIdDefinitions(overideidx);
 
             // Create data-backing table
             let table:Table = null;

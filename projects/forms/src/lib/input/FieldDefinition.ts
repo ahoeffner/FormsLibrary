@@ -18,6 +18,5 @@ export interface FieldDefinition
     type?:FieldType;
     mandatory?:boolean;
     column?:boolean|string;
-    lov?:ListOfValuesFunction;
     fieldoptions?:FieldOptions;
 }

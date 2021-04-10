@@ -14,6 +14,7 @@ export {connect} from './lib/annotations/connect';
 export {destroy} from './lib/annotations/destroy';
 export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
+export {listofvalues} from './lib/annotations/listofvalues';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 
 export {Key,keymap} from './lib/keymap/KeyMap';
@@ -35,6 +36,9 @@ export {Block} from './lib/blocks/Block';
 export {FieldType} from './lib/input/FieldType';
 export {FieldInstance} from './lib/input/FieldInstance';
 export {FieldDefinition} from './lib/input/FieldDefinition';
+
+export {ListOfValues} from './lib/listval/ListOfValues';
+export {ListOfValuesFunction} from './lib/listval/ListOfValuesFunction';
 
 export {Case} from './lib/database/Case';
 export {Column} from './lib/database/Column';

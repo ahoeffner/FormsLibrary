@@ -7,5 +7,13 @@ export const disconnect = (form:Form, func?:string) =>
 {
     let utils:Utils = new Utils();
     let fname:string = utils.getName(form);
+    let ctype:string = utils.getType(form);
+
+    if (ctype != "Form")
+    {
+        console.log("@disconnect can only be used on forms");
+        return;
+    }
+
     FormDefinitions.setOnDisconnect(fname,func);
 }
