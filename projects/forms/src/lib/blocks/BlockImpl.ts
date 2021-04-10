@@ -406,13 +406,11 @@ export class BlockImpl
 
         if (this.idlovs != null && id != null && id.trim().length > 0)
         {
-            console.log("id")
             id = id.trim().toLowerCase();
             ldef = this.idlovs.get(field+"."+id);
         }
         else if (this.lovs != null)
         {
-            console.log("nonid")
             ldef = this.lovs.get(field);
         }
 
@@ -949,7 +947,8 @@ export class BlockImpl
         // ListOfValues / Datepicker
         if (type == "key" && key == keymap.listval)
         {
-
+            this.showListOfValues(field.name,field.id,this.row);
+            return(true);
         }
 
         // Enter query
