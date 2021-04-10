@@ -17,7 +17,10 @@ export class Utils
     public getType(component:any) : string
     {
         let type:string = null;
-        let code:string = ""+component;
+        let code:string = component.toString();
+
+        if (code == "[object Object]")
+            code = component.constructor.toString();
 
         if (code.startsWith("class"))
         {

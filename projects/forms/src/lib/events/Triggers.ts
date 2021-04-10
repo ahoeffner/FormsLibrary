@@ -5,59 +5,56 @@ import { TriggerEvents } from "./TriggerEvents";
 import { TriggerFunction } from "./TriggerFunction";
 
 
-export class Trigger
+export enum Trigger
 {
-    public static Key:Trigger                   = new Trigger("Key");
-    public static Lock:Trigger                  = new Trigger("Lock");
-    public static Typing:Trigger                = new Trigger("Typing");
-    public static MouseClick:Trigger            = new Trigger("Key");
-    public static MouseDoubleClick:Trigger      = new Trigger("Key");
-    public static PreField:Trigger              = new Trigger("PreField");
-    public static PostField:Trigger             = new Trigger("PostField");
-    public static PostChange:Trigger            = new Trigger("PostChange");
-    public static WhenValidateField:Trigger     = new Trigger("WhenValidateField");
-    public static WhenValidateRecord:Trigger    = new Trigger("WhenValidateRecord");
-    public static PreQuery:Trigger              = new Trigger("PreQuery");
-    public static PreInsert:Trigger             = new Trigger("PreInsert");
-    public static PreUpdate:Trigger             = new Trigger("PreUpdate");
-    public static PreDelete:Trigger             = new Trigger("PreDelete");
-
-    private constructor(public name:string) {};
+    Key,
+    Lock,
+    Typing,
+    MouseClick,
+    MouseDoubleClick,
+    PreField,
+    PostField,
+    PostChange,
+    WhenValidateField,
+    WhenValidateRecord,
+    PreQuery,
+    PreInsert,
+    PreUpdate,
+    PreDelete
 }
 
-export class FieldTrigger
+export enum FieldTrigger
 {
-    private static index:Set<string> = null;
-
-    public static Key:Trigger                   = Trigger.Key;
-    public static Typing:Trigger                = Trigger.Typing;
-    public static PreField:Trigger              = Trigger.PreField;
-    public static PostField:Trigger             = Trigger.PostField;
-    public static PostChange:Trigger            = Trigger.PostChange;
-    public static ValidateField:Trigger         = Trigger.WhenValidateField;
-
-    public static isFieldTrigger(trigger:Trigger) : boolean
-    {
-        if (FieldTrigger.index == null)
-        {
-            FieldTrigger.index = new Set<string>();
-
-            FieldTrigger.index.add(Trigger.Key.name);
-            FieldTrigger.index.add(Trigger.Typing.name);
-            FieldTrigger.index.add(Trigger.PreField.name);
-            FieldTrigger.index.add(Trigger.PostField.name);
-            FieldTrigger.index.add(Trigger.PostChange.name);
-            FieldTrigger.index.add(Trigger.WhenValidateField.name);
-        }
-
-        return(FieldTrigger.index.has(trigger.name));
-    }
+    Key,
+    Typing,
+    MouseClick,
+    MouseDoubleClick,
+    PreField,
+    PostField,
+    PostChange,
+    WhenValidateField,
+    WhenValidateRecord
 }
 
 
 export class Triggers
 {
     private triggers:TriggerEvents = new TriggerEvents();
+    private static fieldtriggers:Set<string> = null;
+
+    private static init() : void
+    {
+        if (Triggers.fieldtriggers == null)
+        {
+            Triggers.fieldtriggers = new Set<string>();
+
+            Object.keys(FieldTrigger).forEach((type) =>
+            {
+                if (isNaN(Number(type)))
+                    Triggers.fieldtriggers.add(type);
+            });
+        }
+    }
 
     public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
     {
@@ -125,14 +122,15 @@ export class Triggers
                             lsnrs.push({inst: instance, func: func});
                         });
                     }
-                    else if (FieldTrigger.isFieldTrigger(type))
+                    else if (this.isFieldTrigger(type))
                     {
-                        let lsnrs:Listener[] = triggers.get(type.name);
+                        let name:string = this.name(type);
+                        let lsnrs:Listener[] = triggers.get(name);
 
                         if (lsnrs == null)
                         {
                             lsnrs = [];
-                            triggers.set(type.name,lsnrs);
+                            triggers.set(name,lsnrs);
                         }
 
                         lsnrs.push({inst: instance, func: func});
@@ -161,12 +159,13 @@ export class Triggers
                 }
                 else
                 {
-                    let lsnrs:Listener[] = this.triggers.types.get(type.name);
+                    let name:string = this.name(type);
+                    let lsnrs:Listener[] = this.triggers.types.get(name);
 
                     if (lsnrs == null)
                     {
                         lsnrs = [];
-                        this.triggers.types.set(type.name,lsnrs);
+                        this.triggers.types.set(name,lsnrs);
                     }
 
                     lsnrs.push({inst: instance, func: func});
@@ -178,7 +177,7 @@ export class Triggers
 
     public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
     {
-        event["type$"] = type.name;
+        event["type$"] = this.name(type);
 
         if (type == Trigger.Key && key != null)
         {
@@ -192,7 +191,8 @@ export class Triggers
         }
         else
         {
-            let lsnrs:Listener[] = this.triggers.types.get(type.name);
+            let name:string = this.name(type);
+            let lsnrs:Listener[] = this.triggers.types.get(name);
 
             if (lsnrs != null)
             {
@@ -210,7 +210,7 @@ export class Triggers
         let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
         if (triggers == null) return(true);
 
-        event["type$"] = type.name;
+        event["type$"] = this.name(type);
 
         if (type == Trigger.Key && key != null)
         {
@@ -224,7 +224,8 @@ export class Triggers
         }
         else
         {
-            let lsnrs:Listener[] = triggers.get(type.name);
+            let name:string = this.name(type);
+            let lsnrs:Listener[] = triggers.get(name);
 
             if (lsnrs != null)
             {
@@ -248,5 +249,18 @@ export class Triggers
             console.log(error);
             return(false);
         }
+    }
+
+
+    private isFieldTrigger(trigger:Trigger)
+    {
+        Triggers.init();
+        return(Triggers.fieldtriggers.has(Trigger[trigger]));
+    }
+
+
+    private name(trigger:Trigger) : string
+    {
+        return(Trigger[trigger].toLowerCase());
     }
 }
