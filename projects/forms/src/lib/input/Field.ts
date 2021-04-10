@@ -1,3 +1,4 @@
+import { keymap } from "../keymap/KeyMap";
 import { RecordState } from "../blocks/Record";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldInstance } from "./FieldInstance";
@@ -271,7 +272,7 @@ export class Field
     }
 
 
-    public async onEvent(event:any, field:FieldInstance, type:string, key?:string)
+    public async onEvent(event:any, field:FieldInstance, type:string, key?:keymap)
     {
         if (type == "blur") this.field = null;
         if (type == "focus") this.field = field;

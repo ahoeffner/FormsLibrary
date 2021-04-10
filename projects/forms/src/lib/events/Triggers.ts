@@ -1,5 +1,5 @@
 import { Listener } from "./Listener";
-import { KeyMapper } from "../keymap/KeyMap";
+import { keymap } from "../keymap/KeyMap";
 import { TriggerEvent } from "./TriggerEvent";
 import { TriggerEvents } from "./TriggerEvents";
 import { TriggerFunction } from "./TriggerFunction";
@@ -56,9 +56,9 @@ export class Triggers
         }
     }
 
-    public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:string|string[]) : void
+    public addTrigger(instance:any, func:TriggerFunction, ttypes:Trigger|Trigger[], tfields?:string|string[], tkeys?:keymap|keymap[]) : void
     {
-        let keys:string[] = [];
+        let keys:keymap[] = [];
         let fields:string[] = [];
         let types:Trigger[] = [];
 
@@ -82,14 +82,8 @@ export class Triggers
             let kasa:boolean = false;
             if (tkeys.constructor.name == "Array") kasa = true;
 
-            if (kasa) keys = tkeys as string[];
-            else      keys.push(tkeys as string);
-
-            keys.forEach((key) =>
-            {
-                if (!KeyMapper.ismap(key))
-                    console.log("key '"+key+"' is not a key. use keymap.<keytype>");
-            });
+            if (kasa) keys = tkeys as keymap[];
+            else      keys.push(tkeys as keymap);
         }
 
         if (fields.length > 0)
@@ -111,12 +105,13 @@ export class Triggers
                     {
                         keys.forEach((key) =>
                         {
-                            let lsnrs:Listener[] = triggers.get(key);
+                            let code:string = this.keycode(key);
+                            let lsnrs:Listener[] = triggers.get(code);
 
                             if (lsnrs == null)
                             {
                                 lsnrs = [];
-                                triggers.set(key,lsnrs);
+                                triggers.set(code,lsnrs);
                             }
 
                             lsnrs.push({inst: instance, func: func});
@@ -124,7 +119,7 @@ export class Triggers
                     }
                     else if (this.isFieldTrigger(type))
                     {
-                        let name:string = this.name(type);
+                        let name:string = this.trgname(type);
                         let lsnrs:Listener[] = triggers.get(name);
 
                         if (lsnrs == null)
@@ -146,12 +141,13 @@ export class Triggers
                 {
                     keys.forEach((key) =>
                     {
-                        let lsnrs:Listener[] = this.triggers.types.get(key);
+                        let code:string = this.keycode(key);
+                        let lsnrs:Listener[] = this.triggers.types.get(code);
 
                         if (lsnrs == null)
                         {
                             lsnrs = [];
-                            this.triggers.types.set(key,lsnrs);
+                            this.triggers.types.set(code,lsnrs);
                         }
 
                         lsnrs.push({inst: instance, func: func});
@@ -159,7 +155,7 @@ export class Triggers
                 }
                 else
                 {
-                    let name:string = this.name(type);
+                    let name:string = this.trgname(type);
                     let lsnrs:Listener[] = this.triggers.types.get(name);
 
                     if (lsnrs == null)
@@ -175,13 +171,14 @@ export class Triggers
     }
 
 
-    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
-        event["type$"] = this.name(type);
+        event["type$"] = this.trgname(type);
 
         if (type == Trigger.Key && key != null)
         {
-            let lsnrs:Listener[] = this.triggers.types.get(key);
+            let code:string = this.keycode(key);
+            let lsnrs:Listener[] = this.triggers.types.get(code);
 
             if (lsnrs != null)
             {
@@ -191,7 +188,7 @@ export class Triggers
         }
         else
         {
-            let name:string = this.name(type);
+            let name:string = this.trgname(type);
             let lsnrs:Listener[] = this.triggers.types.get(name);
 
             if (lsnrs != null)
@@ -205,16 +202,17 @@ export class Triggers
     }
 
 
-    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
         let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
         if (triggers == null) return(true);
 
-        event["type$"] = this.name(type);
+        event["type$"] = this.trgname(type);
 
         if (type == Trigger.Key && key != null)
         {
-            let lsnrs:Listener[] = triggers.get(key);
+            let code:string = this.keycode(key);
+            let lsnrs:Listener[] = triggers.get(code);
 
             if (lsnrs != null)
             {
@@ -224,7 +222,7 @@ export class Triggers
         }
         else
         {
-            let name:string = this.name(type);
+            let name:string = this.trgname(type);
             let lsnrs:Listener[] = triggers.get(name);
 
             if (lsnrs != null)
@@ -259,8 +257,14 @@ export class Triggers
     }
 
 
-    private name(trigger:Trigger) : string
+    private trgname(trigger:Trigger) : string
     {
         return(Trigger[trigger].toLowerCase());
+    }
+
+
+    private keycode(key:keymap) : string
+    {
+        return(keymap[key].toLowerCase());
     }
 }

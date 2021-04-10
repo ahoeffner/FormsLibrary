@@ -1,6 +1,7 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "./FormImpl";
 import { Block } from "../blocks/Block";
+import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { Theme } from "../application/Themes";
 import { BlockImpl } from "../blocks/BlockImpl";
@@ -158,7 +159,7 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
-    public addKeyTrigger(func:TriggerFunction, keys?:string|string[]) : void
+    public addKeyTrigger(func:TriggerFunction, keys?:keymap|keymap[]) : void
     {
         this._impl_.addKeyTrigger(this,func,keys);
     }

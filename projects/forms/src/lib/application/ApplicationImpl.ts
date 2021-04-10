@@ -489,7 +489,8 @@ export class ApplicationImpl
             shift : event.shiftKey
         }
 
-        let key:string = KeyMapper.map(keydef);
+        let map:string = KeyMapper.map(keydef);
+        let key:keymap = KeyMapper.keymap(map);
 
         if (key == keymap.connect)
         {

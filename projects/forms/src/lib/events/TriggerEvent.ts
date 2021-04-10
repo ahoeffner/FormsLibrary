@@ -1,5 +1,5 @@
+import { keymap } from "../keymap/KeyMap";
 import { Statement } from "../database/Statement";
-import { Key, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
 
 
@@ -34,17 +34,14 @@ export class TriggerEvent
 
 export class KeyTriggerEvent extends TriggerEvent
 {
-    private key$:Key;
-    private code$:string;
+    private key$:keymap;
     private field$:string;
 
-    constructor(field:FieldInstance, key:string, jsevent:any)
+    constructor(field:FieldInstance, key:keymap, jsevent:any)
     {
         super(0,jsevent);
 
-        this.code$ = key;
-        this.key$ = KeyMapper.parse(key);
-        this.key$.name = KeyMapper.keyname(key);
+        this.key$ = key;
 
         if (field != null)
         {
@@ -53,14 +50,9 @@ export class KeyTriggerEvent extends TriggerEvent
         }
     }
 
-    public get key() : Key
+    public get key() : keymap
     {
         return(this.key$);
-    }
-
-    public get keymap() : string
-    {
-        return(this.code$);
     }
 
     public get field() : string

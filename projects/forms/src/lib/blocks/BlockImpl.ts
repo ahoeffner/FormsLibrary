@@ -2,12 +2,12 @@ import { Key } from "./Key";
 import { Block } from "./Block";
 import { Field } from "../input/Field";
 import { FieldData } from "./FieldData";
+import { keymap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
-import { keymap, KeyMapper } from "../keymap/KeyMap";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
@@ -334,15 +334,7 @@ export class BlockImpl
     }
 
 
-    public dokey(name:string) : boolean
-    {
-        let key:string = KeyMapper.key(name);
-        if (key == null) return(false);
-        return(this.sendkey(null,key));
-    }
-
-
-    public sendkey(event:any,key:string) : boolean
+    public sendkey(event:any,key:keymap) : boolean
     {
         this.onEvent(event,this.field,"key",key);
         return(true);
@@ -832,19 +824,19 @@ export class BlockImpl
     }
 
 
-    public addKeyTrigger(instance:any, func:TriggerFunction, keys:string|string[]) : void
+    public addKeyTrigger(instance:any, func:TriggerFunction, keys:keymap|keymap[]) : void
     {
         this.triggers.addTrigger(instance,func,Trigger.Key,null,keys)
     }
 
 
-    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields:string|string[], keys?:string|string[]) : void
+    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields:string|string[], keys?:keymap|keymap[]) : void
     {
         this.triggers.addTrigger(instance,func,types,fields,keys)
     }
 
 
-    public async onEvent(event:any, field:FieldInstance, type:string, key?:string) : Promise<boolean>
+    public async onEvent(event:any, field:FieldInstance, type:string, key?:keymap) : Promise<boolean>
     {
         let trgevent:TriggerEvent = null;
         if (event == null) event = {type: type};
@@ -1163,7 +1155,7 @@ export class BlockImpl
     }
 
 
-    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
         if (!await this.triggers.invokeTriggers(type,event,key)) return(false);
         if (this.form != null) return(await this.form.invokeTriggers(type,event,key));
@@ -1171,7 +1163,7 @@ export class BlockImpl
     }
 
 
-    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
         if (!await this.triggers.invokeFieldTriggers(type,field,event,key)) return(false);
         if (this.form != null) return(await this.form.invokeFieldTriggers(type,field,event,key));

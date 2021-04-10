@@ -1,8 +1,8 @@
 import { Form } from "../forms/Form";
 import { BlockImpl } from "./BlockImpl";
+import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
-import { ListOfValues } from "../listval/ListOfValues";
 import { TriggerFunction } from "../events/TriggerFunction";
 
 
@@ -38,7 +38,7 @@ export class Block
 
     public cancel() : void
     {
-        this._impl_.dokey("escape");
+        this._impl_.sendkey(null,keymap.escape);
     }
 
     public get ready() : boolean
@@ -49,33 +49,34 @@ export class Block
     public async enterquery(override?:boolean) : Promise<boolean>
     {
         if (override) return(this._impl_.enterqry());
-        else this._impl_.dokey("enterquery");
+        else this._impl_.sendkey(null,keymap.enterquery);
     }
 
     public async executequery(override?:boolean) :  Promise<boolean>
     {
         if (override) return(this._impl_.executeqry());
-        else return(this._impl_.dokey("executequery"));
+        else return(this._impl_.sendkey(null,keymap.executequery));
+
     }
 
     public nextrecord() : void
     {
-        this._impl_.dokey("nextrecord");
+        this._impl_.sendkey(null,keymap.nextrecord);
     }
 
     public prevrecord() : void
     {
-        this._impl_.dokey("prevrecord");
+        this._impl_.sendkey(null,keymap.prevrecord);
     }
 
     public pageup() : void
     {
-        this._impl_.dokey("pageup");
+        this._impl_.sendkey(null,keymap.pageup);
     }
 
     public pagedown() : void
     {
-        this._impl_.dokey("pagedown");
+        this._impl_.sendkey(null,keymap.pagedown);
     }
 
     public get row() : number
@@ -96,7 +97,7 @@ export class Block
     public async delete(override?:boolean) : Promise<boolean>
     {
         if (override) return(this._impl_.delete());
-        else return(this._impl_.dokey("delete"));
+        else return(this._impl_.sendkey(null,keymap.delete));
     }
 
     public showListOfValues(field:string, id?:string, row?:number) : void
@@ -110,8 +111,8 @@ export class Block
         if (override) return(this._impl_.insert(!above));
         else
         {
-            if (!above) return(this._impl_.dokey("insertafter"));
-            else        return(this._impl_.dokey("insertbefore"));
+            if (!above) return(this._impl_.sendkey(null,keymap.insertafter));
+            else        return(this._impl_.sendkey(null,keymap.insertbefore));
         }
     }
 
@@ -125,7 +126,7 @@ export class Block
         this._impl_.addTrigger(this,listener,types);
     }
 
-    public addKeyTrigger(listener:TriggerFunction, keys:string|string[]) : void
+    public addKeyTrigger(listener:TriggerFunction, keys:keymap|keymap[]) : void
     {
         this._impl_.addKeyTrigger(this,listener,keys);
     }

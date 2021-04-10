@@ -984,7 +984,7 @@ export class FormImpl
     }
 
 
-    public sendkey(event:any,key:string) : void
+    public sendkey(event:any,key:keymap) : void
     {
         this.block?.sendkey(event,key);
     }
@@ -996,19 +996,19 @@ export class FormImpl
     }
 
 
-    public addKeyTrigger(instance:any, func:TriggerFunction, keys?:string|string[]) : void
+    public addKeyTrigger(instance:any, func:TriggerFunction, keys?:keymap|keymap[]) : void
     {
         this.triggers.addTrigger(instance,func,Trigger.Key,null,keys)
     }
 
 
-    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields:string|string[], keys?:string|string[]) : void
+    public addFieldTrigger(instance:any, func:TriggerFunction, types:Trigger|Trigger[], fields:string|string[], keys?:keymap|keymap[]) : void
     {
         this.triggers.addTrigger(instance,func,types,fields,keys)
     }
 
 
-    public async onEvent(event:any, field:FieldInstance, type:string, key:string)
+    public async onEvent(event:any, field:FieldInstance, type:string, key:keymap)
     {
         if (this.app == null)
             return;
@@ -1054,13 +1054,13 @@ export class FormImpl
     }
 
 
-    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
         return(await this.triggers.invokeTriggers(type,event,key));
     }
 
 
-    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:string) : Promise<boolean>
+    public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
         return(await this.triggers.invokeFieldTriggers(type,field,event,key));
     }

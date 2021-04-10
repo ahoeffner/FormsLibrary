@@ -140,7 +140,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     }
 
 
-    public close(cancel: boolean): void
+    public close(_cancel: boolean): void
     {
         this.app.enable();
         this.win.closeWindow();
@@ -201,7 +201,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.app.dropContainer();
 
-        let keys:string[] =
+        let keys:keymap[] =
         [
             keymap.enter,
             keymap.escape,
@@ -278,10 +278,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     {
         if (event.type == "key" && event.field == "filter")
         {
-            if (event.keymap == keymap.prevfield)
+            if (event.key == keymap.prevfield)
                 event.event.preventDefault();
 
-            if (event.keymap == keymap.nextfield || event.keymap == keymap.nextrecord)
+            if (event.key == keymap.nextfield || event.key == keymap.nextrecord)
             {
                 this.rblock.navigable = true;
                 this.rblock.focus(0);
@@ -290,7 +290,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         if (event.type == "key" && event.field == "description")
         {
-            if (event.keymap == keymap.nextfield || event.keymap == keymap.prevfield)
+            if (event.key == keymap.nextfield || event.key == keymap.prevfield)
             {
                 this.sblock.focus();
                 event.event.preventDefault();
@@ -298,10 +298,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             }
         }
 
-        if (event.type == "key" && event.keymap == keymap.escape)
+        if (event.type == "key" && event.key == keymap.escape)
             this.close(false);
 
-        if (event.type == "key" && event.keymap == keymap.enter)
+        if (event.type == "key" && event.key == keymap.enter)
         {
             let record:number = -1;
 

@@ -376,10 +376,10 @@ export class FieldInstance implements AfterViewInit
                 shift : event.shiftKey
             }
 
-            let key:string = KeyMapper.map(keydef);
-            let mapped:string = KeyMapper.keyname(key);
+            let map:string = KeyMapper.map(keydef);
+            let key:keymap = KeyMapper.keymap(map);
 
-            if (mapped != null)
+            if (key != null)
             {
                 // handled by application
                 if
