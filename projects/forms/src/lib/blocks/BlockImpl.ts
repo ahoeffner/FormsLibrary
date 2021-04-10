@@ -392,6 +392,7 @@ export class BlockImpl
 
         if (!this.app.connected) return;
         if (!this.records[row].enabled) return;
+        if (this.records[row].state == RecordState.na) return;
 
         let ldef:LOVDefinition = null;
         field = field.trim().toLowerCase();
