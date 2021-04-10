@@ -539,8 +539,24 @@ export class FormImpl
                 inst.definition = fdef;
             });
 
-            let lovs:Map<string,LOVDefinition> = LOVDefinitions.get(block.name);
-            let idlovs:Map<string,LOVDefinition> = LOVDefinitions.getid(block.name);
+            let def:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
+            let lovs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
+            let idlovs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
+
+            def = LOVDefinitions.get(block.name);
+            if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
+
+            def = LOVDefinitions.get(block.alias);
+            if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
+
+            def = LOVDefinitions.getid(block.name);
+            if (def != null) def.forEach((lov,fld) => {idlovs.set(fld,lov)});
+
+            def = LOVDefinitions.getid(block.alias);
+            if (def != null) def.forEach((lov,fld) => {idlovs.set(fld,lov)});
+
+            lovs.forEach((lov,fld) => {console.log("lov "+fld)});
+            idlovs.forEach((lov,fld) => {console.log("idlov "+fld)});
 
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);

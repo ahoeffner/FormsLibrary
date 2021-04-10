@@ -15,15 +15,15 @@ export class LOVDefinitions
         let register:Map<string,LOVDefinition> = null;
         let parts:string[] = LOVDefinitions.split(field);
 
-        if (!block) cname = parts.pop();
+        if (!block) cname = parts.shift();
 
-        if (parts.length == 0 || parts.length > 2)
+        if (parts.length == 0 || parts.length > 1)
         {
-            console.log("@listofvalues on block must specify field[.id], not '"+field+"'");
+            console.log("@listofvalues must specify [alias.]field[.id], not '"+field+"'");
             return;
         }
 
-        let fname:string = parts[0];
+        let fname:string = parts.shift();
 
         if (parts.length == 0)
         {
@@ -37,7 +37,7 @@ export class LOVDefinitions
         }
         else
         {
-            fname = fname+"."+parts[1];
+            fname = fname+"."+parts.shift();
             register = LOVDefinitions.iddefs.get(cname);
 
             if (register == null)
@@ -47,7 +47,6 @@ export class LOVDefinitions
             }
         }
 
-        console.log("add lov for "+fname+" on "+cname);
         let def:LOVDefinition = register.get(fname);
         if (def != null) console.log("@listofvalues defined twice for "+fname+", ignored");
 

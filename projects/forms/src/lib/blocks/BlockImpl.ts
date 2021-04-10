@@ -403,23 +403,26 @@ export class BlockImpl
         let ldef:LOVDefinition = null;
         field = field.trim().toLowerCase();
 
-        if (id != null && id.trim().length > 0)
+        if (this.idlovs != null && id != null && id.trim().length > 0)
         {
             id = id.trim().toLowerCase();
             ldef = this.idlovs.get(field+"."+id);
         }
-        else
+        else if (this.lovs != null)
         {
-            ldef = this.idlovs.get(field);
+            ldef = this.lovs.get(field);
         }
 
-        let lov:ListOfValues = null;
-        let record:number = +row+this.offset;
+        if (ldef != null)
+        {
+            let lov:ListOfValues = null;
+            let record:number = +row+this.offset;
 
-        if (ldef.params.length == 0) lov = ldef.inst[ldef.func]();
-        else                         lov = ldef.inst[ldef.func](record);
+            if (ldef.params.length == 0) lov = ldef.inst[ldef.func]();
+            else                         lov = ldef.inst[ldef.func](record);
 
-        ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
+            ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
+        }
     }
 
 
