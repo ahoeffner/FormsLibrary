@@ -550,7 +550,7 @@ export class FormImpl
             def = LOVDefinitions.getblockid(block.name);
             if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
 
-            ovf = LOVDefinitions.getform(this.name,block.name);
+            ovf = LOVDefinitions.getform(this.name,block.alias);
             if (ovf != null) ovf.forEach((lov,fld) => {lovs.set(fld,lov)});
 
             ovf = LOVDefinitions.getidform(this.name,block.alias);
