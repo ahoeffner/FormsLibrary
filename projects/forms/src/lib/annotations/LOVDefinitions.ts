@@ -9,6 +9,8 @@ export class LOVDefinitions
 {
     private static bdefs:Map<string,Map<string,LOVDefinition>> = new Map<string,Map<string,LOVDefinition>>();
     private static biddefs:Map<string,Map<string,LOVDefinition>> = new Map<string,Map<string,LOVDefinition>>();
+    private static fdefs:Map<string,Map<string,Map<string,LOVDefinition>>> = new Map<string,Map<string,Map<string,LOVDefinition>>>();
+    private static fiddefs:Map<string,Map<string,Map<string,LOVDefinition>>> = new Map<string,Map<string,Map<string,LOVDefinition>>>();
 
     public static add(isblock:boolean, cname:string, fieldspec:string, inst:any, func:string, params:string[])
     {
@@ -16,7 +18,7 @@ export class LOVDefinitions
         let block:string = null;
         let field:string = null;
 
-        let register:Map<string,LOVDefinition> = null;
+        let id:boolean = false;
         let parts:string[] = LOVDefinitions.split(fieldspec);
 
         if (isblock)
@@ -36,40 +38,102 @@ export class LOVDefinitions
         }
 
         field = parts.shift();
-        if (parts.length > 0) field += "."+parts.shift();
 
-        console.log("form: "+form+" block: "+block+" field: "+field);
-
-/*
-        if (parts.length == 0)
+        if (parts.length > 0)
         {
-            register = LOVDefinitions.bdefs.get(cname);
+            id = true;
+            field += "."+parts.shift();
+        }
 
-            if (register == null)
-            {
-                register = new Map<string,LOVDefinition>();
-                LOVDefinitions.bdefs.set(cname,register);
-            }
+        let def:LOVDefinition =
+        {
+            inst: inst,
+            func: func,
+            params: params
+        }
+
+        if (form != null)
+        {
+            if (!id) LOVDefinitions.addFormLov(form,block,field,def);
+            else     LOVDefinitions.addFormIdLov(form,block,field,def);
         }
         else
         {
-            fname = fname+"."+parts.shift();
-            register = LOVDefinitions.biddefs.get(cname);
+            if (!id) LOVDefinitions.addBlockLov(block,field,def);
+            else     LOVDefinitions.addBlockIdLov(block,field,def);
+        }
+    }
 
-            if (register == null)
-            {
-                register = new Map<string,LOVDefinition>();
-                LOVDefinitions.biddefs.set(cname,register);
-            }
+
+    private static addFormLov(form:string, block:string, field:string, def:LOVDefinition)
+    {
+        let fdefs:Map<string,Map<string,LOVDefinition>> = LOVDefinitions.fdefs.get(form);
+
+        if (fdefs == null)
+        {
+            fdefs = new Map<string,Map<string,LOVDefinition>>();
+            LOVDefinitions.fdefs.set(form,fdefs);
         }
 
-        let def:LOVDefinition = register.get(fname);
-        if (def != null) console.log("@listofvalues defined twice for "+fname+", ignored");
+        let bdefs:Map<string,LOVDefinition> = fdefs.get(block);
 
-        console.log("listofvalues form: "+form+" block: "+cname+" field: "+fieldspec);
-        def = {inst: inst, func: func, params: params};
-        register.set(fname,def);
-*/
+        if (bdefs == null)
+        {
+            bdefs = new Map<string,LOVDefinition>();
+            fdefs.set(block,bdefs);
+        }
+
+        bdefs.set(field,def);
+    }
+
+
+    private static addFormIdLov(form:string, block:string, field:string, def:LOVDefinition)
+    {
+        let fdefs:Map<string,Map<string,LOVDefinition>> = LOVDefinitions.fiddefs.get(form);
+
+        if (fdefs == null)
+        {
+            fdefs = new Map<string,Map<string,LOVDefinition>>();
+            LOVDefinitions.fiddefs.set(form,fdefs);
+        }
+
+        let bdefs:Map<string,LOVDefinition> = fdefs.get(block);
+
+        if (bdefs == null)
+        {
+            bdefs = new Map<string,LOVDefinition>();
+            fdefs.set(block,bdefs);
+        }
+
+        bdefs.set(field,def);
+    }
+
+
+    private static addBlockLov(block:string, field:string, def:LOVDefinition)
+    {
+        let bdefs:Map<string,LOVDefinition> = LOVDefinitions.bdefs.get(block);
+
+        if (bdefs == null)
+        {
+            bdefs = new Map<string,LOVDefinition>();
+            LOVDefinitions.bdefs.set(block,bdefs);
+        }
+
+        bdefs.set(field,def);
+    }
+
+
+    private static addBlockIdLov(block:string, field:string, def:LOVDefinition)
+    {
+        let bdefs:Map<string,LOVDefinition> = LOVDefinitions.biddefs.get(block);
+
+        if (bdefs == null)
+        {
+            bdefs = new Map<string,LOVDefinition>();
+            LOVDefinitions.biddefs.set(block,bdefs);
+        }
+
+        bdefs.set(field,def);
     }
 
 
@@ -82,6 +146,23 @@ export class LOVDefinitions
     public static getid(block:string) : Map<string,LOVDefinition>
     {
         return(LOVDefinitions.biddefs.get(block.toLowerCase()));
+    }
+
+
+
+    public static getform(form:string, block:string) : Map<string,LOVDefinition>
+    {
+        let fdefs:Map<string,Map<string,LOVDefinition>> = LOVDefinitions.fdefs.get(form.toLowerCase());
+        if (fdefs != null) return(fdefs.get(block.toLowerCase()));
+        return(null);
+    }
+
+
+    public static getidform(form:string, block:string) : Map<string,LOVDefinition>
+    {
+        let fdefs:Map<string,Map<string,LOVDefinition>> = LOVDefinitions.fiddefs.get(form.toLowerCase());
+        if (fdefs != null) return(fdefs.get(block.toLowerCase()));
+        return(null);
     }
 
 
