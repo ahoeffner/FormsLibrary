@@ -10,10 +10,33 @@ export class LOVDefinitions
     private static defs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
     private static iddefs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
 
-    public static add(field:string,comp:any,func:string,params:string[])
+    public static add(block:boolean, field:string, inst:any, func:string, params:string[])
     {
+        let register:Map<string,LOVDefinition> = null;
         let parts:string[] = LOVDefinitions.split(field);
-        LOVDefinitions.defs.set(field,{inst: comp, func: func, params: params});
+
+        if (block)
+        {
+            if (parts.length == 0 || parts.length > 2)
+            {
+                console.log("@listofvalues on block must specify field[.id], not '"+field+"'");
+                return;
+            }
+
+            let fname:string = parts[0];
+
+            if (parts.length > 1)
+            {
+                fname = fname+"."+parts[1];
+                register = LOVDefinitions.iddefs;
+            }
+
+            let def:LOVDefinition = register.get(fname);
+            if (def != null) console.log("@listofvalues defined twice for "+fname+", ignored");
+
+            def = {inst: inst, func: func, params: params};
+            register.set(fname,def);
+        }
     }
 
 
