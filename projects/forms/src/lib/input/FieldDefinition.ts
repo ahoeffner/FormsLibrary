@@ -1,4 +1,5 @@
 import { Case } from "../database/Case";
+import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { FieldType } from "./FieldType";
 
 export interface FieldOptions
@@ -17,5 +18,6 @@ export interface FieldDefinition
     type?:FieldType;
     mandatory?:boolean;
     column?:boolean|string;
+    lov?:ListOfValuesFunction;
     fieldoptions?:FieldOptions;
 }

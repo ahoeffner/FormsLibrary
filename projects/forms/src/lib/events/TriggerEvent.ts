@@ -73,12 +73,15 @@ export class KeyTriggerEvent extends TriggerEvent
 export class FieldTriggerEvent extends TriggerEvent
 {
     private value$:any;
+    private id$:string;
     private field$:string;
     private previous$:any;
 
-    constructor(field:string, row:number, value:any, previous:any, jsevent?:any)
+    constructor(field:string, id:string, row:number, value:any, previous:any, jsevent?:any)
     {
         super(row,jsevent);
+
+        this.id$ = id;
         this.field$ = field;
         this.value$ = value;
         this.previous$ = previous;
@@ -92,6 +95,11 @@ export class FieldTriggerEvent extends TriggerEvent
     public get field() : string
     {
         return(this.field$);
+    }
+
+    public get id() : string
+    {
+        return(this.id$);
     }
 
     public get previous() : any

@@ -454,6 +454,9 @@ export class FormImpl
             // Then other defined fields (block or form)
             fieldidx.forEach((field) => {if (!fields.includes(field.name,0)) fields.push(field.name)});
 
+            // Field overrides
+            let overideidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
+
             // Set field properties and add undefined fields
             let bfieldlist:FieldInstance[] = bfields.get(block.alias);
             if (bfieldlist != null) bfieldlist.forEach((inst) =>
@@ -485,7 +488,11 @@ export class FormImpl
                     if (iddef != null) fdef = iddef;
                     else iddef = FieldDefinitions.getFieldOverride(block.clazz,id);
 
-                    if (iddef != null) fdef = iddef;
+                    if (iddef != null)
+                    {
+                        fdef = iddef;
+                        overideidx.set(id,iddef);
+                    }
                 }
 
                 let cdef:ColumnDefinition = colindex.get(""+fdef.column);
@@ -510,6 +517,10 @@ export class FormImpl
 
                 inst.definition = fdef;
             });
+
+            // Set all field definitions
+            block.setFieldDefinitions(fieldidx);
+            block.setFieldIdDefinitions(overideidx);
 
             // Create data-backing table
             let table:Table = null;

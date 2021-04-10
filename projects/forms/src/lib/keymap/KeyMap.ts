@@ -13,6 +13,8 @@ export interface KeyMap
     enter:string;
     escape:string;
 
+    listval:string;
+
     delete:string;
     dublicate:string;
     insertafter:string;
@@ -47,6 +49,8 @@ export class keymap
 {
     public static enter:string = null;
     public static escape:string = null;
+
+    public static listval:string = null;
 
     public static delete:string = null;
     public static dublicate:string = null;

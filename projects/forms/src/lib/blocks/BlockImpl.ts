@@ -12,10 +12,12 @@ import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
 import { DatabaseUsage } from "../database/DatabaseUsage";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
+import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 
 
 export class BlockImpl
@@ -36,6 +38,8 @@ export class BlockImpl
     private fields$:FieldInstance[] = [];
     private triggers:Triggers = new Triggers();
     private state:FormState = FormState.normal;
+    private fielddef:Map<string,FieldDefinition>;
+    private fieldiddef:Map<string,FieldDefinition>;
 
 
     constructor(public block?:Block)
@@ -155,6 +159,18 @@ export class BlockImpl
     }
 
 
+    public setFieldDefinitions(fielddef:Map<string,FieldDefinition>)
+    {
+        this.fielddef = fielddef;
+    }
+
+
+    public setFieldIdDefinitions(fielddef:Map<string,FieldDefinition>)
+    {
+        this.fieldiddef = fielddef;
+    }
+
+
     public get fields() : string[]
     {
         if (this.data == null) return(null);
@@ -255,7 +271,7 @@ export class BlockImpl
         if (!this.data.update(+record,column,value))
             return(false);
 
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,+record,value,previous);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
         this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
     }
 
@@ -375,13 +391,28 @@ export class BlockImpl
     }
 
 
-    public showListOfValues(lov:ListOfValues, row?:number) : void
+    public showListOfValues(field:string, id:string, row?:number) : void
     {
         if (row == null) row = this.row;
         if (!this.records[row].enabled) return;
 
+        let fdef:FieldDefinition = null;
+
+        if (id == null || id.trim().length == 0)
+        {
+            fdef = this.fielddef.get(field);
+            if (fdef.lov == null) return;
+        }
+        else
+        {
+            fdef = this.fieldiddef.get(field);
+            if (fdef.lov == null) return;
+        }
+
+        //let lov:ListOfValues = fdef.lov.clazz[fdef.lov]
+
         let record:number = +row+this.offset;
-        ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
+        //ListOfValuesImpl.show(this.app,[new BlockImpl(),new BlockImpl()],lov);
     }
 
 
@@ -662,7 +693,7 @@ export class BlockImpl
 
         this.data.update(+field.row+this.offset,field.name,field.value);
 
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,jsevent);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,jsevent);
 
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
             return(false);
@@ -768,7 +799,7 @@ export class BlockImpl
                     let fname:string = columns[c];
                     if (field != null) fname = field.name;
 
-                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,+r+this.offset,value,value);
+                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,null,+r+this.offset,value,value);
                     this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
                 }
 
@@ -828,7 +859,7 @@ export class BlockImpl
             this.row = field.row;
             this.records$[+field.row].current = true;
 
-            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
 
             if (!await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent))
                 return(false);
@@ -841,7 +872,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
 
             if (!await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
                 return(false);
@@ -863,7 +894,7 @@ export class BlockImpl
                 return(true);
 
             let previous:any = this.getValue(+field.row+this.offset,field.name);
-            trgevent = new FieldTriggerEvent(field.name,+field.row+this.offset,field.value,previous,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,event);
 
             this.invokeTriggers(Trigger.Typing,trgevent);
             return(true);
@@ -898,6 +929,12 @@ export class BlockImpl
 
                 this.focus();
             }
+        }
+
+        // ListOfValues / Datepicker
+        if (type == "key" && key == keymap.listval)
+        {
+
         }
 
         // Enter query

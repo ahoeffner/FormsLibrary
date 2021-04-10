@@ -6,7 +6,7 @@ export {hide} from './lib/annotations/hide';
 export {block} from './lib/annotations/block';
 export {alias} from './lib/annotations/alias';
 export {table} from './lib/annotations/table';
-export {field} from './lib/annotations/field';
+export {field} from './lib/annotations/fieldx';
 export {column} from './lib/annotations/column';
 export {wizard} from './lib/annotations/wizard';
 export {window} from './lib/annotations/window';
