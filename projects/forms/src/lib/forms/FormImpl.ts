@@ -540,23 +540,21 @@ export class FormImpl
             });
 
             let def:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
+            let ovf:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
             let lovs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
             let idlovs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
 
-            def = LOVDefinitions.get(block.name);
+            def = LOVDefinitions.getblock(block.name);
             if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
 
-            def = LOVDefinitions.get(block.alias);
+            def = LOVDefinitions.getblockid(block.name);
             if (def != null) def.forEach((lov,fld) => {lovs.set(fld,lov)});
 
-            def = LOVDefinitions.getid(block.name);
-            if (def != null) def.forEach((lov,fld) => {idlovs.set(fld,lov)});
+            ovf = LOVDefinitions.getform(this.name,block.name);
+            if (ovf != null) ovf.forEach((lov,fld) => {lovs.set(fld,lov)});
 
-            def = LOVDefinitions.getid(block.alias);
-            if (def != null) def.forEach((lov,fld) => {idlovs.set(fld,lov)});
-
-            lovs.forEach((lov,fld) => {console.log("lov "+fld)});
-            idlovs.forEach((lov,fld) => {console.log("idlov "+fld)});
+            ovf = LOVDefinitions.getidform(this.name,block.alias);
+            if (ovf != null) ovf.forEach((lov,fld) => {idlovs.set(fld,lov)});
 
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);

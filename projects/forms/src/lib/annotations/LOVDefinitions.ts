@@ -137,13 +137,13 @@ export class LOVDefinitions
     }
 
 
-    public static get(block:string) : Map<string,LOVDefinition>
+    public static getblock(block:string) : Map<string,LOVDefinition>
     {
         return(LOVDefinitions.bdefs.get(block.toLowerCase()));
     }
 
 
-    public static getid(block:string) : Map<string,LOVDefinition>
+    public static getblockid(block:string) : Map<string,LOVDefinition>
     {
         return(LOVDefinitions.biddefs.get(block.toLowerCase()));
     }
