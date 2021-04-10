@@ -216,9 +216,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.sblock.addTrigger(this,this.search,Trigger.Typing);
         this.rblock.addTrigger(this,this.prequery,Trigger.PreQuery);
-
-        this.rblock.addTrigger(this,this.search,Trigger.MouseClick);
-        this.rblock.addTrigger(this,this.search,Trigger.MouseDoubleClick);
+        this.rblock.addTrigger(this,this.onMouse,Trigger.MouseDoubleClick);
 
         this.rblock.navigable = false;
         this.filter.focus();
@@ -269,10 +267,15 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     }
 
 
+    public async onMouse(event:FieldTriggerEvent) : Promise<boolean>
+    {
+        this.picked(event.record);
+        return(true);
+    }
+
+
     public async onkey(event:KeyTriggerEvent) : Promise<boolean>
     {
-        console.log("event "+event.type);
-        
         if (event.type == "key" && event.field == "filter")
         {
             if (event.keymap == keymap.prevfield)
@@ -308,35 +311,18 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             if (event.field == "description")
                 record = event.record;
 
-            if (record >= 0)
-            {
-                console.log("chose "+this.rblock.getValue(record,"description"));
-                console.log("fields: "+this.rblock.fields);
-                console.log("columns: "+this.rblock.columns);
-                this.close(false);
-            }
+            if (record >= 0) this.picked(record);
         }
 
         return(true);
     }
 
 
-    private picked(event:KeyTriggerEvent) : void
+    private picked(record:number) : void
     {
-        let record:number = -1;
-
-        if (event.field == "filter" && this.rblock.fetched == 1)
-            record = 0;
-
-        if (event.field == "description")
-            record = event.record;
-
-        if (record >= 0)
-        {
-            console.log("chose "+this.rblock.getValue(record,"description"));
-            console.log("fields: "+this.rblock.fields);
-            console.log("columns: "+this.rblock.columns);
-            this.close(false);
-        }
+        console.log("chose "+this.rblock.getValue(record,"description"));
+        console.log("fields: "+this.rblock.fields);
+        console.log("columns: "+this.rblock.columns);
+        this.close(false);
     }
 }

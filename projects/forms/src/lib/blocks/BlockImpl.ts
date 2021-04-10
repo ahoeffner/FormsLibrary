@@ -398,6 +398,7 @@ export class BlockImpl
         if (row == null || row == -1)
             row = this.row;
 
+        if (!this.app.connected) return;
         if (!this.records[row].enabled) return;
 
         let ldef:LOVDefinition = null;
@@ -405,11 +406,13 @@ export class BlockImpl
 
         if (this.idlovs != null && id != null && id.trim().length > 0)
         {
+            console.log("id")
             id = id.trim().toLowerCase();
             ldef = this.idlovs.get(field+"."+id);
         }
         else if (this.lovs != null)
         {
+            console.log("nonid")
             ldef = this.lovs.get(field);
         }
 
