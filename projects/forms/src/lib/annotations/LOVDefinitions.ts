@@ -7,69 +7,87 @@ export interface LOVDefinition
 
 export class LOVDefinitions
 {
-    private static defs:Map<string,Map<string,LOVDefinition>> = new Map<string,Map<string,LOVDefinition>>();
-    private static iddefs:Map<string,Map<string,LOVDefinition>> = new Map<string,Map<string,LOVDefinition>>();
+    private static bdefs:Map<string,Map<string,LOVDefinition>> = new Map<string,Map<string,LOVDefinition>>();
+    private static biddefs:Map<string,Map<string,LOVDefinition>> = new Map<string,Map<string,LOVDefinition>>();
 
-    public static add(block:boolean, cname:string, field:string, inst:any, func:string, params:string[])
+    public static add(isblock:boolean, cname:string, fieldspec:string, inst:any, func:string, params:string[])
     {
+        let form:string = null;
+        let block:string = null;
+        let field:string = null;
+
         let register:Map<string,LOVDefinition> = null;
-        let parts:string[] = LOVDefinitions.split(field);
+        let parts:string[] = LOVDefinitions.split(fieldspec);
 
-        if (!block) cname = parts.shift();
-
-        if (parts.length == 0 || parts.length > 1)
+        if (isblock)
         {
-            console.log("@listofvalues must specify [alias.]field[.id], not '"+field+"'");
+            block = cname;
+        }
+        else
+        {
+            form = cname;
+            block = parts.shift();
+        }
+
+        if (parts.length == 0 || parts.length > 2)
+        {
+            console.log("@listofvalues must specify [alias.]field[.id], not '"+fieldspec+"'");
             return;
         }
 
-        let fname:string = parts.shift();
+        field = parts.shift();
+        if (parts.length > 0) field += "."+parts.shift();
 
+        console.log("form: "+form+" block: "+block+" field: "+field);
+
+/*
         if (parts.length == 0)
         {
-            register = LOVDefinitions.defs.get(cname);
+            register = LOVDefinitions.bdefs.get(cname);
 
             if (register == null)
             {
                 register = new Map<string,LOVDefinition>();
-                LOVDefinitions.defs.set(cname,register);
+                LOVDefinitions.bdefs.set(cname,register);
             }
         }
         else
         {
             fname = fname+"."+parts.shift();
-            register = LOVDefinitions.iddefs.get(cname);
+            register = LOVDefinitions.biddefs.get(cname);
 
             if (register == null)
             {
                 register = new Map<string,LOVDefinition>();
-                LOVDefinitions.iddefs.set(cname,register);
+                LOVDefinitions.biddefs.set(cname,register);
             }
         }
 
         let def:LOVDefinition = register.get(fname);
         if (def != null) console.log("@listofvalues defined twice for "+fname+", ignored");
 
+        console.log("listofvalues form: "+form+" block: "+cname+" field: "+fieldspec);
         def = {inst: inst, func: func, params: params};
         register.set(fname,def);
+*/
     }
 
 
     public static get(block:string) : Map<string,LOVDefinition>
     {
-        return(LOVDefinitions.defs.get(block.toLowerCase()));
+        return(LOVDefinitions.bdefs.get(block.toLowerCase()));
     }
 
 
     public static getid(block:string) : Map<string,LOVDefinition>
     {
-        return(LOVDefinitions.iddefs.get(block.toLowerCase()));
+        return(LOVDefinitions.biddefs.get(block.toLowerCase()));
     }
 
 
     private static split(name:string) : string[]
     {
-        let tokens:string[] = name.split(".");
+        let tokens:string[] = name.trim().split(".");
 
         for(let i = 0; i < tokens.length; i++)
             tokens[i] = tokens[i].trim().toLowerCase();

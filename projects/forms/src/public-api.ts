@@ -13,6 +13,7 @@ export {window} from './lib/annotations/window';
 export {connect} from './lib/annotations/connect';
 export {destroy} from './lib/annotations/destroy';
 export {database} from './lib/annotations/database';
+export {validate} from './lib/annotations/validate';
 export {disconnect} from './lib/annotations/disconnect';
 export {listofvalues} from './lib/annotations/listofvalues';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
