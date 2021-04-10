@@ -3,7 +3,7 @@ import { Utils } from "../utils/Utils";
 import { FormDefinitions } from "./FormDefinitions";
 
 
-export const show = (form:Form, func?:string) =>
+export const init = (form:Form, func?:string) =>
 {
     let utils:Utils = new Utils();
     let fname:string = utils.getName(form);
@@ -11,9 +11,9 @@ export const show = (form:Form, func?:string) =>
 
     if (ctype != "Form")
     {
-        console.log("@show can only be used on forms");
+        console.log("@init can only be used on forms, found on '"+fname+"'");
         return;
     }
 
-    FormDefinitions.setOnShow(fname,func);
+    FormDefinitions.setOnInit(fname,func);
 }

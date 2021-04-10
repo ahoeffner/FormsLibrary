@@ -3,7 +3,7 @@ import { Utils } from "../utils/Utils";
 import { FormDefinitions } from "./FormDefinitions";
 
 
-export const init = (form:Form, func?:string) =>
+export const destroy = (form:Form, func?:string) =>
 {
     let utils:Utils = new Utils();
     let fname:string = utils.getName(form);
@@ -11,9 +11,9 @@ export const init = (form:Form, func?:string) =>
 
     if (ctype != "Form")
     {
-        console.log("@init can only be used on forms");
+        console.log("@destroy can only be used on forms, found on '"+fname+"'");
         return;
     }
 
-    FormDefinitions.setOnInit(fname,func);
+    FormDefinitions.setOnDestroy(fname,func);
 }

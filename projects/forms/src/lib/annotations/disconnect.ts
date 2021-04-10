@@ -3,7 +3,7 @@ import { Utils } from "../utils/Utils";
 import { FormDefinitions } from "./FormDefinitions";
 
 
-export const destroy = (form:Form, func?:string) =>
+export const disconnect = (form:Form, func?:string) =>
 {
     let utils:Utils = new Utils();
     let fname:string = utils.getName(form);
@@ -11,9 +11,9 @@ export const destroy = (form:Form, func?:string) =>
 
     if (ctype != "Form")
     {
-        console.log("@destroy can only be used on forms");
+        console.log("@disconnect can only be used on forms, found on '"+fname+"'");
         return;
     }
 
-    FormDefinitions.setOnDestroy(fname,func);
+    FormDefinitions.setOnDisconnect(fname,func);
 }

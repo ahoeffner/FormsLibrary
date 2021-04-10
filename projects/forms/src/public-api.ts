@@ -1,8 +1,8 @@
 export {key} from './lib/annotations/key';
 export {form} from './lib/annotations/form';
-export {init} from './lib/annotations/INITx';
-export {show} from './lib/annotations/SHOWx';
-export {hide} from './lib/annotations/HIDEx';
+export {init} from './lib/annotations/init';
+export {show} from './lib/annotations/show';
+export {hide} from './lib/annotations/hide';
 export {block} from './lib/annotations/block';
 export {alias} from './lib/annotations/alias';
 export {table} from './lib/annotations/table';
@@ -10,10 +10,10 @@ export {field} from './lib/annotations/field';
 export {column} from './lib/annotations/column';
 export {wizard} from './lib/annotations/wizard';
 export {window} from './lib/annotations/window';
-export {connect} from './lib/annotations/CONNECTx';
-export {destroy} from './lib/annotations/DESTROYx';
+export {connect} from './lib/annotations/connect';
+export {destroy} from './lib/annotations/destroy';
 export {database} from './lib/annotations/database';
-export {disconnect} from './lib/annotations/DISCONNECTx';
+export {disconnect} from './lib/annotations/disconnect';
 export {listofvalues} from './lib/annotations/listofvalues';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 

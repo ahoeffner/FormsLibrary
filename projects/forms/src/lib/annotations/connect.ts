@@ -11,7 +11,7 @@ export const connect = (form:Form, func?:string) =>
 
     if (ctype != "Form")
     {
-        console.log("@connect can only be used on forms");
+        console.log("@connect can only be used on forms, found on '"+fname+"'");
         return;
     }
 

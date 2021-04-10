@@ -3,7 +3,7 @@ import { Utils } from "../utils/Utils";
 import { FormDefinitions } from "./FormDefinitions";
 
 
-export const hide = (form:Form, func?:string) =>
+export const show = (form:Form, func?:string) =>
 {
     let utils:Utils = new Utils();
     let fname:string = utils.getName(form);
@@ -11,9 +11,9 @@ export const hide = (form:Form, func?:string) =>
 
     if (ctype != "Form")
     {
-        console.log("@hide can only be used on forms");
+        console.log("@show can only be used on forms, found on '"+fname+"'");
         return;
     }
 
-    FormDefinitions.setOnHide(fname,func);
+    FormDefinitions.setOnShow(fname,func);
 }
