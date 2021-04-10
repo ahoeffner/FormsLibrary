@@ -13,7 +13,6 @@ export class Field
     private block$:BlockImpl;
     private current$:boolean = false;
     private enabled$:boolean = false;
-    private readonly$:boolean = true;
     private field:FieldInstance = null;
     private fields$:FieldInstance[] = [];
     private cfields$:FieldInstance[] = [];
@@ -91,7 +90,28 @@ export class Field
 
     public get readonly() : boolean
     {
-        return(this.readonly$);
+        for (let i = 0; i < this.fields.length; i++)
+        {
+            if (this.fields[i].enabled)
+            {
+                if (!this.fields[i].readonly)
+                    return(false);
+            }
+        }
+
+        if (this.current$)
+        {
+            for (let i = 0; i < this.cfields.length; i++)
+            {
+                if (this.cfields[i].enabled)
+                {
+                    if (!this.cfields[i].readonly)
+                        return(false);
+                }
+            }
+        }
+
+        return(true);
     }
 
     public get current() : boolean
@@ -220,7 +240,6 @@ export class Field
     public enable(readonly:boolean) : void
     {
         this.enabled$ = true;
-        this.readonly$ = readonly;
         this.fields.forEach((field) => {field.readonly = readonly; field.enable();});
         if (this.current) this.cfields.forEach((field) => {field.readonly = readonly; field.enable();});
     }
@@ -229,7 +248,6 @@ export class Field
     public disable() : void
     {
         this.enabled$ = false;
-        this.readonly$ = false;
         this.fields.forEach((field) => {field.disable()});
         if (this.current) this.cfields.forEach((field) =>  {field.disable()});
     }

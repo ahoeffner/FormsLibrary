@@ -82,6 +82,14 @@ export class Record
         return(this.enabled$);
     }
 
+    public get readonly() :boolean
+    {
+        for(let i = 0; i < this.fields$.length; i++)
+            if (!this.fields$[i].readonly) return(false);
+
+        return(true);
+    }
+
     public enable(readonly?:boolean) : void
     {
         this.enabled$ = true;

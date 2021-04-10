@@ -417,6 +417,9 @@ export class BlockImpl
 
             let blocks:BlockImpl[] = [this,new BlockImpl(),new BlockImpl()];
 
+            if (!lov.force && this.records[row].getField(field)?.readonly)
+                return;
+
             ListOfValuesImpl.show(this.app,blocks,lov);
         }
     }

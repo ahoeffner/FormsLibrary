@@ -18,5 +18,6 @@ export interface ListOfValues
     rows?:number;
     bindvalues?: BindValue[];
 
+    force?:boolean;
     fieldmap:Map<string,string>;
 }
