@@ -507,6 +507,7 @@ export class ApplicationImpl
         if
         (
             key == keymap.delete          ||
+            key == keymap.listval         ||
             key == keymap.insertafter     ||
             key == keymap.insertbefore    ||
             key == keymap.enterquery      ||
