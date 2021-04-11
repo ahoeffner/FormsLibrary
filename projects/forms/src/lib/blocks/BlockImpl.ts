@@ -1045,7 +1045,14 @@ export class BlockImpl
 
         // Next/Previous field
         if (type == "key" && (key == keymap.nextfield || key == keymap.prevfield))
-            if (field.dirty) this.validatefield(field);
+        {
+            if (field.dirty)
+            {
+                // change doesn't fire if field is changed, but reset again
+                let previous:any = this.data.getValue(+field.row+this.offset,field.name)
+                if (previous == field.value) await this.validatefield(field);
+            }
+        }
 
         // Next record
         if (type == "key" && key == keymap.nextrecord)
