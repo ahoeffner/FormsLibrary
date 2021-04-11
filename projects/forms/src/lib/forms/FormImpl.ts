@@ -317,11 +317,14 @@ export class FormImpl
     }
 
 
+    private creationerror:boolean = false;
     public newForm(container:Container) : void
     {
         // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
         blockdef.forEach((bdef) => {this.createBlock(bdef)});
+
+        if (this.creationerror) return;
 
         // DatabaseUsage for this form
         let fusage:DatabaseUsage = DatabaseDefinitions.getFormUsage(this.name);
@@ -866,7 +869,17 @@ export class FormImpl
 
         if (impl == null)
         {
-            console.log(this.name+" cannot create instance of "+blockdef.alias);
+            this.creationerror = true;
+            console.log(this.name+" cannot create instance of "+blockdef.alias+" bailing out");
+            return;
+        }
+
+        let cname:string = block.constructor.name;
+
+        if (!(impl instanceof BlockImpl))
+        {
+            this.creationerror = true;
+            console.log("component: "+cname+" is not an instance of block bailing out");
             return;
         }
 
