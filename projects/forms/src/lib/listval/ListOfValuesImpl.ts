@@ -222,7 +222,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.filter.focus();
 
         if (this.lov.autoquery)
+        {
+            this.last = " ";
             this.search(null);
+        }
     }
 
 
