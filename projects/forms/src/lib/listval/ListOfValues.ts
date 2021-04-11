@@ -16,6 +16,7 @@ export interface ListOfValues
 
     sql:string;
     rows?:number;
+    autoquery:boolean;
     bindvalues?: BindValue[];
 
     force?:boolean;

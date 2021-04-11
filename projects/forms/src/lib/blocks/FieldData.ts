@@ -144,7 +144,7 @@ export class FieldData
     {
         if (+record < 0 || +record >= +this.data.length)
         {
-            console.log(column+"["+record+"] record does not exist");
+            console.log("get "+column+"["+record+"] record does not exist");
             return(null);
         }
 
@@ -152,7 +152,7 @@ export class FieldData
 
         if (colno == null)
         {
-            console.log(column+"["+record+"] column does not exist");
+            console.log("get "+column+"["+record+"] column does not exist");
             return(null);
         }
 
@@ -217,11 +217,11 @@ export class FieldData
     }
 
 
-    public update(record:number, column:string, value:any) : boolean
+    public setValue(record:number, column:string, value:any) : boolean
     {
         if (record < 0 || record >= this.data.length)
         {
-            console.log(column+"["+record+"] row does not exist");
+            console.log("set "+column+"["+record+"] row does not exist");
             return(false);
         }
 
@@ -229,7 +229,7 @@ export class FieldData
 
         if (colno == null)
         {
-            console.log(column+"["+record+"] column does not exist");
+            console.log("set "+column+"["+record+"] column does not exist");
             return(false);
         }
 

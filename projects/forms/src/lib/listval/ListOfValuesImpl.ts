@@ -220,10 +220,13 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.rblock.navigable = false;
         this.filter.focus();
+
+        if (this.lov.autoquery)
+            this.search(null);
     }
 
 
-    private async search(event:FieldTriggerEvent) : Promise<boolean>
+    private async search(_event:FieldTriggerEvent) : Promise<boolean>
     {
         this.execute();
         return(true);
@@ -322,7 +325,6 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
     {
         this.lov.fieldmap.forEach((col,fld) =>
         {
-            console.log("copy from "+fld+" to "+col)
             let val:any = this.rblock.getValue(record,fld);
             this.iblock.setValue(this.iblock.record,col,val);
         });

@@ -267,7 +267,7 @@ export class BlockImpl
 
         let previous:any = this.data.getValue(+record,column);
 
-        if (!this.data.update(+record,column,value))
+        if (!this.data.setValue(+record,column,value))
             return(false);
 
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
@@ -701,7 +701,7 @@ export class BlockImpl
         if (!await this.lockrecord(+field.row+this.offset))
             return(false);
 
-        this.data.update(+field.row+this.offset,field.name,field.value);
+        this.data.setValue(+field.row+this.offset,field.name,field.value);
 
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,jsevent);
 
