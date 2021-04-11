@@ -56,8 +56,6 @@ export class ApplicationImpl
         this.instances = new InstanceControl(this.formsctl);
         this.setFormsDefinitions(FormDefinitions.getForms());
         this.state.appmenu = this.createmenu(this.state.menu);
-
-        this.showLinkedForm();
     }
 
 
@@ -72,6 +70,7 @@ export class ApplicationImpl
             this.config$.setTheme(this.config$.others["theme"]);
 
         this.ready--;
+        this.showLinkedForm();
     }
 
 
