@@ -59,7 +59,7 @@ export class FieldData
     public get columns() : string[]
     {
         if (this.table == null) return(null);
-        else return(this.table.describe());
+        else return(this.table.columns);
     }
 
 
@@ -69,49 +69,40 @@ export class FieldData
     }
 
 
-    public async lock(row:number) : Promise<any>
+    public async lock(record:number) : Promise<any>
     {
-        if (row < 0 || row >= this.data.length)
-            return({status: "failed", message: "row "+row+" does not exist"});
+        if (record < 0 || record >= this.data.length)
+            return({status: "failed", message: "row "+record+" does not exist"});
 
-        if (this.data[row].locked)
-            return({status: "failed", message: "row "+row+" already locked"});
+        if (this.data[record].locked)
+            return({status: "failed", message: "row "+record+" already locked"});
 
         if (this.table == null)
             return({status: "ok"});
 
-        this.data[row].locked = true;
+        this.data[record].locked = true;
         return({status: "ok"});
     }
 
 
-    public locked(row:number) : boolean
+    public locked(record:number) : boolean
     {
-        if (row < 0 || row >= this.data.length) return(false);
-        return(this.data[+row].locked);
+        if (record < 0 || record >= this.data.length) return(false);
+        return(this.data[+record].locked);
     }
 
 
-    public async validate(row:number) : Promise<any>
+    public validated(record:number) : boolean
     {
-        if (row < 0 || row >= this.data.length)
-            return({status: "failed", message: "row "+row+" does not exist"});
+        if (record < 0 || record >= this.data.length) return(true);
 
-        if (this.data[+row].validated)
-            return({status: "ok"});
+        let row:Row = this.data[record];
 
-        if (this.table == null)
-            return({status: "ok"});
+        for (let i = 0; i < row.fields.length; i++)
+            if (!row.fields[i].validated) return(false);
 
-        this.data[+row].validated = true;
-        return({status: "ok"});
-    }
-
-
-    public validated(row:number) : boolean
-    {
-        if (row < 0 || row >= this.data.length) return(false);
-        return(this.data[+row].validated);
+        console.log("record "+record+" validated "+row.validated)
+        return(row.validated);
     }
 
 
@@ -161,59 +152,54 @@ export class FieldData
     }
 
 
-    public state(row:number, state?:RecordState) : RecordState
+    public getValidated(record:number, column?:string) : boolean
     {
-        if (state != null) this.data[row].state = state;
-        return(this.data[row].state);
+        if (record < 0 || record >= this.data.length)
+        {
+            console.log("set "+column+"["+record+"] row does not exist");
+            return(true);
+        }
+
+        let rec:Row = this.data[+record];
+        if (column == null) return(rec.validated);
+
+        let colno:number = this.index.get(column.toLowerCase());
+
+        if (colno == null)
+        {
+            console.log("set "+column+"["+record+"] column does not exist");
+            return;
+        }
+
+        return(rec.fields[+colno].validated);
     }
 
 
-    public parseQuery(keys:Key[], fields:Field[]) : Statement
+    public setValidated(record:number, column?:string) : void
     {
-        if (this.table == null) return(null);
-        return(this.table.parseQuery(keys,fields));
-    }
+        if (record < 0 || record >= this.data.length)
+        {
+            console.log("set "+column+"["+record+"] row does not exist");
+            return;
+        }
 
+        let rec:Row = this.data[+record];
 
-    public async executequery(stmt:Statement) : Promise<any>
-    {
-        this.query = stmt;
-        if (this.table == null) return({status: "ok"});
-        return(this.table.executequery(stmt));
-    }
+        if (column == null)
+        {
+            rec.validated = true;
+            return;
+        }
 
+        let colno:number = this.index.get(column.toLowerCase());
 
-    public insert(row:number) : boolean
-    {
-        let data:Row[] = [];
-        if (row > this.data.length) row = this.data.length;
+        if (colno == null)
+        {
+            console.log("set "+column+"["+record+"] column does not exist");
+            return;
+        }
 
-        data = this.data.slice(0,row);
-
-        data[+row] = new Row(++this.scn,this);
-        data[+row].state = RecordState.insert;
-
-        data = data.concat(this.data.slice(row,this.data.length));
-
-        this.data = data;
-        return(true);
-    }
-
-
-    public delete(row:number) : boolean
-    {
-        let data:Row[] = [];
-
-        if (row < 0 || row >= this.data.length)
-            return(false);
-
-        this.data[row].scn = ++this.scn;
-
-        data = this.data.slice(0,row);
-        data = data.concat(this.data.slice(+row+1,this.data.length));
-
-        this.data = data;
-        return(true);
+        rec.fields[+colno].validated = true;
     }
 
 
@@ -238,12 +224,75 @@ export class FieldData
         if (rec.fields[+colno].value$ == value)
             return(false);
 
-        rec.validated = false;
-        let scn:number = ++this.scn;
+        let scn:number = 0;
+
+        if (this.table != null && +colno < this.table.columns.length)
+        {
+            scn = ++this.scn;
+            rec.validated = false;
+            console.log("invalidate "+record);
+            rec.fields[+colno].validated = false;
+        }
 
         rec.scn = scn;
         rec.fields[+colno].setValue(scn,value);
 
+        return(true);
+    }
+
+
+    public state(record:number, state?:RecordState) : RecordState
+    {
+        if (state != null) this.data[record].state = state;
+        return(this.data[record].state);
+    }
+
+
+    public parseQuery(keys:Key[], fields:Field[]) : Statement
+    {
+        if (this.table == null) return(null);
+        return(this.table.parseQuery(keys,fields));
+    }
+
+
+    public async executequery(stmt:Statement) : Promise<any>
+    {
+        this.query = stmt;
+        if (this.table == null) return({status: "ok"});
+        return(this.table.executequery(stmt));
+    }
+
+
+    public insert(record:number) : boolean
+    {
+        let data:Row[] = [];
+        if (record > this.data.length) record = this.data.length;
+
+        data = this.data.slice(0,record);
+
+        data[+record] = new Row(++this.scn,this);
+        data[+record].state = RecordState.insert;
+
+        data = data.concat(this.data.slice(record,this.data.length));
+
+        this.data = data;
+        return(true);
+    }
+
+
+    public delete(record:number) : boolean
+    {
+        let data:Row[] = [];
+
+        if (record < 0 || record >= this.data.length)
+            return(false);
+
+        this.data[record].scn = ++this.scn;
+
+        data = this.data.slice(0,record);
+        data = data.concat(this.data.slice(+record+1,this.data.length));
+
+        this.data = data;
         return(true);
     }
 
@@ -354,6 +403,7 @@ class Column
 {
     public value$:any;
     public scn:number = 0;
+    public validated:boolean = true;
 
     constructor(scn:number, value?:any)
     {

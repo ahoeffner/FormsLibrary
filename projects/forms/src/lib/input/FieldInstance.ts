@@ -114,12 +114,12 @@ export class FieldInstance implements AfterViewInit
         else return(this.clazz.value);
     }
 
-    public get field() : Field
+    public get parent() : Field
     {
         return(this.fgroup$);
     }
 
-    public set field(field:Field)
+    public set parent(field:Field)
     {
         this.fgroup$ = field;
     }
@@ -203,6 +203,11 @@ export class FieldInstance implements AfterViewInit
     public get valid() : boolean
     {
         return(this.valid$);
+    }
+
+    public get dirty() : boolean
+    {
+        return(!this.firstchange);
     }
 
     public validate() : boolean

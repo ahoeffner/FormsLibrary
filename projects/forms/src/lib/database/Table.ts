@@ -22,7 +22,7 @@ export class Table
     private dates:boolean[] = [];
     private fielddata$:FieldData;
     private table:TableDefinition;
-    private columns:ColumnDefinition[];
+    private columns$:ColumnDefinition[];
     private fielddef:Map<string,FieldDefinition>;
     private index:Map<string,ColumnDefinition> = new Map<string,ColumnDefinition>();
 
@@ -33,21 +33,21 @@ export class Table
         this.conn = conn;
         this.table = table;
         this.fetch$ = rows;
-        this.columns = columns;
+        this.columns$ = columns;
         this.fielddef = fielddef;
         this.cursor = table.name + Date.now();
 
         if (this.key == null)
         {
             this.key = new Key("primary");
-            this.columns.forEach((col) => {this.key.add(col.name)});
+            this.columns$.forEach((col) => {this.key.add(col.name)});
         }
 
         this.fetch$ *= 4;
         if (this.fetch$ < 10) this.fetch$ = 10;
 
         this.cnames = [];
-        this.columns.forEach((column) =>
+        this.columns$.forEach((column) =>
         {
             this.cnames.push(column.name);
             this.index.set(column.name,column);
@@ -61,7 +61,7 @@ export class Table
     }
 
 
-    public describe() : string[]
+    public get columns() : string[]
     {
         return(this.cnames);
     }

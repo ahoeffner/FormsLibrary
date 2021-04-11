@@ -1,6 +1,7 @@
 import { Key } from "./Key";
 import { Block } from "./Block";
 import { Field } from "../input/Field";
+import { Utils } from "../utils/Utils";
 import { FieldData } from "./FieldData";
 import { keymap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
@@ -16,6 +17,7 @@ import { TriggerFunction } from "../events/TriggerFunction";
 import { LOVDefinition } from "../annotations/LOVDefinitions";
 import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
+import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 
 
@@ -205,6 +207,28 @@ export class BlockImpl
     public setIdListOfValues(lovs:Map<string,LOVDefinition>) : void
     {
         this.idlovs = lovs;
+    }
+
+
+    public addListOfValues(form:boolean, func:ListOfValuesFunction, field:string, id?:string) : void
+    {
+        let utils:Utils = new Utils();
+
+        let lovdef:LOVDefinition = null;
+        let params:string[] = utils.getParams(func);
+
+        if (!form) lovdef = {inst: this.block, func: func.name, params: params};
+        else       lovdef = {inst: this.form.form, func: func.name, params: params};
+
+        if (id == null) this.lovs.set(field.toLowerCase(),lovdef);
+        else            this.idlovs.set(field.toLowerCase(),lovdef);
+    }
+
+
+    public removeListOfValues(field:string, id?:string) : void
+    {
+        if (id == null) this.lovs.delete(field.toLowerCase());
+        else this.idlovs.delete(field.toLowerCase()+"."+id.toLowerCase());
     }
 
 
@@ -667,54 +691,44 @@ export class BlockImpl
 
     public async validate() : Promise<boolean>
     {
-        if (this.data == null)
-            return(true);
-
-        if (this.data.database && !this.app.connected)
-            return(true);
-
-        if (this.records.length == 0)
-            return(true);
-
-        let rec:Record = this.records[this.row];
-        if (!rec.enabled) return(true);
-
-        if (!await this.validatefield(this.field,null))
+        if (!await this.validatefield(this.field))
             return(false);
 
         return(await this.validaterecord());
     }
 
 
-    private async validatefield(field:FieldInstance, jsevent:any) : Promise<boolean>
+    private async validatefield(field:FieldInstance) : Promise<boolean>
     {
         if (field == null) return(true);
         if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
         if (this.records[this.row].state == RecordState.na) return(true);
 
-        let previous:any = this.getValue(+field.row+this.offset,field.name);
+        if (!this.field.validate())
+        {
+            field.valid = false;
+            return(false);
+        }
 
-        if (previous == field.value) return(true);
-        if (!this.field.field.validate()) return(false);
+        if (!field.dirty) return(this.data.getValidated(+field.row+this.offset,field.name));
+
+        let previous:any = this.data.getValue(+field.row+this.offset,field.name)
+        this.data.setValue(+field.row+this.offset,field.name,field.value);
+
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,null);
+        if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
+        {
+            field.valid = false;
+            return(false);
+        }
+
+        this.data.setValidated(+field.row+this.offset,field.name);
 
         if (!await this.lockrecord(+field.row+this.offset))
             return(false);
 
-        this.data.setValue(+field.row+this.offset,field.name,field.value);
-
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,jsevent);
-
-        if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
-            return(false);
-
-        if (!await this.invokeTriggers(Trigger.WhenValidateField,trgevent))
-            return(false);
-
         if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
-            return(false);
-
-        if (!await this.invokeTriggers(Trigger.PostChange,trgevent))
             return(false);
 
         return(true);
@@ -725,27 +739,23 @@ export class BlockImpl
     {
         if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
+        if (this.records[this.row].state == RecordState.na) return(true);
 
         let rec:Record = this.records[this.row];
         if (rec.state == RecordState.na) return(true);
-
-        if (!rec.validate()) return(false);
         if (this.data.validated(this.record)) return(true);
+
+        console.log("validate record");
 
         let trgevent:TriggerEvent = new TriggerEvent(this.record,null);
 
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
-        let response:any = await this.data.validate(this.record);
-
-        if (response["status"] == "failed")
-        {
-            this.alert(JSON.stringify(response),"Validate Record");
-            return(false);
-        }
-
         rec.state = RecordState.update;
+        this.data.setValidated(this.record);
+
+        // update field properties
         rec.enable(false);
 
         return(true);
@@ -870,11 +880,7 @@ export class BlockImpl
             this.records$[+field.row].current = true;
 
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
-
-            if (!await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent))
-                return(false);
-
-            return(await this.invokeTriggers(Trigger.PreField,trgevent));
+            return(await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent));
         }
 
         if (type == "blur")
@@ -884,10 +890,7 @@ export class BlockImpl
 
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
 
-            if (!await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent))
-                return(false);
-
-            return(await this.invokeTriggers(Trigger.PostField,trgevent));
+            return(await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent));
         }
 
         if (type == "fchange")
@@ -906,8 +909,7 @@ export class BlockImpl
             let previous:any = this.getValue(+field.row+this.offset,field.name);
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,event);
 
-            this.invokeTriggers(Trigger.Typing,trgevent);
-            return(true);
+            return(this.invokeFieldTriggers(Trigger.Typing,field.name,trgevent));
         }
 
         if (type == "change")
@@ -915,7 +917,7 @@ export class BlockImpl
             // Current row field firing after move
             if (field.row != this.row) return(true);
 
-            if (!await this.validatefield(field,event))
+            if (!await this.validatefield(field))
             {
                 this.field.focus();
                 return(false);
@@ -1038,6 +1040,10 @@ export class BlockImpl
             return(true);
         }
 
+        // Next/Previous field
+        if (type == "key" && (key == keymap.nextfield || key == keymap.prevfield))
+            if (field.dirty) this.validatefield(field);
+
         // Next record
         if (type == "key" && key == keymap.nextrecord)
         {
@@ -1146,13 +1152,13 @@ export class BlockImpl
         if (type == "click")
         {
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
-            return(await this.invokeTriggers(Trigger.MouseClick,trgevent,key));
+            return(await this.invokeFieldTriggers(Trigger.MouseClick,field.name,trgevent,key));
         }
 
         if (type == "dblclick")
         {
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
-            return(await this.invokeTriggers(Trigger.MouseDoubleClick,trgevent,key));
+            return(await this.invokeFieldTriggers(Trigger.MouseDoubleClick,field.name,trgevent,key));
         }
 
         return(true);

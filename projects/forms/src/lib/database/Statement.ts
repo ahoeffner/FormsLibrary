@@ -4,11 +4,11 @@ import { Condition } from "./Condition";
 
 export enum SQLType
 {
+    call,
     select,
     insert,
     update,
-    delete,
-    function
+    delete
 }
 
 
@@ -52,7 +52,7 @@ export class Statement
 
         if (this.sql$ != null)
         {
-            this.type$ = SQLType.function;
+            this.type$ = SQLType.call;
             let test:string = this.sql$.substring(0,7).trim().toLowerCase();
 
             if (test == "select") this.type$ = SQLType.select;
@@ -74,7 +74,7 @@ export class Statement
 
     public isFunction() : boolean
     {
-        return(this.type == SQLType.function);
+        return(this.type == SQLType.call);
     }
 
     public isSelect() : boolean

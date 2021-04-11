@@ -9,6 +9,7 @@ import { Statement } from "../database/Statement";
 import { Container } from "../container/Container";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
+import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 
 
 export interface CallBack
@@ -96,6 +97,12 @@ export class Form implements OnInit, AfterViewInit
         let impl:BlockImpl = this._impl_.getBlock(block);
         if (impl != null) return(impl.block);
         return(null);
+    }
+
+    public addListOfValues(block:string, func:ListOfValuesFunction, field:string, id?:string) :  void
+    {
+        let impl:BlockImpl = this._impl_.getBlock(block);
+        if (impl != null) impl.addListOfValues(true,func,field,id);
     }
 
     public newform(form:any, parameters?:Map<string,any>) : void

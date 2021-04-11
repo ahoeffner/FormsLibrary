@@ -130,7 +130,7 @@ export class Field
         });
         else this.cfields.forEach((inst) =>
         {
-            inst.field = this;
+            inst.parent = this;
             inst.row = this.row;
             inst.value = this.value$;
 
@@ -192,7 +192,7 @@ export class Field
 
     public add(field:FieldInstance) : void
     {
-        field.field = this;
+        field.parent = this;
 
         if (field.row == -1)
         {

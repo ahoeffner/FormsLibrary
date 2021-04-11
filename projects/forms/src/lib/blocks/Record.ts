@@ -96,16 +96,6 @@ export class Record
         this.fields$.forEach((field) => {field.enable(readonly)});
     }
 
-    public validate() : boolean
-    {
-        for(let i = 0; i < this.fields.length; i++)
-        {
-            if (!this.fields[i].validate())
-                return(false);
-        }
-        return(true);
-    }
-
     public disable() : void
     {
         this.enabled$ = false;

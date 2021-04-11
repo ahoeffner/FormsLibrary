@@ -232,7 +232,8 @@ export class Triggers
             }
         }
 
-        return(true);
+
+        return(this.invokeTriggers(type,event,key));
     }
 
 

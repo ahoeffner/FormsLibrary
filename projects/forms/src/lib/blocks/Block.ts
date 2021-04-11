@@ -4,6 +4,7 @@ import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 
 
 export class Block
@@ -120,6 +121,13 @@ export class Block
     {
         return(this._impl_.execute(stmt,firstrow,firstcolumn));
     }
+
+
+    public addListOfValues(func:ListOfValuesFunction, field:string, id?:string) :  void
+    {
+        this._impl_.addListOfValues(false,func,field,id);
+    }
+
 
     public addTrigger(listener:TriggerFunction, types:Trigger|Trigger[]) : void
     {

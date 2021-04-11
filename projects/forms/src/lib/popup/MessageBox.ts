@@ -79,7 +79,7 @@ export class MessageBox implements Popup, AfterViewInit
     @ViewChild("msg", {read: ElementRef}) private msgelem: ElementRef;
     @ViewChild("accept", {read: ElementRef}) private acceptelem: ElementRef;
 
-    
+
     public static show(app:ApplicationImpl, message:string, title?:string, width?:string, height?:string)
     {
         let pinst:PopupInstance = new PopupInstance();
@@ -175,6 +175,13 @@ export class MessageBox implements Popup, AfterViewInit
         this.btn.addEventListener("keydown",() => {this.close(false)});
 
         this.msg.innerHTML = this.message;
-        setTimeout(() => {this.btn.focus()},5);
+        this.keepFocus(0);
+    }
+
+
+    private keepFocus(delay:number) : void
+    {
+        this.btn.focus();
+        setTimeout(() => {this.keepFocus(delay+1)},delay);
     }
 }
