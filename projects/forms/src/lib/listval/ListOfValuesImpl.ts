@@ -320,9 +320,13 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     private picked(record:number) : void
     {
-        console.log("chose "+this.rblock.getValue(record,"description"));
-        console.log("fields: "+this.rblock.fields);
-        console.log("columns: "+this.rblock.columns);
+        this.lov.fieldmap.forEach((col,fld) =>
+        {
+            console.log("copy from "+fld+" to "+col)
+            let val:any = this.rblock.getValue(record,fld);
+            this.iblock.setValue(this.iblock.record,col,val);
+        });
+
         this.close(false);
     }
 }

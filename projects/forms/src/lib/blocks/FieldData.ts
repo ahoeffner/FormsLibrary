@@ -48,7 +48,11 @@ export class FieldData
 
     public set fields(fields:string[])
     {
+        this.index.clear();
         this.fields$ = fields;
+
+        for(let i = 0; i < fields.length; i++)
+            this.index.set(fields[i].toLowerCase(),i);
     }
 
 
@@ -136,17 +140,23 @@ export class FieldData
     }
 
 
-    public getValue(row:number, column:string) : any
+    public getValue(record:number, column:string) : any
     {
-        if (row < 0 || row >= this.data.length)
-            return(false);
+        if (+record < 0 || +record >= +this.data.length)
+        {
+            console.log(column+"["+record+"] record does not exist");
+            return(null);
+        }
 
         let colno:number = this.index.get(column.toLowerCase());
 
         if (colno == null)
-             return(false);
+        {
+            console.log(column+"["+record+"] column does not exist");
+            return(null);
+        }
 
-        let rec:Row = this.data[+row];
+        let rec:Row = this.data[+record];
         return(rec.fields[+colno].value$);
     }
 
@@ -207,17 +217,23 @@ export class FieldData
     }
 
 
-    public update(row:number, column:string, value:any) : boolean
+    public update(record:number, column:string, value:any) : boolean
     {
-        if (row < 0 || row >= this.data.length)
+        if (record < 0 || record >= this.data.length)
+        {
+            console.log(column+"["+record+"] row does not exist");
             return(false);
+        }
 
         let colno:number = this.index.get(column.toLowerCase());
 
         if (colno == null)
+        {
+            console.log(column+"["+record+"] column does not exist");
             return(false);
+        }
 
-        let rec:Row = this.data[+row];
+        let rec:Row = this.data[+record];
 
         if (rec.fields[+colno].value$ == value)
             return(false);
