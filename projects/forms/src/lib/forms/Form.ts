@@ -189,7 +189,6 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.newForm(container);
     }
 
-
     public alert(message:string, title?:string, width?:string, height?:string) : void
     {
         if (title == null) title = this.name;

@@ -34,8 +34,8 @@ export const trigger = (trigger:Trigger,field:string|string[]) =>
         {
             let trg:TriggerDefinition =
             {
-                inst: comp,
                 field: fld,
+                block: block,
                 params: params,
                 func: comp[func],
                 trigger: trigger

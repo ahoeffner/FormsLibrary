@@ -3,8 +3,8 @@ import { TriggerFunction } from "../events/TriggerFunction";
 
 export interface TriggerDefinition
 {
-    inst:any;
     field:string;
+    block:boolean;
     trigger:Trigger;
     params:string[];
     func:TriggerFunction;

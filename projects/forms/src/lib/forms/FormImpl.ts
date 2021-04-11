@@ -564,7 +564,12 @@ export class FormImpl
             let ftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormTriggers(this.name,block.alias);
 
             ftriggers.forEach((def,trg) => {btriggers.set(trg,def)});
-            btriggers.forEach((def) => {block["triggers"].addTrigger(def.inst, def.func, def.trigger, def.field);});
+
+            btriggers.forEach((def) =>
+            {
+                if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field)
+                else            block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field);
+            });
 
             // Create data-backing table
             let table:Table = null;

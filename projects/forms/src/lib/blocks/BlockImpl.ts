@@ -691,6 +691,7 @@ export class BlockImpl
         if (field == null) return(true);
         if (this.data == null) return(true);
         if (this.state == FormState.entqry) return(true);
+        if (this.records[this.row].state == RecordState.na) return(true);
 
         let previous:any = this.getValue(+field.row+this.offset,field.name);
 
