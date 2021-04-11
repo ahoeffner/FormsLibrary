@@ -743,9 +743,12 @@ export class BlockImpl
 
         let rec:Record = this.records[this.row];
         if (rec.state == RecordState.na) return(true);
-        if (this.data.validated(this.record)) return(true);
 
-        console.log("validate record");
+        // Check fields is validated
+        if (!this.data.validated(this.record,true)) return(false);
+
+        // Check record is validated
+        if (this.data.validated(this.record,false)) return(true);
 
         let trgevent:TriggerEvent = new TriggerEvent(this.record,null);
 

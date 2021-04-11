@@ -92,19 +92,21 @@ export class FieldData
     }
 
 
-    public validated(record:number) : boolean
+    public validated(record:number, fields:boolean) : boolean
     {
         if (record < 0 || record >= this.data.length) return(true);
 
         let row:Row = this.data[record];
 
-        for (let i = 0; i < row.fields.length; i++)
-            if (!row.fields[i].validated) return(false);
+        if (fields)
+        {
+            for (let i = 0; i < row.fields.length; i++)
+                if (!row.fields[i].validated) return(false);
+            return(true);
+        }
 
-        console.log("record "+record+" validated "+row.validated)
         return(row.validated);
     }
-
 
     public newrow() : Row
     {
@@ -230,7 +232,6 @@ export class FieldData
         {
             scn = ++this.scn;
             rec.validated = false;
-            console.log("invalidate "+record);
             rec.fields[+colno].validated = false;
         }
 

@@ -205,7 +205,9 @@ export class Triggers
     public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
         let triggers:Map<string,Listener[]> = this.triggers.fields.get(field);
-        if (triggers == null) return(true);
+
+        if (triggers == null)
+            return(this.invokeTriggers(type,event,key));
 
         event["type$"] = this.trgname(type);
 
@@ -231,7 +233,6 @@ export class Triggers
                     if (!await this.execfunc(lsnrs[i],event)) return(false);
             }
         }
-
 
         return(this.invokeTriggers(type,event,key));
     }
