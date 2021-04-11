@@ -702,6 +702,7 @@ export class BlockImpl
     {
         if (field == null) return(true);
         if (this.data == null) return(true);
+        if (this.row >= this.data.rows) return(true);
         if (this.state == FormState.entqry) return(true);
         if (this.records[this.row].state == RecordState.na) return(true);
 
@@ -738,6 +739,7 @@ export class BlockImpl
     private async validaterecord() : Promise<boolean>
     {
         if (this.data == null) return(true);
+        if (this.row >= this.data.rows) return(true);
         if (this.state == FormState.entqry) return(true);
         if (this.records[this.row].state == RecordState.na) return(true);
 
