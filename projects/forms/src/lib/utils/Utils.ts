@@ -14,6 +14,15 @@ export class Utils
     }
 
 
+    public clone(obj:any) : any
+    {
+        let clone:any = {};
+        if (obj == null) return(null);
+        Object.keys(obj).forEach((key) => {clone[key] = obj[key];});
+        return(clone);
+    }
+
+
     public getType(component:any) : string
     {
         let type:string = null;

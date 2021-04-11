@@ -331,8 +331,8 @@ export class FieldInstance implements AfterViewInit
             if (this.class$ != "") this.clazz.element.classList.add(this.class$);
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
 
+            this.disable();
             this.addTriggers();
-            this.setInputState();
         }
     }
 

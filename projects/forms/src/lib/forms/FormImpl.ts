@@ -320,6 +320,8 @@ export class FormImpl
     private creationerror:boolean = false;
     public newForm(container:Container) : void
     {
+        let utils:Utils = new Utils();
+
         // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
         blockdef.forEach((bdef) => {this.createBlock(bdef)});
@@ -476,7 +478,7 @@ export class FormImpl
             let bfieldlist:FieldInstance[] = bfields.get(block.alias);
             if (bfieldlist != null) bfieldlist.forEach((inst) =>
             {
-                let fdef:FieldDefinition = fieldidx.get(inst.name);
+                let fdef:FieldDefinition = utils.clone(fieldidx.get(inst.name));
 
                 if (fdef == null)
                 {
@@ -499,7 +501,7 @@ export class FormImpl
                 {
                     let comp:any = null;
                     let id:string = inst.name+"."+inst.id;
-                    let iddef:FieldDefinition = FieldDefinitions.getFormFieldOverride(this.name,block.alias,id);
+                    let iddef:FieldDefinition = utils.clone(FieldDefinitions.getFormFieldOverride(this.name,block.alias,id));
 
                     if (iddef != null)
                     {
@@ -509,7 +511,7 @@ export class FormImpl
                     else
                     {
                         comp = this;
-                        iddef = FieldDefinitions.getFieldOverride(block.clazz,id);
+                        iddef = utils.clone(FieldDefinitions.getFieldOverride(block.clazz,id));
                     }
 
                     if (iddef != null)
