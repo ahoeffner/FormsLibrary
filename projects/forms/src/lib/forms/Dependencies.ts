@@ -5,8 +5,8 @@ import { JOINDefinition } from "../annotations/JOINDefinitions";
 
 interface masterdetails
 {
-    masters?:{block:BlockImpl, key:Key}[];
-    details?:{block:BlockImpl, key:Key}[];
+    masters?:{block:BlockImpl, mkey:Key, dkey:Key}[];
+    details?:{block:BlockImpl, mkey:Key, dkey:Key}[];
 }
 
 export class Dependencies
@@ -93,7 +93,7 @@ export class Dependencies
                     if (mdep.details == null)
                         mdep.details = [];
 
-                    mdep.details.push({block: detail, key: dkey});
+                    mdep.details.push({block: detail, mkey: mkey, dkey: dkey});
 
                     let ddep:masterdetails = this.dependencies.get(detail.alias);
 
@@ -106,7 +106,7 @@ export class Dependencies
                     if (ddep.masters == null)
                         ddep.masters = [];
 
-                    ddep.masters.push({block: master, key: dkey});
+                    ddep.masters.push({block: master, mkey: mkey, dkey: dkey});
                 }
             }
         });
@@ -116,10 +116,10 @@ export class Dependencies
             console.log("block "+blk+" has ");
 
             if (md.masters != null) md.masters.forEach((dep) =>
-            {console.log("master: "+dep.block.alias+" "+dep.key.name);});
+            {console.log("master: "+dep.block.alias+" m: "+dep.mkey.name+" d: "+dep.dkey.name);});
 
             if (md.details != null) md.details.forEach((dep) =>
-            {console.log("detail: "+dep.block.alias+" "+dep.key.name);});
+            {console.log("detail: "+dep.block.alias+" m: "+dep.mkey.name+" d: "+dep.dkey.name);});
         });
     }
 }
