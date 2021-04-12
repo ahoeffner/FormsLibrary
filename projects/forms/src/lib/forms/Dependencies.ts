@@ -63,7 +63,6 @@ export class Dependencies
                 let keys:Map<string,Key> = null;
 
                 keys = this.defined.get(join.master.alias);
-                console.log("keys on "+join.master.alias+" => "+keys);
                 let mkey:Key = keys?.get(join.master.key);
 
                 keys = this.defined.get(join.detail.alias);
@@ -117,10 +116,10 @@ export class Dependencies
             console.log("block "+blk+" has ");
 
             if (md.masters != null) md.masters.forEach((dep) =>
-            {console.log("master: "+dep.block.alias+" "+dep.key);});
+            {console.log("master: "+dep.block.alias+" "+dep.key.name);});
 
             if (md.details != null) md.details.forEach((dep) =>
-            {console.log("detail: "+dep.block.alias+" "+dep.key);});
+            {console.log("detail: "+dep.block.alias+" "+dep.key.name);});
         });
     }
 }
