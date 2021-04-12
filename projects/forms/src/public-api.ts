@@ -3,6 +3,7 @@ export {form} from './lib/annotations/form';
 export {init} from './lib/annotations/init';
 export {show} from './lib/annotations/show';
 export {hide} from './lib/annotations/hide';
+export {join} from './lib/annotations/join';
 export {block} from './lib/annotations/block';
 export {alias} from './lib/annotations/alias';
 export {table} from './lib/annotations/table';
@@ -16,6 +17,7 @@ export {trigger} from './lib/annotations/trigger';
 export {database} from './lib/annotations/database';
 export {disconnect} from './lib/annotations/disconnect';
 export {listofvalues} from './lib/annotations/listofvalues';
+export {JOINDefinition} from './lib/annotations/JOINDefinitions';
 export {BlockDefinition} from './lib/annotations/BlockDefinition';
 
 export {Key,keymap} from './lib/keymap/KeyMap';

@@ -110,8 +110,12 @@ export class FieldInstance implements AfterViewInit
 
     public get value() : any
     {
-        if (this.clazz == null) return("");
-        else return(this.clazz.value);
+        if (this.clazz == null) return(null);
+
+        let value:any = this.clazz.value;
+        if ((""+value).trim().length == 0) value = null;
+        
+        return(value);
     }
 
     public get parent() : Field

@@ -1,5 +1,6 @@
 import { KeyDefinition } from './KeyDefinition';
 import { BlockDefinition } from '../blocks/BlockDefinition';
+import { BlockImpl } from '../blocks/BlockImpl';
 
 
 export class BlockDefinitions

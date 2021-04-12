@@ -2,38 +2,60 @@ import { NameValuePair } from "../utils/NameValuePair";
 
 export class Key
 {
-    private values:NameValuePair[] = [];
+    private values$:any[] = [];
+    private columns$:string[] = [];
     private index:Map<string,any> = new Map<string,any>();
 
     constructor(public name:string) {}
 
     public get(part:string|number) : any
     {
-        if (part.constructor.name == "String")
-            return(this.index.get(""+part));
+        let col:number = -1;
 
-        return(this.values[part as number]);
+        if (part.constructor.name == "Number") col = +part;
+        else col = this.index.get(""+part);
+
+        return(this.values$[col]);
     }
 
     public partof(part:string) : boolean
     {
-        return(this.index.has(part));
+        return(this.columns$.includes(part,0));
     }
 
-    public set(name:string, value:any) : void
+    public set(name:string|number, value:any) : void
     {
-        let nvp:NameValuePair = this.index.get(name);
-        if (nvp != null) nvp.value = value;
+        let col:number = -1;
+
+        if (name.constructor.name == "Number") col = +name;
+        else col = this.index.get(""+name);
+
+        this.values$[col] = value;
     }
 
-    public add(name:string, value?:any) : void
+    public add(name:string) : void
     {
-        this.index.set(name,value);
-        this.values.push({name: name, value: value});
+        this.index.set(name,this.columns$.length);
+
+        this.values$.push(name);
+        this.columns$.push(name);
     }
 
-    public get columns() : NameValuePair[]
+    public columns() : string[]
     {
-        return(this.values);
+        return(this.columns$);
+    }
+
+    public get values() : NameValuePair[]
+    {
+        let map:NameValuePair[] = [];
+
+        for (let i = 0; i < this.columns$.length; i++)
+        {
+            let val:any = this.values$.length > i ? this.values$[i] : null;
+            map.push({name: this.columns$[i], value: val});
+        }
+
+        return(map);
     }
 }

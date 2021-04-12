@@ -9,6 +9,7 @@ import { keymap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
+import { Dependencies } from "./Dependencies";
 import { FormInstance } from "./FormInstance";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
@@ -37,6 +38,7 @@ import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 import { LOVDefinition, LOVDefinitions } from "../annotations/LOVDefinitions";
 import { TriggerDefinition, TriggerDefinitions } from "../annotations/TriggerDefinitions";
+import { JOINDefinitions } from "../annotations/JOINDefinitions";
 
 
 export class FormImpl
@@ -63,7 +65,6 @@ export class FormImpl
     private fields$:FieldInstance[] = [];
     private ddmenu:ComponentRef<DropDownMenu>;
     private triggers:Triggers = new Triggers();
-    private keys:Map<string,Key> = new Map<string,Key>();
     private parameters:Map<string,any> = new Map<string,any>();
     private stack:Map<string,InstanceID> = new Map<string,InstanceID>();
     private blkindex:Map<string,BlockImpl> = new Map<string,BlockImpl>();
@@ -321,6 +322,7 @@ export class FormImpl
     public newForm(container:Container) : void
     {
         let utils:Utils = new Utils();
+        let depencies:Dependencies = new Dependencies(this);
 
         // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
@@ -367,23 +369,27 @@ export class FormImpl
 
         this.blkindex.forEach((block) =>
         {
+            depencies.addBlock(block);
+
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.clazz);
-            let keys:KeyDefinition[] = BlockDefinitions.getKeys(block.clazz);
+            let keydefs:KeyDefinition[] = BlockDefinitions.getKeys(block.clazz);
 
             // Column definitions
             let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
 
             // Create keys and decide on primary
             let pkey:Key = null;
-            keys.forEach((kdef) =>
+            let keys:Map<string,Key> = new Map<string,Key>();
+
+            keydefs.forEach((kdef) =>
             {
-                let key:Key = this.keys.get(kdef.name);
+                let key:Key = keys.get(kdef.name);
 
                 if (key == null)
                 {
                     key = new Key(kdef.name);
-                    this.keys.set(kdef.name,key);
+                    keys.set(kdef.name,key);
 
                     kdef.columns.forEach((col) =>
                     {
@@ -400,6 +406,8 @@ export class FormImpl
                 }
             });
 
+            depencies.addKeys(block,keys);
+
             // Columns mapped to fields. Form definitions overrides
             let colfields:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
             let colffields:Map<string,FieldDefinition> = FieldDefinitions.getFormColumnIndex(this.name,block.alias);
@@ -411,13 +419,13 @@ export class FormImpl
             // List of data-fields. First pkey
             if (pkey != null)
             {
-                pkey.columns.forEach((part) =>
+                pkey.columns().forEach((part) =>
                 {
-                    let fname:string = part.name.toLowerCase();
-                    let fdef:FieldDefinition = colfields.get(part.name);
+                    let fname:string = part;
+                    let fdef:FieldDefinition = colfields.get(part);
 
                     if (fdef != null) fname = fdef.name;
-                    sorted.push(colindex.get(part.name));
+                    sorted.push(colindex.get(part));
 
                     fields.push(fname);
                 });
@@ -602,6 +610,8 @@ export class FormImpl
             if (block.records.length > 0)
                 block.records[0].enable(true);
         });
+
+        depencies.addJoins(JOINDefinitions.get(this.name));
 
         this.app.newForm(this);
         this.initiated$ = true;

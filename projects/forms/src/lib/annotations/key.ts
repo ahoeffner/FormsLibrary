@@ -29,7 +29,7 @@ export const key = (name:string, unique:boolean, columns:string|string[]) =>
         let lccols:string[] = [];
         cols.forEach((col) => {lccols.push(col.toLowerCase())});
 
-        let def:KeyDefinition = {name: name, unique: unique, columns: lccols}
+        let def:KeyDefinition = {name: name.toLowerCase(), unique: unique, columns: lccols}
         BlockDefinitions.setKey(cname,def);
     }
     return(define);

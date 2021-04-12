@@ -92,7 +92,7 @@ export class Table
 
         keys.forEach((key) =>
         {
-            key.columns.forEach((part) =>
+            key.values.forEach((part) =>
             {
                 let type:Column = this.index.get(part.name).type;
 
@@ -161,7 +161,7 @@ export class Table
 
     private addRows(rows:any[]) : void
     {
-        let klen:number = this.key.columns.length;
+        let klen:number = this.key.values.length;
         if (rows.length < this.fetch$) this.eof = true;
 
         rows.forEach((row) =>

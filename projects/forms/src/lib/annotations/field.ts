@@ -14,7 +14,7 @@ export const field = (definition:FieldDefinition) =>
 
         if (ctype != "Block" && ctype != "Form")
         {
-            console.log("@field("+JSON.stringify(definition.name)+") can only be used on blocks and forms");
+            console.log("@field("+JSON.stringify(definition)+") can only be used on blocks and forms");
             return;
         }
 
