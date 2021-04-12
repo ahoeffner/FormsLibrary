@@ -709,6 +709,7 @@ export class BlockImpl
         if (!this.field.validate())
         {
             field.valid = false;
+            this.data.setValue(+field.row+this.offset,field.name,field.value);
             return(false);
         }
 
@@ -747,7 +748,12 @@ export class BlockImpl
         if (rec.state == RecordState.na) return(true);
 
         // Check fields is validated
-        if (!this.data.validated(this.record,true)) return(false);
+        if (!this.data.validated(this.record,true))
+        {
+            let cols:string[] = this.data.getNonValidated(this.record);
+            this.alert("Columns <br>"+cols+"<br> is not valid","Validate Record");
+            return(false);
+        }
 
         // Check record is validated
         if (this.data.validated(this.record,false)) return(true);

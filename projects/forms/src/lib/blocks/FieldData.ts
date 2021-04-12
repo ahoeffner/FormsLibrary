@@ -92,6 +92,24 @@ export class FieldData
     }
 
 
+    public getNonValidated(record:number) : string[]
+    {
+        if (record < 0 || record >= this.data.length) return([]);
+
+        let row:Row = this.data[record];
+
+        let cols:string[] = [];
+
+        for (let i = 0; i < row.fields.length; i++)
+        {
+            if (!row.fields[i].validated)
+                cols.push(this.columns[i]);
+        }
+
+        return(cols);
+    }
+
+
     public validated(record:number, fields:boolean) : boolean
     {
         if (record < 0 || record >= this.data.length) return(true);
