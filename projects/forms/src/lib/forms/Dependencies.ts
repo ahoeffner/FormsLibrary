@@ -100,7 +100,7 @@ export class Dependencies
                     if (ddep == null)
                     {
                         ddep = {};
-                        this.dependencies.set(detail.alias,mdep);
+                        this.dependencies.set(detail.alias,ddep);
                     }
 
                     if (ddep.masters == null)
