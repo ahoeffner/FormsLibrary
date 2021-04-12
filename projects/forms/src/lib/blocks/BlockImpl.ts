@@ -720,6 +720,9 @@ export class BlockImpl
         let previous:any = this.data.getValue(+field.row+this.offset,field.name)
         this.data.setValue(+field.row+this.offset,field.name,field.value);
 
+        // ctrl-z doesn't refresh
+        if (field.dirty && field.value == previous) field.parent.copy(field);
+
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,null);
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
         {

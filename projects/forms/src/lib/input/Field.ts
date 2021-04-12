@@ -299,7 +299,7 @@ export class Field
     }
 
 
-    private copy(field:FieldInstance)
+    public copy(field:FieldInstance)
     {
         this.value$ = field.value;
 
