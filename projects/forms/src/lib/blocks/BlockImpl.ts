@@ -751,7 +751,7 @@ export class BlockImpl
         if (!this.data.validated(this.record,true))
         {
             let cols:string[] = this.data.getNonValidated(this.record);
-            this.alert("Columns <br><br><b>"+cols+"</b><br>br> is not valid","Validate Record");
+            this.alert("Columns <br><br><b>"+cols+"</b><br><br> is not valid","Validate Record");
             return(false);
         }
 

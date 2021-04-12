@@ -139,7 +139,7 @@ export class PopupWindow implements onEventListener, AfterViewInit
     public left : string = null;
     public width : string =  "300px";
     public height : string = "200px";
-    public tmargin : string = "12px";
+    public tmargin : string =  "8px";
 
     @ViewChild("title", {read: ElementRef}) private titlebarElement: ElementRef;
     @ViewChild("window", {read: ElementRef}) private windowElement: ElementRef;
