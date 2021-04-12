@@ -33,7 +33,7 @@ export class Key
         this.values$[col] = value;
     }
 
-    public add(name:string) : void
+    public addColumn(name:string) : void
     {
         this.index.set(name,this.columns$.length);
 
@@ -51,10 +51,7 @@ export class Key
         let map:NameValuePair[] = [];
 
         for (let i = 0; i < this.columns$.length; i++)
-        {
-            let val:any = this.values$.length > i ? this.values$[i] : null;
-            map.push({name: this.columns$[i], value: val});
-        }
+            map.push({name: this.columns$[i], value: this.values$[i]});
 
         return(map);
     }

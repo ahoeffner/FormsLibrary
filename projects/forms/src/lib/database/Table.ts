@@ -40,7 +40,7 @@ export class Table
         if (this.key == null)
         {
             this.key = new Key("primary");
-            this.columns$.forEach((col) => {this.key.add(col.name)});
+            this.columns$.forEach((col) => {this.key.addColumn(col.name)});
         }
 
         this.fetch$ *= 4;
