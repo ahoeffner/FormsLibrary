@@ -286,16 +286,18 @@ export class BlockImpl
         if (+record >= +this.offset && +record < +this.offset+this.rows)
         {
             let field:Field = this.records[record-this.offset].getField(column);
+
             if (field != null) field.value = value;
+            let previous:any = this.data.getValue(+record,column);
+
+            if (!this.data.setValue(+record,column,value))
+                return(false);
+
+            this.data.setValidated(record,column)
+
+            let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
+            this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
         }
-
-        let previous:any = this.data.getValue(+record,column);
-
-        if (!this.data.setValue(+record,column,value))
-            return(false);
-
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
-        this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
     }
 
 
@@ -752,6 +754,13 @@ export class BlockImpl
         {
             let cols:string[] = this.data.getNonValidated(this.record);
             this.alert("The following columns are not valid:<br><br>"+cols,"Validate Record");
+
+            cols.forEach((col) =>
+            {
+                let val:any = this.data.getValue(this.record,col);
+                console.log(col+": "+val+" not valid");
+            });
+
             return(false);
         }
 

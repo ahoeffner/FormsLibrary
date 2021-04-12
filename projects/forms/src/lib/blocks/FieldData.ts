@@ -219,7 +219,8 @@ export class FieldData
             return;
         }
 
-        rec.fields[+colno].validated = true;
+        if (this.table != null && +colno < this.table.columns.length)
+            rec.fields[+colno].validated = true;
     }
 
 
