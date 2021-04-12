@@ -2,14 +2,19 @@ import { Key } from "../blocks/Key";
 import { FormImpl } from "./FormImpl";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
-import { join } from "../annotations/join";
 
+interface masterdetails
+{
+    masters?:{block:BlockImpl, key:Key}[];
+    details?:{block:BlockImpl, key:Key}[];
+}
 
 export class Dependencies
 {
     private form:FormImpl;
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private defined:Map<string,Map<string,Key>> = new Map<string,Map<string,Key>>();
+    private dependencies:Map<string,masterdetails> = new Map<string,masterdetails>();
 
 
     constructor(form:FormImpl)
@@ -78,16 +83,44 @@ export class Dependencies
 
                 if (!skip)
                 {
-                    console.log("Join "+master.alias+" to "+detail.alias);
+                    let mdep:masterdetails = this.dependencies.get(master.alias);
 
-                    console.log("Master "+mkey.get("location_id"));
-                    console.log("Master "+dkey.get("location_id"));
+                    if (mdep == null)
+                    {
+                        mdep = {};
+                        this.dependencies.set(master.alias,mdep);
+                    }
 
-                    console.log("Test1 "+mkey.get("location_id"));
-                    mkey.set("location_id",17);
-                    console.log("Test2 "+mkey.get("location_id"));
+                    if (mdep.details == null)
+                        mdep.details = [];
+
+                    mdep.details.push({block: detail, key: dkey});
+
+                    let ddep:masterdetails = this.dependencies.get(detail.alias);
+
+                    if (ddep == null)
+                    {
+                        ddep = {};
+                        this.dependencies.set(detail.alias,mdep);
+                    }
+
+                    if (ddep.masters == null)
+                        ddep.masters = [];
+
+                    ddep.masters.push({block: master, key: dkey});
                 }
             }
+        });
+
+        this.dependencies.forEach((md,blk) =>
+        {
+            console.log("block "+blk+" has ");
+
+            if (md.masters != null) md.masters.forEach((dep) =>
+            {console.log("master: "+dep.block.alias+" "+dep.key);});
+
+            if (md.details != null) md.details.forEach((dep) =>
+            {console.log("detail: "+dep.block.alias+" "+dep.key);});
         });
     }
 }
