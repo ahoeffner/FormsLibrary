@@ -932,7 +932,7 @@ export class BlockImpl
                 }
 
                 if (this.masterdetail != null)
-                    this.masterdetail.querydetails(this,+field.row+this.offset);
+                    this.masterdetail.querydetails(this,+field.row+this.offset,true);
             }
 
             this.field$ = field;
@@ -1137,6 +1137,10 @@ export class BlockImpl
             }
 
             this.focus(row);
+
+            if (this.masterdetail != null)
+                this.masterdetail.querydetails(this,this.record,true);
+
             return(true);
         }
 
@@ -1161,6 +1165,10 @@ export class BlockImpl
             }
 
             this.focus(row);
+
+            if (this.masterdetail != null)
+                this.masterdetail.querydetails(this,this.record,true);
+
             return(true);
         }
 
@@ -1183,6 +1191,9 @@ export class BlockImpl
             this.display(+this.offset+this.rows);
             this.focus();
 
+            if (this.masterdetail != null)
+                this.masterdetail.querydetails(this,this.record,true);
+
             return(true);
         }
 
@@ -1199,6 +1210,9 @@ export class BlockImpl
 
             this.display(+this.offset-this.rows);
             this.focus();
+
+            if (this.masterdetail != null)
+                this.masterdetail.querydetails(this,this.record,true);
 
             return(true);
         }

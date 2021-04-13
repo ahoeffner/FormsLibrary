@@ -41,9 +41,11 @@ export class MasterDetail
     }
 
 
-    public async querydetails(block:BlockImpl, record?:number)
+    public async querydetails(block:BlockImpl, record?:number, init?:boolean)
     {
+        if (init == null) init = false;
         if (record == null) record = 0;
+
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null)
