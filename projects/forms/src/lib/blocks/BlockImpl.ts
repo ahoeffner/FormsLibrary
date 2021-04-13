@@ -930,6 +930,9 @@ export class BlockImpl
                     this.field.focus();
                     return(false);
                 }
+
+                if (this.masterdetail != null)
+                    this.masterdetail.querydetails(this,+field.row+this.offset);
             }
 
             this.field$ = field;
@@ -946,7 +949,6 @@ export class BlockImpl
                 return(true);
 
             trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
-
             return(await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent));
         }
 
