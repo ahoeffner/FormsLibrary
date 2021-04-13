@@ -5,14 +5,21 @@ import { dependencies, MasterDetail } from "./MasterDetail";
 export class MasterDetailQuery
 {
     private done:number = 0;
+    private root$:BlockImpl;
     private detailblks:Map<string,boolean> = new Map<string,boolean>();
 
 
     constructor(private md:MasterDetail, private links:Map<string,dependencies>, block:BlockImpl, col?:string)
     {
+        this.root$ = block;
         this.details(block.alias,col);
         this.detailblks.set(block.alias,true);
-        this.detailblks.forEach((stat,blk) => {console.log("detail: "+blk)})
+    }
+
+
+    public get root() : BlockImpl
+    {
+        return(this.root$);
     }
 
 
