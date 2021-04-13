@@ -83,6 +83,12 @@ export class MasterDetail
     }
 
 
+    public done() : void
+    {
+        this.query = null;
+    }
+
+
     // Copy values to detail keys
     public bindkeys(block:BlockImpl, record:number, dep:dependencies) : void
     {

@@ -57,6 +57,9 @@ export class MasterDetailQuery
 
         this.blocks.forEach((status,blk) => {console.log(blk+" "+status)});
         console.log("blocks: "+this.blocks.size+" done: "+this.done);
+
+        if (this.done == this.blocks.size - 1)
+            this.md.done();
     }
 
 
