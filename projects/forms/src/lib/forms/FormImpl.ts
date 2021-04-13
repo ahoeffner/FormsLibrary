@@ -9,8 +9,8 @@ import { keymap } from "../keymap/KeyMap";
 import { InstanceID } from "./InstanceID";
 import { ModalWindow } from "./ModalWindow";
 import { ComponentRef } from "@angular/core";
-import { Dependencies } from "./Dependencies";
 import { FormInstance } from "./FormInstance";
+import { MasterDetail } from "./MasterDetail";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldData } from "../blocks/FieldData";
 import { MessageBox } from "../popup/MessageBox";
@@ -322,7 +322,7 @@ export class FormImpl
     public newForm(container:Container) : void
     {
         let utils:Utils = new Utils();
-        let depencies:Dependencies = new Dependencies(this);
+        let depencies:MasterDetail = new MasterDetail(this);
 
         // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
@@ -370,6 +370,7 @@ export class FormImpl
         this.blkindex.forEach((block) =>
         {
             depencies.addBlock(block);
+            block.setMasterDetail(depencies);
 
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.clazz);
@@ -505,6 +506,9 @@ export class FormImpl
                         fdef.column = fdef.name;
                 }
 
+                if (inst.parent.definition == null)
+                    inst.parent.setDefinition(fdef,false);
+
                 if (inst.id.length > 0)
                 {
                     let comp:any = null;
@@ -530,7 +534,7 @@ export class FormImpl
                     }
                 }
 
-                let cdef:ColumnDefinition = colindex.get(""+fdef.column);
+                let cdef:ColumnDefinition = colindex.get(fdef.column);
 
                 if (fdef.column != null && !fdef.hasOwnProperty("case"))
                     fdef.case = cdef.case;

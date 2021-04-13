@@ -174,22 +174,22 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             this.sblock.addRecord(new Record(rec.row,rec.fields,rec.index));
 
             this.filter = this.sblock.getField(rec.row,"filter");
-            let filter:FieldDefinition = {name: "filter", type: FieldType.text};
+            let filtdef:FieldDefinition = {name: "filter", type: FieldType.text};
 
-            if (this.lov.case != null) filter.case = this.lov.case;
-            this.filter.definition = filter;
+            if (this.lov.case != null) filtdef.case = this.lov.case;
+            this.filter.setDefinition(filtdef,true);
             this.filter.enable(false);
 
         })
 
-        let def:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {update: false}};
+        let descdef:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {update: false}};
 
         container.getBlock("result").records.forEach((rec) =>
         {
             this.rblock.addRecord(new Record(rec.row,rec.fields,rec.index));
             this.description = this.rblock.getField(rec.row,"description");
 
-            this.description.definition = def;
+            this.description.setDefinition(descdef,true);
             this.description.enable(true);
         });
 

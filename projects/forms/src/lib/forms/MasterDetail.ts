@@ -3,18 +3,19 @@ import { FormImpl } from "./FormImpl";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
 
-interface masterdetails
+interface dependencies
 {
+    keycols:Set<string>;
     masters?:{block:BlockImpl, mkey:Key, dkey:Key}[];
     details?:{block:BlockImpl, mkey:Key, dkey:Key}[];
 }
 
-export class Dependencies
+export class MasterDetail
 {
     private form:FormImpl;
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
+    private links:Map<string,dependencies> = new Map<string,dependencies>();
     private defined:Map<string,Map<string,Key>> = new Map<string,Map<string,Key>>();
-    private dependencies:Map<string,masterdetails> = new Map<string,masterdetails>();
 
 
     constructor(form:FormImpl)
@@ -32,6 +33,15 @@ export class Dependencies
     public addKeys(block:BlockImpl, keys:Map<string,Key>) : void
     {
         this.defined.set(block.alias,keys);
+    }
+
+
+    public sync(block:BlockImpl, col:string) : boolean
+    {
+        if (col == null) return(false);
+        let dep:dependencies = this.links.get(block.alias);
+        if (dep != null) return(dep.keycols.has(col));
+        return(false);
     }
 
 
@@ -82,25 +92,26 @@ export class Dependencies
 
                 if (!skip)
                 {
-                    let mdep:masterdetails = this.dependencies.get(master.alias);
+                    let mdep:dependencies = this.links.get(master.alias);
 
                     if (mdep == null)
                     {
-                        mdep = {};
-                        this.dependencies.set(master.alias,mdep);
+                        mdep = {keycols: new Set<string>()};
+                        this.links.set(master.alias,mdep);
                     }
 
                     if (mdep.details == null)
                         mdep.details = [];
 
+                    dkey.columns().forEach((col) => {mdep.keycols.add(col)});
                     mdep.details.push({block: detail, mkey: mkey, dkey: dkey});
 
-                    let ddep:masterdetails = this.dependencies.get(detail.alias);
+                    let ddep:dependencies = this.links.get(detail.alias);
 
                     if (ddep == null)
                     {
-                        ddep = {};
-                        this.dependencies.set(detail.alias,ddep);
+                        ddep = {keycols: new Set<string>()};
+                        this.links.set(detail.alias,ddep);
                     }
 
                     if (ddep.masters == null)
@@ -109,17 +120,6 @@ export class Dependencies
                     ddep.masters.push({block: master, mkey: mkey, dkey: dkey});
                 }
             }
-        });
-
-        this.dependencies.forEach((md,blk) =>
-        {
-            console.log("block "+blk+" has ");
-
-            if (md.masters != null) md.masters.forEach((dep) =>
-            {console.log("master: "+dep.block.alias+" m: "+dep.mkey.name+" d: "+dep.dkey.name);});
-
-            if (md.details != null) md.details.forEach((dep) =>
-            {console.log("detail: "+dep.block.alias+" m: "+dep.mkey.name+" d: "+dep.dkey.name);});
         });
     }
 }

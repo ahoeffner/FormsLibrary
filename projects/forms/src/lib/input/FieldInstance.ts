@@ -114,7 +114,7 @@ export class FieldInstance implements AfterViewInit
 
         let value:any = this.clazz.value;
         if ((""+value).trim().length == 0) value = null;
-        
+
         return(value);
     }
 
@@ -295,6 +295,11 @@ export class FieldInstance implements AfterViewInit
             this.clazz.enable = this.enabled$;
             this.clazz.readonly = this.readonly$;
         }
+    }
+
+    public get definition() : FieldDefinition
+    {
+        return(this.def);
     }
 
     public set definition(def:FieldDefinition)

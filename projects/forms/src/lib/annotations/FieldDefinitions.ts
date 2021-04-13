@@ -91,18 +91,6 @@ export class FieldDefinitions
             formbcx.set(block,columns);
         }
 
-        if (def.hasOwnProperty("column"))
-        {
-            if (def.column.constructor.name == "Boolean")
-            {
-                if (!def.column) def.column = null;
-                else             def.column = def.name;
-            }
-
-            if (def.column != null)
-                def.column = (""+def.column).toLowerCase();
-        }
-
         if (index.get(def.name) != null)
         {
             console.log("Field "+def.name+" defined twice on block '"+form+"."+block+"', ignored");
@@ -117,7 +105,7 @@ export class FieldDefinitions
 
         fields.unshift(def);
         index.set(def.name,def);
-        if (def.column != null) columns.set(""+def.column,def);
+        if (def.column != null) columns.set(def.column,def);
     }
 
 

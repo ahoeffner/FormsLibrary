@@ -9,6 +9,7 @@ import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
 import { Statement } from "../database/Statement";
+import { MasterDetail } from "../forms/MasterDetail";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
@@ -35,7 +36,7 @@ export class BlockImpl
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
     private navigable$:boolean = true;
-    private details$:BlockImpl[] = [];
+    private masterdetail:MasterDetail;
     private fields$:FieldInstance[] = [];
     private lovs:Map<string,LOVDefinition>;
     private idlovs:Map<string,LOVDefinition>;
@@ -154,12 +155,6 @@ export class BlockImpl
     }
 
 
-    public setFields(fields:FieldInstance[])
-    {
-        this.fields$ = fields;
-    }
-
-
     public get fields() : string[]
     {
         if (this.data == null) return(null);
@@ -195,6 +190,18 @@ export class BlockImpl
     public get form() : FormImpl
     {
         return(this.form$);
+    }
+
+
+    public setFields(fields:FieldInstance[])
+    {
+        this.fields$ = fields;
+    }
+
+
+    public setMasterDetail(md:MasterDetail) : void
+    {
+        this.masterdetail = md;
     }
 
 
@@ -285,18 +292,30 @@ export class BlockImpl
 
         if (+record >= +this.offset && +record < +this.offset+this.rows)
         {
+            let dbcol:string = column;
             let field:Field = this.records[record-this.offset].getField(column);
 
-            if (field != null) field.value = value;
+            if (field != null)
+            {
+                field.value = value;
+                dbcol = field.definition.column;
+            }
+
             let previous:any = this.data.getValue(+record,column);
 
             if (!this.data.setValue(+record,column,value))
                 return(false);
 
-            this.data.setValidated(record,column)
+            this.data.setValidated(record,column);
 
             let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
             this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
+
+            if (this.masterdetail != null && value != previous)
+            {
+                let req:boolean = this.masterdetail.sync(this,dbcol);
+                if (req) console.log("requery");
+            }
         }
     }
 
@@ -735,8 +754,18 @@ export class BlockImpl
         if (!await this.lockrecord(+field.row+this.offset))
             return(false);
 
-        if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
-            return(false);
+        if  (field.value != previous)
+        {
+            if (this.masterdetail != null)
+            {
+                let dbcol:string = field.definition.column;
+                let req:boolean = this.masterdetail.sync(this,dbcol);
+                if (req) console.log("requery");
+            }
+
+            if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
+                return(false);
+        }
 
         return(true);
     }
@@ -795,8 +824,6 @@ export class BlockImpl
             this.records[r].clear();
             this.records[r].disable();
         }
-
-        this.details$.forEach((block) => {block.clear()});
 
         this.records[0].current = true;
         this.records[0].state = RecordState.na;

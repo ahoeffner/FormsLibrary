@@ -11,6 +11,7 @@ export class Field
     private seq:number = 0;;
     private value$:any = "";
     private block$:BlockImpl;
+    private def:FieldDefinition;
     private current$:boolean = false;
     private enabled$:boolean = false;
     private field:FieldInstance = null;
@@ -219,13 +220,23 @@ export class Field
         }
     }
 
-    public set definition(def:FieldDefinition)
+    public get definition() : FieldDefinition
     {
-        for (let i = 0; i < this.fields.length; i++)
-            this.fields[i].definition = def;
+        return(this.def);
+    }
 
-        for (let i = 0; i < this.cfields.length; i++)
-            this.cfields[i].definition = def;
+    public setDefinition(def:FieldDefinition, cascade:boolean)
+    {
+        this.def = def;
+
+        if (cascade)
+        {
+            for (let i = 0; i < this.fields.length; i++)
+                this.fields[i].definition = def;
+
+            for (let i = 0; i < this.cfields.length; i++)
+                this.cfields[i].definition = def;
+        }
     }
 
 

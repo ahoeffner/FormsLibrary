@@ -111,10 +111,10 @@ export class Table
 
                 if (def.column != null)
                 {
-                    let type:Column = this.index.get(""+def.column).type;
+                    let type:Column = this.index.get(def.column).type;
 
-                    if (!where) stmt.and(""+def.column,field.value,type);
-                    else        stmt.where(""+def.column,field.value,type);
+                    if (!where) stmt.and(def.column,field.value,type);
+                    else        stmt.where(def.column,field.value,type);
 
                     where = false;
                 }
