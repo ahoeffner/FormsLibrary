@@ -46,7 +46,7 @@ export class MasterDetail
         if (record == null) record = 0;
         let dep:dependencies = this.links.get(block.alias);
 
-        if (dep != null && dep.details != null)
+        if (dep != null)
         {
             if (this.query == null)
                 this.query = new MasterDetailQuery(this,this.links,block);
@@ -58,7 +58,6 @@ export class MasterDetail
 
     public getKeys(block:BlockImpl) : Key[]
     {
-        console.log("getKeys "+block.alias+" "+this.query)
         if (this.query == null)
             return([]);
 
@@ -78,17 +77,19 @@ export class MasterDetail
     // Copy values to detail keys
     public bindkeys(block:BlockImpl, record:number, dep:dependencies) : void
     {
-        dep.details.forEach((det) =>
+        if (dep.details != null)
         {
-            det.mkey.columns().forEach((col) =>
-            {det.dkey.set(col,block.data.getValue(record,col));});
-        });
+            dep.details.forEach((det) =>
+            {
+                det.mkey.columns().forEach((col) =>
+                {det.dkey.set(col,block.data.getValue(record,col));});
+            });
+        }
     }
 
 
     public done() : void
     {
-        console.log("done");
         this.query = null;
     }
 

@@ -5,13 +5,14 @@ import { dependencies, MasterDetail } from "./MasterDetail";
 export class MasterDetailQuery
 {
     private done:number = 0;
-    public blocks:Map<string,boolean> = new Map<string,boolean>();
+    private detailblks:Map<string,boolean> = new Map<string,boolean>();
 
 
     constructor(private md:MasterDetail, private links:Map<string,dependencies>, block:BlockImpl, col?:string)
     {
         this.details(block.alias,col);
-        if (col == null) this.blocks.set(block.alias,true);
+        this.detailblks.set(block.alias,true);
+        this.detailblks.forEach((stat,blk) => {console.log("detail: "+blk)})
     }
 
 
@@ -26,7 +27,7 @@ export class MasterDetailQuery
                 if (col == null || det.mkey.partof(col))
                 {
                     this.details(det.block.alias,null);
-                    this.blocks.set(det.block.alias,false);
+                    this.detailblks.set(det.block.alias,false);
                 }
             });
         }
@@ -35,13 +36,15 @@ export class MasterDetailQuery
 
     public ready(block:BlockImpl, record:number) : void
     {
-        console.log("query ready "+block.alias);
         let dep:dependencies = this.links.get(block.alias);
 
         this.md.bindkeys(block,record,dep);
-        this.blocks.set(block.alias,true);
+        this.detailblks.set(block.alias,true);
 
         this.execute(dep);
+
+        if (++this.done == this.detailblks.size)
+            this.md.done();
     }
 
 
@@ -52,15 +55,9 @@ export class MasterDetailQuery
             dep.details.forEach((det) =>
             {
                 if (this.isready(det.block))
-                {
-                    this.done++;
                     det.block.executeqry();
-                }
             });
         }
-
-        if (this.done == this.blocks.size)
-            this.md.done();
     }
 
 
@@ -74,7 +71,7 @@ export class MasterDetailQuery
             dep.masters.forEach((master) =>
             {
                 let alias:string = master.block.alias;
-                let ok:boolean = this.blocks.get(alias);
+                let ok:boolean = this.detailblks.get(alias);
                 if (ok == null || !ok) ready = false;
             });
         }

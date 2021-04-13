@@ -572,6 +572,10 @@ export class BlockImpl
             msg += "</table>";
 
             this.alert(msg,"Query Condition");
+
+            if (this.masterdetail != null)
+                this.masterdetail.done();
+
             return(false);
         }
 
@@ -585,6 +589,10 @@ export class BlockImpl
         {
             this.clear();
             this.alert(JSON.stringify(response),"Database Query");
+
+            if (this.masterdetail != null)
+                this.masterdetail.done();
+
             return(false);
         }
 
