@@ -92,7 +92,7 @@ export class MasterDetail
 
     public done() : void
     {
-        this.query.root.focus();
+        //this.query.root.focus();
         this.query = null;
     }
 
