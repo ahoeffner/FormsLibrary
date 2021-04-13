@@ -1,18 +1,22 @@
 import { Key } from "../blocks/Key";
 import { FormImpl } from "./FormImpl";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
 
-interface dependencies
+
+export interface dependencies
 {
     keycols:Set<string>;
     masters?:{block:BlockImpl, mkey:Key, dkey:Key}[];
     details?:{block:BlockImpl, mkey:Key, dkey:Key}[];
 }
 
+
 export class MasterDetail
 {
-    private form:FormImpl;
+    private form:FormImpl = null;
+    private query:MasterDetailQuery = null;
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private links:Map<string,dependencies> = new Map<string,dependencies>();
     private defined:Map<string,Map<string,Key>> = new Map<string,Map<string,Key>>();
@@ -36,12 +40,57 @@ export class MasterDetail
     }
 
 
-    public sync(block:BlockImpl, col:string) : boolean
+    public getKeys(block:BlockImpl) : Key[]
     {
-        if (col == null) return(false);
+        if (this.query == null)
+            return([]);
+
+        let keys:Key[] = [];
         let dep:dependencies = this.links.get(block.alias);
-        if (dep != null) return(dep.keycols.has(col));
-        return(false);
+
+        if (dep != null && dep.masters != null)
+        {
+            dep.masters.forEach((master) =>
+            {keys.push(master.dkey);});
+        }
+
+        keys.forEach((key) => {console.log("key: "+key.toString())});
+
+        return(keys);
+    }
+
+
+    public sync(block:BlockImpl, record:number, col:string) : void
+    {
+        if (col == null) return;
+        let dep:dependencies = this.links.get(block.alias);
+        if (dep != null) this.querydetails(block,record);
+    }
+
+
+    public async querydetails(block:BlockImpl, record?:number)
+    {
+        if (record == null) record = 0;
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.details != null)
+        {
+            if (this.query == null)
+                this.query = new MasterDetailQuery(this,this.links,block);
+
+            this.query.ready(block,record);
+        }
+    }
+
+
+    // Copy values to detail keys
+    public bindkeys(block:BlockImpl, record:number, dep:dependencies) : void
+    {
+        dep.details.forEach((det) =>
+        {
+            det.mkey.columns().forEach((col) =>
+            {det.dkey.set(col,block.data.getValue(record,col));});
+        });
     }
 
 

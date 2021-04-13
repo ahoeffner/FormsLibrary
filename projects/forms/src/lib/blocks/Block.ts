@@ -57,7 +57,6 @@ export class Block
     {
         if (override) return(this._impl_.executeqry());
         else return(this._impl_.sendkey(null,keymap.executequery));
-
     }
 
     public nextrecord() : void

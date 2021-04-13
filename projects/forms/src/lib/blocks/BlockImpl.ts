@@ -311,11 +311,8 @@ export class BlockImpl
             let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
             this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
 
-            if (this.masterdetail != null && value != previous)
-            {
-                let req:boolean = this.masterdetail.sync(this,dbcol);
-                if (req) console.log("requery");
-            }
+            if (record == this.record && this.masterdetail != null && value != previous)
+                this.masterdetail.sync(this,record,dbcol);
         }
     }
 
@@ -560,6 +557,9 @@ export class BlockImpl
             this.records[0].disable();
         }
 
+        if (this.masterdetail != null)
+            keys = this.masterdetail.getKeys(this);
+
         this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,fields);
 
@@ -587,6 +587,9 @@ export class BlockImpl
             this.alert(JSON.stringify(response),"Database Query");
             return(false);
         }
+
+        if (this.masterdetail != null)
+            this.masterdetail.querydetails(this);
 
         this.row = 0;
         this.display(0);
@@ -756,12 +759,8 @@ export class BlockImpl
 
         if  (field.value != previous)
         {
-            if (this.masterdetail != null)
-            {
-                let dbcol:string = field.definition.column;
-                let req:boolean = this.masterdetail.sync(this,dbcol);
-                if (req) console.log("requery");
-            }
+            if (+field.row+this.offset == this.record && this.masterdetail != null)
+                this.masterdetail.sync(this,this.record,field.definition.column);
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
                 return(false);

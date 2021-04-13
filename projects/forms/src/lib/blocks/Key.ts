@@ -55,4 +55,15 @@ export class Key
 
         return(map);
     }
+
+
+    public toString() : string
+    {
+        let str:string = this.name+" [";
+
+        for (let i = 0; i < this.columns$.length; i++)
+            str += this.columns$[i]+" = "+this.values$[i]+", ";
+
+        return(str.substring(0,str.length-2)+"]");
+    }
 }
