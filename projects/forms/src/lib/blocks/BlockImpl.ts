@@ -511,7 +511,10 @@ export class BlockImpl
         if (this.data.database && !this.app.connected)
             return(false);
 
-        return(await this.executeqry());
+        let status = await this.executeqry();
+        this.focus();
+
+        return(status);
     }
 
 
@@ -600,10 +603,10 @@ export class BlockImpl
             this.masterdetail.querydetails(this);
 
         this.row = 0;
-        this.display(0);
+        await this.display(0);
+
         this.state = FormState.normal;
         this.records[0].current = true;
-        //this.focus();
 
         return(true);
     }
@@ -868,6 +871,8 @@ export class BlockImpl
 
             if (state == RecordState.na)
             {
+                let execs:Promise<boolean>[] = [];
+
                 for(let c = 0; c < rows[r].length; c++)
                 {
                     let field:Field = rec.getField(columns[c]);
@@ -877,11 +882,13 @@ export class BlockImpl
                     if (field != null) fname = field.name;
 
                     let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,null,+r+this.offset,value,value);
-                    this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent);
+                    execs.push(this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent));
                 }
 
-                this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r+this.offset));
+                execs.push(this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r+this.offset)));
                 state = this.data.state(+this.offset+r,RecordState.update);
+
+                for (let i = 0; i < execs.length; i++) await execs[i];
             }
 
             rec.state = state;
@@ -1192,7 +1199,7 @@ export class BlockImpl
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,this.record,true);
+                this.masterdetail.querydetails(this,+this.offset+this.rows,true);
 
             return(true);
         }
@@ -1212,7 +1219,7 @@ export class BlockImpl
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,this.record,true);
+                this.masterdetail.querydetails(this,+this.offset+this.rows,true);
 
             return(true);
         }
