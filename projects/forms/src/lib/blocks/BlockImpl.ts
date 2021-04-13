@@ -1039,6 +1039,7 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
+            console.log(this.field.name+" "+this.field.value);
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
@@ -1195,11 +1196,11 @@ export class BlockImpl
 
             if (fetched == 0) return(false);
 
-            this.display(+this.offset+this.rows);
+            await this.display(+this.offset+this.rows);
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,+this.offset+this.rows,true);
+                this.masterdetail.querydetails(this,this.record,true);
 
             return(true);
         }
@@ -1215,11 +1216,11 @@ export class BlockImpl
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            this.display(+this.offset-this.rows);
+            await this.display(+this.offset-this.rows);
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,+this.offset+this.rows,true);
+                this.masterdetail.querydetails(this,this.record,true);
 
             return(true);
         }
