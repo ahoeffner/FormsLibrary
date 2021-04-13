@@ -6,14 +6,14 @@ export class MasterDetailQuery
 {
     private done:number = 0;
     private root$:BlockImpl;
+    private masterblks:Map<string,boolean> = new Map<string,boolean>();
     private detailblks:Map<string,boolean> = new Map<string,boolean>();
 
 
     constructor(private md:MasterDetail, private links:Map<string,dependencies>, block:BlockImpl, col?:string)
     {
         this.root$ = block;
-        this.details(block.alias,col);
-        this.detailblks.set(block.alias,true);
+        this.findblocks(block.alias,col);
     }
 
 
@@ -23,17 +23,19 @@ export class MasterDetailQuery
     }
 
 
-    private details(block:string, col:string) : void
+    private findblocks(block:string, col:string) : void
     {
         let dep:dependencies = this.links.get(block);
 
         if (dep.details != null)
         {
+            this.masterblks.set(block,false);
+
             dep.details.forEach((det) =>
             {
                 if (col == null || det.mkey.partof(col))
                 {
-                    this.details(det.block.alias,null);
+                    this.findblocks(det.block.alias,null);
                     this.detailblks.set(det.block.alias,false);
                 }
             });
@@ -46,24 +48,31 @@ export class MasterDetailQuery
         let dep:dependencies = this.links.get(block.alias);
 
         this.md.bindkeys(block,record,dep);
-        this.detailblks.set(block.alias,true);
+        this.masterblks.set(block.alias,true);
 
         this.execute(dep);
-
-        if (++this.done == this.detailblks.size)
-            this.md.done();
     }
 
 
-    private execute(dep:dependencies) : void
+    private async execute(dep:dependencies)
     {
         if (dep.details != null)
         {
-            dep.details.forEach((det) =>
+            for (let i = 0; i < dep.details.length; i++)
             {
-                if (this.isready(det.block))
-                    det.block.executeqry();
-            });
+                if (this.isready(dep.details[i].block))
+                {
+                    let last:boolean = this.done == this.detailblks.size - 1;
+
+                    if (!last) dep.details[i].block.executeqry();
+                    else await dep.details[i].block.executeqry();
+
+                    this.detailblks.set(dep.details[i].block.alias,true);
+
+                    if (++this.done == this.detailblks.size)
+                        this.md.done();
+                }
+            }
         }
     }
 
@@ -78,7 +87,7 @@ export class MasterDetailQuery
             dep.masters.forEach((master) =>
             {
                 let alias:string = master.block.alias;
-                let ok:boolean = this.detailblks.get(alias);
+                let ok:boolean = this.masterblks.get(alias);
                 if (ok == null || !ok) ready = false;
             });
         }
