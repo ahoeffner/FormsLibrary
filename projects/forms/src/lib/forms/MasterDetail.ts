@@ -28,43 +28,16 @@ export class MasterDetail
     }
 
 
-    public addBlock(block:BlockImpl) : void
-    {
-        this.blocks.set(block.alias,block);
-    }
-
-
-    public addKeys(block:BlockImpl, keys:Map<string,Key>) : void
-    {
-        this.defined.set(block.alias,keys);
-    }
-
-
-    public getKeys(block:BlockImpl) : Key[]
-    {
-        if (this.query == null)
-            return([]);
-
-        let keys:Key[] = [];
-        let dep:dependencies = this.links.get(block.alias);
-
-        if (dep != null && dep.masters != null)
-        {
-            dep.masters.forEach((master) =>
-            {keys.push(master.dkey);});
-        }
-
-        keys.forEach((key) => {console.log("key: "+key.toString())});
-
-        return(keys);
-    }
-
-
     public sync(block:BlockImpl, record:number, col:string) : void
     {
         if (col == null) return;
         let dep:dependencies = this.links.get(block.alias);
-        if (dep != null) this.querydetails(block,record);
+
+        if (dep != null)
+        {
+            this.query = new MasterDetailQuery(this,this.links,block,col);
+            this.querydetails(block,record);
+        }
     }
 
 
@@ -83,9 +56,22 @@ export class MasterDetail
     }
 
 
-    public done() : void
+    public getKeys(block:BlockImpl) : Key[]
     {
-        this.query = null;
+        console.log("getKeys "+block.alias+" "+this.query)
+        if (this.query == null)
+            return([]);
+
+        let keys:Key[] = [];
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.masters != null)
+        {
+            dep.masters.forEach((master) =>
+            {keys.push(master.dkey);});
+        }
+
+        return(keys);
     }
 
 
@@ -97,6 +83,25 @@ export class MasterDetail
             det.mkey.columns().forEach((col) =>
             {det.dkey.set(col,block.data.getValue(record,col));});
         });
+    }
+
+
+    public done() : void
+    {
+        console.log("done");
+        this.query = null;
+    }
+
+
+    public addBlock(block:BlockImpl) : void
+    {
+        this.blocks.set(block.alias,block);
+    }
+
+
+    public addKeys(block:BlockImpl, keys:Map<string,Key>) : void
+    {
+        this.defined.set(block.alias,keys);
     }
 
 

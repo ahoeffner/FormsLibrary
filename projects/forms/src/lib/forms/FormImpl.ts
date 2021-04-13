@@ -555,6 +555,7 @@ export class FormImpl
                     fdef.fieldoptions.update = false;
 
                 inst.definition = fdef;
+                fieldidx.set(inst.name,fdef);
             });
 
             let def:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
