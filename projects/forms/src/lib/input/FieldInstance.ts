@@ -407,7 +407,10 @@ export class FieldInstance implements AfterViewInit
                     key == keymap.enterquery      ||
                     key == keymap.executequery
                 )
-                return;
+                {
+                    this.fgroup$.copy(this);
+                    return;
+                }
 
                 this.fgroup$["onEvent"](event,this,"key",key);
             }

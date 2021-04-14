@@ -1035,7 +1035,6 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
-            this.alert(field.name+" = <"+field.value+">","Check");
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
