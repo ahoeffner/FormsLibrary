@@ -557,7 +557,6 @@ export class BlockImpl
         if (this.state == FormState.entqry)
         {
             fields = this.records[0].fields;
-            fields.forEach((field) => {console.log(field.name+"= <"+field.value+">")})
             this.records[0].disable();
         }
 
@@ -1020,8 +1019,7 @@ export class BlockImpl
         // Enter query
         if (type == "key" && key == keymap.enterquery)
         {
-            if (this.state == FormState.entqry)
-                return(true);
+            if (!await this.validate()) return(false);
 
             if (!await this.keyentqry())
             {
@@ -1031,28 +1029,20 @@ export class BlockImpl
 
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
-                return(true);
-
-            return(true);
+            return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
 
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
+            this.alert(field.name+" = <"+field.value+">","Check");
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            if (!await this.keyexeqry())
-            {
-                field.focus();
-                return(false);
-            }
-
-            return(true);
+            return(await this.keyexeqry());
         }
 
         // Delete
