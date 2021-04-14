@@ -1,8 +1,11 @@
+@menu
 Drop down colors
+Add submenu levels
 Add F1-F12 in KeyCodes
-close cursor
+Fieldnavigation, stay in table + next "section" key
 
-Library ng-package.json
+
+Add assets to library ng-package.json
 
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
@@ -13,7 +16,7 @@ Library ng-package.json
   }
 }
 
-Project angular.json:
+Change project angular.json to include folder-open etc:
 
 "assets": [
     "projects/demo/src/favicon.ico",
@@ -24,6 +27,8 @@ Project angular.json:
     "output": "./assets/"
     }
 ],
+
+Remove compile warnings
 
 node_modules/stylus/lib/nodes/index.js
 

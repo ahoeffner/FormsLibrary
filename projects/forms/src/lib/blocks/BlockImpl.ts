@@ -528,6 +528,9 @@ export class BlockImpl
 
         this.clear();
 
+        if (this.masterdetail != null)
+            this.masterdetail.cleardetails(this);
+
         if (this.records.length > 0)
         {
             this.row = 0;
@@ -641,6 +644,9 @@ export class BlockImpl
         if (!this.data.insert(+this.row + +this.offset + +off))
             return(false);
 
+        if (this.masterdetail != null)
+            this.masterdetail.cleardetails(this);
+
         // Is first row
         if (this.data.rows == 1)
         {
@@ -681,6 +687,9 @@ export class BlockImpl
         if (!this.data.delete(+this.row + +this.offset))
             return(false);
 
+        if (this.masterdetail != null)
+            this.masterdetail.cleardetails(this);
+
         // current view is not full
         if (+this.data.rows - this.offset < this.rows)
         {
@@ -698,6 +707,9 @@ export class BlockImpl
         if (row < 0) this.row = 0;
 
         this.focus(row);
+
+        if (this.masterdetail != null)
+            this.masterdetail.querydetails(this,this.record);
     }
 
 
