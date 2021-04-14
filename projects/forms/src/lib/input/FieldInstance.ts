@@ -203,7 +203,6 @@ export class FieldInstance implements AfterViewInit
 
     public set value(value:any)
     {
-        console.log("set "+value);
         if (value == null) value = "";
         if (this.clazz != null) this.clazz.value = value;
     }
@@ -462,10 +461,10 @@ export class FieldInstance implements AfterViewInit
                 return;
         }
 
-        if (this.def.case == Case.lower)
+        if (this.value != null && this.def.case == Case.lower)
             this.value = (""+this.value).toLowerCase();
 
-        if (this.def.case == Case.upper)
+        if (this.value != null && this.def.case == Case.upper)
             this.value = (""+this.value).toUpperCase();
 
         this.fgroup$.onEvent(event,this,"cchange");

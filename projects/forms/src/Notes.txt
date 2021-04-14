@@ -1,3 +1,6 @@
+Dont set row = 0 @clear
+value NULL wtf !!
+
 @menu
 Drop down colors
 Add submenu levels

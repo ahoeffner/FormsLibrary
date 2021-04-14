@@ -766,6 +766,7 @@ export class BlockImpl
         let previous:any = this.data.getValue(+field.row+this.offset,field.name)
 
         // ctrl-z doesn't refresh
+        if (field.dirty && field.value == previous) console.log("ctrl-z");
         if (field.dirty && field.value == previous) field.parent.copy(field);
 
         // Nothing has changed
