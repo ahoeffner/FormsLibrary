@@ -203,6 +203,7 @@ export class FieldInstance implements AfterViewInit
 
     public set value(value:any)
     {
+        console.log("set "+value);
         if (value == null) value = "";
         if (this.clazz != null) this.clazz.value = value;
     }
