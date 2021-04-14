@@ -557,6 +557,7 @@ export class BlockImpl
         if (this.state == FormState.entqry)
         {
             fields = this.records[0].fields;
+            fields.forEach((field) => {console.log(field.name+"= <"+field.value+">")})
             this.records[0].disable();
         }
 
@@ -1039,7 +1040,6 @@ export class BlockImpl
         // Execute query
         if (type == "key" && key == keymap.executequery)
         {
-            console.log(this.field.name+" "+this.field.value);
             if (!await this.validate()) return(false);
             trgevent = new KeyTriggerEvent(field,key,event);
 
