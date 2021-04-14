@@ -784,7 +784,7 @@ export class BlockImpl
 
         if  (field.value != previous)
         {
-            if (+field.row+this.offset == this.record && this.masterdetail != null)
+            if (field.definition.column != null && +field.row+this.offset == this.record && this.masterdetail != null)
                 this.masterdetail.sync(this,this.record,field.definition.column);
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))

@@ -39,8 +39,9 @@ export class MasterDetail
     public cleardetails(block:BlockImpl) : void
     {
         let dep:dependencies = this.links.get(block.alias);
+
         if (dep != null && dep.details != null)
-            dep.details.forEach((det) => this.clear(det.block))
+            dep.details.forEach((det) => this.clear(det.block));
     }
 
 
@@ -96,7 +97,6 @@ export class MasterDetail
 
     public sync(block:BlockImpl, record:number, col:string) : void
     {
-        if (col == null) return;
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null)

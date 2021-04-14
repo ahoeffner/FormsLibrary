@@ -450,7 +450,7 @@ export class ApplicationImpl
         if (this.ready != 0)
         {
             // Make time for application setup
-            setTimeout(() => {this.showLinkedForm()},200);
+            setTimeout(() => {this.showLinkedForm()},500);
             return;
         }
 
