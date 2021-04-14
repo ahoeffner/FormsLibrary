@@ -66,6 +66,11 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.block?.block);
     }
 
+    public groupfields(groups:string[]) : void
+    {
+        this._impl_.regroup(groups);
+    }
+
     public get popup() : boolean
     {
         return(this._impl_.popup);
