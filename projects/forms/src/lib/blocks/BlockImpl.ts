@@ -650,7 +650,9 @@ export class BlockImpl
         // Is first row
         if (this.data.rows == 1)
         {
+
             this.display(this.offset);
+            this.disableall(0);
             this.focus(0);
             return(true);
         }
@@ -673,8 +675,9 @@ export class BlockImpl
         let rec:Record = this.records[+row];
 
         rec.current = true;
-        this.focus(row);
+        this.disableall(row);
 
+        this.focus(row);
         return(true);
     }
 
@@ -777,6 +780,7 @@ export class BlockImpl
             return(false);
         }
 
+        field.parent.valid = true;
         this.data.setValidated(+field.row+this.offset,field.name);
 
         if (!await this.lockrecord(+field.row+this.offset))
@@ -784,7 +788,7 @@ export class BlockImpl
 
         if  (field.value != previous)
         {
-            if (field.definition.column != null && +field.row+this.offset == this.record && this.masterdetail != null)
+            if (+field.row+this.offset == this.record && this.masterdetail != null)
                 this.masterdetail.sync(this,this.record,field.definition.column);
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
@@ -824,6 +828,8 @@ export class BlockImpl
         rec.state = RecordState.update;
         this.data.setValidated(this.record);
 
+        this.enableall();
+
         // update field properties
         rec.enable(false);
 
@@ -847,6 +853,26 @@ export class BlockImpl
         this.records[0].enable(true);
 
         this.row = 0;
+    }
+
+
+    public async disableall(except?:number)
+    {
+        for(let r = 0; r < this.rows; r++)
+            this.records[r].disable();
+
+        if (except != null)
+        {
+            this.records[+except].current = true;
+            this.records[+except].enable(false);
+        }
+    }
+
+
+    public async enableall()
+    {
+        for(let r = 0; r < this.rows; r++)
+            this.records[r].enable(false);
     }
 
 

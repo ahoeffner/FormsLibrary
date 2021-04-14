@@ -259,13 +259,13 @@ export class FieldInstance implements AfterViewInit
     {
         this.valid = true;
         this.enabled$ = false;
-        this.readonly$ = false;
+        this.readonly$ = true;
         this.state = RecordState.na;
 
         if (this.clazz != null)
         {
             this.clazz.enable = false;
-            this.clazz.readonly = false;
+            this.clazz.readonly = true;
         }
     }
 

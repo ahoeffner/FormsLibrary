@@ -97,10 +97,13 @@ export class MasterDetail
 
     public sync(block:BlockImpl, record:number, col:string) : void
     {
+        if (col == null) return;
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null)
         {
+            if (!dep.keycols.has(col)) return;
+            console.log("Query details col: "+col)
             this.query = new MasterDetailQuery(this,this.links,block,col);
             this.querydetails(block,record);
         }
