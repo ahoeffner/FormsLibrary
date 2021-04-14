@@ -93,7 +93,11 @@ export class Record
     public enable(readonly?:boolean) : void
     {
         this.enabled$ = true;
-        this.fields$.forEach((field) => {field.enable(readonly)});
+        this.fields$.forEach((field) =>
+        {
+            field.state = this.state$;
+            field.enable(readonly);
+        });
     }
 
     public disable() : void

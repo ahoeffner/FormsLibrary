@@ -103,7 +103,6 @@ export class MasterDetail
         if (dep != null)
         {
             if (!dep.keycols.has(col)) return;
-            console.log("Query details col: "+col)
             this.query = new MasterDetailQuery(this,this.links,block,col);
             this.querydetails(block,record);
         }

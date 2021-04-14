@@ -829,10 +829,6 @@ export class BlockImpl
         this.data.setValidated(this.record);
 
         this.enableall();
-
-        // update field properties
-        rec.enable(false);
-
         return(true);
     }
 
