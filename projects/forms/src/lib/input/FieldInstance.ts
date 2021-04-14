@@ -17,12 +17,14 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular
 
 export class FieldInstance implements AfterViewInit
 {
+    private lvalue:any;
     private guid$:string;
     private def:FieldDefinition;
     private app:ApplicationImpl;
     private clazz:FieldInterface;
     private fgroup$:Field = null;
     private valid$:boolean = true;
+    private lvalid:boolean = true;
     private enabled$:boolean = false;
     private readonly$:boolean = false;
     private mandatory$:boolean = false;
@@ -356,11 +358,18 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "focus")
         {
             this.firstchange = true;
+            this.lvalue = this.value;
+            this.lvalid = this.valid$;
             this.fgroup$["onEvent"](event,this,"focus");
         }
 
         if (event.type == "blur")
+        {
+            if (this.dirty && this.value == this.lvalue && !this.lvalid)
+                this.valid = false;
+
             this.fgroup$["onEvent"](event,this,"blur");
+        }
 
         if (event.type == "click" || event.type == "dblclick")
             this.fgroup$["onEvent"](event,this,event.type);
@@ -368,8 +377,9 @@ export class FieldInstance implements AfterViewInit
         if (event.type == "change")
         {
             if (this.enabled && !this.readonly)
-                if (!this.valid) this.fgroup$.valid = true;
+                if (!this.valid) this.fgroup$.valid = false;
 
+            this.valid = this.validate();
             this.fgroup$["onEvent"](event,this,"change");
         }
 
@@ -467,7 +477,7 @@ export class FieldInstance implements AfterViewInit
 
         let nvalue:string = this.value;
 
-        if (nvalue.trim().length == 0)
+        if (nvalue == null || nvalue.trim().length == 0)
             return(true);
 
         let numeric:boolean = !isNaN(+nvalue);
@@ -489,7 +499,7 @@ export class FieldInstance implements AfterViewInit
 
         let nvalue:string = this.value;
 
-        if (nvalue.trim().length == 0)
+        if (nvalue == null || nvalue.trim().length == 0)
             return(true);
 
         let numeric:boolean = !isNaN(+nvalue);

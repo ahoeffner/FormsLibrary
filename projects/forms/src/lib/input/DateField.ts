@@ -10,7 +10,13 @@ export class DateField extends TextField
     public get value() : any
     {
         if (this.element$.value == this.formatted)
+        {
+            // Invalid date
+            if (this.formatted.length > 0 && this.dateval == null)
+                return(this.formatted);
+
             return(this.dateval);
+        }
 
         return(this.element$.value);
     }
@@ -39,7 +45,12 @@ export class DateField extends TextField
         let strval:string = this.element$.value;
 
         if (strval == this.formatted)
+        {
+            if (strval != null && dates.parse(strval) == null)
+                return(false);
+
             return(true);
+        }
 
         this.formatted = null;
         this.dateval = dates.parse(strval);

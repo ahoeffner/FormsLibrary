@@ -741,20 +741,22 @@ export class BlockImpl
         if (this.state == FormState.entqry) return(true);
         if (this.records[this.row].state == RecordState.na) return(true);
 
-        if (!this.field.validate())
+        if (!field.validate())
         {
             field.valid = false;
             this.data.setValue(+field.row+this.offset,field.name,field.value);
             return(false);
         }
 
-        if (!field.dirty) return(this.data.getValidated(+field.row+this.offset,field.name));
-
         let previous:any = this.data.getValue(+field.row+this.offset,field.name)
-        this.data.setValue(+field.row+this.offset,field.name,field.value);
 
         // ctrl-z doesn't refresh
         if (field.dirty && field.value == previous) field.parent.copy(field);
+
+        // Nothing has changed
+        if (field.value == previous) return(this.data.getValidated(+field.row+this.offset,field.name));
+
+        this.data.setValue(+field.row+this.offset,field.name,field.value);
 
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,null);
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
@@ -796,13 +798,6 @@ export class BlockImpl
         {
             let cols:string[] = this.data.getNonValidated(this.record);
             this.alert("The following columns are not valid:<br><br>"+cols,"Validate Record");
-
-            cols.forEach((col) =>
-            {
-                let val:any = this.data.getValue(this.record,col);
-                console.log(col+": "+val+" not valid");
-            });
-
             return(false);
         }
 
