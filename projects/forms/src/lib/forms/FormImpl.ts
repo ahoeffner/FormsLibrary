@@ -608,7 +608,7 @@ export class FormImpl
         if (this.blocks.length > 0)
             this.block$ = this.blocks[0];
 
-        this.regroup();
+        this.groupfields();
 
         this.blocks.forEach((block) =>
         {
@@ -942,7 +942,7 @@ export class FormImpl
 
 
     // Sort fields by group and set tabindex
-    public regroup(groups?:string[]) : void
+    public groupfields(groups?:string[]) : void
     {
         let seq:number = 1;
         if (groups == null) groups = [];

@@ -68,7 +68,7 @@ export class Form implements OnInit, AfterViewInit
 
     public groupfields(groups:string[]) : void
     {
-        this._impl_.regroup(groups);
+        this._impl_.groupfields(groups);
     }
 
     public get popup() : boolean
