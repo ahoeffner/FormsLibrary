@@ -200,9 +200,9 @@ export class MasterDetail
 
         if (sql.length > 0)
         {
-            console.log("I add sub to "+sub.sql);
+            console.log("I "+sub.sql);
             sub.sql += sql;
-            console.log("II add sub to "+sub.sql);
+            console.log("II "+sub.sql);
         }
 
         return(sub);
@@ -228,7 +228,7 @@ export class MasterDetail
             sql: "select location_id from tab1 where col1 = :col1",
             subs: [],
             binds: [],
-            mcols: [],
+            mcols: ["l1key"],
             mtab: "tab1"
         }
 
@@ -237,7 +237,7 @@ export class MasterDetail
             sql: "select location_id from tab2 where col1 = :col1",
             subs: [],
             binds: [],
-            mcols: [],
+            mcols: ["l2key"],
             mtab: "tab2"
         }
 
@@ -249,7 +249,7 @@ export class MasterDetail
             sql: "select location_id from tab3 where col1 = :col1",
             subs: [],
             binds: [],
-            mcols: [],
+            mcols: ["l3key"],
             mtab: "tab3"
         }
 
