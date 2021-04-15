@@ -835,12 +835,16 @@ export class BlockImpl
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
-        rec.state = RecordState.update;
         this.data.setValidated(this.record);
 
-        if (this.form == null) this.enableall();
-        else                   this.form.enableall();
-        
+        if (rec.state == RecordState.insert)
+        {
+            console.log("enableall")
+            rec.state = RecordState.update;
+            if (this.form == null) this.enableall();
+            else                   this.form.enableall();
+        }
+
         return(true);
     }
 
