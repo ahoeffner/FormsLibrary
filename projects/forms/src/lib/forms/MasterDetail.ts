@@ -36,6 +36,15 @@ export class MasterDetail
     }
 
 
+    public enterquery(block:BlockImpl) : void
+    {
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.details != null)
+            dep.details.forEach((det) => det.block.keyentqry());
+    }
+
+
     public cleardetails(block:BlockImpl) : void
     {
         let dep:dependencies = this.links.get(block.alias);

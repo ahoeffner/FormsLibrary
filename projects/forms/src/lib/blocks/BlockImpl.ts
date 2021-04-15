@@ -35,6 +35,7 @@ export class BlockImpl
     private ready$:boolean = false;
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
+    private querying$:boolean = false;
     private disabled$:boolean = false;
     private navigable$:boolean = true;
     private masterdetail:MasterDetail;
@@ -492,25 +493,35 @@ export class BlockImpl
     }
 
 
-    public async keyentqry() : Promise<boolean>
+    public async keyentqry(force?:boolean) : Promise<boolean>
     {
-        if (this.data == null) return(false);
-        if (!this.usage.query) return(false);
+        if (force == null) force = false;
 
-        if (this.data.database && !this.app.connected)
-            return(false);
+        if (!force)
+        {
+            if (this.data == null) return(false);
+            if (!this.usage.query) return(false);
+
+            if (this.data.database && !this.app.connected)
+                return(false);
+        }
 
         return(await this.enterqry());
     }
 
 
-    private async keyexeqry() : Promise<boolean>
+    public async keyexeqry(force?:boolean) : Promise<boolean>
     {
-        if (this.data == null) return(false);
-        if (!this.usage.query) return(false);
+        if (force == null) force = false;
 
-        if (this.data.database && !this.app.connected)
-            return(false);
+        if (!force)
+        {
+            if (this.data == null) return(false);
+            if (!this.usage.query) return(false);
+
+            if (this.data.database && !this.app.connected)
+                return(false);
+        }
 
         let status = await this.executeqry();
         this.focus(0);
@@ -519,7 +530,7 @@ export class BlockImpl
     }
 
 
-    public async enterqry() : Promise<boolean>
+    private async enterqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -544,7 +555,7 @@ export class BlockImpl
     }
 
 
-    public async executeqry() : Promise<boolean>
+    private async executeqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -554,6 +565,11 @@ export class BlockImpl
 
         let keys:Key[] = [];
         let fields:Field[] = [];
+
+        if (this.querying$)
+            return(false);
+
+        this.querying$ = true;
 
         if (this.state == FormState.entqry)
         {
@@ -577,6 +593,8 @@ export class BlockImpl
 
             this.alert(msg,"Query Condition");
 
+            this.querying$ = false;
+
             if (this.masterdetail != null)
                 this.masterdetail.done();
 
@@ -594,6 +612,8 @@ export class BlockImpl
             this.clear();
             this.alert(JSON.stringify(response),"Database Query");
 
+            this.querying$ = false;
+
             if (this.masterdetail != null)
                 this.masterdetail.done();
 
@@ -606,6 +626,7 @@ export class BlockImpl
         this.row = 0;
         await this.display(0);
 
+        this.querying$ = false;
         this.state = FormState.normal;
         this.records[0].current = true;
 

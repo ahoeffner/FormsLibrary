@@ -49,14 +49,12 @@ export class Block
 
     public async enterquery(override?:boolean) : Promise<boolean>
     {
-        if (override) return(this._impl_.enterqry());
-        else this._impl_.sendkey(null,keymap.enterquery);
+        return(this._impl_.keyentqry(override));
     }
 
     public async executequery(override?:boolean) :  Promise<boolean>
     {
-        if (override) return(this._impl_.executeqry());
-        else return(this._impl_.sendkey(null,keymap.executequery));
+        return(this._impl_.keyexeqry(override));
     }
 
     public nextrecord() : void
