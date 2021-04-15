@@ -5,6 +5,7 @@ import { BlockImpl } from "../blocks/BlockImpl";
 import { Statement } from "../database/Statement";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
+import { Condition } from "../database/Condition";
 
 
 interface waiting
@@ -106,24 +107,30 @@ export class MasterDetail
         {
             dep.details.forEach((det) =>
             {
-                console.log("mkey: "+det.mkey.columns())
-                console.log("dkey: "+det.dkey.columns())
-                this.subquery(det.block);
+                this.subquery(det.block,det.mkey,det.dkey);
             });
         }
     }
 
 
-    private subquery(block:BlockImpl)
+    private subquery(block:BlockImpl, mkey:Key, dkey:Key)
     {
         if (!block.querymode) return(null);
         let fields:Field[] = block.records[0].fields;
+
         let stmt:Statement = block.data.parseQuery([],fields);
+        let cond:Condition = stmt.getCondition();
 
-        fields.forEach((fld) => {console.log(fld.name+" "+fld.value)});
+        if (cond)
+        {
+            stmt.order = null;
+            stmt.columns = dkey.columns();
 
-        if (stmt.condition)
-            console.log(block.alias+" "+stmt.condition.toString);
+            let sql:string = stmt.build().sql;
+            console.log(sql)
+        }
+
+        block.cancelqry();
     }
 
 

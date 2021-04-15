@@ -17,6 +17,18 @@ export class Condition
     private next$:Condition = null;
     private bindvalues$:BindValue[] = [];
 
+    private static id:number = 1;
+
+    private static ubid() : string
+    {
+        if (++Condition.id > 9999)
+            Condition.id = 1;
+
+        let ubid:string = ""+Condition.id;
+        while(ubid.length < 4) ubid = "0"+ubid;
+
+        return("_"+ubid);
+    }
 
     public static where(column:string, value:string, datatype?:Column) : Condition
     {
@@ -30,8 +42,8 @@ export class Condition
     {
         this.error$ = null;
         this.column$ = column;
-        this.placeholder = column;
         this.datatype$ = datatype;
+        this.placeholder = column + Condition.ubid();
 
         if (this.column$ == null)
         {
@@ -148,8 +160,7 @@ export class Condition
                 let edate:number = date.getTime() + 60 * 60 * 24 * 1000;
 
                 this.value$ = [sdate,edate];
-                let guid:number = new Date().getTime();
-                this.placeholder = [this.column$+"0"+guid,this.column$+"1"+guid];
+                this.placeholder = [this.placeholder+"-0",this.placeholder+"-1"];
             }
         }
 

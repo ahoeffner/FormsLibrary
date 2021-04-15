@@ -523,19 +523,27 @@ export class BlockImpl
         {
             if (this.masterdetail.master != this)
                 return(this.masterdetail.master.keyexeqry(force));
-
-            this.masterdetail.master = null;
         }
 
         if (force == null) force = false;
 
         if (!force)
         {
-            if (this.data == null) return(false);
-            if (!this.usage.query) return(false);
+            if (this.data == null || !this.usage.query)
+            {
+                if (this.masterdetail != null)
+                    this.masterdetail.master = null;
+
+                return(false);
+            }
 
             if (this.data.database && !this.app.connected)
+            {
+                if (this.masterdetail != null)
+                    this.masterdetail.master = null;
+
                 return(false);
+            }
         }
 
         if (this.masterdetail != null)
@@ -545,6 +553,20 @@ export class BlockImpl
         this.focus(0);
 
         return(status);
+    }
+
+
+    public cancelqry() : void
+    {
+        this.records[0].current = true;
+
+        this.records[0].clear();
+        this.records[0].disable();
+
+        this.state = FormState.normal;
+        this.records[0].state = RecordState.na;
+
+        this.records[0].enable(true);
     }
 
 
@@ -1093,14 +1115,7 @@ export class BlockImpl
         {
             if (this.state == FormState.entqry)
             {
-                this.records[0].current = true;
-
-                this.records[0].clear();
-                this.records[0].disable();
-                this.state = FormState.normal;
-                this.records[0].state = RecordState.na;
-                this.records[0].enable(true);
-
+                this.cancelqry();
                 this.focus();
             }
 

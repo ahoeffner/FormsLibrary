@@ -119,6 +119,8 @@ export class Statement
 
     public set columns(columns:string|string[])
     {
+        this.columns$ = [];
+        
         if (columns.constructor.name == "String")
         {
             this.columns$.push(""+columns);
@@ -262,6 +264,11 @@ export class Statement
         this.errors = this.condition$.errors();
 
         return(this.errors);
+    }
+
+    public getCondition() : Condition
+    {
+        return(this.condition$);
     }
 
     public build() : SQL
