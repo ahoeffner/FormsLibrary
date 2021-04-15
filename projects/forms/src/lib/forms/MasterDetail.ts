@@ -128,11 +128,10 @@ export class MasterDetail
         if (dep != null && dep.details != null)
         {
             for (let i = 0; i < dep.details.length; i++)
-                sub[i] = this.subquery(dep.details[i]);
+                sub.subs.push(this.subquery(dep.details[i]));
         }
 
-        console.log("subs "+sub.subs.length);
-        sub.subs.forEach((sub) => {console.log(sub.sql)});
+        this.test();
     }
 
 
@@ -178,10 +177,86 @@ export class MasterDetail
         if (dep != null && dep.details != null)
         {
             for (let i = 0; i < dep.details.length; i++)
-                sub[i] = this.subquery(dep.details[i]);
+                sub.subs.push(this.subquery(dep.details[i]));
         }
 
         return(sub);
+    }
+
+
+    private buildsubquery(sub:subquery) : subquery
+    {
+        let sql:string = "";
+
+        for (let i = 0; i < sub.subs.length; i++)
+        {
+            let sb:subquery = this.buildsubquery(sub.subs[i]);
+
+            if (sb.sql != null)
+            {
+                sql += " and ("+sub.mcols+") in ("+sb.sql+")";
+            }
+        }
+
+        if (sql.length > 0)
+        {
+            console.log("I add sub to "+sub.sql);
+            sub.sql += sql;
+            console.log("II add sub to "+sub.sql);
+        }
+
+        return(sub);
+    }
+
+
+    public test()
+    {
+        let sub:subquery =
+        {
+            sql: null,
+            subs: [],
+            binds: [],
+            mcols: [],
+            mtab: null
+        };
+
+        let sub1:subquery = null;
+        let sub2:subquery = null;
+
+        sub1 =
+        {
+            sql: "select location_id from tab1 where col1 = :col1",
+            subs: [],
+            binds: [],
+            mcols: [],
+            mtab: "tab1"
+        }
+
+        sub2 =
+        {
+            sql: "select location_id from tab2 where col1 = :col1",
+            subs: [],
+            binds: [],
+            mcols: [],
+            mtab: "tab2"
+        }
+
+        sub.subs.push(sub1);
+        sub.subs.push(sub2);
+
+        sub2 =
+        {
+            sql: "select location_id from tab3 where col1 = :col1",
+            subs: [],
+            binds: [],
+            mcols: [],
+            mtab: "tab3"
+        }
+
+        sub1.subs.push(sub2);
+
+        sub = this.buildsubquery(sub);
+        console.log("done: "+sub.sql);
     }
 
 
