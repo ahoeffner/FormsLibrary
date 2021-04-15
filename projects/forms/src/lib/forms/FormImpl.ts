@@ -162,6 +162,18 @@ export class FormImpl
     }
 
 
+    public enableall() : void
+    {
+        this.blocks.forEach((block) => {block.enableall()});
+    }
+
+
+    public disableall() : void
+    {
+        this.blocks.forEach((block) => {block.disableall()});
+    }
+
+
     public focus() : void
     {
         this.block?.focus();

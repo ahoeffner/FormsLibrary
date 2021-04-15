@@ -649,7 +649,12 @@ export class BlockImpl
         {
 
             await this.display(this.offset);
-            this.disableall(0);
+
+            if (this.form == null) this.disableall();
+            else                   this.form.disableall();
+
+            this.records[0].enable(false);
+
             this.focus(0);
             return(true);
         }
@@ -672,7 +677,11 @@ export class BlockImpl
         let rec:Record = this.records[+row];
 
         rec.current = true;
-        this.disableall(row);
+
+        if (this.form == null) this.disableall();
+        else                   this.form.disableall();
+
+        this.records[+row].enable(false);
 
         this.focus(row);
         return(true);
@@ -829,7 +838,9 @@ export class BlockImpl
         rec.state = RecordState.update;
         this.data.setValidated(this.record);
 
-        this.enableall();
+        if (this.form == null) this.enableall();
+        else                   this.form.enableall();
+        
         return(true);
     }
 
@@ -851,16 +862,10 @@ export class BlockImpl
     }
 
 
-    public async disableall(except?:number)
+    public async disableall()
     {
         for(let r = 0; r < this.rows; r++)
             this.records[r].disable();
-
-        if (except != null)
-        {
-            this.records[+except].current = true;
-            this.records[+except].enable(false);
-        }
     }
 
 
