@@ -4,6 +4,7 @@ import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
 import { Statement } from "../database/Statement";
+import { FieldDefinition } from "../input/FieldDefinition";
 
 
 export class FieldData
@@ -14,14 +15,16 @@ export class FieldData
     private block:BlockImpl;
     private data:Row[] = [];
     private fields$:string[];
+    private fielddef:Map<string,FieldDefinition>;
     private index:Map<string,number> = new Map<string,number>();
 
 
-    public constructor(block:BlockImpl, table:Table, fields:string[])
+    public constructor(block:BlockImpl, table:Table, fields:string[], fielddef:Map<string,FieldDefinition>)
     {
         this.block = block;
         this.table = table;
         this.fields$ = fields;
+        this.fielddef = fielddef;
 
         if (table != null)
             this.table.fielddata = this;
@@ -92,6 +95,23 @@ export class FieldData
     }
 
 
+    public mandatory(column:string) : boolean
+    {
+        let md:boolean = false;
+
+        if (this.table != null)
+            md = this.table.mandatory(column);
+
+        if (!md)
+        {
+            md = this.fielddef.get(column)?.mandatory;
+            if (md == null) md = false;
+        }
+
+        return(md);
+    }
+
+
     public getNonValidated(record:number) : string[]
     {
         if (record < 0 || record >= this.data.length) return([]);
@@ -102,8 +122,14 @@ export class FieldData
 
         for (let i = 0; i < row.fields.length; i++)
         {
-            if (!row.fields[i].validated)
+            if (this.mandatory(this.fields[i]) && row.fields[i].value$ == null)
+            {
                 cols.push(this.columns[i]);
+            }
+            else if (!row.fields[i].validated)
+            {
+                cols.push(this.columns[i]);
+            }
         }
 
         return(cols);
@@ -119,7 +145,12 @@ export class FieldData
         if (fields)
         {
             for (let i = 0; i < row.fields.length; i++)
+            {
+                if (this.mandatory(this.fields[i]) && row.fields[i].value$ == null)
+                    return(false);
+
                 if (!row.fields[i].validated) return(false);
+            }
             return(true);
         }
 

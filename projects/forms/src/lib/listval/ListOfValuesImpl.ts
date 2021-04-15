@@ -182,7 +182,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         })
 
+        let fielddef:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
         let descdef:FieldDefinition = {name: "description", type: FieldType.text, fieldoptions: {update: false}};
+
+        fielddef.set("description",descdef);
 
         container.getBlock("result").records.forEach((rec) =>
         {
@@ -197,7 +200,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         let table:Table = new Table(conn,{name: "none"},null,[],null,this.fetch);
 
         this.rblock.setApplication(this.app);
-        this.rblock.data = new FieldData(this.rblock,table,["description"]);
+        this.rblock.data = new FieldData(this.rblock,table,["description"],fielddef);
 
         this.app.dropContainer();
 

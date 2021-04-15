@@ -138,7 +138,7 @@ export class BlockImpl
 
     public get record() : number
     {
-        return(+this.row+this.offset);
+        return(this.sum(this.row,this.offset));
     }
 
 
@@ -290,7 +290,7 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
 
-        if (+record >= +this.offset && +record < +this.offset+this.rows)
+        if (+record >= +this.offset && +record < this.sum(this.offset,this.rows))
         {
             let dbcol:string = column;
             let field:Field = this.records[record-this.offset].getField(column);
@@ -452,7 +452,7 @@ export class BlockImpl
         if (ldef != null)
         {
             let lov:ListOfValues = null;
-            let record:number = +row+this.offset;
+            let record:number = this.sum(row,this.offset);
 
             if (ldef.params.length == 0) lov = ldef.inst[ldef.func]();
             else                         lov = ldef.inst[ldef.func](record);
@@ -512,7 +512,7 @@ export class BlockImpl
             return(false);
 
         let status = await this.executeqry();
-        this.focus();
+        this.focus(0);
 
         return(status);
     }
@@ -526,21 +526,18 @@ export class BlockImpl
         if (!await this.validate())
             return(false);
 
-        this.clear();
+        await this.clear();
 
         if (this.masterdetail != null)
             this.masterdetail.cleardetails(this);
 
-        if (this.records.length > 0)
-        {
-            this.row = 0;
+        this.row = 0;
 
-            this.state = FormState.entqry;
-            this.records[0].state = RecordState.qmode;
+        this.state = FormState.entqry;
+        this.records[0].state = RecordState.qmode;
 
-            this.records[0].enable(false);
-            this.focus();
-        }
+        this.records[0].enable(false);
+        this.focus();
 
         return(true);
     }
@@ -611,6 +608,7 @@ export class BlockImpl
         this.state = FormState.normal;
         this.records[0].current = true;
 
+        this.focus(0);
         return(true);
     }
 
@@ -641,7 +639,7 @@ export class BlockImpl
 
         let off:number = after ? 1 : 0;
 
-        if (!this.data.insert(+this.row + +this.offset + +off))
+        if (!this.data.insert(this.sum(this.row,this.offset,off)))
             return(false);
 
         if (this.masterdetail != null)
@@ -669,9 +667,9 @@ export class BlockImpl
         let move:number = 0;
         if (scroll == 0) move = after ? 1 : 0;
 
-        await this.display(+this.offset + scroll);
+        await this.display(this.sum(this.offset,scroll));
 
-        row = +row + +move;
+        row = this.sum(row,move);
         let rec:Record = this.records[+row];
 
         rec.current = true;
@@ -687,7 +685,7 @@ export class BlockImpl
         if (this.data.database && !this.app.connected)
             return(false);
 
-        if (!this.data.delete(+this.row + +this.offset))
+        if (!this.data.delete(this.sum(this.row,this.offset)))
             return(false);
 
         if (this.masterdetail != null)
@@ -704,7 +702,7 @@ export class BlockImpl
         await this.display(this.offset);
 
         // no records at current position
-        if ((+row) + (+this.offset) >= this.data.rows)
+        if (this.sum(row,this.offset) >= this.data.rows)
             row = this.data.rows - this.offset - 1;
 
         if (row < 0) this.row = 0;
@@ -759,22 +757,21 @@ export class BlockImpl
         if (!field.validate())
         {
             field.valid = false;
-            this.data.setValue(+field.row+this.offset,field.name,field.value);
+            this.data.setValue(this.sum(field.row,this.offset),field.name,field.value);
             return(false);
         }
 
-        let previous:any = this.data.getValue(+field.row+this.offset,field.name)
+        let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
 
         // ctrl-z doesn't refresh
-        if (field.dirty && field.value == previous) console.log("ctrl-z");
         if (field.dirty && field.value == previous) field.parent.copy(field);
 
         // Nothing has changed
-        if (field.value == previous) return(this.data.getValidated(+field.row+this.offset,field.name));
+        if (field.value == previous) return(this.data.getValidated(this.sum(field.row,this.offset),field.name));
 
         this.data.setValue(+field.row+this.offset,field.name,field.value);
 
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,null);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,null);
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
         {
             field.valid = false;
@@ -782,14 +779,14 @@ export class BlockImpl
         }
 
         field.parent.valid = true;
-        this.data.setValidated(+field.row+this.offset,field.name);
+        this.data.setValidated(this.sum(field.row,this.offset),field.name);
 
-        if (!await this.lockrecord(+field.row+this.offset))
+        if (!await this.lockrecord(this.sum(field.row,this.offset)))
             return(false);
 
         if  (field.value != previous)
         {
-            if (+field.row+this.offset == this.record && this.masterdetail != null)
+            if (this.sum(field.row,this.offset) == this.record && this.masterdetail != null)
                 this.masterdetail.sync(this,this.record,field.definition.column);
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
@@ -815,6 +812,10 @@ export class BlockImpl
         {
             let cols:string[] = this.data.getNonValidated(this.record);
             this.alert("The following columns are not valid:<br><br>"+cols,"Validate Record");
+
+            cols.forEach((col) =>
+            {this.records[this.record].getField(col).valid = false;});
+
             return(false);
         }
 
@@ -848,8 +849,6 @@ export class BlockImpl
         this.records[0].current = true;
         this.records[0].state = RecordState.na;
         this.records[0].enable(true);
-
-        this.row = 0;
     }
 
 
@@ -880,7 +879,7 @@ export class BlockImpl
         this.offset = start;
         if (this.data == null) return;
 
-        if (+this.offset + +this.rows > +this.data.rows)
+        if (this.sum(this.offset,this.rows) > +this.data.rows)
             this.offset = this.data.rows - this.rows;
 
         if (this.offset < 0) this.offset = 0;
@@ -891,7 +890,7 @@ export class BlockImpl
         for(let r = 0; r < rows.length; r++)
         {
             let rec:Record = this.getRecord(r);
-            let state:RecordState = this.data.state(+this.offset+r);
+            let state:RecordState = this.data.state(this.sum(this.offset,r));
 
             for(let c = 0; c < rows[r].length; c++)
             {
@@ -911,11 +910,11 @@ export class BlockImpl
                     let fname:string = columns[c];
                     if (field != null) fname = field.name;
 
-                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,null,+r+this.offset,value,value);
+                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,null,this.sum(r,this.offset),value,value);
                     execs.push(this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent));
                 }
 
-                execs.push(this.invokeTriggers(Trigger.PostChange, new TriggerEvent(+r+this.offset)));
+                execs.push(this.invokeTriggers(Trigger.PostChange, new TriggerEvent(this.sum(r,this.offset))));
                 state = this.data.state(+this.offset+r,RecordState.update);
 
                 for (let i = 0; i < execs.length; i++) await execs[i];
@@ -969,14 +968,14 @@ export class BlockImpl
                 }
 
                 if (this.masterdetail != null)
-                    this.masterdetail.querydetails(this,+field.row+this.offset,true);
+                    this.masterdetail.querydetails(this,this.sum(field.row,this.offset),true);
             }
 
             this.field$ = field;
             this.row = field.row;
             this.records$[+field.row].current = true;
 
-            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent));
         }
 
@@ -985,7 +984,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent));
         }
 
@@ -994,7 +993,7 @@ export class BlockImpl
             if (this.state == FormState.entqry || this.data == null)
                 return(true);
 
-            return(await this.lockrecord(+field.row+this.offset));
+            return(await this.lockrecord(this.sum(field.row,this.offset)));
         }
 
         if (type == "cchange")
@@ -1002,8 +1001,8 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            let previous:any = this.getValue(+field.row+this.offset,field.name);
-            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,previous,event);
+            let previous:any = this.getValue(this.sum(field.row,this.offset),field.name);
+            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
 
             return(this.invokeFieldTriggers(Trigger.Typing,field.name,trgevent));
         }
@@ -1132,7 +1131,7 @@ export class BlockImpl
             if (field.dirty)
             {
                 // change doesn't fire if field is changed, but reset again
-                let previous:any = this.data.getValue(+field.row+this.offset,field.name)
+                let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
                 if (previous == field.value) await this.validatefield(field);
             }
         }
@@ -1148,7 +1147,7 @@ export class BlockImpl
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            let row:number = +field.row + 1;
+            let row:number = this.sum(field.row,1);
             if (this.data == null) return(false);
 
             if (+row >= +this.rows)
@@ -1156,11 +1155,11 @@ export class BlockImpl
                 row = +this.rows - 1;
                 if (this.data == null) return(false);
 
-                let offset:number = +this.offset + +field.row;
+                let offset:number = this.sum(field.row,this.offset);
                 let fetched:number = await this.data.fetch(offset,1);
 
                 if (fetched == 0) return(false);
-                await this.display(this.offset+1);
+                await this.display(this.sum(this.offset,1));
             }
 
             this.focus(row);
@@ -1188,7 +1187,7 @@ export class BlockImpl
             if (+row < 0)
             {
                 row = 0;
-                this.display(this.offset-1);
+                this.display(this.offset - 1);
             }
 
             this.focus(row);
@@ -1210,12 +1209,12 @@ export class BlockImpl
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
 
-            let offset:number = +this.offset + +field.row;
+            let offset:number = this.sum(this.offset,field.row);
             let fetched:number = await this.data.fetch(offset,this.rows);
 
             if (fetched == 0) return(false);
 
-            await this.display(+this.offset+this.rows);
+            await this.display(this.sum(this.offset,this.rows));
             this.focus();
 
             if (this.masterdetail != null)
@@ -1258,13 +1257,13 @@ export class BlockImpl
 
         if (type == "click")
         {
-            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.MouseClick,field.name,trgevent,key));
         }
 
         if (type == "dblclick")
         {
-            trgevent = new FieldTriggerEvent(field.name,field.id,+field.row+this.offset,field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.MouseDoubleClick,field.name,trgevent,key));
         }
 
@@ -1298,5 +1297,13 @@ export class BlockImpl
     {
         if (title == null) title = this.alias;
         MessageBox.show(this.app,msg,title,width,height);
+    }
+
+
+    private sum(n1:number,n2:number, n3?:number) : number
+    {
+        let s:number = +n1 + +n2;
+        if (n3 != null) s = +s + +n3;
+        return(s);
     }
 }

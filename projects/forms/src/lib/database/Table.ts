@@ -67,6 +67,14 @@ export class Table
     }
 
 
+    public mandatory(column:string) : boolean
+    {
+        let def:ColumnDefinition = this.index.get(column);
+        if (def == null || def.mandatory == null) return(false);
+        return(def.mandatory);
+    }
+
+
     public set fielddata(fielddata:FieldData)
     {
         this.fielddata$ = fielddata;

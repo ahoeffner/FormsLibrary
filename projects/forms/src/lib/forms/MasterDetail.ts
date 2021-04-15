@@ -114,6 +114,8 @@ export class MasterDetail
         if (init == null) init = false;
         if (record == null) record = 0;
 
+        //console.log("execute query "+block.alias+"["+record+"] "+init+" "+this.query)
+
         if (init && this.query != null)
         {
             this.waiting.block = block;
@@ -169,6 +171,8 @@ export class MasterDetail
     {
         let record:number = 0;
         let block:BlockImpl = null;
+
+        //console.log("done, "+this.waiting.block)
 
         if (this.waiting.block != null)
         {
