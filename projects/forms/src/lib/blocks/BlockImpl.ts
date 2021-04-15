@@ -648,7 +648,7 @@ export class BlockImpl
         if (this.data.rows == 1)
         {
 
-            this.display(this.offset);
+            await this.display(this.offset);
             this.disableall(0);
             this.focus(0);
             return(true);
@@ -1186,7 +1186,7 @@ export class BlockImpl
             if (+row < 0)
             {
                 row = 0;
-                this.display(this.offset - 1);
+                await this.display(this.offset - 1);
             }
 
             this.focus(row);
