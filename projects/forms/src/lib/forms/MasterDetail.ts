@@ -45,14 +45,9 @@ export class MasterDetail
     }
 
 
-    public enterquery(block:BlockImpl) : void
+    public set master(block:BlockImpl)
     {
         this.master$ = block;
-        return;
-        let dep:dependencies = this.links.get(block.alias);
-
-        if (dep != null && dep.details != null)
-            dep.details.forEach((det) => det.block.enterqry());
     }
 
 
@@ -76,45 +71,6 @@ export class MasterDetail
     }
 
 
-    public async validatedetails(block:BlockImpl) : Promise<boolean>
-    {
-        let dep:dependencies = this.links.get(block.alias);
-
-        if (dep != null && dep.details != null)
-        {
-            for (let i = 0; i < dep.details.length; i++)
-            {
-                if (!await this.validate(dep.details[i].block))
-                    return(false);
-            }
-        }
-
-        return(true);
-    }
-
-
-    private async validate(block:BlockImpl) : Promise<boolean>
-    {
-        block.clear();
-
-        let dep:dependencies = this.links.get(block.alias);
-
-        if (dep != null && dep.details != null)
-        {
-            for (let i = 0; i < dep.details.length; i++)
-            {
-                if (!await this.validate(dep.details[i].block))
-                    return(false);
-
-                if (!await dep.details[i].block.validate())
-                    return(false);
-            }
-        }
-
-        return(true);
-    }
-
-
     public sync(block:BlockImpl, record:number, col:string) : void
     {
         if (col == null) return;
@@ -129,10 +85,19 @@ export class MasterDetail
     }
 
 
+    public enterquery(block:BlockImpl) : void
+    {
+        this.master$ = block;
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.details != null)
+            dep.details.forEach((det) => det.block.enterqry());
+    }
+
+
     // Build subquery from details
     public getDetailQuery() : void
     {
-        return;
         let block:BlockImpl = this.master$;
         let dep:dependencies = this.links.get(block.alias);
 
@@ -154,6 +119,8 @@ export class MasterDetail
         if (!block.querymode) return(null);
         let fields:Field[] = block.records[0].fields;
         let stmt:Statement = block.data.parseQuery([],fields);
+
+        fields.forEach((fld) => {console.log(fld.name+" "+fld.value)});
 
         if (stmt.condition)
             console.log(block.alias+" "+stmt.condition.toString);

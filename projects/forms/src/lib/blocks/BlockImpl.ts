@@ -519,6 +519,14 @@ export class BlockImpl
 
     public async keyexeqry(force?:boolean) : Promise<boolean>
     {
+        if (this.masterdetail != null)
+        {
+            if (this.masterdetail.master != this)
+                return(this.masterdetail.master.keyexeqry(force));
+
+            this.masterdetail.master = null;
+        }
+
         if (force == null) force = false;
 
         if (!force)
