@@ -3,15 +3,26 @@ import { FormImpl } from "./FormImpl";
 import { Field } from "../input/Field";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Statement } from "../database/Statement";
+import { Condition } from "../database/Condition";
+import { BindValue } from "../database/BindValue";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
-import { Condition } from "../database/Condition";
 
 
 interface waiting
 {
     record:number;
     block:BlockImpl;
+}
+
+
+interface subquery
+{
+    sql:string;
+    mtab:string;
+    mcols:string[],
+    subs:subquery[];
+    binds:BindValue[]
 }
 
 
@@ -103,22 +114,50 @@ export class MasterDetail
         let dep:dependencies = this.links.get(block.alias);
 
         this.master$ = null;
+
+        let sub:subquery =
+        {
+            sql: null,
+            subs: [],
+            binds: [],
+            mcols: [],
+            mtab: block.data?.table?.name
+        };
+
         if (dep != null && dep.details != null)
         {
-            dep.details.forEach((det) =>
-            {
-                this.subquery(det.block,det.mkey,det.dkey);
-            });
+            for (let i = 0; i < dep.details.length; i++)
+                sub[i] = this.subquery(dep.details[i]);
         }
+
+        sub.subs.forEach((sub) => {console.log(sub.sql)});
     }
 
 
-    private subquery(block:BlockImpl, mkey:Key, dkey:Key)
+    private subquery(detail:any) : subquery
     {
-        if (!block.querymode) return(null);
-        let fields:Field[] = block.records[0].fields;
+        let sub:subquery =
+        {
+            sql: null,
+            subs: [],
+            binds: [],
+            mcols: [],
+            mtab: null
+        };
 
+        let mkey:Key = detail.mkey;
+        let dkey:Key = detail.dkey;
+        let block:BlockImpl = detail.block;
+
+        if (!block.querymode)
+            return(sub);
+
+        let fields:Field[] = block.records[0].fields;
         let stmt:Statement = block.data.parseQuery([],fields);
+
+        sub.mcols = mkey.columns(),
+        sub.mtab = block.data?.table?.name;
+
         let cond:Condition = stmt.getCondition();
 
         if (cond)
@@ -126,11 +165,21 @@ export class MasterDetail
             stmt.order = null;
             stmt.columns = dkey.columns();
 
-            let sql:string = stmt.build().sql;
-            console.log(sql)
+            sub.sql = stmt.build().sql;
+            sub.binds = cond.bindvalues();
         }
 
         block.cancelqry();
+
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.details != null)
+        {
+            for (let i = 0; i < dep.details.length; i++)
+                sub[i] = this.subquery(dep.details[i]);
+        }
+
+        return(sub);
     }
 
 

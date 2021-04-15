@@ -9,7 +9,7 @@ import { FieldDefinition } from "../input/FieldDefinition";
 
 export class FieldData
 {
-    private table:Table;
+    private table$:Table;
     private scn:number = 0;
     private query:Statement;
     private block:BlockImpl;
@@ -22,18 +22,24 @@ export class FieldData
     public constructor(block:BlockImpl, table:Table, fields:string[], fielddef:Map<string,FieldDefinition>)
     {
         this.block = block;
-        this.table = table;
+        this.table$ = table;
         this.fields$ = fields;
         this.fielddef = fielddef;
 
         if (table != null)
-            this.table.fielddata = this;
+            this.table$.fielddata = this;
 
         if (fields != null)
         {
             for(let i = 0; i < fields.length; i++)
                 this.index.set(fields[i].toLowerCase(),i);
         }
+    }
+
+
+    public get table() : Table
+    {
+        return(this.table$);
     }
 
 

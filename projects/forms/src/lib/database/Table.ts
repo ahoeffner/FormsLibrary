@@ -61,6 +61,12 @@ export class Table
     }
 
 
+    public get name() : string
+    {
+        return(this.table.name);
+    }
+
+
     public get columns() : string[]
     {
         return(this.cnames);
