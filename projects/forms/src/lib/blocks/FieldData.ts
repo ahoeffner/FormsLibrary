@@ -294,6 +294,7 @@ export class FieldData
 
     public state(record:number, state?:RecordState) : RecordState
     {
+        if (record >= this.data.length) return(RecordState.na);
         if (state != null) this.data[record].state = state;
         return(this.data[record].state);
     }

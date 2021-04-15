@@ -66,5 +66,7 @@ export interface FieldInterface
     tabindex:number;
     readonly:boolean;
     element:HTMLElement;
+
+    focus() : void;
     validate() : boolean;
 }

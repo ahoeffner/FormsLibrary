@@ -56,6 +56,12 @@ export class TextField implements FieldInterface
         this.element$.value = value;
     }
 
+    public focus() : void
+    {
+        this.element$.focus();
+        this.element$.select();
+    }
+
     public validate() : boolean
     {
         return(true);

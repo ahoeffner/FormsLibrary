@@ -175,7 +175,7 @@ export class FieldInstance implements AfterViewInit
     public focus() : boolean
     {
         if (!this.enabled) return(false);
-        setTimeout(() => {this.clazz.element.focus()},0);
+        setTimeout(() => {this.clazz.focus()},0);
         return(true);
     }
 
@@ -273,7 +273,7 @@ export class FieldInstance implements AfterViewInit
     private setInputState() : void
     {
         this.enabled$ = false;
-
+        
         if (!this.options$.navigable)
         {
             if (this.clazz != null)

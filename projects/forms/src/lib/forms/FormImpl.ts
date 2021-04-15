@@ -509,15 +509,6 @@ export class FormImpl
                     if (!fields.includes(inst.name,0)) fields.push(inst.name);
                 }
 
-                if (fdef.column == null)
-                {
-                    // Map to column, unless column is mapped otherwise
-                    let cdef:ColumnDefinition = colindex.get(fdef.name);
-
-                    if (cdef != null && colfields.get(fdef.name) == null)
-                        fdef.column = fdef.name;
-                }
-
                 if (inst.parent.definition == null)
                     inst.parent.setDefinition(fdef,false);
 
@@ -544,6 +535,15 @@ export class FormImpl
                         ovcompidx.set(id,comp);
                         overideidx.set(id,iddef);
                     }
+                }
+
+                if (fdef.column == null)
+                {
+                    // Map to column, unless column is mapped otherwise
+                    let cdef:ColumnDefinition = colindex.get(fdef.name);
+
+                    if (cdef != null && colfields.get(fdef.name) == null)
+                        fdef.column = fdef.name;
                 }
 
                 let cdef:ColumnDefinition = colindex.get(fdef.column);
@@ -1077,7 +1077,20 @@ export class FormImpl
                 }
             }
 
-            if (!prev) event.preventDefault();
+            if (!prev)
+            {
+                event.preventDefault();
+
+                for(let i = this.fields$.length - 1; i >= 0; i--)
+                {
+                    if (this.fields$[i].enabled)
+                    {
+                        this.fields$[i].focus();
+                        break;
+                    }
+                }
+            }
+
             return;
         }
 
@@ -1095,7 +1108,20 @@ export class FormImpl
                 }
             }
 
-            if (!next) event.preventDefault();
+            if (!next)
+            {
+                event.preventDefault();
+
+                for(let i = 0; i < this.fields$.length; i++)
+                {
+                    if (this.fields$[i].enabled)
+                    {
+                        this.fields$[i].focus();
+                        break;
+                    }
+                }
+            }
+
             return;
         }
     }

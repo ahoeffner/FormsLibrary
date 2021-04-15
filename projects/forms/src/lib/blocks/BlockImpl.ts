@@ -35,6 +35,7 @@ export class BlockImpl
     private ready$:boolean = false;
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
+    private disabled$:boolean = false;
     private navigable$:boolean = true;
     private masterdetail:MasterDetail;
     private fields$:FieldInstance[] = [];
@@ -771,9 +772,6 @@ export class BlockImpl
 
         let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
 
-        // ctrl-z doesn't refresh
-        if (field.dirty && field.value == previous) field.parent.copy(field);
-
         // Nothing has changed
         if (field.value == previous) return(this.data.getValidated(this.sum(field.row,this.offset),field.name));
 
@@ -799,7 +797,13 @@ export class BlockImpl
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
                 return(false);
-        }
+
+                if (this.records[this.row].state == RecordState.insert)
+                {
+                    if (this.data.validated(this.record,true))
+                        this.validaterecord();
+                }
+            }
 
         return(true);
     }
@@ -836,11 +840,12 @@ export class BlockImpl
             return(false);
 
         this.data.setValidated(this.record);
-
         if (rec.state == RecordState.insert)
         {
-            console.log("enableall")
+            await this.sleep(10);
+            // Let cursor move first
             rec.state = RecordState.update;
+
             if (this.form == null) this.enableall();
             else                   this.form.enableall();
         }
@@ -856,18 +861,20 @@ export class BlockImpl
 
         for(let r = 0; r < this.rows; r++)
         {
-            this.records[r].clear();
-            this.records[r].disable();
+            this.records[+r].clear();
+            this.records[+r].disable();
+            this.records[+r].state = RecordState.na;
         }
 
         this.records[0].current = true;
         this.records[0].state = RecordState.na;
-        this.records[0].enable(true);
+        if (!this.disabled$) this.records[0].enable(true);
     }
 
 
     public async disableall()
     {
+        this.disabled$ = true;
         for(let r = 0; r < this.rows; r++)
             this.records[r].disable();
     }
@@ -875,8 +882,12 @@ export class BlockImpl
 
     public async enableall()
     {
+        this.disabled$ = false;
         for(let r = 0; r < this.rows; r++)
-            this.records[r].enable(false);
+        {
+            if (this.records[r].state != RecordState.na)
+                this.records[r].enable(false);
+        }
     }
 
 
@@ -923,13 +934,13 @@ export class BlockImpl
                 }
 
                 execs.push(this.invokeTriggers(Trigger.PostChange, new TriggerEvent(this.sum(r,this.offset))));
-                state = this.data.state(+this.offset+r,RecordState.update);
+                state = this.data.state(this.sum(this.offset,r),RecordState.update);
 
                 for (let i = 0; i < execs.length; i++) await execs[i];
             }
 
             rec.state = state;
-            rec.enable(false);
+            if (!this.disabled$) rec.enable(false);
         }
     }
 
@@ -1020,6 +1031,7 @@ export class BlockImpl
             // Current row field firing after move
             if (field.row != this.row) return(true);
 
+            // This will fire appropiate triggers
             if (!await this.validatefield(field))
             {
                 this.field.focus();
@@ -1027,6 +1039,19 @@ export class BlockImpl
             }
 
             return(true);
+        }
+
+        // Enter
+        if (type == "key" && key == keymap.enter)
+        {
+            if (this.state == FormState.entqry)
+                key = keymap.executequery;
+
+            if (this.records[+this.row]?.state == RecordState.insert)
+                return(await this.validaterecord());
+
+            if (this.records[+this.row]?.state == RecordState.update)
+                return(await this.validaterecord());
         }
 
         // Cancel
@@ -1043,6 +1068,12 @@ export class BlockImpl
                 this.records[0].enable(true);
 
                 this.focus();
+            }
+
+            if (this.records[+this.row]?.state == RecordState.insert)
+            {
+                this.enableall();
+                key = keymap.delete;
             }
         }
 
@@ -1086,13 +1117,13 @@ export class BlockImpl
         {
             trgevent = new KeyTriggerEvent(field,key,event);
 
-            if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
-                return(true);
+            if (this.records[+this.row]?.state == RecordState.update)
+            {
+                if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
+                    return(false);
+            }
 
-            if (!await this.keydelete())
-                return(false);
-
-            return(true);
+            return(await this.keydelete());
         }
 
         // Insert after
@@ -1136,12 +1167,32 @@ export class BlockImpl
         // Next/Previous field
         if (type == "key" && (key == keymap.nextfield || key == keymap.prevfield))
         {
-            if (field.dirty)
+            if (this.records[+this.row]?.state != RecordState.na)
             {
-                // change doesn't fire if field is changed, but reset again
                 let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
-                if (previous == field.value) await this.validatefield(field);
+
+                if (field.dirty)
+                {
+                    // ctrl-z doesn't refresh
+                    if (field.value == previous) field.parent.copy(field);
+                }
+
+                trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
+
+                if (key == keymap.prevfield)
+                {
+                    if (!await this.invokeFieldTriggers(Trigger.KeyPrevField,field.name,trgevent,key))
+                        return(false);
+                }
+
+                if (key == keymap.nextfield)
+                {
+                    if (!await this.invokeFieldTriggers(Trigger.KeyNextField,field.name,trgevent,key))
+                        return(false);
+                }
             }
+
+            console.log("go on")
         }
 
         // Next record
