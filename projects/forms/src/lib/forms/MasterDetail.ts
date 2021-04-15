@@ -111,9 +111,10 @@ export class MasterDetail
     public getDetailQuery() : void
     {
         let block:BlockImpl = this.master$;
-        let dep:dependencies = this.links.get(block.alias);
-
         this.master$ = null;
+
+        if (block == null) return;
+        let dep:dependencies = this.links.get(block.alias);
 
         let sub:subquery =
         {
@@ -130,6 +131,7 @@ export class MasterDetail
                 sub[i] = this.subquery(dep.details[i]);
         }
 
+        console.log("subs "+sub.subs.length);
         sub.subs.forEach((sub) => {console.log(sub.sql)});
     }
 

@@ -521,7 +521,7 @@ export class BlockImpl
     {
         if (this.masterdetail != null)
         {
-            if (this.masterdetail.master != this)
+            if (this.masterdetail.master != null && this.masterdetail.master != this)
                 return(this.masterdetail.master.keyexeqry(force));
         }
 
