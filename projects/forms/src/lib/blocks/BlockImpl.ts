@@ -1232,6 +1232,9 @@ export class BlockImpl
         // Previous record
         if (type == "key" && key == keymap.prevrecord)
         {
+            if (this.record == 0)
+                return(true);
+
             if (!await this.validate())
                 return(false);
 
@@ -1285,6 +1288,9 @@ export class BlockImpl
         // Page up
         if (type == "key" && key == keymap.pageup)
         {
+            if (this.record == 0)
+                return(true);
+
             if (!await this.validate())
                 return(false);
 
