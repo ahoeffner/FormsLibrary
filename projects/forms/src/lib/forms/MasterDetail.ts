@@ -1,10 +1,10 @@
 import { Key } from "../blocks/Key";
 import { FormImpl } from "./FormImpl";
+import { Field } from "../input/Field";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { Statement } from "../database/Statement";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
-import { Statement } from "../database/Statement";
-import { Field } from "../input/Field";
 
 
 interface waiting
@@ -25,6 +25,7 @@ export interface dependencies
 export class MasterDetail
 {
     private form:FormImpl = null;
+    private master$:BlockImpl = null;
     private query:MasterDetailQuery = null;
     private waiting:waiting = {block: null, record: null};
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
@@ -38,8 +39,16 @@ export class MasterDetail
     }
 
 
+    public get master() : BlockImpl
+    {
+        return(this.master$);
+    }
+
+
     public enterquery(block:BlockImpl) : void
     {
+        this.master$ = block;
+        return;
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null && dep.details != null)
@@ -121,10 +130,13 @@ export class MasterDetail
 
 
     // Build subquery from details
-    public getDetailQuery(block:BlockImpl) : void
+    public getDetailQuery() : void
     {
+        return;
+        let block:BlockImpl = this.master$;
         let dep:dependencies = this.links.get(block.alias);
 
+        this.master$ = null;
         if (dep != null && dep.details != null)
         {
             dep.details.forEach((det) =>
@@ -155,6 +167,7 @@ export class MasterDetail
 
         if (init && this.query != null)
         {
+            console.log("waiting for <"+this.waiting.block?.alias+">")
             this.waiting.block = block;
             this.waiting.record = record;
             return;

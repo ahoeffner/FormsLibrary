@@ -1,3 +1,4 @@
+import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { dependencies, MasterDetail } from "./MasterDetail";
 
@@ -50,7 +51,8 @@ export class MasterDetailQuery
         this.md.bindkeys(block,record,dep);
         this.masterblks.set(block.alias,true);
 
-        this.execute(dep);
+        if (dep.details == null) this.md.done();
+        else this.execute(dep);
     }
 
 

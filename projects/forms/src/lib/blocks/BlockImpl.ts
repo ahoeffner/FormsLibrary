@@ -531,7 +531,7 @@ export class BlockImpl
         }
 
         if (this.masterdetail != null)
-            this.masterdetail.getDetailQuery(this);
+            this.masterdetail.getDetailQuery();
 
         let status = await this.executeqry();
         this.focus(0);
