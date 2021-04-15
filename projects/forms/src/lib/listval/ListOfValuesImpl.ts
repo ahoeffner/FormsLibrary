@@ -254,7 +254,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.last = this.filter.value;
 
         if (this.last.length < this.minlen) this.rblock.clear();
-        else                                await this.rblock.executeqry();
+        else                                await this.rblock.keyexeqry();
 
         this.wait = false;
     }

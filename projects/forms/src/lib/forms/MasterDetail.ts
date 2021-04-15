@@ -3,6 +3,8 @@ import { FormImpl } from "./FormImpl";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
+import { Statement } from "../database/Statement";
+import { Field } from "../input/Field";
 
 
 interface waiting
@@ -41,7 +43,7 @@ export class MasterDetail
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null && dep.details != null)
-            dep.details.forEach((det) => det.block.keyentqry());
+            dep.details.forEach((det) => det.block.enterqry());
     }
 
 
@@ -115,6 +117,34 @@ export class MasterDetail
             this.query = new MasterDetailQuery(this,this.links,block,col);
             this.querydetails(block,record);
         }
+    }
+
+
+    // Build subquery from details
+    public getDetailQuery(block:BlockImpl) : void
+    {
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.details != null)
+        {
+            dep.details.forEach((det) =>
+            {
+                console.log("mkey: "+det.mkey.columns())
+                console.log("dkey: "+det.dkey.columns())
+                this.subquery(det.block);
+            });
+        }
+    }
+
+
+    private subquery(block:BlockImpl)
+    {
+        if (!block.querymode) return(null);
+        let fields:Field[] = block.records[0].fields;
+        let stmt:Statement = block.data.parseQuery([],fields);
+
+        if (stmt.condition)
+            console.log(block.alias+" "+stmt.condition.toString);
     }
 
 

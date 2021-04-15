@@ -506,7 +506,14 @@ export class BlockImpl
                 return(false);
         }
 
-        return(await this.enterqry());
+        if (!await this.enterqry())
+            return(false);
+
+        if (this.masterdetail != null)
+            this.masterdetail.enterquery(this);
+
+        this.focus(0);
+        return(true);
     }
 
 
@@ -523,6 +530,9 @@ export class BlockImpl
                 return(false);
         }
 
+        if (this.masterdetail != null)
+            this.masterdetail.getDetailQuery(this);
+
         let status = await this.executeqry();
         this.focus(0);
 
@@ -530,7 +540,7 @@ export class BlockImpl
     }
 
 
-    private async enterqry() : Promise<boolean>
+    public async enterqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -540,22 +550,17 @@ export class BlockImpl
 
         await this.clear();
 
-        if (this.masterdetail != null)
-            this.masterdetail.cleardetails(this);
-
         this.row = 0;
 
         this.state = FormState.entqry;
         this.records[0].state = RecordState.qmode;
 
         this.records[0].enable(false);
-        this.focus();
-
         return(true);
     }
 
 
-    private async executeqry() : Promise<boolean>
+    public async executeqry() : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -1188,7 +1193,7 @@ export class BlockImpl
         // Next/Previous field
         if (type == "key" && (key == keymap.nextfield || key == keymap.prevfield))
         {
-            if (this.records[+this.row]?.state != RecordState.na)
+            if (this.state != FormState.entqry && this.records[+this.row]?.state != RecordState.na)
             {
                 let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
 
@@ -1212,8 +1217,6 @@ export class BlockImpl
                         return(false);
                 }
             }
-
-            console.log("go on")
         }
 
         // Next record
