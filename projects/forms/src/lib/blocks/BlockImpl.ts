@@ -259,7 +259,7 @@ export class BlockImpl
             }
         }
 
-        let rec:Record = this.records[this.row];
+        let rec:Record = this.records[+this.row];
 
         if (this.field != null)
         {
@@ -434,8 +434,8 @@ export class BlockImpl
             row = this.row;
 
         if (!this.app.connected) return;
-        if (!this.records[row].enabled) return;
-        if (this.records[row].state == RecordState.na) return;
+        if (!this.records[+row].enabled) return;
+        if (this.records[+row].state == RecordState.na) return;
 
         let ldef:LOVDefinition = null;
         field = field.trim().toLowerCase();
@@ -460,7 +460,7 @@ export class BlockImpl
 
             let blocks:BlockImpl[] = [this,new BlockImpl(),new BlockImpl()];
 
-            if (!lov.force && this.records[row].getField(field)?.readonly)
+            if (!lov.force && this.records[+row].getField(field)?.readonly)
                 return;
 
             ListOfValuesImpl.show(this.app,blocks,lov);
@@ -761,7 +761,7 @@ export class BlockImpl
         if (this.data == null) return(true);
         if (this.row >= this.data.rows) return(true);
         if (this.state == FormState.entqry) return(true);
-        if (this.records[this.row].state == RecordState.na) return(true);
+        if (this.records[+this.row].state == RecordState.na) return(true);
 
         if (!field.validate())
         {
@@ -798,7 +798,7 @@ export class BlockImpl
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
                 return(false);
 
-                if (this.records[this.row].state == RecordState.insert)
+                if (this.records[+this.row].state == RecordState.insert)
                 {
                     if (this.data.validated(this.record,true))
                         this.validaterecord();
@@ -814,9 +814,9 @@ export class BlockImpl
         if (this.data == null) return(true);
         if (this.row >= this.data.rows) return(true);
         if (this.state == FormState.entqry) return(true);
-        if (this.records[this.row].state == RecordState.na) return(true);
+        if (this.records[+this.row].state == RecordState.na) return(true);
 
-        let rec:Record = this.records[this.row];
+        let rec:Record = this.records[+this.row];
         if (rec.state == RecordState.na) return(true);
 
         // Check fields is validated
@@ -826,7 +826,7 @@ export class BlockImpl
             this.alert("The following columns are not valid:<br><br>"+cols,"Validate Record");
 
             cols.forEach((col) =>
-            {this.records[this.record].getField(col).valid = false;});
+            {this.records[+this.record].getField(col).valid = false;});
 
             return(false);
         }
@@ -876,7 +876,7 @@ export class BlockImpl
     {
         this.disabled$ = true;
         for(let r = 0; r < this.rows; r++)
-            this.records[r].disable();
+            this.records[+r].disable();
     }
 
 
@@ -885,8 +885,8 @@ export class BlockImpl
         this.disabled$ = false;
         for(let r = 0; r < this.rows; r++)
         {
-            if (this.records[r].state != RecordState.na)
-                this.records[r].enable(false);
+            if (this.records[+r].state != RecordState.na)
+                this.records[+r].enable(false);
         }
     }
 
