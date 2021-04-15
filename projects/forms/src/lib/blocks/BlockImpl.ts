@@ -608,7 +608,6 @@ export class BlockImpl
         this.state = FormState.normal;
         this.records[0].current = true;
 
-        this.focus(0);
         return(true);
     }
 
