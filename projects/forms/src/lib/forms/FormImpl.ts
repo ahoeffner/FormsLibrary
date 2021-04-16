@@ -491,7 +491,7 @@ export class FormImpl
             // Then other defined fields (block or form)
             fieldidx.forEach((field) => {if (!fields.includes(field.name,0)) fields.push(field.name)});
 
-            // Field overrides
+            // Field overrides. ovcompidx is not used
             let ovcompidx:Map<string,any> = new Map<string,any>();
             let overideidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
 
@@ -518,8 +518,10 @@ export class FormImpl
                         fdef.column = fdef.name;
                 }
 
+                // Save default definition
                 fieldidx.set(inst.name,fdef);
 
+                // Override def
                 if (inst.id.length > 0)
                 {
                     let comp:any = null;
