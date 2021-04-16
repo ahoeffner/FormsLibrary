@@ -509,6 +509,15 @@ export class FormImpl
                     if (!fields.includes(inst.name,0)) fields.push(inst.name);
                 }
 
+                if (fdef.column == null)
+                {
+                    // Map to column, unless column is mapped otherwise
+                    let cdef:ColumnDefinition = colindex.get(fdef.name);
+
+                    if (cdef != null && colfields.get(fdef.name) == null)
+                        fdef.column = fdef.name;
+                }
+
                 fieldidx.set(inst.name,fdef);
 
                 if (inst.id.length > 0)
@@ -530,19 +539,11 @@ export class FormImpl
 
                     if (iddef != null)
                     {
-                        fdef = iddef;
                         ovcompidx.set(id,comp);
                         overideidx.set(id,iddef);
+                        iddef.column = fdef.column;
+                        fdef = iddef;
                     }
-                }
-
-                if (fdef.column == null)
-                {
-                    // Map to column, unless column is mapped otherwise
-                    let cdef:ColumnDefinition = colindex.get(fdef.name);
-
-                    if (cdef != null && colfields.get(fdef.name) == null)
-                        fdef.column = fdef.name;
                 }
 
                 let cdef:ColumnDefinition = colindex.get(fdef.column);
