@@ -12,20 +12,20 @@ export enum SQLType
 }
 
 
-interface bindvalue
-{
-    value:any;
-    name:string;
-    type:string;
-}
-
-
 export interface SQL
 {
     sql:string;
     rows?:number;
     cursor?:string;
     bindvalues:bindvalue[];
+}
+
+
+export interface bindvalue
+{
+    value:any;
+    name:string;
+    type:string;
 }
 
 
@@ -120,7 +120,7 @@ export class Statement
     public set columns(columns:string|string[])
     {
         this.columns$ = [];
-        
+
         if (columns.constructor.name == "String")
         {
             this.columns$.push(""+columns);

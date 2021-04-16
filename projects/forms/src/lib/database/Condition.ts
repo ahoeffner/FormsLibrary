@@ -30,6 +30,7 @@ export class Condition
         return("_"+ubid);
     }
 
+
     public static where(column:string, value:string, datatype?:Column) : Condition
     {
         let condition:Condition = new Condition(column,value,datatype);
@@ -37,7 +38,7 @@ export class Condition
         return(condition);
     }
 
-
+    
     constructor(column:string, value:any, datatype?:Column)
     {
         this.error$ = null;

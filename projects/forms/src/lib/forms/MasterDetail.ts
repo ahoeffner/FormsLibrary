@@ -1,12 +1,13 @@
 import { Key } from "../blocks/Key";
 import { FormImpl } from "./FormImpl";
 import { Field } from "../input/Field";
+import { Column } from "../database/Column";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Condition } from "../database/Condition";
 import { BindValue } from "../database/BindValue";
-import { SQL, Statement } from "../database/Statement";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
+import { bindvalue, SQL, Statement } from "../database/Statement";
 
 
 interface waiting
@@ -24,7 +25,7 @@ interface subquery
     mcols:string[],
     dcols:string[],
     subs:subquery[];
-    binds:BindValue[]
+    bindvalues:BindValue[]
 }
 
 
@@ -110,12 +111,12 @@ export class MasterDetail
 
 
     // Build subquery from details
-    public getDetailQuery() : void
+    public getDetailQuery() : SQL
     {
         let block:BlockImpl = this.master$;
         this.master$ = null;
 
-        if (block == null) return;
+        if (block == null) return(null);
         let dep:dependencies = this.links.get(block.alias);
 
         let sub:subquery =
@@ -125,7 +126,7 @@ export class MasterDetail
             subs: [],
             mcols: [],
             dcols: [],
-            binds: [],
+            bindvalues: [],
             mtab: null
         };
 
@@ -140,10 +141,22 @@ export class MasterDetail
 
         if (sub.sql.length > 0)
         {
-            console.log("sql: "+sub.sql)
-            console.log("bind: "+sub.binds.length);
-            //subq = {sql: sub.sql, bindvalues: sub.binds};
+            let bindvals:bindvalue[] = [];
+
+            sub.bindvalues.forEach((bindv) =>
+            {
+                bindvals.push
+                ({
+                    name: bindv.name,
+                    type: Column[bindv.type].toLowerCase(),
+                    value: bindv.value
+                });
+            });
+
+            subq = {sql: sub.sql, bindvalues: bindvals};
         }
+
+        return(subq);
     }
 
 
@@ -159,7 +172,7 @@ export class MasterDetail
             {
                 sql: null,
                 subs: [],
-                binds: [],
+                bindvalues: [],
                 lev: +parent.lev + 1,
                 mcols: mkey.columns(),
                 dcols: dkey.columns(),
@@ -181,7 +194,7 @@ export class MasterDetail
                 stmt.columns = dkey.columns();
 
                 sub.sql = stmt.build().sql;
-                sub.binds = cond.bindvalues();
+                sub.bindvalues = cond.bindvalues();
             }
 
             let dep:dependencies = this.links.get(block.alias);
@@ -233,7 +246,7 @@ export class MasterDetail
                     sql += sub.subs[i].sql;
                     sql += ")";
 
-                    sub.subs[i].binds.forEach((bind) => {sub.binds.push(bind)});
+                    sub.subs[i].bindvalues.forEach((bind) => {sub.bindvalues.push(bind)});
 
                     and = true;
                     where = false;
