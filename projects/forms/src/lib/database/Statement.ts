@@ -325,10 +325,7 @@ export class Statement
 
         if (this.subquery$ != null)
         {
-            if (this.condition$ != null) sql += " and ";
-            else                         sql += "where ";
-            
-            sql += this.subquery$.sql;
+            sql += " "+this.subquery$.sql;
 
             this.subquery$.bindvalues.forEach((bindv) =>
             {

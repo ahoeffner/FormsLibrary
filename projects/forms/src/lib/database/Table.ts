@@ -137,7 +137,10 @@ export class Table
 
         if (subquery != null)
         {
-            
+            if (!where) subquery.sql = "and "+subquery.sql;
+            else        subquery.sql = "where "+subquery.sql;
+
+            stmt.subquery = subquery;
         }
 
         return(stmt);
