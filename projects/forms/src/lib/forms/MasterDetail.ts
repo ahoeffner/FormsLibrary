@@ -261,8 +261,6 @@ export class MasterDetail
 
         if (children)
         {
-            sql += " (";
-
             for (let i = 0; i < sub.subs.length; i++)
             {
                 if (sub.subs[i].sql != null && sub.subs[i].sql.length > 0)
@@ -280,8 +278,6 @@ export class MasterDetail
                     where = false;
                 }
             }
-
-            sql += ")";
         }
 
         if (sub.sql == null) sub.sql = sql;
