@@ -2,9 +2,9 @@ import { Key } from "../blocks/Key";
 import { FormImpl } from "./FormImpl";
 import { Field } from "../input/Field";
 import { BlockImpl } from "../blocks/BlockImpl";
-import { Statement } from "../database/Statement";
 import { Condition } from "../database/Condition";
 import { BindValue } from "../database/BindValue";
+import { SQL, Statement } from "../database/Statement";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
 
@@ -135,23 +135,15 @@ export class MasterDetail
                 this.subquery(sub,dep.details[i]);
         }
 
+        let subq:SQL = null;
         this.buildsubquery(sub);
 
-        let sql:string = "";
-        let and:boolean = false;
-
-        for (let i = 0; i < sub.subs.length; i++)
+        if (sub.sql.length > 0)
         {
-            if (sub.subs[i].sql != null && sub.subs[i].sql.length > 0)
-            {
-                if (and) sql += " and ";
-                sql += sub.subs[i].sql;
-                and = false;
-            }
+            console.log("sql: "+sub.sql)
+            console.log("bind: "+sub.binds.length);
+            //subq = {sql: sub.sql, bindvalues: sub.binds};
         }
-
-        console.log("sql: "+sql)
-        console.log("bind: "+sub.binds.length);
     }
 
 
@@ -232,17 +224,20 @@ export class MasterDetail
 
             for (let i = 0; i < sub.subs.length; i++)
             {
-                if (and) sql += " and ";
-                if (where) sql += " where ";
+                if (sub.subs[i].sql != null && sub.subs[i].sql.length > 0)
+                {
+                    if (and) sql += " and ";
+                    if (where) sql += " where ";
 
-                sql += "("+sub.subs[i].mcols+") in (";
-                sql += sub.subs[i].sql;
-                sql += ")";
+                    sql += "("+sub.subs[i].mcols+") in (";
+                    sql += sub.subs[i].sql;
+                    sql += ")";
 
-                sub.subs[i].binds.forEach((bind) => {sub.binds.push(bind)});
+                    sub.subs[i].binds.forEach((bind) => {sub.binds.push(bind)});
 
-                and = true;
-                where = false;
+                    and = true;
+                    where = false;
+                }
             }
 
             sql += ")";
