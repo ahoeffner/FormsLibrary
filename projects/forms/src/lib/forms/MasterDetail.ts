@@ -137,10 +137,21 @@ export class MasterDetail
 
         this.buildsubquery(sub);
 
+        let sql:string = "";
+        let and:boolean = false;
+
         for (let i = 0; i < sub.subs.length; i++)
         {
-            console.log("add:  "+sub.sql)
+            if (sub.subs[i].sql != null && sub.subs[i].sql.length > 0)
+            {
+                if (and) sql += " and ";
+                sql += sub.subs[i].sql;
+                and = false;
+            }
         }
+
+        console.log("sql: "+sql)
+        console.log("bind: "+sub.binds.length);
     }
 
 
@@ -199,7 +210,9 @@ export class MasterDetail
         for (let i = 0; i < sub.subs.length; i++)
         {
             this.buildsubquery(sub.subs[i]);
-            if (sub.subs[i].sql != null) children = true;
+
+            if (sub.subs[i].sql != null && sub.subs[i].sql.length > 0)
+                children = true;
         }
 
         let sql:string = "";
@@ -222,7 +235,7 @@ export class MasterDetail
                 if (and) sql += " and ";
                 if (where) sql += " where ";
 
-                sql += " ("+sub.subs[i].mcols+") in (";
+                sql += "("+sub.subs[i].mcols+") in (";
                 sql += sub.subs[i].sql;
                 sql += ")";
 
