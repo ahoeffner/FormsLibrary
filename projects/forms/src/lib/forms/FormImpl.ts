@@ -1134,8 +1134,17 @@ export class FormImpl
 
                     if (blk != next)
                     {
+                        let nb:BlockImpl = this.blkindex.get(blk);
+                        let nf:FieldInstance = nb.field;
+
+                        if (nf.enabled)
+                        {
+                            nf.focus();
+                            break;
+                        }
+
                         next = blk;
-                        row = this.blkindex.get(next).row;
+                        row = nb.row;
                     }
 
                     if (this.fields$[seq].row == row && this.fields$[seq].enabled)
@@ -1167,8 +1176,17 @@ export class FormImpl
 
                     if (blk != next)
                     {
+                        let nb:BlockImpl = this.blkindex.get(blk);
+                        let nf:FieldInstance = nb.field;
+
+                        if (nf.enabled)
+                        {
+                            nf.focus();
+                            break;
+                        }
+
                         next = blk;
-                        row = this.blkindex.get(next).row;
+                        row = nb.row;
                     }
 
                     if (this.fields$[seq].row == row && this.fields$[seq].enabled)
