@@ -1121,10 +1121,16 @@ export class BlockImpl
                 key = keymap.executequery;
 
             if (this.records[+this.row]?.state == RecordState.insert)
-                return(await this.validaterecord());
+            {
+                if (!await this.validaterecord())
+                    return(false);
+            }
 
             if (this.records[+this.row]?.state == RecordState.update)
-                return(await this.validaterecord());
+            {
+                if (!await this.validaterecord())
+                    return(false);
+            }
         }
 
         // Cancel

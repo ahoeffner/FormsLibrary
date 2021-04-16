@@ -116,8 +116,8 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         if (this.size == null) this.size = 25;
 
-        let width:number = this.size*10;
-        let height:number = this.rows*28+10;
+        let width:number = this.size*12;
+        let height:number = this.rows*28+16;
 
         if (this.width == null) this.width = width+"px";
         if (this.height == null) this.height = height+"px";
@@ -168,6 +168,8 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.sblock.setFields(container.getBlock("search").fields);
         this.rblock.setFields(container.getBlock("result").fields);
+
+        this.rblock.usage = {query: true};
 
         container.getBlock("search").records.forEach((rec) =>
         {
@@ -252,6 +254,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
         this.wait = true;
         this.last = this.filter.value;
+        if (this.last == null) this.last = "";
 
         if (this.last.length < this.minlen) this.rblock.clear();
         else                                await this.rblock.keyexeqry();
