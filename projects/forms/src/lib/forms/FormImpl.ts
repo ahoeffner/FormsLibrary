@@ -509,8 +509,7 @@ export class FormImpl
                     if (!fields.includes(inst.name,0)) fields.push(inst.name);
                 }
 
-                if (inst.parent.definition == null)
-                    inst.parent.setDefinition(fdef,false);
+                fieldidx.set(inst.name,fdef);
 
                 if (inst.id.length > 0)
                 {
@@ -567,7 +566,9 @@ export class FormImpl
                     fdef.fieldoptions.update = false;
 
                 inst.definition = fdef;
-                fieldidx.set(inst.name,fdef);
+
+                if (inst.parent.definition == null)
+                    inst.parent.setDefinition(fdef,false);
             });
 
             let def:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
