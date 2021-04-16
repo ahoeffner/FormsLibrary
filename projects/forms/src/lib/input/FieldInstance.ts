@@ -273,7 +273,7 @@ export class FieldInstance implements AfterViewInit
     private setInputState() : void
     {
         this.enabled$ = false;
-        
+
         if (!this.options$.navigable)
         {
             if (this.clazz != null)

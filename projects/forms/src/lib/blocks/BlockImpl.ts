@@ -927,8 +927,6 @@ export class BlockImpl
         this.data.setValidated(this.record);
         if (rec.state == RecordState.insert)
         {
-            await this.sleep(10);
-            // Let cursor move first
             rec.state = RecordState.update;
 
             if (this.form == null) this.enableall();
@@ -1397,10 +1395,45 @@ export class BlockImpl
             return(true);
         }
 
+        // Next/Prev block
+        if (type == "key" && (key == keymap.prevblock || key == keymap.nextblock))
+        {
+            if (this.state != FormState.entqry && this.records[+this.row]?.state != RecordState.na)
+            {
+                let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
+
+                if (field.dirty)
+                {
+                    // ctrl-z doesn't refresh
+                    if (field.value == previous) field.parent.copy(field);
+                }
+
+                trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
+
+                if (key == keymap.prevblock)
+                {
+                    if (!await this.invokeFieldTriggers(Trigger.KeyPrevBlock,field.name,trgevent,key))
+                        return(false);
+                }
+
+                if (key == keymap.nextblock)
+                {
+                    if (!await this.invokeFieldTriggers(Trigger.KeyNextBlock,field.name,trgevent,key))
+                        return(false);
+                }
+            }
+        }
+
         if (type == "key" && key == keymap.prevfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 
         if (type == "key" && key == keymap.nextfield && this.form != null)
+            await this.form.onEvent(event,field,type,key);
+
+        if (type == "key" && key == keymap.prevblock && this.form != null)
+            await this.form.onEvent(event,field,type,key);
+
+        if (type == "key" && key == keymap.nextblock && this.form != null)
             await this.form.onEvent(event,field,type,key);
 
         if (type == "key")

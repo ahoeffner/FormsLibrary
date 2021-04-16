@@ -1112,6 +1112,51 @@ export class FormImpl
                 }
             }
         }
+
+
+        if (type == "key" && key == keymap.prevblock)
+        {
+            event.preventDefault();
+
+            let seq:number = field.seq - 1;
+            let block:string = field.block;
+
+            for(let i = 0; i < this.fields$.length; i++)
+            {
+                if (--seq < 0) seq = this.fields$.length - 1;
+
+                if (this.fields$[seq].block != block)
+                {
+                    if (this.fields$[seq].enabled)
+                    {
+                        this.fields$[seq].focus();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (type == "key" && key == keymap.nextblock)
+        {
+            event.preventDefault();
+
+            let seq:number = field.seq - 1;
+            let block:string = field.block;
+
+            for(let i = 0; i < this.fields$.length; i++)
+            {
+                if (++seq >= this.fields$.length) seq = 0;
+
+                if (this.fields$[seq].block != block)
+                {
+                    if (this.fields$[seq].enabled)
+                    {
+                        this.fields$[seq].focus();
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 
