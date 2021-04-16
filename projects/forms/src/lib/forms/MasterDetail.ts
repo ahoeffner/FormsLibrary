@@ -280,40 +280,30 @@ export class MasterDetail
             if (this.query == null)
                 this.query = new MasterDetailQuery(this,this.links,block);
 
-            this.query.ready(block,record);
+            this.query.ready(block);
         }
     }
 
 
     public getKeys(block:BlockImpl) : Key[]
     {
-        if (this.query == null)
-            return([]);
-
         let keys:Key[] = [];
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null && dep.masters != null)
         {
             dep.masters.forEach((master) =>
-            {keys.push(master.dkey);});
+            {
+                let record:number = master.block.record;
+
+                master.dkey.columns().forEach((col) =>
+                {master.dkey.set(col,master.block.getValue(record,col))});
+
+                keys.push(master.dkey);
+            });
         }
 
         return(keys);
-    }
-
-
-    // Copy values to detail keys
-    public bindkeys(block:BlockImpl, record:number, dep:dependencies) : void
-    {
-        if (dep.details != null)
-        {
-            dep.details.forEach((det) =>
-            {
-                det.mkey.columns().forEach((col) =>
-                {det.dkey.set(col,block.data.getValue(record,col));});
-            });
-        }
     }
 
 
@@ -330,7 +320,7 @@ export class MasterDetail
             this.waiting.block = null;
 
             this.query = new MasterDetailQuery(this,this.links,block);
-            this.query.ready(block,record);
+            this.query.ready(block);
         }
         else this.query = null;
     }

@@ -3,6 +3,7 @@ import { RecordState } from "./Record";
 import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
+import { NameValuePair } from "../utils/NameValuePair";
 import { SQL, Statement } from "../database/Statement";
 import { FieldDefinition } from "../input/FieldDefinition";
 
@@ -303,6 +304,20 @@ export class FieldData
         if (record >= this.data.length) return(RecordState.na);
         if (state != null) this.data[record].state = state;
         return(this.data[record].state);
+    }
+
+
+    public get searchfilter() : NameValuePair[]
+    {
+        if (this.table == null) return(null);
+        return(this.table.searchfilter);
+    }
+
+
+    public set searchfilter(filter:NameValuePair[])
+    {
+        if (this.table != null)
+            this.table.searchfilter = filter;
     }
 
 

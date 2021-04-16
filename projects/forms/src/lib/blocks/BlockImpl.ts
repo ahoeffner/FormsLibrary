@@ -13,6 +13,7 @@ import { SQL, Statement } from "../database/Statement";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
+import { NameValuePair } from "../utils/NameValuePair";
 import { DatabaseUsage } from "../database/DatabaseUsage";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { LOVDefinition } from "../annotations/LOVDefinitions";
@@ -382,6 +383,20 @@ export class BlockImpl
     {
         this.onEvent(event,this.field,"key",key);
         return(true);
+    }
+
+
+    public get searchfilter() : NameValuePair[]
+    {
+        if (this.data == null) return(null);
+        return(this.data.searchfilter);
+    }
+
+
+    public set searchfilter(filter:NameValuePair[])
+    {
+        if (this.data != null)
+            this.data.searchfilter = filter;
     }
 
 

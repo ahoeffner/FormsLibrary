@@ -44,13 +44,10 @@ export class MasterDetailQuery
     }
 
 
-    public ready(block:BlockImpl, record:number) : void
+    public ready(block:BlockImpl) : void
     {
-        let dep:dependencies = this.links.get(block.alias);
-
-        this.md.bindkeys(block,record,dep);
         this.masterblks.set(block.alias,true);
-
+        let dep:dependencies = this.links.get(block.alias);
         if (dep.details == null) this.md.done();
         else this.execute(dep);
     }

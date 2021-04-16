@@ -5,6 +5,7 @@ import { Connection } from "./Connection";
 import { TableDefinition } from "./TableDefinition";
 import { FieldData, Row } from "../blocks/FieldData";
 import { ColumnDefinition } from "./ColumnDefinition";
+import { NameValuePair } from "../utils/NameValuePair";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { SQL, SQLType, Statement } from "../database/Statement";
 
@@ -22,6 +23,7 @@ export class Table
     private dates:boolean[] = [];
     private fielddata$:FieldData;
     private table:TableDefinition;
+    private criterias:NameValuePair[];
     private columns$:ColumnDefinition[];
     private fielddef:Map<string,FieldDefinition>;
     private index:Map<string,ColumnDefinition> = new Map<string,ColumnDefinition>();
@@ -33,6 +35,7 @@ export class Table
         this.conn = conn;
         this.table = table;
         this.fetch$ = rows;
+        this.criterias = [];
         this.columns$ = columns;
         this.fielddef = fielddef;
         this.cursor = table.name + Date.now();
@@ -93,6 +96,18 @@ export class Table
     }
 
 
+    public get searchfilter() : NameValuePair[]
+    {
+        return(this.searchfilter);
+    }
+
+
+    public set searchfilter(filter:NameValuePair[])
+    {
+        this.searchfilter = filter;
+    }
+
+
     public parseQuery(keys:Key[], subquery:SQL, fields:Field[]) : Statement
     {
         let stmt:Statement = new Statement(SQLType.select);
@@ -103,6 +118,12 @@ export class Table
         stmt.order = this.table.order;
 
         let where:boolean = true;
+
+        if (fields.length > 0)
+        {
+            this.criterias = [];
+            fields.forEach((field) => {this.criterias.push({name: field.name, value: field.value})});
+        }
 
         keys.forEach((key) =>
         {
@@ -117,7 +138,7 @@ export class Table
             });
         });
 
-        fields.forEach((field) =>
+        this.criterias.forEach((field) =>
         {
             if (field.value != null && (""+field.value).trim() != "")
             {
