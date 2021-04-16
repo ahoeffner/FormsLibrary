@@ -18,6 +18,7 @@ interface waiting
 
 interface subquery
 {
+    lev:number;
     sql:string;
     mtab:string;
     mcols:string[],
@@ -119,6 +120,7 @@ export class MasterDetail
 
         let sub:subquery =
         {
+            lev: 0,
             sql: null,
             subs: [],
             mcols: [],
@@ -130,65 +132,63 @@ export class MasterDetail
         if (dep != null && dep.details != null)
         {
             for (let i = 0; i < dep.details.length; i++)
-                sub.subs.push(this.subquery(dep.details[i]));
+                this.subquery(sub,dep.details[i]);
         }
 
         this.buildsubquery(sub);
 
-        console.log(sub.sql);
+        for (let i = 0; i < sub.subs.length; i++)
+        {
+            console.log("add:  "+sub.sql)
+        }
     }
 
 
-    private subquery(detail:any) : subquery
+    private subquery(parent:subquery,detail:any) : void
     {
-        let sub:subquery =
-        {
-            sql: null,
-            subs: [],
-            mcols: [],
-            dcols: [],
-            binds: [],
-            mtab: null
-        };
-
         let mkey:Key = detail.dkey;
         let dkey:Key = detail.dkey;
         let block:BlockImpl = detail.block;
 
-        if (!block.querymode)
-            return(sub);
-
-        let fields:Field[] = block.records[0].fields;
-        let stmt:Statement = block.data.parseQuery([],fields);
-
-        sub.mcols = mkey.columns(),
-        sub.dcols = dkey.columns(),
-        sub.mtab = block.data?.table?.name;
-
-        console.log("sub table: "+sub.mtab+" masters: "+sub.mcols+" details: "+sub.dcols)
-
-        let cond:Condition = stmt.getCondition();
-
-        if (cond)
+        if (block.querymode)
         {
-            stmt.order = null;
-            stmt.columns = dkey.columns();
+            let sub:subquery =
+            {
+                sql: null,
+                subs: [],
+                binds: [],
+                lev: +parent.lev + 1,
+                mcols: mkey.columns(),
+                dcols: dkey.columns(),
+                mtab: block.data?.table?.name
+            };
 
-            sub.sql = stmt.build().sql;
-            sub.binds = cond.bindvalues();
+            parent.subs.push(sub);
+
+            let fields:Field[] = block.records[0].fields;
+            let stmt:Statement = block.data.parseQuery([],fields);
+
+            block.cancelqry();
+
+            let cond:Condition = stmt.getCondition();
+
+            if (cond)
+            {
+                stmt.order = null;
+                stmt.columns = dkey.columns();
+
+                sub.sql = stmt.build().sql;
+                sub.binds = cond.bindvalues();
+            }
+
+            let dep:dependencies = this.links.get(block.alias);
+
+            if (dep != null && dep.details != null)
+            {
+                for (let i = 0; i < dep.details.length; i++)
+                    this.subquery(sub,dep.details[i]);
+            }
         }
-
-        block.cancelqry();
-
-        let dep:dependencies = this.links.get(block.alias);
-
-        if (dep != null && dep.details != null)
-        {
-            for (let i = 0; i < dep.details.length; i++)
-                sub.subs.push(this.subquery(dep.details[i]));
-        }
-
-        return(sub);
     }
 
 
@@ -203,35 +203,39 @@ export class MasterDetail
         }
 
         let sql:string = "";
+        let and:boolean = true;
+        let where:boolean = false;
+
+        if (children && sub.sql == null && sub.mtab != null)
+        {
+            and = false;
+            where = true;
+            sub.sql = "select "+sub.dcols+" from "+sub.mtab;
+        }
 
         if (children)
         {
-            if (sub.sql != null) sub.sql += " and ("+sub.dcols+") in ";
-            else sub.sql = " and select "+sub.dcols+" from "+sub.mtab+" where ";
-
             sql += "(";
 
             for (let i = 0; i < sub.subs.length; i++)
             {
-                if (sql.length > 1)
-                    sql += " and ";
+                if (and) sql += " and ";
+                if (where) sql += " where ";
 
+                sql += " ("+sub.subs[i].mcols+") in (";
                 sql += sub.subs[i].sql;
+                sql += ")";
+
                 sub.subs[i].binds.forEach((bind) => {sub.binds.push(bind)});
+
+                and = true;
+                where = false;
             }
 
             sql += ")";
         }
 
-        if (sub.mtab == null)
-        {
-            if (sql.length > 2)
-                sub.sql = "("+sub.mcols+") in " +sql;
-        }
-        else
-        {
-            sub.sql += sql;
-        }
+        sub.sql += sql;
     }
 
 
@@ -242,7 +246,6 @@ export class MasterDetail
 
         if (init && this.query != null)
         {
-            console.log("waiting for <"+this.waiting.block?.alias+">")
             this.waiting.block = block;
             this.waiting.record = record;
             return;
