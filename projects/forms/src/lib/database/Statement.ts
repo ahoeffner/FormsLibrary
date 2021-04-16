@@ -326,16 +326,8 @@ export class Statement
         if (this.subquery$ != null)
         {
             sql += " "+this.subquery$.sql;
-
             this.subquery$.bindvalues.forEach((bindv) =>
-            {
-                bindvals.push
-                ({
-                    name: bindv.name,
-                    type: Column[bindv.type].toLowerCase(),
-                    value: bindv.value
-                });
-            });
+            {bindvals.push(bindv)});
         }
 
         if (this.type$ == SQLType.select && this.order$ != null)
