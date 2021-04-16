@@ -122,7 +122,7 @@ export class MasterDetail
             subs: [],
             binds: [],
             mcols: [],
-            mtab: block.data?.table?.name
+            mtab: null
         };
 
         if (dep != null && dep.details != null)
@@ -186,7 +186,7 @@ export class MasterDetail
 
     private buildsubquery(sub:subquery) : subquery
     {
-        let sql:string = "";
+        let sql:string = "(";
 
         for (let i = 0; i < sub.subs.length; i++)
         {
@@ -194,17 +194,37 @@ export class MasterDetail
 
             if (sb.sql != null)
             {
-                sql += " and ("+sub.mcols+") in ("+sb.sql+")";
+                if (sql.length > 1) sql += " and ";
+                sql += "("+sb.mcols+") in ("+sb.sql+")";
             }
         }
 
-        if (sql.length > 0)
+        sql += ")";
+
+        if (sub.mtab == null)
         {
-            console.log("I "+sub.sql);
-            sub.sql += sql;
-            console.log("II "+sub.sql);
+            sub.sql = sql;
+            return(sub);
         }
 
+        if (sql.length == 2)
+        {
+            return(sub);
+        }
+
+        let op:string = " and ";
+
+        if (sub.sql == null)
+        {
+            op = " where ";
+            sub.sql = "select "+sub.mcols;
+        }
+
+        console.log("merge: "+sub.sql);
+        console.log("with: "+sql);
+        console.log("maybe: "+sub.sql+op+sql);
+
+        sub.sql += op+sql;
         return(sub);
     }
 
@@ -234,7 +254,7 @@ export class MasterDetail
 
         sub2 =
         {
-            sql: "select location_id from tab2 where col1 = :col1",
+            sql: "select location_id from tab2 where col2 = :col2",
             subs: [],
             binds: [],
             mcols: ["l2key"],
@@ -242,18 +262,20 @@ export class MasterDetail
         }
 
         sub.subs.push(sub1);
-        sub.subs.push(sub2);
+        sub1.subs.push(sub2);
 
+        /*
         sub2 =
         {
-            sql: "select location_id from tab3 where col1 = :col1",
+            sql: "select location_id from tab3 where col3 = :col3",
             subs: [],
             binds: [],
             mcols: ["l3key"],
             mtab: "tab3"
         }
 
-        sub1.subs.push(sub2);
+        sub2.subs.push(sub2);
+        */
 
         sub = this.buildsubquery(sub);
         console.log("done: "+sub.sql);
