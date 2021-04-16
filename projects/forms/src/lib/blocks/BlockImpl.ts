@@ -950,6 +950,8 @@ export class BlockImpl
     public async clear()
     {
         if (this.rows == null) return;
+
+        this.field$ = this.fields$[0];
         this.records[0].current = true;
 
         for(let r = 0; r < this.rows; r++)

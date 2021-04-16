@@ -156,7 +156,7 @@ export class FormImpl
 
     public clear() : void
     {
-        this.blocks.forEach((block) => {block.clear()});
+        this.blocks.forEach((block) => {block.clearblock()});
         if (this.blocks.length > 0) this.block = this.blocks[0];
         this.block?.focus();
     }
