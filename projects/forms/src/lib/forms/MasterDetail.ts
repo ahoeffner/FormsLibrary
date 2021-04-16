@@ -121,9 +121,9 @@ export class MasterDetail
         {
             sql: null,
             subs: [],
-            binds: [],
             mcols: [],
             dcols: [],
+            binds: [],
             mtab: null
         };
 
@@ -132,6 +132,10 @@ export class MasterDetail
             for (let i = 0; i < dep.details.length; i++)
                 sub.subs.push(this.subquery(dep.details[i]));
         }
+
+        this.buildsubquery(sub);
+
+        console.log(sub.sql);
     }
 
 
@@ -141,13 +145,13 @@ export class MasterDetail
         {
             sql: null,
             subs: [],
-            binds: [],
             mcols: [],
             dcols: [],
+            binds: [],
             mtab: null
         };
 
-        let mkey:Key = detail.mkey;
+        let mkey:Key = detail.dkey;
         let dkey:Key = detail.dkey;
         let block:BlockImpl = detail.block;
 
@@ -160,6 +164,8 @@ export class MasterDetail
         sub.mcols = mkey.columns(),
         sub.dcols = dkey.columns(),
         sub.mtab = block.data?.table?.name;
+
+        console.log("sub table: "+sub.mtab+" masters: "+sub.mcols+" details: "+sub.dcols)
 
         let cond:Condition = stmt.getCondition();
 
@@ -201,77 +207,31 @@ export class MasterDetail
         if (children)
         {
             if (sub.sql != null) sub.sql += " and ("+sub.dcols+") in ";
-            else sub.sql = " and select "+sub.mcols+" from "+sub.mtab+" where ";
+            else sub.sql = " and select "+sub.dcols+" from "+sub.mtab+" where ";
 
             sql += "(";
 
             for (let i = 0; i < sub.subs.length; i++)
             {
-                if (sql.length > 1) sql += " and ";
+                if (sql.length > 1)
+                    sql += " and ";
+
                 sql += sub.subs[i].sql;
+                sub.subs[i].binds.forEach((bind) => {sub.binds.push(bind)});
             }
 
             sql += ")";
         }
 
-        sub.sql += sql;
-    }
-
-
-    public test()
-    {
-        let sub:subquery =
+        if (sub.mtab == null)
         {
-            sql: null,
-            subs: [],
-            binds: [],
-            mcols: [],
-            dcols: [],
-            mtab: null
-        };
-
-        let sub1:subquery = null;
-        let sub2:subquery = null;
-        let sub32:subquery = null;
-
-        sub1 =
-        {
-            sql: "select location_id from locations where country_id = :country_id",
-            subs: [],
-            binds: [],
-            mcols: ["x"],
-            dcols: ["location_id"],
-            mtab: "locations"
+            if (sql.length > 2)
+                sub.sql = "("+sub.mcols+") in " +sql;
         }
-
-        sub2 =
+        else
         {
-            sql: "select department_id from departments where department_name = :department_name",
-            subs: [],
-            binds: [],
-            mcols: ["location_id"],
-            dcols: ["location_id"],
-            mtab: "departments"
+            sub.sql += sql;
         }
-
-        sub.subs.push(sub1);
-        sub1.subs.push(sub2);
-
-        sub32 =
-        {
-            sql: "select department_id from employees where first_name = :first_name",
-            subs: [],
-            binds: [],
-            mcols: ["department_id"],
-            dcols: ["department_id"],
-            mtab: "employees"
-        }
-
-        sub2.subs.push(sub32);
-
-        //sub = this.buildsubquery(sub);
-        this.buildsubquery(sub);
-        console.log(sub.sql);
     }
 
 
