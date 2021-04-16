@@ -203,12 +203,12 @@ export class MasterDetail
         }
 
         let sql:string = "";
-        let and:boolean = true;
+        let and:boolean = false;
         let where:boolean = false;
 
-        if (children && sub.sql == null && sub.mtab != null)
+        if (sub.sql != null) and = true;
+        else if (children && sub.mtab != null)
         {
-            and = false;
             where = true;
             sub.sql = "select "+sub.dcols+" from "+sub.mtab;
         }
