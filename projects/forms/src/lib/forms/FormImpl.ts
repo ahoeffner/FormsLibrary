@@ -635,6 +635,8 @@ export class FormImpl
 
         if (this.fields$.length > 0)
             this.fields$[0].focus();
+
+        depencies.test();
     }
 
 

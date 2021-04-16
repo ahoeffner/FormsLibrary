@@ -21,6 +21,7 @@ interface subquery
     sql:string;
     mtab:string;
     mcols:string[],
+    dcols:string[],
     subs:subquery[];
     binds:BindValue[]
 }
@@ -122,6 +123,7 @@ export class MasterDetail
             subs: [],
             binds: [],
             mcols: [],
+            dcols: [],
             mtab: null
         };
 
@@ -130,8 +132,6 @@ export class MasterDetail
             for (let i = 0; i < dep.details.length; i++)
                 sub.subs.push(this.subquery(dep.details[i]));
         }
-
-        this.test();
     }
 
 
@@ -143,6 +143,7 @@ export class MasterDetail
             subs: [],
             binds: [],
             mcols: [],
+            dcols: [],
             mtab: null
         };
 
@@ -157,6 +158,7 @@ export class MasterDetail
         let stmt:Statement = block.data.parseQuery([],fields);
 
         sub.mcols = mkey.columns(),
+        sub.dcols = dkey.columns(),
         sub.mtab = block.data?.table?.name;
 
         let cond:Condition = stmt.getCondition();
@@ -184,48 +186,35 @@ export class MasterDetail
     }
 
 
-    private buildsubquery(sub:subquery) : subquery
+    private buildsubquery(sub:subquery)
     {
-        let sql:string = "(";
+        let children:boolean = false;
 
         for (let i = 0; i < sub.subs.length; i++)
         {
-            let sb:subquery = this.buildsubquery(sub.subs[i]);
+            this.buildsubquery(sub.subs[i]);
+            if (sub.subs[i].sql != null) children = true;
+        }
 
-            if (sb.sql != null)
+        let sql:string = "";
+
+        if (children)
+        {
+            if (sub.sql != null) sub.sql += " and ("+sub.dcols+") in ";
+            else sub.sql = " and select "+sub.mcols+" from "+sub.mtab+" where ";
+
+            sql += "(";
+
+            for (let i = 0; i < sub.subs.length; i++)
             {
                 if (sql.length > 1) sql += " and ";
-                sql += "("+sb.mcols+") in ("+sb.sql+")";
+                sql += sub.subs[i].sql;
             }
+
+            sql += ")";
         }
 
-        sql += ")";
-
-        if (sub.mtab == null)
-        {
-            sub.sql = sql;
-            return(sub);
-        }
-
-        if (sql.length == 2)
-        {
-            return(sub);
-        }
-
-        let op:string = " and ";
-
-        if (sub.sql == null)
-        {
-            op = " where ";
-            sub.sql = "select "+sub.mcols;
-        }
-
-        console.log("merge: "+sub.sql);
-        console.log("with: "+sql);
-        console.log("maybe: "+sub.sql+op+sql);
-
-        sub.sql += op+sql;
-        return(sub);
+        sub.sql += sql;
     }
 
 
@@ -237,48 +226,52 @@ export class MasterDetail
             subs: [],
             binds: [],
             mcols: [],
+            dcols: [],
             mtab: null
         };
 
         let sub1:subquery = null;
         let sub2:subquery = null;
+        let sub32:subquery = null;
 
         sub1 =
         {
-            sql: "select location_id from tab1 where col1 = :col1",
+            sql: "select location_id from locations where country_id = :country_id",
             subs: [],
             binds: [],
-            mcols: ["l1key"],
-            mtab: "tab1"
+            mcols: ["x"],
+            dcols: ["location_id"],
+            mtab: "locations"
         }
 
         sub2 =
         {
-            sql: "select location_id from tab2 where col2 = :col2",
+            sql: "select department_id from departments where department_name = :department_name",
             subs: [],
             binds: [],
-            mcols: ["l2key"],
-            mtab: "tab2"
+            mcols: ["location_id"],
+            dcols: ["location_id"],
+            mtab: "departments"
         }
 
         sub.subs.push(sub1);
         sub1.subs.push(sub2);
 
-        /*
-        sub2 =
+        sub32 =
         {
-            sql: "select location_id from tab3 where col3 = :col3",
+            sql: "select department_id from employees where first_name = :first_name",
             subs: [],
             binds: [],
-            mcols: ["l3key"],
-            mtab: "tab3"
+            mcols: ["department_id"],
+            dcols: ["department_id"],
+            mtab: "employees"
         }
 
-        sub2.subs.push(sub2);
-        */
+        sub2.subs.push(sub32);
 
-        sub = this.buildsubquery(sub);
-        console.log("done: "+sub.sql);
+        //sub = this.buildsubquery(sub);
+        this.buildsubquery(sub);
+        console.log(sub.sql);
     }
 
 
