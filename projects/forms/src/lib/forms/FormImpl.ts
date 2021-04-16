@@ -1069,64 +1069,48 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevfield)
         {
-            let prev:boolean = false;
+            event.preventDefault();
 
-            // seq 1 -> fields.length
-            for(let i = field.seq - 1; i > 0; i--)
+            let row:number = field.row;
+            let seq:number = field.seq - 1;
+            let block:string = field.block;
+
+            for(let i = 0; i < this.fields$.length; i++)
             {
-                if (this.fields$[i-1].enabled)
-                {
-                    prev = true;
-                    break;
-                }
-            }
+                if (--seq < 0) seq = this.fields$.length - 1;
 
-            if (!prev)
-            {
-                event.preventDefault();
-
-                for(let i = this.fields$.length - 1; i >= 0; i--)
+                if (this.fields$[seq].row == row && this.fields$[seq].block == block)
                 {
-                    if (this.fields$[i].enabled)
+                    if (this.fields$[seq].enabled)
                     {
-                        this.fields$[i].focus();
+                        this.fields$[seq].focus();
                         break;
                     }
                 }
             }
-
-            return;
         }
 
         if (type == "key" && key == keymap.nextfield)
         {
-            let next:boolean = false;
+            event.preventDefault();
 
-            // seq 1 -> fields.length
-            for(let i = field.seq; i < this.fields$.length; i++)
+            let row:number = field.row;
+            let seq:number = field.seq - 1;
+            let block:string = field.block;
+
+            for(let i = 0; i < this.fields$.length; i++)
             {
-                if (this.fields$[i].enabled)
-                {
-                    next = true;
-                    break;
-                }
-            }
+                if (++seq >= this.fields$.length) seq = 0;
 
-            if (!next)
-            {
-                event.preventDefault();
-
-                for(let i = 0; i < this.fields$.length; i++)
+                if (this.fields$[seq].row == row && this.fields$[seq].block == block)
                 {
-                    if (this.fields$[i].enabled)
+                    if (this.fields$[seq].enabled)
                     {
-                        this.fields$[i].focus();
+                        this.fields$[seq].focus();
                         break;
                     }
                 }
             }
-
-            return;
         }
     }
 
