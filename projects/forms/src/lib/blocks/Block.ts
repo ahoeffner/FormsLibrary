@@ -5,6 +5,7 @@ import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
+import { NoopAnimationPlayer } from "@angular/animations";
 
 
 export class Block
@@ -85,6 +86,11 @@ export class Block
     public get record() : number
     {
         return(this._impl_.record);
+    }
+
+    public get filtered() : boolean
+    {
+        return(this._impl_.searchfilter.length > 0);
     }
 
     public async createControlRecord() : Promise<number>

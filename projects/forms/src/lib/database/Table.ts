@@ -98,13 +98,13 @@ export class Table
 
     public get searchfilter() : NameValuePair[]
     {
-        return(this.searchfilter);
+        return(this.criterias);
     }
 
 
     public set searchfilter(filter:NameValuePair[])
     {
-        this.searchfilter = filter;
+        this.criterias = filter;
     }
 
 
@@ -122,7 +122,11 @@ export class Table
         if (fields.length > 0)
         {
             this.criterias = [];
-            fields.forEach((field) => {this.criterias.push({name: field.name, value: field.value})});
+            fields.forEach((field) =>
+            {
+                if (field.value != null && (""+field.value).trim() != "")
+                    this.criterias.push({name: field.name, value: field.value});
+            });
         }
 
         keys.forEach((key) =>
@@ -140,19 +144,16 @@ export class Table
 
         this.criterias.forEach((field) =>
         {
-            if (field.value != null && (""+field.value).trim() != "")
+            let def:FieldDefinition = this.fielddef.get(field.name);
+
+            if (def.column != null)
             {
-                let def:FieldDefinition = this.fielddef.get(field.name);
+                let type:Column = this.index.get(def.column).type;
 
-                if (def.column != null)
-                {
-                    let type:Column = this.index.get(def.column).type;
+                if (!where) stmt.and(def.column,field.value,type);
+                else        stmt.where(def.column,field.value,type);
 
-                    if (!where) stmt.and(def.column,field.value,type);
-                    else        stmt.where(def.column,field.value,type);
-
-                    where = false;
-                }
+                where = false;
             }
         });
 

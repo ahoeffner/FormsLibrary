@@ -101,6 +101,14 @@ export class BlockImpl
     }
 
 
+
+    public get datarows() : number
+    {
+        if (this.data == null) return(0);
+        return(this.data.rows);
+    }
+
+
     public get columns() : string[]
     {
         if (this.data == null) return(null);
@@ -538,6 +546,9 @@ export class BlockImpl
         {
             if (this.masterdetail.master != null && this.masterdetail.master != this)
                 return(this.masterdetail.master.keyexeqry(force));
+
+            if (this.state != FormState.entqry)
+                this.masterdetail.clearfilters(this);
         }
 
         if (force == null) force = false;
@@ -599,6 +610,7 @@ export class BlockImpl
 
         this.row = 0;
 
+        this.searchfilter = [];
         this.state = FormState.entqry;
         this.records[0].state = RecordState.qmode;
 
@@ -924,6 +936,13 @@ export class BlockImpl
         }
 
         return(true);
+    }
+
+
+    public async clearblock()
+    {
+        this.clear();
+        this.searchfilter = [];
     }
 
 

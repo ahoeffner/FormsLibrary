@@ -81,6 +81,13 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.getApplication().config.colors);
     }
 
+    public getBlockFilter(block:string) : string
+    {
+        let blk:Block = this.getBlock(block);
+        if (blk != null && blk.filtered) return(this.colors.rowindicator);
+        return("");
+    }
+
     public getRowIndicator(block:string, row:number) : string
     {
         if (row == this.getCurrentRow(block)) return(this.colors.rowindicator);

@@ -110,6 +110,16 @@ export class MasterDetail
     }
 
 
+    public clearfilters(block:BlockImpl) : void
+    {
+        block.searchfilter = [];
+        let dep:dependencies = this.links.get(block.alias);
+
+        if (dep != null && dep.details != null)
+            dep.details.forEach((det) => det.block.searchfilter = []);
+    }
+
+
     // Build subquery from details
     public getDetailQuery() : SQL
     {
@@ -297,7 +307,14 @@ export class MasterDetail
                 let record:number = master.block.record;
 
                 master.dkey.columns().forEach((col) =>
-                {master.dkey.set(col,master.block.getValue(record,col))});
+                {
+                    let val:any = null;
+
+                    if (record < master.block.datarows)
+                        val = master.block.getValue(record,col);
+
+                    master.dkey.set(col,val);
+                });
 
                 keys.push(master.dkey);
             });
