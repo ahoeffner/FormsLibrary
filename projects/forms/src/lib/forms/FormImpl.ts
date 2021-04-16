@@ -1121,13 +1121,24 @@ export class FormImpl
             let seq:number = field.seq - 1;
             let block:string = field.block;
 
+            let row:number = 0;
+            let next:string = "";
+
             for(let i = 0; i < this.fields$.length; i++)
             {
                 if (--seq < 0) seq = this.fields$.length - 1;
 
                 if (this.fields$[seq].block != block)
                 {
-                    if (this.fields$[seq].enabled)
+                    let blk:string = this.fields$[seq].block;
+
+                    if (blk != next)
+                    {
+                        next = blk;
+                        row = this.blkindex.get(next).row;
+                    }
+
+                    if (this.fields$[seq].row == row && this.fields$[seq].enabled)
                     {
                         this.fields$[seq].focus();
                         break;
@@ -1143,13 +1154,24 @@ export class FormImpl
             let seq:number = field.seq - 1;
             let block:string = field.block;
 
+            let row:number = 0;
+            let next:string = "";
+
             for(let i = 0; i < this.fields$.length; i++)
             {
                 if (++seq >= this.fields$.length) seq = 0;
 
                 if (this.fields$[seq].block != block)
                 {
-                    if (this.fields$[seq].enabled)
+                    let blk:string = this.fields$[seq].block;
+
+                    if (blk != next)
+                    {
+                        next = blk;
+                        row = this.blkindex.get(next).row;
+                    }
+
+                    if (this.fields$[seq].row == row && this.fields$[seq].enabled)
                     {
                         this.fields$[seq].focus();
                         break;
