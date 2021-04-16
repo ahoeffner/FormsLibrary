@@ -3,7 +3,7 @@ import { RecordState } from "./Record";
 import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
-import { Statement } from "../database/Statement";
+import { SQL, Statement } from "../database/Statement";
 import { FieldDefinition } from "../input/FieldDefinition";
 
 
@@ -306,10 +306,10 @@ export class FieldData
     }
 
 
-    public parseQuery(keys:Key[], fields:Field[]) : Statement
+    public parseQuery(keys:Key[], subquery:SQL, fields:Field[]) : Statement
     {
         if (this.table == null) return(null);
-        return(this.table.parseQuery(keys,fields));
+        return(this.table.parseQuery(keys,subquery,fields));
     }
 
 

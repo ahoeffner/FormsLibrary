@@ -32,6 +32,7 @@ export interface bindvalue
 export class Statement
 {
     private sql$:string = null;
+    private subquery$:SQL = null;
     private table$:string = null;
     private order$:string = null;
     private type$:SQLType = null;
@@ -253,6 +254,16 @@ export class Statement
         return(this);
     }
 
+    public get subquery() : SQL
+    {
+        return(this.subquery$);
+    }
+
+    public set subquery(subquery:SQL)
+    {
+        this.subquery$ = subquery;
+    }
+
     public validate() : string[]
     {
         if (this.errors != null)
@@ -311,6 +322,24 @@ export class Statement
             });
         });
 
+
+        if (this.subquery$ != null)
+        {
+            if (this.condition$ != null) sql += " and ";
+            else                         sql += "where ";
+            
+            sql += this.subquery$.sql;
+
+            this.subquery$.bindvalues.forEach((bindv) =>
+            {
+                bindvals.push
+                ({
+                    name: bindv.name,
+                    type: Column[bindv.type].toLowerCase(),
+                    value: bindv.value
+                });
+            });
+        }
 
         if (this.type$ == SQLType.select && this.order$ != null)
             sql += " order by "+this.order$;

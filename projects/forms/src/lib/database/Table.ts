@@ -93,7 +93,7 @@ export class Table
     }
 
 
-    public parseQuery(keys:Key[], fields:Field[]) : Statement
+    public parseQuery(keys:Key[], subquery:SQL, fields:Field[]) : Statement
     {
         let stmt:Statement = new Statement(SQLType.select);
 
@@ -134,6 +134,11 @@ export class Table
                 }
             }
         });
+
+        if (subquery != null)
+        {
+            
+        }
 
         return(stmt);
     }

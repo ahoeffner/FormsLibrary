@@ -8,8 +8,8 @@ import { FormImpl } from "../forms/FormImpl";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
 import { MessageBox } from "../popup/MessageBox";
-import { Statement } from "../database/Statement";
 import { MasterDetail } from "../forms/MasterDetail";
+import { SQL, Statement } from "../database/Statement";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
@@ -546,10 +546,12 @@ export class BlockImpl
             }
         }
 
-        if (this.masterdetail != null)
-            this.masterdetail.getDetailQuery();
+        let subquery:SQL = null;
 
-        let status = await this.executeqry();
+        if (this.masterdetail != null)
+            subquery = this.masterdetail.getDetailQuery();
+
+        let status = await this.executeqry(subquery);
         this.focus(0);
 
         return(status);
@@ -590,7 +592,7 @@ export class BlockImpl
     }
 
 
-    public async executeqry() : Promise<boolean>
+    public async executeqry(subquery?:SQL) : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
             return(false);
@@ -616,7 +618,7 @@ export class BlockImpl
             keys = this.masterdetail.getKeys(this);
 
         this.state = FormState.exeqry;
-        let stmt:Statement = this.data.parseQuery(keys,fields);
+        let stmt:Statement = this.data.parseQuery(keys,subquery,fields);
 
         let errors:string[] = stmt.validate();
 

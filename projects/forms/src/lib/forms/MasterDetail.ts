@@ -156,7 +156,7 @@ export class MasterDetail
             subq = {sql: sub.sql, bindvalues: bindvals};
         }
 
-        return(subq);
+        return(subq)
     }
 
 
@@ -182,7 +182,7 @@ export class MasterDetail
             parent.subs.push(sub);
 
             let fields:Field[] = block.records[0].fields;
-            let stmt:Statement = block.data.parseQuery([],fields);
+            let stmt:Statement = block.data.parseQuery([],null,fields);
 
             block.cancelqry();
 
