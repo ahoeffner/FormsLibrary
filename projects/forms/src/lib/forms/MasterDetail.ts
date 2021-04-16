@@ -103,10 +103,22 @@ export class MasterDetail
     public enterquery(block:BlockImpl) : void
     {
         this.master$ = block;
+        this.enterdetailquery(block);
+    }
+
+
+    private enterdetailquery(block:BlockImpl) : void
+    {
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null && dep.details != null)
-            dep.details.forEach((det) => det.block.enterqry());
+        {
+            dep.details.forEach((det) =>
+            {
+                det.block.enterqry();
+                this.enterdetailquery(det.block);
+            });
+        }
     }
 
 
@@ -116,7 +128,13 @@ export class MasterDetail
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null && dep.details != null)
-            dep.details.forEach((det) => det.block.searchfilter = []);
+        {
+            dep.details.forEach((det) =>
+            {
+                det.block.searchfilter = [];
+                this.clearfilters(det.block);
+            });
+        }
     }
 
 
@@ -243,7 +261,7 @@ export class MasterDetail
 
         if (children)
         {
-            sql += "(";
+            sql += " (";
 
             for (let i = 0; i < sub.subs.length; i++)
             {
