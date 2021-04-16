@@ -848,8 +848,6 @@ export class BlockImpl
         if (this.state == FormState.entqry) return(true);
         if (this.records[+this.row].state == RecordState.na) return(true);
 
-        console.log("valiate field")
-
         if (!field.validate())
         {
             field.valid = false;
@@ -905,7 +903,6 @@ export class BlockImpl
 
         let rec:Record = this.records[+this.row];
         if (rec.state == RecordState.na) return(true);
-        console.log("validate record")
 
         // Check fields is validated
         if (!this.data.validated(this.record,true))

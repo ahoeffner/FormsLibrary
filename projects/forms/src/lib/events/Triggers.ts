@@ -177,7 +177,7 @@ export class Triggers
 
     public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
-        event["type$"] = this.trgname(type);
+        event["type$"] = type;
 
         if (type == Trigger.Key && key != null)
         {
@@ -213,7 +213,7 @@ export class Triggers
         if (triggers == null)
             return(this.invokeTriggers(type,event,key));
 
-        event["type$"] = this.trgname(type);
+        event["type$"] = type;
 
         if (type == Trigger.Key && key != null)
         {

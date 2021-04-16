@@ -288,7 +288,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
 
     public async onkey(event:KeyTriggerEvent) : Promise<boolean>
     {
-        if (event.type == "key" && event.field == "filter")
+        if (event.type == Trigger.Key && event.field == "filter")
         {
             if (event.key == keymap.prevfield)
                 event.event.preventDefault();
@@ -300,7 +300,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             }
         }
 
-        if (event.type == "key" && event.field == "description")
+        if (event.type == Trigger.Key && event.field == "description")
         {
             if (event.key == keymap.nextfield || event.key == keymap.prevfield)
             {
@@ -310,10 +310,10 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             }
         }
 
-        if (event.type == "key" && event.key == keymap.escape)
+        if (event.type == Trigger.Key && event.key == keymap.escape)
             this.close(false);
 
-        if (event.type == "key" && event.key == keymap.enter)
+        if (event.type == Trigger.Key && event.key == keymap.enter)
         {
             let record:number = -1;
 

@@ -1,3 +1,4 @@
+import { Trigger } from "./Triggers";
 import { keymap } from "../keymap/KeyMap";
 import { Statement } from "../database/Statement";
 import { FieldInstance } from "../input/FieldInstance";
@@ -6,7 +7,7 @@ import { FieldInstance } from "../input/FieldInstance";
 export class TriggerEvent
 {
     private event$:any;
-    private type$:string;
+    private type$:Trigger;
     private record$:number;
 
     constructor(record:number, jsevent?:any)
@@ -15,7 +16,7 @@ export class TriggerEvent
         this.event$ = jsevent;
     }
 
-    public get type() : string
+    public get type() : Trigger
     {
         return(this.type$);
     }
@@ -88,7 +89,7 @@ export class FieldTriggerEvent extends TriggerEvent
 
     public get block() : string
     {
-        return(this.field$);
+        return(this.block$);
     }
 
     public get field() : string
