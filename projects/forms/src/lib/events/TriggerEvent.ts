@@ -66,14 +66,16 @@ export class FieldTriggerEvent extends TriggerEvent
 {
     private value$:any;
     private id$:string;
+    private block$:string;
     private field$:string;
     private previous$:any;
 
-    constructor(field:string, id:string, row:number, value:any, previous:any, jsevent?:any)
+    constructor(block:string, field:string, id:string, row:number, value:any, previous:any, jsevent?:any)
     {
         super(row,jsevent);
 
         this.id$ = id;
+        this.block$ = block;
         this.field$ = field;
         this.value$ = value;
         this.previous$ = previous;
@@ -82,6 +84,11 @@ export class FieldTriggerEvent extends TriggerEvent
     public get value() : any
     {
         return(this.value$);
+    }
+
+    public get block() : string
+    {
+        return(this.field$);
     }
 
     public get field() : string

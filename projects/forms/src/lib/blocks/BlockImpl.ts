@@ -319,7 +319,7 @@ export class BlockImpl
 
             this.data.setValidated(record,column);
 
-            let trgevent:FieldTriggerEvent = new FieldTriggerEvent(column,null,+record,value,previous);
+            let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,column,null,+record,value,previous);
             this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
 
             if (record == this.record && this.masterdetail != null && value != previous)
@@ -848,6 +848,8 @@ export class BlockImpl
         if (this.state == FormState.entqry) return(true);
         if (this.records[+this.row].state == RecordState.na) return(true);
 
+        console.log("valiate field")
+
         if (!field.validate())
         {
             field.valid = false;
@@ -862,7 +864,7 @@ export class BlockImpl
 
         this.data.setValue(+field.row+this.offset,field.name,field.value);
 
-        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,null);
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,previous,null);
         if (!await this.invokeFieldTriggers(Trigger.WhenValidateField,field.name,trgevent))
         {
             field.valid = false;
@@ -903,6 +905,7 @@ export class BlockImpl
 
         let rec:Record = this.records[+this.row];
         if (rec.state == RecordState.na) return(true);
+        console.log("validate record")
 
         // Check fields is validated
         if (!this.data.validated(this.record,true))
@@ -1019,7 +1022,7 @@ export class BlockImpl
                     let fname:string = columns[c];
                     if (field != null) fname = field.name;
 
-                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(fname,null,this.sum(r,this.offset),value,value);
+                    let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,fname,null,this.sum(r,this.offset),value,value);
                     execs.push(this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent));
                 }
 
@@ -1084,7 +1087,7 @@ export class BlockImpl
             this.row = field.row;
             this.records$[+field.row].current = true;
 
-            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent));
         }
 
@@ -1093,7 +1096,7 @@ export class BlockImpl
             if (this.state == FormState.entqry)
                 return(true);
 
-            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.PostField,field.name,trgevent));
         }
 
@@ -1111,7 +1114,7 @@ export class BlockImpl
                 return(true);
 
             let previous:any = this.getValue(this.sum(field.row,this.offset),field.name);
-            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
+            trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
 
             return(this.invokeFieldTriggers(Trigger.Typing,field.name,trgevent));
         }
@@ -1266,7 +1269,7 @@ export class BlockImpl
                     if (field.value == previous) field.parent.copy(field);
                 }
 
-                trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
+                trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
 
                 if (key == keymap.prevfield)
                 {
@@ -1400,15 +1403,10 @@ export class BlockImpl
         {
             if (this.state != FormState.entqry && this.records[+this.row]?.state != RecordState.na)
             {
-                let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
+                if (!await this.validate())
+                    return(false);
 
-                if (field.dirty)
-                {
-                    // ctrl-z doesn't refresh
-                    if (field.value == previous) field.parent.copy(field);
-                }
-
-                trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,previous,event);
+                trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,null,event);
 
                 if (key == keymap.prevblock)
                 {
@@ -1444,13 +1442,13 @@ export class BlockImpl
 
         if (type == "click")
         {
-            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.MouseClick,field.name,trgevent,key));
         }
 
         if (type == "dblclick")
         {
-            trgevent = new FieldTriggerEvent(field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
+            trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.MouseDoubleClick,field.name,trgevent,key));
         }
 
