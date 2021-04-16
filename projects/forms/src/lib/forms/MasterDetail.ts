@@ -235,7 +235,8 @@ export class MasterDetail
             sql += ")";
         }
 
-        sub.sql += sql;
+        if (sub.sql == null) sub.sql = sql;
+        else                 sub.sql += sql;
     }
 
 
