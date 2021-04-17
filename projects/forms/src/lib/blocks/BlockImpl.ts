@@ -411,6 +411,7 @@ export class BlockImpl
     public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
     {
         // Strange
+        if (stmt == null) console.log("strange");
         if (stmt == null) return(null);
 
         let errors:string[] = stmt.validate();

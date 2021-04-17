@@ -230,15 +230,12 @@ export class Statement
             {
                 datatype = Column.date;
                 value = (value as Date).getTime();
-                return;
             }
 
             if (type == "number")
-            {
                 datatype = Column.decimal;
-                return;
-            }
         }
+
 
         if (value != null && (value+"").trim().length > 0 && datatype == null)
         {
