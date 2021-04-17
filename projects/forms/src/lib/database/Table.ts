@@ -17,7 +17,7 @@ export class Table
     private eof:boolean;
     private fetch$:number;
     private cursor:string;
-    private data:any[] = [];
+    private keys:any[] = [];
     private cnames:string[];
     private conn:Connection;
     private dates:boolean[] = [];
@@ -105,6 +105,52 @@ export class Table
     public set searchfilter(filter:NameValuePair[])
     {
         this.criterias = filter;
+    }
+
+
+    public async lock(record:number, data:any[]) : Promise<any>
+    {
+        let cols:NameValuePair[] = [];
+
+        for (let i = 0; i < this.columns.length; i++)
+            cols.push({name: this.columns[i], value: data[i]});
+
+        let where:boolean = true;
+        let stmt:Statement = new Statement(SQLType.lock);
+
+        stmt.columns = this.columns;
+        stmt.table = this.table.name;
+
+        for (let i = 0; i < this.keys[record].length; i++)
+        {
+            let type:Column = this.index.get(this.columns[i]).type;
+
+            if (!where) stmt.and(this.columns[i],this.keys[record][i],type);
+            else        stmt.where(this.columns[i],this.keys[record][i],type);
+
+            where = false;
+        }
+
+        let lock:SQL = stmt.build();
+        let response:any = await this.conn.invoke("lock",lock);
+
+        if (response["status"] == "failed")
+            return(response);
+
+        let rows:any[] = response["rows"];
+
+        if (rows.length == 0)
+            return({status: "failed", message: "Row has been deleted by another user. Requery to see changes"});
+
+        let row:any = rows[0];
+
+        for (let i = 0; i < this.columns.length; i++)
+        {
+            if (row[this.columns[i]] != cols[i].value)
+                return({status: "failed", message: "Row '"+cols[i].name+"' has been changed by another user. Requery to see changes"});
+        }
+
+        return({status: "ok"});
     }
 
 
@@ -240,7 +286,7 @@ export class Table
                 if (keyval.length < klen) keyval.push(val);
             });
 
-            this.data.push(keyval);
+            this.keys.push(keyval);
             this.fielddata.add(drow);
         });
     }

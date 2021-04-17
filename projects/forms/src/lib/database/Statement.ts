@@ -5,6 +5,7 @@ import { Condition } from "./Condition";
 export enum SQLType
 {
     call,
+    lock,
     select,
     insert,
     update,
@@ -281,11 +282,20 @@ export class Statement
 
     public build() : SQL
     {
+        switch(this.type)
+        {
+            case SQLType.lock: return(this.buildselect());
+            case SQLType.select: return(this.buildselect());
+        }
+    }
+
+    private buildselect() : SQL
+    {
         let sql:string = this.sql$;
 
         if (sql == null)
         {
-            sql = SQLType[this.type$] + " ";
+            sql = "select ";
 
             if (this.columns$ != null)
             {

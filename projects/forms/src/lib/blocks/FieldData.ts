@@ -90,6 +90,8 @@ export class FieldData
         if (this.table == null)
             return({status: "ok"});
 
+        await this.table.lock(record,this.data[+record].values);
+
         this.data[record].locked = true;
         return({status: "ok"});
     }
