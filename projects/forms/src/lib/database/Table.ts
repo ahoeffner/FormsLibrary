@@ -146,7 +146,12 @@ export class Table
 
         for (let i = 0; i < this.columns.length; i++)
         {
-            if (row[this.columns[i]] != cols[i].value)
+            let cval:any = cols[i].value;
+
+            if (cval != null && this.dates[i])
+                cval = (cval as Date).getTime();
+
+            if (row[this.columns[i]] != cval)
                 return({status: "failed", message: "Row '"+cols[i].name+"' has been changed by another user. Requery to see changes"});
         }
 

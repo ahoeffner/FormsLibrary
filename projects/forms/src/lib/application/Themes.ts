@@ -5,6 +5,7 @@ export interface Theme
     text:string;
     title:string;
     topbar:string;
+    enabled:string;
     disabled:string;
     foldertree:string;
     buttontext:string;
@@ -20,6 +21,7 @@ export class defaultTheme implements Theme
     public text:string = "black";
     public title:string = "white";
     public topbar:string = "#303f9f";
+    public enabled:string = "black";
     public disabled:string = "silver";
     public menuoption:string = "white";
     public buttontext:string = "white";
@@ -63,6 +65,7 @@ export class Yellow implements Theme
     public title:string = "black";
     public topbar:string = "yellow";
     public foldertree:string = "grey";
+    public enabled:string = "black";
     public disabled:string = "silver";
     public menuoption:string = "black";
     public buttontext:string = "black";

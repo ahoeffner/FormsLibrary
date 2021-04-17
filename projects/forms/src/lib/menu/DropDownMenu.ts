@@ -4,11 +4,11 @@ import { MenuEntry } from './MenuEntry';
 import { DefaultMenu } from './DefaultMenu';
 import { Config } from '../application/Config';
 import { MenuInterface } from './MenuInterface';
+import { Context } from '../application/Context';
 import { Application } from '../application/Application';
 import { ApplicationImpl } from '../application/ApplicationImpl';
 import { WindowListener, onEventListener } from '../events/WindowListener';
 import { Component, ComponentRef, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Context } from '../application/Context';
 
 @Component({
     selector: '',
@@ -168,7 +168,8 @@ export class DropDownMenu implements onEventListener, AfterViewInit
         {
             let mopt:MenuOption = new MenuOption(menus[i].children[0]);
             this.menus.set(mopt.elem.id,mopt);
-            mopt.elem.classList.add("dddmenu-isabled");
+            mopt.elem.classList.add("ddmenu-default");
+            mopt.elem.classList.add("ddmenu-disabled");
 			mopt.elem.addEventListener("click", (event) => {this.toggle(event)});
         }
 
@@ -337,6 +338,11 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 background: transparent;
             }
 
+            .ddmenu-default
+            {
+                color: `+this.conf.colors.enabled+`;
+            }
+
             .ddmenu-disabled
             {
                 color: `+this.conf.colors.disabled+`;
@@ -356,6 +362,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
                 min-width: 80px;
                 position: absolute;
                 background-color: #f1f1f1;
+                color: `+this.conf.colors.menuoption+`;
                 box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             }
 

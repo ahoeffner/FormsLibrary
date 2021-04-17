@@ -260,8 +260,8 @@ export class FieldData
 
         if (column == null)
         {
+            console.log("valid "+rec.validated+" insert/update "+RecordState[rec.state]+" "+rec.scn);
             rec.validated = true;
-            console.log("insert/update "+RecordState[rec.state]+" "+rec.scn);
             rec.fields.forEach((col) => {console.log(col.value$+" scn: "+col.scn)});
             return;
         }

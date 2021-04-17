@@ -39,23 +39,35 @@ export class DefaultMenuHandler extends MenuHandler
 
         if (this.form != null)
         {
+            this.enable("/form/close");
             this.enable("/section/next");
             this.enable("/section/previous");
 
-            if (this.connected) this.enable();
-            else this.enable("/form/close");
-        }
-
-        if (this.connected)
-        {
-            this.disable("/connection/connect");
-            this.enable("/connection/disconnect");
+            if (this.connected)
+            {
+                this.enable("/form");
+                this.enable("/section");
+                this.enable("/record");
+                this.enable("/connection/disconnect");
+            }
+            else
+            {
+                this.enable("/connection/connect");
+            }
         }
         else
         {
-            this.enable("/connection/connect");
-            this.disable("/connection/disconnect");
+            if (this.connected)
+            {
+                this.enable("/connection/disconnect");
+            }
+            else
+            {
+                this.enable("/connection/connect");
+            }
         }
+
+        this.onTransactionChange();
     }
 
     public connect() : void

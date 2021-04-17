@@ -116,6 +116,8 @@ export class Connection
 
         this.conn = null;
         this.keepalive = 0;
+
+        this.app.appstate.transactionChange(false);
         this.app.appstate.onDisconnect();
     }
 

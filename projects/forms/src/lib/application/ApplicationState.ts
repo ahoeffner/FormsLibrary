@@ -83,14 +83,6 @@ export class ApplicationState
 
     public async onDisconnect() : Promise<boolean>
     {
-        let response = await this.connection.rollback();
-
-        if (response["status"] == "failed")
-        {
-            this.alert(JSON.stringify(response),"Rollback");
-            return(false);
-        }
-
         this.menus.forEach((mhdl) => {mhdl.onDisconnect()});
 
         this.forms.forEach(async (form) =>
