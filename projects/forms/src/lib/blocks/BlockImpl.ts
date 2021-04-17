@@ -898,12 +898,12 @@ export class BlockImpl
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
                 return(false);
 
-                if (this.records[+this.row].state == RecordState.insert)
-                {
-                    if (this.data.validated(this.record,true))
-                        this.validaterecord();
-                }
+            if (this.records[+this.row].state == RecordState.insert)
+            {
+                if (this.data.validated(this.record,true))
+                    this.validaterecord();
             }
+        }
 
         return(true);
     }
@@ -933,6 +933,12 @@ export class BlockImpl
 
         // Check record is validated
         if (this.data.validated(this.record,false)) return(true);
+
+        if (this.data.failed(this.record) != null)
+        {
+            this.alert("Backend has not processed this record, requery to see actual data","Validation error");
+            return(true);
+        }
 
         let trgevent:TriggerEvent = new TriggerEvent(this.record,null);
 

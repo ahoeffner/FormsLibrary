@@ -263,7 +263,7 @@ export class FieldData
         if (column == null)
         {
             if (rec.failed != null)
-                return(false)
+                return({status: "failed", message: rec.failed});
 
             if (rec.validated)
                 return({status: "failed", message: "Record already validated"});
@@ -280,6 +280,32 @@ export class FieldData
 
                     rec.dbn = scn;
                 }
+            }
+            else if (this.table != null)
+            {
+                let scn:number = rec.scn;
+                let columns:NameValuePair[] = [];
+
+                for (let i = 0; i < this.columns.length; i++)
+                {
+                    let status:any = {updated: false};
+
+                    if (+rec.fields[i].scn > +rec.dbn)
+                    {
+                        status.updated = true;
+                        status.newvalue = rec.fields[i].value$;
+                    }
+
+                    columns.push({name: this.columns[i], value: rec.fields[i].value$});
+                }
+
+                console.log("Update "+columns.length);
+                let response:any= await this.table.update(record,columns);
+
+                if (response["status"] == "failed")
+                    return(response);
+
+                rec.dbn = scn;
             }
 
             rec.validated = true;
@@ -323,7 +349,7 @@ export class FieldData
         if (rec.fields[+colno].value$ == value)
             return(false);
 
-        let scn:number = rec.scn++;
+        let scn:number = +rec.scn + 1;
 
         if (this.table != null && +colno < this.table.columns.length)
         {

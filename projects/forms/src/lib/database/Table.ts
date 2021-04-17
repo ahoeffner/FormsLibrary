@@ -188,16 +188,63 @@ export class Table
         }
 
         let insert:SQL = stmt.build();
-        this.keys.splice(record,0,keyval);
+        this.keys.splice(+record,0,keyval);
         let response:any = await this.conn.invoke("insert",insert);
 
         return(response);
     }
 
 
-    public async update(record:number, data:any[]) : Promise<any>
+    public async update(record:number, data:NameValuePair[]) : Promise<any>
     {
+        data.forEach((nvp) => {console.log("update "+nvp.name+" = "+nvp.value)});
+        let stmt:Statement = new Statement(SQLType.insert);
+
+        let keyval:any[] = this.keys[+record];
+
+        for (let i = 0; i < keyval.length; i++)
+        {
+            let type:Column = this.index.get(this.columns[i]).type;
+            stmt.bind("key_"+this.columns[i],keyval[i],type);
+        }
+
+        keyval = [];
+        let columns:string[] = [];
+
+        for (let i = 0; i < data.length; i++)
+        {
+            if (data[i].value.updated)
+            {
+                columns.push(data[i].name);
+
+                let cval:any = data[i].value.newvalue;
+                let type:Column = this.index.get(data[i].name).type;
+
+                if (cval != null && type == Column.date)
+                    cval = (cval as Date).getTime();
+
+                    if (cval != null && this.dates[i])
+                    cval = (cval as Date).getTime();
+
+                if (i < this.key.columns().length)
+                    keyval.push(cval);
+
+                stmt.bind("val_"+data[i].name,cval,type);
+            }
+        }
+
+        stmt.columns = columns;
+        stmt.table = this.table.name;
+
+        let update:SQL = stmt.build();
+        let response:any = await this.conn.invoke("update",update);
+
+        if (response["status"] != "failed")
+            this.keys[+record] = keyval;
+
+        return(response);
     }
+
 
     public parseQuery(keys:Key[], subquery:SQL, fields:Field[]) : Statement
     {

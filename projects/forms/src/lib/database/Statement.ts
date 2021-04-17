@@ -33,6 +33,7 @@ export interface bindvalue
 export class Statement
 {
     private sql$:string = null;
+    private keys$:any[] = null;
     private subquery$:SQL = null;
     private table$:string = null;
     private order$:string = null;
@@ -117,6 +118,11 @@ export class Statement
     public get cursor() : string
     {
         return(this.cursor$);
+    }
+
+    public set keys(names:string[])
+    {
+        this.keys$ = names;
     }
 
     public set columns(columns:string|string[])
@@ -337,6 +343,43 @@ export class Statement
         }
 
         this.sql$ += ") values (";
+
+        for (let i = 0; i < bindvals.length; i++)
+        {
+            this.sql$ += ":"+bindvals[i].name;
+            if (i < bindvals.length - 1) this.sql$ += ",";
+        }
+
+        this.sql$ += ")";
+
+        return({sql: this.sql$, bindvalues: bindvals});
+    }
+
+    private buildupdate() : SQL
+    {
+        let bindvalues:BindValue[] = this.bindvalues;
+
+        let bindvals:bindvalue[] = [];
+
+        bindvalues.forEach((bindv) =>
+        {
+            bindvals.push
+            ({
+                name: bindv.name,
+                type: Column[bindv.type].toLowerCase(),
+                value: bindv.value
+            });
+        });
+
+        this.sql$ = "update "+this.table$+" set ";
+
+        for (let i = 0; i < this.columns$.length; i++)
+        {
+            this.sql$ += bindvals[i].name;
+            if (i < bindvals.length - 1) this.sql$ += ",";
+        }
+
+        this.sql$ += " where ";
 
         for (let i = 0; i < bindvals.length; i++)
         {
