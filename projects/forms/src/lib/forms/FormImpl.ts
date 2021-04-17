@@ -129,7 +129,7 @@ export class FormImpl
 
     public enterquery() : void
     {
-        this.depencies.getRoot().sendkey(null,keymap.enterquery);
+        this.depencies.getRoot()?.sendkey(null,keymap.enterquery);
     }
 
 

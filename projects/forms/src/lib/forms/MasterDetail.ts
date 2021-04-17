@@ -69,11 +69,11 @@ export class MasterDetail
     public getRoot(block?:BlockImpl) : BlockImpl
     {
         if (block == null)
-            block = this.blocks.entries().next().value;
+            block = Array.from(this.blocks)[0]["1"];
 
         let dep:dependencies = this.links.get(block.alias);
 
-        while(dep != null && dep.masters != null)
+        while(dep != null && dep.masters != null && dep.masters.length > 0)
         {
             block = dep.masters[0].block;
             dep = this.links.get(block.alias);
