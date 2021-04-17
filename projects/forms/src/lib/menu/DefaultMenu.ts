@@ -20,17 +20,16 @@ export class DefaultMenu implements Menu
                     {name: "execute query",     action: "executeQuery"},
                     {name: "clear",             action: "clear"},
                     {name: "close",             action: "close"},
-                    {name: "cancel",            action: "cancelQuery"},
                 ]
             }
             ,
             {
                 name: "Section", title: "Block actions", options:
                 [
-                    {name: "enter",     action: "enterQuery"},
-                    {name: "execute",   action: "executeQuery"},
-                    {name: "next",      action: "nextBlock"},
-                    {name: "previous",  action: "prevBlock"},
+                    {name: "enter query",     action: "enterQuery"},
+                    {name: "execute query",   action: "executeQuery"},
+                    {name: "next",            action: "nextBlock"},
+                    {name: "previous",        action: "prevBlock"},
                 ]
             }
             ,

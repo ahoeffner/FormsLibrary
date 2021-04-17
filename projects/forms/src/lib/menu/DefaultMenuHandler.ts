@@ -85,7 +85,7 @@ export class DefaultMenuHandler extends MenuHandler
         this.form?.clear();
     }
 
-    public cancelQuery() : void
+    public cancel() : void
     {
         this.form?.block?.cancel();
     }
