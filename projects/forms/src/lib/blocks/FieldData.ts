@@ -90,10 +90,16 @@ export class FieldData
         if (this.table == null)
             return({status: "ok"});
 
-        await this.table.lock(record,this.data[+record].values);
+        let response:any = await this.table.lock(record,this.data[+record].values);
+
+        if (response["status"] == "failed")
+        {
+            this.data[record].failed = true;
+            return(response);
+        }
 
         this.data[record].locked = true;
-        return({status: "ok"});
+        return(response);
     }
 
 
@@ -101,6 +107,13 @@ export class FieldData
     {
         if (record < 0 || record >= this.data.length) return(false);
         return(this.data[+record].locked);
+    }
+
+
+    public failed(record:number) : boolean
+    {
+        if (record < 0 || record >= this.data.length) return(false);
+        return(this.data[+record].failed);
     }
 
 
@@ -418,6 +431,7 @@ export class Row
     public scn:number = 0;
     public fields:Column[] = [];
     public locked:boolean = false;
+    public failed:boolean = false;
     public validated:boolean = true;
     public state:RecordState = RecordState.na;
 

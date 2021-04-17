@@ -821,6 +821,7 @@ export class BlockImpl
     {
         if (this.data == null) return(true);
         if (this.data.locked(record)) return(true);
+        if (this.data.failed(record)) return(false);
 
         let trgevent:TriggerEvent = new TriggerEvent(record,null);
 
