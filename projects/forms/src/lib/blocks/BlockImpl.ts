@@ -101,6 +101,11 @@ export class BlockImpl
     }
 
 
+    public database() : boolean
+    {
+        return(this.data?.database);
+    }
+
 
     public get datarows() : number
     {

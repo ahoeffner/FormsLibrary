@@ -59,6 +59,7 @@ export class FormImpl
     private block$:BlockImpl;
     private app:ApplicationImpl;
     private callbackfunc:CallBack;
+    private depencies:MasterDetail;
     private blocks:BlockImpl[] = [];
     private cancelled:boolean = false;
     private initiated$:boolean = false;
@@ -123,6 +124,12 @@ export class FormImpl
     public get block() : BlockImpl
     {
         return(this.block$);
+    }
+
+
+    public enterquery() : void
+    {
+        this.blocks.forEach((blk) => {console.log("blk: "+blk.alias+" "+blk.database())})
     }
 
 
@@ -334,7 +341,7 @@ export class FormImpl
     public newForm(container:Container) : void
     {
         let utils:Utils = new Utils();
-        let depencies:MasterDetail = new MasterDetail(this);
+        this.depencies = new MasterDetail(this);
 
         // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
@@ -381,8 +388,8 @@ export class FormImpl
 
         this.blkindex.forEach((block) =>
         {
-            depencies.addBlock(block);
-            block.setMasterDetail(depencies);
+            this.depencies.addBlock(block);
+            block.setMasterDetail(this.depencies);
 
             // Finish setup for each block
             let tabdef:TableDefinition = TableDefinitions.get(block.clazz);
@@ -419,7 +426,7 @@ export class FormImpl
                 }
             });
 
-            depencies.addKeys(block,keys);
+            this.depencies.addKeys(block,keys);
 
             // Columns mapped to fields. Form definitions overrides
             let colfields:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
@@ -632,7 +639,7 @@ export class FormImpl
                 block.records[0].enable(true);
         });
 
-        depencies.addJoins(JOINDefinitions.get(this.name));
+        this.depencies.addJoins(JOINDefinitions.get(this.name));
 
         this.app.newForm(this);
         this.initiated$ = true;
@@ -1069,7 +1076,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevfield)
         {
-            event.preventDefault();
+            if (event) event.preventDefault();
 
             let row:number = field.row;
             let seq:number = field.seq - 1;
@@ -1092,7 +1099,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.nextfield)
         {
-            event.preventDefault();
+            if (event) event.preventDefault();
 
             let row:number = field.row;
             let seq:number = field.seq - 1;
@@ -1116,7 +1123,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevblock)
         {
-            event.preventDefault();
+            if (event) event.preventDefault();
 
             let seq:number = field.seq - 1;
             let block:string = field.block;
@@ -1158,7 +1165,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.nextblock)
         {
-            event.preventDefault();
+            if (event) event.preventDefault();
 
             let seq:number = field.seq - 1;
             let block:string = field.block;

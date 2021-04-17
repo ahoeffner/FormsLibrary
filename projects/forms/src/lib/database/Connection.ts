@@ -61,6 +61,38 @@ export class Connection
     }
 
 
+    public async commit() : Promise<boolean>
+    {
+        if (this.conn != null)
+        {
+            let response:any = await this.invoke("commit",{});
+
+            if (response["status"] != "ok")
+                this.alert(JSON.stringify(response));
+
+            return(false);
+        }
+
+        return(true);
+    }
+
+
+    public async rollback() : Promise<boolean>
+    {
+        if (this.conn != null)
+        {
+            let response:any = await this.invoke("rollback",{});
+
+            if (response["status"] != "ok")
+                this.alert(JSON.stringify(response));
+
+            return(false);
+        }
+
+        return(true);
+    }
+
+
     public get connected() : boolean
     {
         return(this.conn != null);

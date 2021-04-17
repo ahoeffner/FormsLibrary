@@ -13,6 +13,7 @@ import { HttpClient } from "@angular/common/http";
 import { MenuFactory } from "../menu/MenuFactory";
 import { Container } from "../container/Container";
 import { DropDownMenu } from "../menu/DropDownMenu";
+import { Connection } from "../database/Connection";
 import { FormInstance } from '../forms/FormInstance';
 import { FormsControl } from "../forms/FormsControl";
 import { ApplicationState } from "./ApplicationState";
@@ -194,6 +195,12 @@ export class ApplicationImpl
     public dropContainer() : void
     {
         this.contctl.dropContainer();
+    }
+
+
+    public get connection() : Connection
+    {
+        return(this.appstate.connection);
     }
 
 

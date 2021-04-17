@@ -14,19 +14,23 @@ export class DefaultMenu implements Menu
         this.entries =
         [
             {
-                name: "Connection", title: "Connection to database", options:
+                name: "Form", title: "Form actions", options:
                 [
-                    {name: "connect",    action: "connect"},
-                    {name: "disconnect", action: "disconnect"},
+                    {name: "enter query",       action: "enterFormQuery"},
+                    {name: "execute query",     action: "executeQuery"},
+                    {name: "clear",             action: "clear"},
+                    {name: "close",             action: "close"},
+                    {name: "cancel",            action: "cancelQuery"},
                 ]
             }
             ,
             {
-                name: "Query", title: "Query actions", options:
+                name: "Section", title: "Block actions", options:
                 [
                     {name: "enter",     action: "enterQuery"},
                     {name: "execute",   action: "executeQuery"},
-                    {name: "cancel",    action: "cancelQuery"},
+                    {name: "next",      action: "nextBlock"},
+                    {name: "previous",  action: "prevBlock"},
                 ]
             }
             ,
@@ -44,26 +48,18 @@ export class DefaultMenu implements Menu
             }
             ,
             {
-                name: "Block", title: "Block actions", options:
-                [
-                    {name: "next", action: null},
-                    {name: "previous", action: null},
-                ]
-            }
-            ,
-            {
-                name: "Form", title: "Form actions", options:
-                [
-                    {name: "clear", action: "clear"},
-                    {name: "close", action: "close"},
-                ]
-            }
-            ,
-            {
                 name: "Transaction", title: "Transaction Menu", options:
                 [
-                    {name: "commit", action: null},
-                    {name: "rollback", action: null},
+                    {name: "commit", action: "commit"},
+                    {name: "rollback", action: "rollback"},
+                ]
+            }
+            ,
+            {
+                name: "Connection", title: "Connection to database", options:
+                [
+                    {name: "connect",    action: "connect"},
+                    {name: "disconnect", action: "disconnect"},
                 ]
             }
         ];

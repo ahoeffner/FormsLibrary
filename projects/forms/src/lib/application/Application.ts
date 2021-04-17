@@ -103,15 +103,6 @@ export class Application
         }
     }
 
-    public cxxx() : void
-    {
-        if (!this._impl_.connected)
-        {
-            let pinst:PopupInstance = new PopupInstance();
-            pinst.display(this._impl_,ListOfValuesImpl);
-        }
-    }
-
     public disconnect() : void
     {
         if (this._impl_.connected)
@@ -119,5 +110,17 @@ export class Application
             this._impl_.disconnect();
             this._impl_.getCurrentForm()?.clear();
         }
+    }
+
+    public commit() : void
+    {
+        if (this._impl_.connected)
+            this._impl_.connection.commit();
+    }
+
+    public rollback() : void
+    {
+        if (this._impl_.connected)
+            this._impl_.connection.rollback();
     }
 }

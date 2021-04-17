@@ -184,6 +184,24 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
+    public enterquery() : void
+    {
+        this._impl_.enterquery();
+    }
+
+
+    public prevBlock() : void
+    {
+        this._impl_.block.sendkey(null,keymap.prevblock);
+    }
+
+
+    public nextBlock() : void
+    {
+        this._impl_.block.sendkey(null,keymap.nextblock);
+    }
+
+
     public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
     {
         return(this._impl_.execute(stmt,firstrow,firstcolumn));

@@ -68,6 +68,16 @@ export class Block
         this._impl_.sendkey(null,keymap.prevrecord);
     }
 
+    public nextblock() : void
+    {
+        this._impl_.sendkey(null,keymap.nextblock);
+    }
+
+    public prevblock() : void
+    {
+        this._impl_.sendkey(null,keymap.prevblock);
+    }
+
     public pageup() : void
     {
         this._impl_.sendkey(null,keymap.pageup);

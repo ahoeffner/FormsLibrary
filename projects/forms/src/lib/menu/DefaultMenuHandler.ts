@@ -68,6 +68,16 @@ export class DefaultMenuHandler extends MenuHandler
         this.init();
     }
 
+    public commit() : void
+    {
+        this.app.commit();
+    }
+
+    public rollback() : void
+    {
+        this.app.rollback();
+    }
+
     public clear() : void
     {
         this.form?.clear();
@@ -76,6 +86,11 @@ export class DefaultMenuHandler extends MenuHandler
     public cancelQuery() : void
     {
         this.form?.block?.cancel();
+    }
+
+    public enterFormQuery() : void
+    {
+        this.form?.enterquery();
     }
 
     public enterQuery() : void
@@ -88,7 +103,6 @@ export class DefaultMenuHandler extends MenuHandler
         this.form?.block?.executequery();
     }
 
-
     public deleteRecord() : void
     {
         this.form?.block?.delete();
@@ -99,30 +113,35 @@ export class DefaultMenuHandler extends MenuHandler
         this.form?.block?.insert(false);
     }
 
-
     public insertRecordBefore() : void
     {
         this.form?.block?.insert(true);
     }
-
 
     public nextRecord() : void
     {
         this.form?.block?.nextrecord();
     }
 
-
     public prevRecord() : void
     {
         this.form?.block?.prevrecord();
     }
 
+    public nextBlock() : void
+    {
+        this.form?.block?.nextblock();
+    }
+
+    public prevBlock() : void
+    {
+        this.form?.block?.prevblock();
+    }
 
     public pageUp() : void
     {
         this.form?.block?.pageup();
     }
-
 
     public pageDown() : void
     {
