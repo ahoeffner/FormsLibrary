@@ -1,6 +1,7 @@
 import { Menu } from "../menu/Menu";
 import { FormImpl } from "../forms/FormImpl";
 import { ComponentRef } from "@angular/core";
+import { MessageBox } from "../popup/MessageBox";
 import { MenuHandler } from "../menu/MenuHandler";
 import { DefaultMenu } from "../menu/DefaultMenu";
 import { Connection } from "../database/Connection";
@@ -82,6 +83,14 @@ export class ApplicationState
 
     public async onDisconnect() : Promise<boolean>
     {
+        let response = await this.connection.rollback();
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Rollback");
+            return(false);
+        }
+
         this.menus.forEach((mhdl) => {mhdl.onDisconnect()});
 
         this.forms.forEach(async (form) =>
@@ -97,5 +106,11 @@ export class ApplicationState
     public get connected() : boolean
     {
         return(this.connection.connected);
+    }
+
+
+    public alert(message:string, title?:string, width?:string, height?:string) : void
+    {
+        MessageBox.show(this.app,message,title,width,height);
     }
 }

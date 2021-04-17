@@ -1082,7 +1082,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevfield)
         {
-            if (event.hasOwnProperty("preventDefault"))
+            if (event["preventDefault"] != null)
                 event.preventDefault();
 
             let row:number = field.row;
@@ -1106,7 +1106,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.nextfield)
         {
-            if (event.hasOwnProperty("preventDefault"))
+            if (event["preventDefault"] != null)
                 event.preventDefault();
 
             let row:number = field.row;
@@ -1131,7 +1131,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevblock)
         {
-            if (event.hasOwnProperty("preventDefault"))
+            if (event["preventDefault"] != null)
                 event.preventDefault();
 
             let seq:number = field.seq - 1;
@@ -1174,7 +1174,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.nextblock)
         {
-            if (event.hasOwnProperty("preventDefault"))
+            if (event["preventDefault"] != null)
                 event.preventDefault();
 
             let seq:number = field.seq - 1;

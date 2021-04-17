@@ -6,11 +6,11 @@ import { Form } from "../forms/Form";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { FormImpl } from "../forms/FormImpl";
+import { MessageBox } from "../popup/MessageBox";
 import { HttpClient } from "@angular/common/http";
 import { LoginForm } from "../database/LoginForm";
 import { ApplicationImpl } from "./ApplicationImpl";
 import { PopupInstance } from "../popup/PopupInstance";
-import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 
 
 @Injectable({
@@ -122,5 +122,10 @@ export class Application
     {
         if (this._impl_.connected)
             this._impl_.connection.rollback();
+    }
+
+    public alert(message:string, title?:string, width?:string, height?:string) : void
+    {
+        MessageBox.show(this._impl_,message,title,width,height);
     }
 }

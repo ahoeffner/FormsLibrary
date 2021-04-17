@@ -284,9 +284,31 @@ export class Statement
     {
         switch(this.type)
         {
+            case SQLType.call: return(this.buildcall());
             case SQLType.lock: return(this.buildselect());
             case SQLType.select: return(this.buildselect());
+
+            default: console.log("don't know hoe to build "+SQLType[this.type]);
         }
+    }
+
+    private buildcall() : SQL
+    {
+        let bindvalues:BindValue[] = this.bindvalues;
+
+        let bindvals:bindvalue[] = [];
+
+        bindvalues.forEach((bindv) =>
+        {
+            bindvals.push
+            ({
+                name: bindv.name,
+                type: Column[bindv.type].toLowerCase(),
+                value: bindv.value
+            });
+        });
+
+        return({sql: this.sql$, bindvalues: bindvals});
     }
 
     private buildselect() : SQL

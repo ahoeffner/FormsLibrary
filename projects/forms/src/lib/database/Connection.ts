@@ -70,6 +70,7 @@ export class Connection
             if (response["status"] != "ok")
                 this.alert(JSON.stringify(response));
 
+            this.app.appstate.transactionChange(false);
             return(false);
         }
 
@@ -86,6 +87,7 @@ export class Connection
             if (response["status"] != "ok")
                 this.alert(JSON.stringify(response));
 
+            this.app.appstate.transactionChange(false);
             return(false);
         }
 
