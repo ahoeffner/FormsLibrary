@@ -39,9 +39,11 @@ export class DefaultMenuHandler extends MenuHandler
 
         if (this.form != null)
         {
+            this.enable("/section/next");
+            this.enable("/section/previous");
+
             if (this.connected) this.enable();
             else this.enable("/form/close");
-            this.disable("/transaction");
         }
 
         if (this.connected)

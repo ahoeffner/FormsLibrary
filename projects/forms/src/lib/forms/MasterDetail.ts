@@ -66,6 +66,23 @@ export class MasterDetail
     }
 
 
+    public getRoot(block?:BlockImpl) : BlockImpl
+    {
+        if (block == null)
+            block = this.blocks.entries().next().value;
+
+        let dep:dependencies = this.links.get(block.alias);
+
+        while(dep != null && dep.masters != null)
+        {
+            block = dep.masters[0].block;
+            dep = this.links.get(block.alias);
+        }
+
+        return(block);
+    }
+
+
     public cleardetails(block:BlockImpl) : void
     {
         let dep:dependencies = this.links.get(block.alias);

@@ -129,7 +129,7 @@ export class FormImpl
 
     public enterquery() : void
     {
-        this.blocks.forEach((blk) => {console.log("blk: "+blk.alias+" "+blk.database())})
+        this.depencies.getRoot().sendkey(null,keymap.enterquery);
     }
 
 
@@ -1076,7 +1076,8 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevfield)
         {
-            if (event) event.preventDefault();
+            if (event.hasOwnProperty("preventDefault"))
+                event.preventDefault();
 
             let row:number = field.row;
             let seq:number = field.seq - 1;
@@ -1099,7 +1100,8 @@ export class FormImpl
 
         if (type == "key" && key == keymap.nextfield)
         {
-            if (event) event.preventDefault();
+            if (event.hasOwnProperty("preventDefault"))
+                event.preventDefault();
 
             let row:number = field.row;
             let seq:number = field.seq - 1;
@@ -1123,7 +1125,8 @@ export class FormImpl
 
         if (type == "key" && key == keymap.prevblock)
         {
-            if (event) event.preventDefault();
+            if (event.hasOwnProperty("preventDefault"))
+                event.preventDefault();
 
             let seq:number = field.seq - 1;
             let block:string = field.block;
@@ -1165,7 +1168,8 @@ export class FormImpl
 
         if (type == "key" && key == keymap.nextblock)
         {
-            if (event) event.preventDefault();
+            if (event.hasOwnProperty("preventDefault"))
+                event.preventDefault();
 
             let seq:number = field.seq - 1;
             let block:string = field.block;
