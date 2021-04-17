@@ -287,6 +287,7 @@ export class Statement
             case SQLType.call: return(this.buildcall());
             case SQLType.lock: return(this.buildselect());
             case SQLType.select: return(this.buildselect());
+            case SQLType.insert: return(this.buildinsert());
 
             default: console.log("don't know hoe to build "+SQLType[this.type]);
         }
@@ -307,6 +308,43 @@ export class Statement
                 value: bindv.value
             });
         });
+
+        return({sql: this.sql$, bindvalues: bindvals});
+    }
+
+    private buildinsert() : SQL
+    {
+        let bindvalues:BindValue[] = this.bindvalues;
+
+        let bindvals:bindvalue[] = [];
+
+        bindvalues.forEach((bindv) =>
+        {
+            bindvals.push
+            ({
+                name: bindv.name,
+                type: Column[bindv.type].toLowerCase(),
+                value: bindv.value
+            });
+        });
+
+        this.sql$ = "insert into "+this.table$+" (";
+
+        for (let i = 0; i < bindvals.length; i++)
+        {
+            this.sql$ += bindvals[i].name;
+            if (i < bindvals.length - 1) this.sql$ += ",";
+        }
+
+        this.sql$ += ") values (";
+
+        for (let i = 0; i < bindvals.length; i++)
+        {
+            this.sql$ += ":"+bindvals[i].name;
+            if (i < bindvals.length - 1) this.sql$ += ",";
+        }
+
+        this.sql$ += ")";
 
         return({sql: this.sql$, bindvalues: bindvals});
     }

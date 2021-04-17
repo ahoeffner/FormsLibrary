@@ -11,7 +11,6 @@ import { FieldDefinition } from "../input/FieldDefinition";
 export class FieldData
 {
     private table$:Table;
-    private scn:number = 0;
     private query:Statement;
     private block:BlockImpl;
     private data:Row[] = [];
@@ -90,12 +89,17 @@ export class FieldData
         if (this.table == null)
             return({status: "ok"});
 
-        let response:any = await this.table.lock(record,this.data[+record].values);
+        let response:any = {status: "ok"};
 
-        if (response["status"] == "failed")
+        if (this.table != null)
         {
-            this.data[record].failed = true;
-            return(response);
+            response = await this.table.lock(record,this.data[+record].values);
+
+            if (response["status"] == "failed")
+            {
+                this.data[record].failed = "lock";
+                return(response);
+            }
         }
 
         this.data[record].locked = true;
@@ -106,13 +110,14 @@ export class FieldData
     public locked(record:number) : boolean
     {
         if (record < 0 || record >= this.data.length) return(false);
+        if (this.data[+record].state == RecordState.insert) return(true);
         return(this.data[+record].locked);
     }
 
 
-    public failed(record:number) : boolean
+    public failed(record:number) : string
     {
-        if (record < 0 || record >= this.data.length) return(false);
+        if (record < 0 || record >= this.data.length) return(null);
         return(this.data[+record].failed);
     }
 
@@ -181,7 +186,7 @@ export class FieldData
 
     public newrow() : Row
     {
-        let row:Row = new Row(++this.scn,this);
+        let row:Row = new Row(0,this);
         return(row);
     }
 
@@ -248,34 +253,52 @@ export class FieldData
     }
 
 
-    public setValidated(record:number, column?:string) : void
+    public async setValidated(record:number, column?:string) : Promise<any>
     {
         if (record < 0 || record >= this.data.length)
-        {
-            console.log("set "+column+"["+record+"] row does not exist");
-            return;
-        }
+            return({status: "failed", message: "set "+column+"["+record+"] validated failed, row does not exist"});
 
         let rec:Row = this.data[+record];
 
         if (column == null)
         {
-            console.log("valid "+rec.validated+" insert/update "+RecordState[rec.state]+" "+rec.scn);
+            if (rec.failed != null)
+                return(false)
+
+            if (rec.validated)
+                return({status: "failed", message: "Record already validated"});
+
+            if (rec.state == RecordState.insert)
+            {
+                if (this.table != null)
+                {
+                    let scn:number = rec.scn;
+                    let response:any = await this.table.insert(record,this.data[+record].values);
+
+                    if (response["status"] == "failed")
+                        return(response);
+
+                    rec.dbn = scn;
+                }
+            }
+
             rec.validated = true;
-            rec.fields.forEach((col) => {console.log(col.value$+" scn: "+col.scn)});
-            return;
+
+            if (rec.state == RecordState.insert)
+                rec.state = RecordState.update;
+
+            return({status: "ok"});
         }
 
         let colno:number = this.index.get(column.toLowerCase());
 
         if (colno == null)
-        {
-            console.log("set "+column+"["+record+"] column does not exist");
-            return;
-        }
+            return({status: "failed", message: "set "+column+"["+record+"] validated failed, column does not exist"});
 
         if (this.table != null && +colno < this.table.columns.length)
             rec.fields[+colno].validated = true;
+
+        return({status: "ok"});
     }
 
 
@@ -300,11 +323,10 @@ export class FieldData
         if (rec.fields[+colno].value$ == value)
             return(false);
 
-        let scn:number = 0;
+        let scn:number = rec.scn++;
 
         if (this.table != null && +colno < this.table.columns.length)
         {
-            scn = ++this.scn;
             rec.validated = false;
             rec.fields[+colno].validated = false;
         }
@@ -360,7 +382,7 @@ export class FieldData
 
         data = this.data.slice(0,record);
 
-        data[+record] = new Row(++this.scn,this);
+        data[+record] = new Row(0,this);
         data[+record].state = RecordState.insert;
 
         data = data.concat(this.data.slice(record,this.data.length));
@@ -377,7 +399,7 @@ export class FieldData
         if (record < 0 || record >= this.data.length)
             return(false);
 
-        this.data[record].scn = ++this.scn;
+        this.data[record].scn++;
 
         data = this.data.slice(0,record);
         data = data.concat(this.data.slice(+record+1,this.data.length));
@@ -431,9 +453,10 @@ export class FieldData
 export class Row
 {
     public scn:number = 0;
+    public dbn:number = 0;
     public fields:Column[] = [];
+    public failed:string = null;
     public locked:boolean = false;
-    public failed:boolean = false;
     public validated:boolean = true;
     public state:RecordState = RecordState.na;
 

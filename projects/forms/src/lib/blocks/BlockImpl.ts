@@ -821,7 +821,12 @@ export class BlockImpl
     {
         if (this.data == null) return(true);
         if (this.data.locked(record)) return(true);
-        if (this.data.failed(record)) return(false);
+
+        if (this.data.failed(record) != null)
+        {
+            this.alert("The backend has failed locking this row","Lock Failure")
+            return(false);
+        }
 
         let trgevent:TriggerEvent = new TriggerEvent(record,null);
 
@@ -934,11 +939,18 @@ export class BlockImpl
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
 
-        this.data.setValidated(this.record);
-        if (rec.state == RecordState.insert)
-        {
-            rec.state = RecordState.update;
+        let insert:boolean = (rec.state == RecordState.insert);
+        let response:any = await this.data.setValidated(this.record);
 
+        if (response["status"] == "failed")
+        {
+            let title:string = insert ? "Insert" : "Update";
+            this.alert(JSON.stringify(response),title+" Failed");
+            return(false);
+        }
+
+        if (insert)
+        {
             if (this.form == null) this.enableall();
             else                   this.form.enableall();
         }

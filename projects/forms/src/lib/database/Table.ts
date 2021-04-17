@@ -159,6 +159,46 @@ export class Table
     }
 
 
+    public async insert(record:number, data:any[]) : Promise<any>
+    {
+        let cols:NameValuePair[] = [];
+
+        for (let i = 0; i < this.columns.length; i++)
+            cols.push({name: this.columns[i], value: data[i]});
+
+        let stmt:Statement = new Statement(SQLType.insert);
+
+        stmt.columns = this.columns;
+        stmt.table = this.table.name;
+
+        let keyval:any[] = [];
+
+        for (let i = 0; i < this.columns.length; i++)
+        {
+            let cval:any = cols[i].value;
+            let type:Column = this.index.get(this.columns[i]).type;
+
+            if (cval != null && this.dates[i])
+                cval = (cval as Date).getTime();
+
+            if (i < this.key.columns().length)
+                keyval.push(cval);
+
+            stmt.bind(cols[i].name,cval,type);
+        }
+
+        let insert:SQL = stmt.build();
+        this.keys.splice(record,0,keyval);
+        let response:any = await this.conn.invoke("insert",insert);
+
+        return(response);
+    }
+
+
+    public async update(record:number, data:any[]) : Promise<any>
+    {
+    }
+
     public parseQuery(keys:Key[], subquery:SQL, fields:Field[]) : Statement
     {
         let stmt:Statement = new Statement(SQLType.select);
