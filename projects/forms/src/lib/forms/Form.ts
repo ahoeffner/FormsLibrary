@@ -190,6 +190,12 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
+    public executequery() : void
+    {
+        this._impl_.executequery();
+    }
+
+
     public prevBlock() : void
     {
         this._impl_.block.sendkey(null,keymap.prevblock);

@@ -133,6 +133,12 @@ export class FormImpl
     }
 
 
+    public executequery() : void
+    {
+        this.depencies.getRoot()?.sendkey(null,keymap.executequery);
+    }
+
+
     public get popup() : boolean
     {
         return(this.win != null);

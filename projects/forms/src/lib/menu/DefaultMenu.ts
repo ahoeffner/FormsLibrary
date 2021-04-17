@@ -17,7 +17,7 @@ export class DefaultMenu implements Menu
                 name: "Form", title: "Form actions", options:
                 [
                     {name: "enter query",       action: "enterFormQuery"},
-                    {name: "execute query",     action: "executeQuery"},
+                    {name: "execute query",     action: "executeFormQuery"},
                     {name: "clear",             action: "clear"},
                     {name: "close",             action: "close"},
                 ]
@@ -28,6 +28,7 @@ export class DefaultMenu implements Menu
                 [
                     {name: "enter query",     action: "enterQuery"},
                     {name: "execute query",   action: "executeQuery"},
+                    {name: "clear filter",    action: "executeQuery"},
                     {name: "next",            action: "nextBlock"},
                     {name: "previous",        action: "prevBlock"},
                 ]

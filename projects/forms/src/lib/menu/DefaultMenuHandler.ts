@@ -95,6 +95,11 @@ export class DefaultMenuHandler extends MenuHandler
         this.form?.enterquery();
     }
 
+    public executeFormQuery() : void
+    {
+        this.form?.executequery();
+    }
+
     public enterQuery() : void
     {
         this.form?.block?.enterquery();
