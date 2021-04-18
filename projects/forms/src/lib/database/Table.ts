@@ -110,6 +110,7 @@ export class Table
 
     public async lock(record:number, data:any[]) : Promise<any>
     {
+        console.log("lock "+record);
         let cols:NameValuePair[] = [];
 
         for (let i = 0; i < this.columns.length; i++)
@@ -152,7 +153,10 @@ export class Table
                 cval = (cval as Date).getTime();
 
             if (row[this.columns[i]] != cval)
-                return({status: "failed", message: "Row '"+cols[i].name+"' has been changed by another user. Requery to see changes"});
+            {
+                let problem:string = cols[i].name+"["+record+"], db: "+row[this.columns[i]]+" != "+cval;
+                return({status: "failed", message: "Value '"+problem+"' has been changed by another user. Requery to see changes"});
+            }
         }
 
         return({status: "ok"});
@@ -197,50 +201,43 @@ export class Table
 
     public async update(record:number, data:NameValuePair[]) : Promise<any>
     {
-        data.forEach((nvp) => {console.log("update "+nvp.name+" = "+nvp.value)});
         let stmt:Statement = new Statement(SQLType.update);
 
-        let where:boolean = true;
         let keyval:any[] = this.keys[+record];
-
-        for (let i = 0; i < keyval.length; i++)
-        {
-            let type:Column = this.index.get(this.columns[i]).type;
-            stmt.addkey(this.columns[i],keyval[i],type);
-
-            if (!where) stmt.and(data[i].name,keyval[i],type);
-            else        stmt.where(data[i].name,keyval[i],type);
-
-            where = false;
-
-        }
-
-        keyval = [];
-        let columns:string[] = [];
 
         for (let i = 0; i < data.length; i++)
         {
             if (data[i].value.updated)
             {
-                columns.push(data[i].name);
-
-                let cval:any = data[i].value.newvalue;
+                let val:any = data[i].value.newvalue;
                 let type:Column = this.index.get(data[i].name).type;
 
-                if (cval != null && type == Column.date)
-                    cval = (cval as Date).getTime();
+                if (val != null && type == Column.date)
+                    val = (val as Date).getTime();
 
-                    if (cval != null && this.dates[i])
-                    cval = (cval as Date).getTime();
+                if (val != null && this.dates[i])
+                    val = (val as Date).getTime();
 
                 if (i < this.key.columns().length)
-                    keyval.push(cval);
+                    keyval[i] = val;
 
-                stmt.bind(data[i].name,data[i].value,type);
+                stmt.update(data[i].name,val,type);
             }
         }
 
-        stmt.columns = columns;
+        let where:boolean = true;
+
+        for (let i = 0; i < keyval.length; i++)
+        {
+            let type:Column = this.index.get(this.columns[i]).type;
+            stmt.update(this.columns[i],keyval[i],type);
+
+            if (!where) stmt.and(data[i].name,keyval[i],type);
+            else        stmt.where(data[i].name,keyval[i],type);
+
+            where = false;
+        }
+
         stmt.table = this.table.name;
 
         let update:SQL = stmt.build();

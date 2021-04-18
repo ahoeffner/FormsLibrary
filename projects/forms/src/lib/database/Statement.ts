@@ -38,9 +38,9 @@ export class Statement
     private order$:string = null;
     private type$:SQLType = null;
     private cursor$:string = null;
-    private keys$:BindValue[] = [];
     private columns$:string[] = [];
     private errors:string[] = null;
+    private updates$:BindValue[] = [];
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
 
@@ -120,7 +120,7 @@ export class Statement
         return(this.cursor$);
     }
 
-    public addkey(name:string, value:any, datatype?:Column)
+    public update(name:string, value:any, datatype?:Column)
     {
         if (value != null && datatype == null)
         {
@@ -147,7 +147,7 @@ export class Statement
         if (datatype == null)
             datatype = Column.varchar;
 
-        this.keys$.push({name: name, value: value, type: datatype});
+        this.updates$.push({name: name, value: value, type: datatype});
     }
 
     public set columns(columns:string|string[])
@@ -379,26 +379,28 @@ export class Statement
 
     private buildupdate() : SQL
     {
-        let keyvals:bindvalue[] = [];
+        let updates:bindvalue[] = [];
         let bindvals:bindvalue[] = [];
 
-        for (let i = 0; i < this.keys$.length; i++)
+        for (let i = 0; i < this.updates$.length; i++)
         {
-            keyvals.push(
+            updates.push(
             {
-                name: this.keys$[i].name,
-                type: Column[this.keys$[i].type].toLowerCase(),
-                value: this.keys$[i].value
+                name: this.updates$[i].name,
+                type: Column[this.updates$[i].type].toLowerCase(),
+                value: this.updates$[i].value
             });
         }
 
-        keyvals.forEach((bindv) => {bindvals.push(bindv)});
+        // Bindvalues for the update
+        updates.forEach((bindv) => {bindvals.push(bindv)});
 
         let bindvalues:BindValue[] = this.bindvalues;
 
         if (this.condition$ != null)
             this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
 
+        // Bindvalues for the whereclause
         this.bindvalues.forEach((bindv) =>
         {
             bindvals.push
@@ -411,10 +413,10 @@ export class Statement
 
         this.sql$ = "update "+this.table$+" set ";
 
-        for (let i = 0; i < keyvals.length; i++)
+        for (let i = 0; i < updates.length; i++)
         {
-            this.sql$ += keyvals[i].name + " = :"+keyvals[i].name;
-            if (i < keyvals.length - 1) this.sql$ += ", ";
+            this.sql$ += updates[i].name + " = :"+updates[i].name;
+            if (i < updates.length - 1) this.sql$ += ", ";
         }
 
         if (this.condition$ != null)
