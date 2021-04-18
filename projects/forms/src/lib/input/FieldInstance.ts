@@ -25,6 +25,7 @@ export class FieldInstance implements AfterViewInit
     private fgroup$:Field = null;
     private valid$:boolean = true;
     private lvalid:boolean = true;
+    private type$:FieldType = null;
     private enabled$:boolean = false;
     private readonly$:boolean = false;
     private mandatory$:boolean = false;
@@ -163,6 +164,47 @@ export class FieldInstance implements AfterViewInit
     public get mandatory() : boolean
     {
         return(this.mandatory$);
+    }
+
+    public setPossibleValues(id:string, values:Set<any>|Map<string,any>) : void
+    {
+        if (id != this.id) return;
+
+        let name:string = this.block+"."+this.name;
+        if (this.id.length > 0) name += "."+this.id;
+        let type:string = this.clazz.constructor.name;
+
+        if (type == "TextField") this.setTextFieldValues(values);
+    }
+
+    private setTextFieldValues(values:Set<any>|Map<string,any>) : void
+    {
+        let name:string = this.block+"."+this.name;
+        if (this.id.length > 0) name += "."+this.id;
+        let list:HTMLElement = document.getElementById(name);
+
+        if (list == null)
+        {
+            let vals:Set<any> = new Set<any>();
+
+            if (values instanceof Set) values.forEach((val) => {vals.add(val)});
+            else                       values.forEach((_val,key) => {vals.add(key)});
+
+            list = document.createElement("datalist");
+            list.setAttribute("id",name);
+
+            vals.forEach((val) =>
+            {
+                let option:HTMLElement = document.createElement("option");
+
+                option.textContent = val;
+                list.append(option);
+            })
+
+            this.clazz.element.appendChild(list);
+        }
+
+        this.clazz.element.setAttribute("list",name);
     }
 
     public set mandatory(flag:boolean)
@@ -329,6 +371,7 @@ export class FieldInstance implements AfterViewInit
 
     private setType(type:FieldType) : void
     {
+        this.type$ = type;
         this.container.innerHTML = null;
         let cname:any = FieldImplementation.getClass(FieldType[type]);
 

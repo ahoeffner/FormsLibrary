@@ -21,6 +21,7 @@ import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
+import { field } from "../annotations/field";
 
 
 export class BlockImpl
@@ -45,6 +46,7 @@ export class BlockImpl
     private idlovs:Map<string,LOVDefinition>;
     private triggers:Triggers = new Triggers();
     private state:FormState = FormState.normal;
+    private fieldidx$:Map<string,FieldInstance> = new Map<string,FieldInstance>();
 
 
     constructor(public block?:Block)
@@ -209,9 +211,33 @@ export class BlockImpl
     }
 
 
+    public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean
+    {
+        let inst:FieldInstance = this.fieldidx$.get(field);
+
+        if (inst != null)
+        {
+            inst.parent.setPossibleValues(inst.id,values);
+            return(true);
+        }
+
+        return(false);
+    }
+
+
     public setFields(fields:FieldInstance[])
     {
         this.fields$ = fields;
+
+        fields.forEach((inst) =>
+        {
+            let name:string = inst.name;
+
+            if (inst.id != null && inst.id.length > 0)
+                name += "."+inst.id;
+
+            this.fieldidx$.set(name,inst);
+        });
     }
 
 

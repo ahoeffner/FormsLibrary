@@ -114,6 +114,11 @@ export class Block
         else return(this._impl_.sendkey(null,keymap.delete));
     }
 
+    public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean
+    {
+        return(this._impl_.setPossibleValues(field,values));
+    }
+
     public showListOfValues(field:string, id?:string, row?:number) : void
     {
         this._impl_.showListOfValues(field,id,row);

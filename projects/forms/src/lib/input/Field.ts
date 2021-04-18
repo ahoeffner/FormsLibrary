@@ -240,6 +240,13 @@ export class Field
     }
 
 
+    public setPossibleValues(id:string, values:Set<any>|Map<string,any>) : void
+    {
+        this.fields.forEach((field) => {field.setPossibleValues(id,values);});
+        this.cfields.forEach((field) => {field.setPossibleValues(id,values);});
+    }
+
+
     public set state(state:RecordState)
     {
         this.state$ = state;
