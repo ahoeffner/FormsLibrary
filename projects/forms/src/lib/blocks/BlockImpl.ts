@@ -842,7 +842,7 @@ export class BlockImpl
 
         if (response["status"] == "failed")
         {
-            this.alert(JSON.stringify(response),"Lock Record");
+            this.alert(JSON.stringify(response),"Lock Record Backend Response");
             return(false);
         }
 
