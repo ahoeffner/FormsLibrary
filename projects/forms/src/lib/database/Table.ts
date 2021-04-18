@@ -318,6 +318,7 @@ export class Table
 
     public async executequery(stmt:Statement) : Promise<any>
     {
+        this.keys = [];
         this.eof = false;
         this.fielddata.clear();
         this.select = stmt.build();
