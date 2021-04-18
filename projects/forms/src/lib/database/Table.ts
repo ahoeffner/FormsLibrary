@@ -209,6 +209,7 @@ export class Table
         }
 
         keyval = [];
+        let where:boolean = true;
         let columns:string[] = [];
 
         for (let i = 0; i < data.length; i++)
@@ -229,7 +230,10 @@ export class Table
                 if (i < this.key.columns().length)
                     keyval.push(cval);
 
-                stmt.bind(data[i].name,cval,type);
+                if (!where) stmt.and(data[i].name,cval,type);
+                else        stmt.where(data[i].name,cval,type);
+
+                where = false;
             }
         }
 
