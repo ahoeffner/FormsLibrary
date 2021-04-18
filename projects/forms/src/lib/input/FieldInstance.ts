@@ -89,7 +89,7 @@ export class FieldInstance implements AfterViewInit
     {
         let name:string = this.block$+"."+this.name;
         if (this.id.length > 0) name += "."+this.id;
-        name += "["+this.row+"]("+this.guid+")";
+        //name += "["+this.row+"]("+this.guid+")";
         return(name);
     }
 
@@ -429,6 +429,7 @@ export class FieldInstance implements AfterViewInit
     private setType(type:FieldType) : void
     {
         this.type$ = type;
+        let seq:number = this.seq;
         this.container.innerHTML = null;
         let cname:any = FieldImplementation.getClass(FieldType[type]);
 
@@ -442,6 +443,8 @@ export class FieldInstance implements AfterViewInit
             if (this.size$ != null) this.clazz.size = this.size$;
             if (this.class$ != "") this.clazz.element.classList.add(this.class$);
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
+
+            this.seq = seq;
 
             this.disable();
             this.addTriggers();
