@@ -1,3 +1,4 @@
+import { DropDown } from "./DropDown";
 import { Password } from "./Password";
 import { TextField } from "./TextField";
 import { DateField } from "./DateField";
@@ -11,7 +12,8 @@ export enum FieldType
     integer,
     decimal,
     datetime,
-    password
+    password,
+    dropdown
 }
 
 
@@ -30,8 +32,9 @@ export class FieldImplementation
                 FieldImplementation.impl.set(type,TextField);
         });
 
-        FieldImplementation.impl.set(FieldType[FieldType.date],DateField)
-        FieldImplementation.impl.set(FieldType[FieldType.password],Password)
+        FieldImplementation.impl.set(FieldType[FieldType.date],DateField);
+        FieldImplementation.impl.set(FieldType[FieldType.password],Password);
+        FieldImplementation.impl.set(FieldType[FieldType.dropdown],DropDown);
     }
 
     public static getClass(type:string) : any

@@ -1,8 +1,10 @@
+import { FieldType } from "./FieldType";
 import { keymap } from "../keymap/KeyMap";
 import { RecordState } from "../blocks/Record";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { FieldInstance } from "./FieldInstance";
 import { FieldDefinition } from "./FieldDefinition";
+
 
 export class Field
 {
@@ -237,13 +239,6 @@ export class Field
             for (let i = 0; i < this.cfields.length; i++)
                 this.cfields[i].definition = def;
         }
-    }
-
-
-    public setPossibleValues(id:string, values:Set<any>|Map<string,any>) : void
-    {
-        this.fields.forEach((field) => {field.setPossibleValues(id,values);});
-        this.cfields.forEach((field) => {field.setPossibleValues(id,values);});
     }
 
 

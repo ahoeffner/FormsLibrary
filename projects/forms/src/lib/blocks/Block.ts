@@ -3,9 +3,9 @@ import { BlockImpl } from "./BlockImpl";
 import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
-import { NoopAnimationPlayer } from "@angular/animations";
 
 
 export class Block
@@ -112,6 +112,11 @@ export class Block
     {
         if (override) return(this._impl_.delete());
         else return(this._impl_.sendkey(null,keymap.delete));
+    }
+
+    public setFieldDefinition(field:string, def:FieldDefinition) : boolean
+    {
+        return(this._impl_.setFieldDefinition(field,def));
     }
 
     public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean

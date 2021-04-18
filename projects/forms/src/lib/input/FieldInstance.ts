@@ -166,14 +166,11 @@ export class FieldInstance implements AfterViewInit
         return(this.mandatory$);
     }
 
-    public setPossibleValues(id:string, values:Set<any>|Map<string,any>) : void
+    public setPossibleValues(values:Set<any>|Map<string,any>) : void
     {
-        if (id != this.id) return;
-
-        let name:string = this.block+"."+this.name;
-        if (this.id.length > 0) name += "."+this.id;
         let type:string = this.clazz.constructor.name;
 
+        if (type == "DropDown") this.setDropDownValues(values);
         if (type == "TextField") this.setTextFieldValues(values);
     }
 
@@ -185,19 +182,27 @@ export class FieldInstance implements AfterViewInit
 
         if (list == null)
         {
-            let vals:Set<any> = new Set<any>();
+            let kvpair:boolean = true;
+            let vals:Map<string,any> = null;
 
-            if (values instanceof Set) values.forEach((val) => {vals.add(val)});
-            else                       values.forEach((_val,key) => {vals.add(key)});
+            if (values instanceof Map) vals = values;
+            else
+            {
+                kvpair = false;
+                vals = new Map<string,any>();
+                values.forEach((val) => vals.set(val,val));
+            }
 
             list = document.createElement("datalist");
             list.setAttribute("id",name);
 
-            vals.forEach((val) =>
+            vals.forEach((val,key) =>
             {
-                let option:HTMLElement = document.createElement("option");
+                let option:HTMLOptionElement = document.createElement("option");
 
-                option.textContent = val;
+                option.text = val;
+                if (kvpair) option.value = key;
+
                 list.append(option);
             })
 
@@ -205,6 +210,28 @@ export class FieldInstance implements AfterViewInit
         }
 
         this.clazz.element.setAttribute("list",name);
+    }
+
+    private setDropDownValues(values:Set<any>|Map<string,any>) : void
+    {
+        let vals:Map<string,any> = null;
+
+        if (values instanceof Map) vals = values;
+        else
+        {
+            vals = new Map<string,any>();
+            values.forEach((val) => vals.set(val,val));
+        }
+
+        vals.forEach((val,key) =>
+        {
+            let option:HTMLOptionElement = document.createElement("option");
+
+            option.text = val;
+            option.value = key;
+
+            this.clazz.element.appendChild(option);
+        });
     }
 
     public set mandatory(flag:boolean)

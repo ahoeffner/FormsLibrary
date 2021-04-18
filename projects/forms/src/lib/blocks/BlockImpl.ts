@@ -22,6 +22,7 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { field } from "../annotations/field";
+import { FieldDefinition } from "../input/FieldDefinition";
 
 
 export class BlockImpl
@@ -211,13 +212,37 @@ export class BlockImpl
     }
 
 
+    public setFieldDefinition(field:string, def:FieldDefinition) : boolean
+    {
+        let inst:FieldInstance = this.fieldidx$.get(field);
+
+        if (inst != null)
+        {
+            let fields:FieldInstance[] = inst.parent.fields;
+            let cfields:FieldInstance[] = inst.parent.cfields;
+
+            fields.forEach((fld) => {if (fld.id == inst.id) fld.definition = def;})
+            cfields.forEach((fld) => {if (fld.id == inst.id) fld.definition = def;})
+
+            return(true);
+        }
+
+        return(false);
+    }
+
+
     public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean
     {
         let inst:FieldInstance = this.fieldidx$.get(field);
 
         if (inst != null)
         {
-            inst.parent.setPossibleValues(inst.id,values);
+            let fields:FieldInstance[] = inst.parent.fields;
+            let cfields:FieldInstance[] = inst.parent.cfields;
+
+            fields.forEach((fld) => {if (fld.id == inst.id) fld.setPossibleValues(values);})
+            cfields.forEach((fld) => {if (fld.id == inst.id) fld.setPossibleValues(values);})
+
             return(true);
         }
 
