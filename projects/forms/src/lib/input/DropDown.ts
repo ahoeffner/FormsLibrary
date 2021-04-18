@@ -6,4 +6,9 @@ export class DropDown extends TextField
     {
         return("<select></select>");
     }
+
+    public focus() : void
+    {
+        this.element$.focus();
+    }
 }

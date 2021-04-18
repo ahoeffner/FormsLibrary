@@ -231,7 +231,7 @@ export class BlockImpl
     }
 
 
-    public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean
+    public setPossibleValues(field:string, values:Set<any>|Map<string,any>, enforce:boolean) : boolean
     {
         let inst:FieldInstance = this.fieldidx$.get(field);
 
@@ -240,8 +240,8 @@ export class BlockImpl
             let fields:FieldInstance[] = inst.parent.fields;
             let cfields:FieldInstance[] = inst.parent.cfields;
 
-            fields.forEach((fld) => {if (fld.id == inst.id) fld.setPossibleValues(values);})
-            cfields.forEach((fld) => {if (fld.id == inst.id) fld.setPossibleValues(values);})
+            fields.forEach((fld) => {if (fld.id == inst.id) fld.setPossibleValues(values, enforce);})
+            cfields.forEach((fld) => {if (fld.id == inst.id) fld.setPossibleValues(values, enforce);})
 
             return(true);
         }

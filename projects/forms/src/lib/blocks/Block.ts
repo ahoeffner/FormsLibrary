@@ -119,9 +119,9 @@ export class Block
         return(this._impl_.setFieldDefinition(def));
     }
 
-    public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean
+    public setPossibleValues(field:string, values:Set<any>|Map<string,any>, enforce?:boolean) : boolean
     {
-        return(this._impl_.setPossibleValues(field,values));
+        return(this._impl_.setPossibleValues(field,values,enforce));
     }
 
     public showListOfValues(field:string, id?:string, row?:number) : void

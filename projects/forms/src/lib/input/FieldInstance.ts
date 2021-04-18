@@ -26,10 +26,12 @@ export class FieldInstance implements AfterViewInit
     private valid$:boolean = true;
     private lvalid:boolean = true;
     private type$:FieldType = null;
+    private enforce:boolean = false;
     private enabled$:boolean = false;
     private readonly$:boolean = false;
     private mandatory$:boolean = false;
     private firstchange:boolean = true;
+    private values:Map<string,any> = null;
     private container:HTMLSpanElement = null;
     private state$:RecordState = RecordState.na;
     private options$:FieldOptions = {query: true, insert: true, update: true, navigable: true};
@@ -166,10 +168,10 @@ export class FieldInstance implements AfterViewInit
         return(this.mandatory$);
     }
 
-    public setPossibleValues(values:Set<any>|Map<string,any>) : void
+    public setPossibleValues(values:Set<any>|Map<string,any>, enforce:boolean) : void
     {
+        this.enforce = enforce;
         let type:string = this.clazz.constructor.name;
-        console.log("set values "+type);
 
         if (type == "DropDown") this.setDropDownValues(values);
         if (type == "TextField") this.setTextFieldValues(values);
@@ -184,20 +186,19 @@ export class FieldInstance implements AfterViewInit
         if (list == null)
         {
             let kvpair:boolean = true;
-            let vals:Map<string,any> = null;
 
-            if (values instanceof Map) vals = values;
+            if (values instanceof Map) this.values = new Map(values);
             else
             {
                 kvpair = false;
-                vals = new Map<string,any>();
-                values.forEach((val) => vals.set(val,val));
+                this.values = new Map<string,any>();
+                values.forEach((val) => this.values.set(val,val));
             }
 
             list = document.createElement("datalist");
             list.setAttribute("id",name);
 
-            vals.forEach((val,key) =>
+            this.values.forEach((val,key) =>
             {
                 let option:HTMLOptionElement = document.createElement("option");
 
@@ -213,18 +214,16 @@ export class FieldInstance implements AfterViewInit
         this.clazz.element.setAttribute("list",name);
     }
 
-    private setDropDownValues(values:Set<any>|Map<string,any>) : void
+    private setDropDownValues(xvalues:Set<any>|Map<string,any>) : void
     {
-        let vals:Map<string,any> = null;
-
-        if (values instanceof Map) vals = values;
+        if (xvalues instanceof Map) this.values = new Map(xvalues);
         else
         {
-            vals = new Map<string,any>();
-            values.forEach((val) => vals.set(val,val));
+            this.values = new Map<string,any>();
+            xvalues.forEach((val) => this.values.set(val,val));
         }
 
-        vals.forEach((val,key) =>
+        this.values.forEach((val,key) =>
         {
             let option:HTMLOptionElement = document.createElement("option");
 
@@ -297,6 +296,9 @@ export class FieldInstance implements AfterViewInit
 
         if (this.mandatory && (this.value == null || (""+this.value).length == 0))
             return(false);
+
+        if (this.enforce && this.values != null && this.value != null)
+            if (!this.values.has(this.value)) return(false);
 
         return(true);
     }
