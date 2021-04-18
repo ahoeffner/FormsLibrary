@@ -417,7 +417,8 @@ export class Statement
             if (i < keyvals.length - 1) this.sql$ += ", ";
         }
 
-        this.sql$ += " "+this.condition$.toString();
+        if (this.condition$ != null)
+            this.sql$ += " "+this.condition$.toString();
 
         return({sql: this.sql$, bindvalues: bindvals});
     }

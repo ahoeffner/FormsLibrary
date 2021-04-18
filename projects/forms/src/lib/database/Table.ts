@@ -198,18 +198,24 @@ export class Table
     public async update(record:number, data:NameValuePair[]) : Promise<any>
     {
         data.forEach((nvp) => {console.log("update "+nvp.name+" = "+nvp.value)});
-        let stmt:Statement = new Statement(SQLType.insert);
+        let stmt:Statement = new Statement(SQLType.update);
 
+        let where:boolean = true;
         let keyval:any[] = this.keys[+record];
 
         for (let i = 0; i < keyval.length; i++)
         {
             let type:Column = this.index.get(this.columns[i]).type;
             stmt.addkey(this.columns[i],keyval[i],type);
+
+            if (!where) stmt.and(data[i].name,keyval[i],type);
+            else        stmt.where(data[i].name,keyval[i],type);
+
+            where = false;
+
         }
 
         keyval = [];
-        let where:boolean = true;
         let columns:string[] = [];
 
         for (let i = 0; i < data.length; i++)
@@ -230,10 +236,7 @@ export class Table
                 if (i < this.key.columns().length)
                     keyval.push(cval);
 
-                if (!where) stmt.and(data[i].name,cval,type);
-                else        stmt.where(data[i].name,cval,type);
-
-                where = false;
+                stmt.bind(data[i].name,data[i].value,type);
             }
         }
 
