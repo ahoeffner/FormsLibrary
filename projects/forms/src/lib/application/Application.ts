@@ -118,10 +118,13 @@ export class Application
             this._impl_.connection.commit();
     }
 
-    public rollback() : void
+    public async rollback()
     {
         if (this._impl_.connected)
-            this._impl_.connection.rollback();
+        {
+            let status:boolean = await this._impl_.connection.rollback();
+            if (status && this.form != null) this.form.clear();
+        }
     }
 
     public alert(message:string, title?:string, width?:string, height?:string) : void
