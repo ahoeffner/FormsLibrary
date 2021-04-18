@@ -212,9 +212,9 @@ export class BlockImpl
     }
 
 
-    public setFieldDefinition(field:string, def:FieldDefinition) : boolean
+    public setFieldDefinition(def:FieldDefinition) : boolean
     {
-        let inst:FieldInstance = this.fieldidx$.get(field);
+        let inst:FieldInstance = this.fieldidx$.get(def.name);
 
         if (inst != null)
         {

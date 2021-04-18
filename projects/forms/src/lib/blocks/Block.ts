@@ -114,9 +114,9 @@ export class Block
         else return(this._impl_.sendkey(null,keymap.delete));
     }
 
-    public setFieldDefinition(field:string, def:FieldDefinition) : boolean
+    public setFieldDefinition(def:FieldDefinition) : boolean
     {
-        return(this._impl_.setFieldDefinition(field,def));
+        return(this._impl_.setFieldDefinition(def));
     }
 
     public setPossibleValues(field:string, values:Set<any>|Map<string,any>) : boolean

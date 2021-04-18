@@ -169,6 +169,7 @@ export class FieldInstance implements AfterViewInit
     public setPossibleValues(values:Set<any>|Map<string,any>) : void
     {
         let type:string = this.clazz.constructor.name;
+        console.log("set values "+type);
 
         if (type == "DropDown") this.setDropDownValues(values);
         if (type == "TextField") this.setTextFieldValues(values);
@@ -376,6 +377,30 @@ export class FieldInstance implements AfterViewInit
 
     public set definition(def:FieldDefinition)
     {
+        let override:boolean = false;
+
+        if (this.def != null)
+        {
+            override = true;
+
+            if (def.hasOwnProperty("case"))
+                this.def.case = def.case;
+
+            if (def.hasOwnProperty("mandatory"))
+                this.def.mandatory = def.mandatory;
+
+            if (def.hasOwnProperty("type"))
+                this.def.type = def.type;
+
+            if (def.hasOwnProperty("fieldoptions"))
+            {
+                if (def.hasOwnProperty("query"))  this.def.fieldoptions.query = def.fieldoptions.query;
+                if (def.hasOwnProperty("insert")) this.def.fieldoptions.insert = def.fieldoptions.insert;
+                if (def.hasOwnProperty("update")) this.def.fieldoptions.update = def.fieldoptions.update;
+                if (def.hasOwnProperty("navigable")) this.def.fieldoptions.navigable = def.fieldoptions.navigable;
+            }
+        }
+
         this.def = def;
         this.setType(def.type);
 
@@ -393,6 +418,9 @@ export class FieldInstance implements AfterViewInit
             if (!this.options$.hasOwnProperty("update")) this.options$.update = true;
             if (!this.options$.hasOwnProperty("navigable")) this.options$.navigable = true;
         }
+
+        if (override)
+            this.setInputState();
     }
 
 
