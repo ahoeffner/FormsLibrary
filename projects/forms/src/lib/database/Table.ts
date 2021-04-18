@@ -205,7 +205,7 @@ export class Table
         for (let i = 0; i < keyval.length; i++)
         {
             let type:Column = this.index.get(this.columns[i]).type;
-            stmt.bind("key_"+this.columns[i],keyval[i],type);
+            stmt.addkey(this.columns[i],keyval[i],type);
         }
 
         keyval = [];
@@ -229,7 +229,7 @@ export class Table
                 if (i < this.key.columns().length)
                     keyval.push(cval);
 
-                stmt.bind("val_"+data[i].name,cval,type);
+                stmt.bind(data[i].name,cval,type);
             }
         }
 

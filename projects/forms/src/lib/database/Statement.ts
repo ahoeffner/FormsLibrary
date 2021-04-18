@@ -33,7 +33,6 @@ export interface bindvalue
 export class Statement
 {
     private sql$:string = null;
-    private keys$:any[] = null;
     private subquery$:SQL = null;
     private table$:string = null;
     private order$:string = null;
@@ -43,6 +42,7 @@ export class Statement
     private errors:string[] = null;
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
+    private keys$:Map<string,BindValue> = new Map<string,BindValue>();
 
 
     constructor(sql:string|SQLType)
@@ -120,9 +120,34 @@ export class Statement
         return(this.cursor$);
     }
 
-    public set keys(names:string[])
+    public addkey(name:string, value:any, datatype?:Column)
     {
-        this.keys$ = names;
+        if (value != null && datatype == null)
+        {
+            let type:string = value.constructor.name.toLowerCase();
+
+            if (type == "date")
+            {
+                datatype = Column.date;
+                value = (value as Date).getTime();
+            }
+
+            if (type == "number")
+                datatype = Column.decimal;
+        }
+
+
+        if (value != null && (value+"").trim().length > 0 && datatype == null)
+        {
+            value = (value+"").trim();
+            let numeric:boolean = !isNaN(+value);
+            if (numeric) datatype = Column.decimal;
+        }
+
+        if (datatype == null)
+            datatype = Column.varchar;
+
+        this.keys$.set(name,{name: "key_"+name, value: value, type: datatype});
     }
 
     public set columns(columns:string|string[])
@@ -301,11 +326,9 @@ export class Statement
 
     private buildcall() : SQL
     {
-        let bindvalues:BindValue[] = this.bindvalues;
-
         let bindvals:bindvalue[] = [];
 
-        bindvalues.forEach((bindv) =>
+        this.bindvalues.forEach((bindv) =>
         {
             bindvals.push
             ({
@@ -320,11 +343,9 @@ export class Statement
 
     private buildinsert() : SQL
     {
-        let bindvalues:BindValue[] = this.bindvalues;
-
         let bindvals:bindvalue[] = [];
 
-        bindvalues.forEach((bindv) =>
+        this.bindvalues.forEach((bindv) =>
         {
             bindvals.push
             ({
@@ -357,11 +378,20 @@ export class Statement
 
     private buildupdate() : SQL
     {
-        let bindvalues:BindValue[] = this.bindvalues;
-
         let bindvals:bindvalue[] = [];
+        let keyvals:Map<string,bindvalue> = new Map<string,bindvalue>();
 
-        bindvalues.forEach((bindv) =>
+        this.keys$.forEach((bindv,key) =>
+        {
+            keyvals.set(key,
+            {
+                name: bindv.name,
+                type: Column[bindv.type].toLowerCase(),
+                value: bindv.value
+            });
+        })
+
+        this.bindvalues.forEach((bindv) =>
         {
             bindvals.push
             ({
@@ -375,19 +405,20 @@ export class Statement
 
         for (let i = 0; i < this.columns$.length; i++)
         {
-            this.sql$ += bindvals[i].name;
+            this.sql$ += this.columns$ + " = :" + this.columns$;
             if (i < bindvals.length - 1) this.sql$ += ",";
         }
 
-        this.sql$ += " where ";
+        let where:boolean = true;
 
-        for (let i = 0; i < bindvals.length; i++)
+        keyvals.forEach((bindv,key) =>
         {
-            this.sql$ += ":"+bindvals[i].name;
-            if (i < bindvals.length - 1) this.sql$ += ",";
-        }
+            this.sql$ += where ? " where " : " and ";
+            
+            if (bindv.value == null) this.sql$ += key + " is null";
+            else                     this.sql$ += key + " = :" + bindv.name;
+        })
 
-        this.sql$ += ")";
 
         return({sql: this.sql$, bindvalues: bindvals});
     }
