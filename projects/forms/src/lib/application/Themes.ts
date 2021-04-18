@@ -21,7 +21,7 @@ export class defaultTheme implements Theme
     public text:string = "black";
     public title:string = "white";
     public topbar:string = "#303f9f";
-    public enabled:string = "black";
+    public enabled:string = "white";
     public disabled:string = "silver";
     public menuoption:string = "white";
     public buttontext:string = "white";
