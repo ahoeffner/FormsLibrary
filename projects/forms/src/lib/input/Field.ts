@@ -211,15 +211,7 @@ export class Field
         this.index.set(field.guid,field);
 
         if (field.id.length > 0)
-        {
-            if (this.ids.get(field.id) != null)
-            {
-                console.log("id "+field.id+" is not unique within "+field.name+", ignored");
-                return;
-            }
-
             this.ids.set(field.id,field);
-        }
     }
 
     public get definition() : FieldDefinition

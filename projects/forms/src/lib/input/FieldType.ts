@@ -1,7 +1,9 @@
 import { DropDown } from "./DropDown";
 import { Password } from "./Password";
+import { CheckBox } from "./CheckBox";
 import { TextField } from "./TextField";
 import { DateField } from "./DateField";
+import { RadioButton } from "./RadioButton";
 import { Column } from "../database/Column";
 
 
@@ -9,8 +11,10 @@ export enum FieldType
 {
     date,
     text,
+    radio,
     integer,
     decimal,
+    checkbox,
     datetime,
     password,
     dropdown
@@ -33,6 +37,8 @@ export class FieldImplementation
         });
 
         FieldImplementation.impl.set(FieldType[FieldType.date],DateField);
+        FieldImplementation.impl.set(FieldType[FieldType.radio],RadioButton);
+        FieldImplementation.impl.set(FieldType[FieldType.checkbox],CheckBox);
         FieldImplementation.impl.set(FieldType[FieldType.password],Password);
         FieldImplementation.impl.set(FieldType[FieldType.dropdown],DropDown);
     }

@@ -1,5 +1,7 @@
 import { Field } from './Field';
+import { CheckBox } from './CheckBox';
 import { Case } from '../database/Case';
+import { RadioButton } from './RadioButton';
 import { RecordState } from '../blocks/Record';
 import { Context } from '../application/Context';
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
@@ -44,6 +46,7 @@ export class FieldInstance implements AfterViewInit
     @Input("class") private class$:string = "";
     @Input("style") private style$:string = "";
     @Input("size")  private size$:number = null;
+    @Input("value") private value$:string = null;
 
     @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
 
@@ -441,6 +444,7 @@ export class FieldInstance implements AfterViewInit
             this.clazz.element = this.container.children[0] as HTMLElement;
 
             if (this.size$ != null) this.clazz.size = this.size$;
+            if (this.value$ != null) this.clazz.value = this.value$;
             if (this.class$ != "") this.clazz.element.classList.add(this.class$);
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
 
@@ -484,6 +488,13 @@ export class FieldInstance implements AfterViewInit
                 if (!this.valid) this.fgroup$.valid = false;
 
             this.valid = this.validate();
+
+            if (this.clazz instanceof CheckBox)
+                this.value = this.value$;
+
+            if (this.clazz instanceof RadioButton)
+                this.value = this.value$;
+
             this.fgroup$["onEvent"](event,this,"change");
         }
 
