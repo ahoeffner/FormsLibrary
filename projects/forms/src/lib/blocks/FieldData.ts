@@ -49,6 +49,13 @@ export class FieldData
     }
 
 
+    public databasecolumn(column:string) : boolean
+    {
+        if (this.table == null) return(false);
+        return(this.table.databasecolumn(column));
+    }
+
+
     public get fields() : string[]
     {
         return(this.fields$);
@@ -183,6 +190,7 @@ export class FieldData
 
         return(row.validated);
     }
+
 
     public newrow() : Row
     {

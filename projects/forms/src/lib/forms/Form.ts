@@ -147,6 +147,20 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.getParameters());
     }
 
+    public getValue(block:string, record:number, field:string) : any
+    {
+        let blk:Block = this.getBlock(block);
+        if (blk != null) return(blk.getValue(record,field));
+        return(null);
+    }
+
+    public async setValue(block:string, record:number, field:string, value:any) : Promise<boolean>
+    {
+        let blk:Block = this.getBlock(block);
+        if (blk != null) return(await blk.setValue(record,field,value));
+        return(false);
+    }
+
     public cancelled() : boolean
     {
         return(this._impl_.wasCancelled());

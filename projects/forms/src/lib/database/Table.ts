@@ -84,6 +84,12 @@ export class Table
     }
 
 
+    public databasecolumn(column:string) : boolean
+    {
+        return(this.index.has(column.toLowerCase()));
+    }
+
+
     public set fielddata(fielddata:FieldData)
     {
         this.fielddata$ = fielddata;

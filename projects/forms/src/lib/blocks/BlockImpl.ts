@@ -353,9 +353,12 @@ export class BlockImpl
     }
 
 
-    public setValue(record:number, column:string, value:any) : boolean
+    public async setValue(record:number, column:string, value:any) : Promise<boolean>
     {
         if (this.data == null) return(false);
+
+        if (!await this.lockrecord(record,column))
+            return(false);
 
         if (+record >= +this.offset && +record < this.sum(this.offset,this.rows))
         {
@@ -870,10 +873,11 @@ export class BlockImpl
     }
 
 
-    private async lockrecord(record:number) : Promise<boolean>
+    private async lockrecord(record:number, field:string) : Promise<boolean>
     {
         if (this.data == null) return(true);
-        if (this.state == FormState.exeqry) return(true);
+        if (this.state != FormState.normal) return(true);
+        if (!this.data.databasecolumn(field)) return(true);
 
         if (this.data.locked(record))
             return(true);
@@ -943,7 +947,7 @@ export class BlockImpl
         field.parent.valid = true;
         this.data.setValidated(this.sum(field.row,this.offset),field.name);
 
-        if (!await this.lockrecord(this.sum(field.row,this.offset)))
+        if (!await this.lockrecord(this.sum(field.row,this.offset),field.name))
             return(false);
 
         if  (field.value != previous)
@@ -1188,7 +1192,7 @@ export class BlockImpl
             if (this.state == FormState.entqry || this.data == null)
                 return(true);
 
-            return(await this.lockrecord(this.sum(field.row,this.offset)));
+            return(await this.lockrecord(this.sum(field.row,this.offset),field.name));
         }
 
         if (type == "cchange")

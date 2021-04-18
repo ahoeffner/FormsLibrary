@@ -272,6 +272,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         if (this.lov.bindvalues != null)
             this.lov.bindvalues.forEach((bv) => {stmt.bind(bv.name,bv.value,bv.type)});
 
+        if (this.filter.value == null) this.filter.value = "";
         stmt.bind("filter",this.prefix+this.filter.value+this.postfix);
 
         event.stmt = stmt;

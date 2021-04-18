@@ -28,9 +28,9 @@ export class Block
         return(this._impl_.getValue(record,field));
     }
 
-    public setValue(record:number, field:string, value:any) : boolean
+    public async setValue(record:number, field:string, value:any) : Promise<boolean>
     {
-        return(this._impl_.setValue(record,field,value));
+        return(await this._impl_.setValue(record,field,value));
     }
 
     public get querymode() : boolean
