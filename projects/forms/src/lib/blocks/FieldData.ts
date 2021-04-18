@@ -276,7 +276,10 @@ export class FieldData
                     let response:any = await this.table.insert(record,this.data[+record].values);
 
                     if (response["status"] == "failed")
+                    {
+                        this.data[record].failed = "insert";
                         return(response);
+                    }
 
                     rec.dbn = scn;
                 }
@@ -302,7 +305,10 @@ export class FieldData
                 let response:any = await this.table.update(record,columns);
 
                 if (response["status"] == "failed")
+                {
+                    this.data[record].failed = "update";
                     return(response);
+                }
 
                 rec.dbn = scn;
             }

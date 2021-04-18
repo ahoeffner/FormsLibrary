@@ -207,12 +207,15 @@ export class Table
 
     public async update(record:number, data:NameValuePair[]) : Promise<any>
     {
-        let stmt:Statement = new Statement(SQLType.update);
-
+        let keyupd:any[] = [];
         let keyval:any[] = this.keys[+record];
+        let stmt:Statement = new Statement(SQLType.update);
 
         for (let i = 0; i < data.length; i++)
         {
+            if (i < this.key.columns().length)
+                keyupd.push(keyval[i]);
+
             if (data[i].value.updated)
             {
                 let val:any = data[i].value.newvalue;
@@ -222,7 +225,7 @@ export class Table
                     val = (val as Date).getTime();
 
                 if (i < this.key.columns().length)
-                    keyval[i] = val;
+                    keyupd[i] = val;
 
                 stmt.update(data[i].name,val,type);
             }
@@ -246,7 +249,7 @@ export class Table
         let response:any = await this.conn.invoke("update",update);
 
         if (response["status"] != "failed")
-            this.keys[+record] = keyval;
+            this.keys[+record] = keyupd;
 
         return(response);
     }
