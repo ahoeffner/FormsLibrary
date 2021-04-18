@@ -653,7 +653,6 @@ export class BlockImpl
         if (this.masterdetail != null)
             keys = this.masterdetail.getKeys(this);
 
-        this.state = FormState.exeqry;
         let stmt:Statement = this.data.parseQuery(keys,subquery,fields);
 
         let errors:string[] = stmt.validate();
@@ -677,6 +676,8 @@ export class BlockImpl
         let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
         if (!await this.invokeTriggers(Trigger.PreQuery,event)) return(false);
 
+        this.state = FormState.exeqry;
+
         stmt = event.stmt; // could be replaced by trigger
         let response:any = await this.data.executequery(stmt);
 
@@ -690,6 +691,7 @@ export class BlockImpl
             if (this.masterdetail != null)
                 this.masterdetail.done();
 
+            this.state = FormState.normal;
             return(false);
         }
 
@@ -820,7 +822,10 @@ export class BlockImpl
     private async lockrecord(record:number) : Promise<boolean>
     {
         if (this.data == null) return(true);
-        if (this.data.locked(record)) return(true);
+        if (this.state == FormState.exeqry) return(true);
+
+        if (this.data.locked(record))
+            return(true);
 
         if (this.data.failed(record) != null)
         {
@@ -860,7 +865,7 @@ export class BlockImpl
         if (field == null) return(true);
         if (this.data == null) return(true);
         if (this.row >= this.data.rows) return(true);
-        if (this.state == FormState.entqry) return(true);
+        if (this.state != FormState.normal) return(true);
         if (this.records[+this.row].state == RecordState.na) return(true);
 
         if (!field.validate())

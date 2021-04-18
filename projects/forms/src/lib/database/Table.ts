@@ -110,7 +110,6 @@ export class Table
 
     public async lock(record:number, data:any[]) : Promise<any>
     {
-        console.log("lock "+record);
         let cols:NameValuePair[] = [];
 
         for (let i = 0; i < this.columns.length; i++)
@@ -136,12 +135,18 @@ export class Table
         let response:any = await this.conn.invoke("lock",lock);
 
         if (response["status"] == "failed")
+        {
+            console.log(JSON.stringify(response));
             return(response);
+        }
 
         let rows:any[] = response["rows"];
 
         if (rows.length == 0)
-            return({status: "failed", message: "Row has been deleted by another user. Requery to see changes"});
+        {
+            console.log("Row["+record+"] has been deleted by another user. Requery to see changes")
+            return({status: "failed", message: "Row["+record+"] has been deleted by another user. Requery to see changes"});
+        }
 
         let row:any = rows[0];
 
@@ -155,6 +160,7 @@ export class Table
             if (row[this.columns[i]] != cval)
             {
                 let problem:string = cols[i].name+"["+record+"], db: "+row[this.columns[i]]+" != "+cval;
+                console.log("Value '"+problem+"' has been changed by another user. Requery to see changes");
                 return({status: "failed", message: "Value '"+problem+"' has been changed by another user. Requery to see changes"});
             }
         }
@@ -212,15 +218,13 @@ export class Table
                 let val:any = data[i].value.newvalue;
                 let type:Column = this.index.get(data[i].name).type;
 
-                if (val != null && type == Column.date)
-                    val = (val as Date).getTime();
-
                 if (val != null && this.dates[i])
                     val = (val as Date).getTime();
 
                 if (i < this.key.columns().length)
                     keyval[i] = val;
 
+                console.log("set "+data[i].name+" = "+val)
                 stmt.update(data[i].name,val,type);
             }
         }

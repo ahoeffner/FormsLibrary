@@ -296,11 +296,10 @@ export class FieldData
                         status.newvalue = rec.fields[i].value$;
                     }
 
-                    columns.push({name: this.columns[i], value: rec.fields[i].value$});
+                    columns.push({name: this.columns[i], value: status});
                 }
 
-                console.log("Update "+columns.length);
-                let response:any= await this.table.update(record,columns);
+                let response:any = await this.table.update(record,columns);
 
                 if (response["status"] == "failed")
                     return(response);

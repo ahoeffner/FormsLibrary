@@ -147,6 +147,7 @@ export class Statement
         if (datatype == null)
             datatype = Column.varchar;
 
+        console.log("push update "+name+" = "+value)
         this.updates$.push({name: name, value: value, type: datatype});
     }
 
