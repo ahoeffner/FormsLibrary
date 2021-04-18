@@ -224,7 +224,6 @@ export class Table
                 if (i < this.key.columns().length)
                     keyval[i] = val;
 
-                console.log("set "+data[i].name+" = "+val)
                 stmt.update(data[i].name,val,type);
             }
         }
@@ -234,7 +233,6 @@ export class Table
         for (let i = 0; i < keyval.length; i++)
         {
             let type:Column = this.index.get(this.columns[i]).type;
-            stmt.update(this.columns[i],keyval[i],type);
 
             if (!where) stmt.and(data[i].name,keyval[i],type);
             else        stmt.where(data[i].name,keyval[i],type);
