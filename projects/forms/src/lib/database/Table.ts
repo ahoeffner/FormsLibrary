@@ -46,6 +46,21 @@ export class Table
             this.columns$.forEach((col) => {this.key.addColumn(col.name)});
         }
 
+        if (this.table.where != null)
+        {
+            this.table.where = this.table.where.trim();
+
+            if (this.table.where.startsWith("where "))
+                this.table.where = this.table.where.substring(6);
+
+
+            if (this.table.where.startsWith("and "))
+                this.table.where = this.table.where.substring(4);
+
+            if (this.table.where.length == 0)
+                this.table.where = null;
+        }
+
         this.fetch$ *= 4;
         if (this.fetch$ < 10) this.fetch$ = 10;
 
@@ -248,7 +263,7 @@ export class Table
         if (this.table.where != null && this.table.where.trim.length > 0)
         {
             where = false;
-            stmt.constrain = "where "+this.table.where;
+            stmt.constraint = "where "+this.table.where;
         }
 
         for (let i = 0; i < keyval.length; i++)
@@ -283,7 +298,7 @@ export class Table
         if (this.table.where != null && this.table.where.trim.length > 0)
         {
             where = false;
-            stmt.constrain = "where "+this.table.where;
+            stmt.constraint = "where "+this.table.where;
         }
 
         for (let i = 0; i < keyval.length; i++)
@@ -323,10 +338,10 @@ export class Table
 
         let where:boolean = true;
 
-        if (this.table.where != null && this.table.where.trim.length > 0)
+        if (this.table.where != null)
         {
             where = false;
-            stmt.constrain = "where "+this.table.where;
+            stmt.constraint = "where "+this.table.where;
         }
 
         if (fields.length > 0)

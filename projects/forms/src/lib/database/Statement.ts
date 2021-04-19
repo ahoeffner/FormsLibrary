@@ -40,7 +40,7 @@ export class Statement
     private cursor$:string = null;
     private columns$:string[] = [];
     private errors:string[] = null;
-    private constrain$:string = null;
+    private constraint$:string = null;
     private updates$:BindValue[] = [];
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
@@ -106,9 +106,9 @@ export class Statement
         this.table$ = table;
     }
 
-    public set constrain(where:string)
+    public set constraint(where:string)
     {
-        this.constrain$ = where;
+        this.constraint$ = where;
     }
 
     public set order(order:string)
@@ -429,8 +429,8 @@ export class Statement
             if (i < updates.length - 1) this.sql$ += ", ";
         }
 
-        if (this.constrain$ != null)
-            this.sql$ += " "+this.constrain$;
+        if (this.constraint$ != null)
+            this.sql$ += " "+this.constraint$;
 
         if (this.condition$ != null)
             this.sql$ += " "+this.condition$.toString();
@@ -445,8 +445,8 @@ export class Statement
         if (sql == null)
             sql = "delete from "+this.table$;
 
-        if (this.constrain$ != null)
-            sql += " "+this.constrain$;
+        if (this.constraint$ != null)
+            sql += " "+this.constraint$;
 
         let bindvalues:BindValue[] = this.bindvalues;
 
@@ -500,8 +500,9 @@ export class Statement
                 sql += " from "+this.table$;
         }
 
-        if (this.constrain$ != null)
-            sql += " "+this.constrain$;
+        console.log("constraint "+this.constraint$)
+        if (this.constraint$ != null)
+            sql += " "+this.constraint$;
 
         let bindvalues:BindValue[] = this.bindvalues;
 
