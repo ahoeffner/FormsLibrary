@@ -732,7 +732,13 @@ export class BlockImpl
         }
 
         let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
-        if (!await this.invokeTriggers(Trigger.PreQuery,event)) return(false);
+        if (!await this.invokeTriggers(Trigger.PreQuery,event))
+        {
+            if (this.masterdetail != null)
+                this.masterdetail.done();
+
+            return(false);
+        }
 
         this.state = FormState.exeqry;
 
@@ -1561,17 +1567,15 @@ export class BlockImpl
 
     public async invokeTriggers(type:Trigger, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
-        if (!await this.triggers.invokeTriggers(type,event,key)) return(false);
-        if (this.form != null) return(await this.form.invokeTriggers(type,event,key));
-        return(true);
+        if (this.form != null) if (!await this.form.invokeTriggers(type,event,key)) return(false);
+        return(await this.triggers.invokeTriggers(type,event,key));
     }
 
 
     public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
-        if (!await this.triggers.invokeFieldTriggers(type,field,event,key)) return(false);
-        if (this.form != null) return(await this.form.invokeFieldTriggers(type,field,event,key));
-        return(true);
+        if (this.form != null) if (!await this.form.invokeFieldTriggers(type,field,event,key)) return(false);
+        return(await this.triggers.invokeFieldTriggers(type,field,event,key));
     }
 
 
