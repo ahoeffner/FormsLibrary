@@ -212,7 +212,7 @@ export class ApplicationImpl
 
     public async disconnect() : Promise<void>
     {
-        return(this.appstate.connection.disconnect());
+        return(await this.appstate.connection.disconnect());
     }
 
 

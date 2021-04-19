@@ -103,12 +103,13 @@ export class Application
         }
     }
 
-    public disconnect() : void
+    public async disconnect()
     {
         if (this._impl_.connected)
         {
-            this._impl_.disconnect();
-            this._impl_.getCurrentForm()?.clear();
+            let form:FormImpl = this._impl_.getCurrentForm();
+            if (form != null) await form.clear();
+            await this._impl_.disconnect();
         }
     }
 

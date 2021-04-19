@@ -469,8 +469,6 @@ export class BlockImpl
 
     public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
     {
-        // Strange
-        if (stmt == null) console.log("strange");
         if (stmt == null) return(null);
 
         let errors:string[] = stmt.validate();
@@ -1027,7 +1025,7 @@ export class BlockImpl
 
     public async clearblock()
     {
-        this.clear();
+        await this.clear();
         this.searchfilter = [];
     }
 
@@ -1037,7 +1035,6 @@ export class BlockImpl
         if (this.rows == null) return;
 
         this.field$ = this.fields$[0];
-        this.records[0].current = true;
 
         for(let r = 0; r < this.rows; r++)
         {
@@ -1166,7 +1163,9 @@ export class BlockImpl
                     return(false);
                 }
 
-                if (this.masterdetail != null)
+                let state:RecordState = this.records[field.row].state
+
+                if (this.masterdetail != null && state != RecordState.na)
                     this.masterdetail.querydetails(this,this.sum(field.row,this.offset),true);
             }
 

@@ -167,9 +167,11 @@ export class FormImpl
     }
 
 
-    public clear() : void
+    public async clear()
     {
-        this.blocks.forEach((block) => {block.clearblock()});
+        for (let i = 0; i < this.blocks.length; i++)
+            await this.blocks[i].clearblock();
+
         if (this.blocks.length > 0) this.block = this.blocks[0];
         this.block?.focus();
     }

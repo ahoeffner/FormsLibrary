@@ -10,13 +10,6 @@ import { JOINDefinition } from "../annotations/JOINDefinitions";
 import { bindvalue, SQL, Statement } from "../database/Statement";
 
 
-interface waiting
-{
-    record:number;
-    block:BlockImpl;
-}
-
-
 interface subquery
 {
     lev:number;
@@ -41,8 +34,8 @@ export class MasterDetail
 {
     private form:FormImpl = null;
     private master$:BlockImpl = null;
+    private waiting:BlockImpl = null;
     private query:MasterDetailQuery = null;
-    private waiting:waiting = {block: null, record: null};
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private links:Map<string,dependencies> = new Map<string,dependencies>();
     private defined:Map<string,Map<string,Key>> = new Map<string,Map<string,Key>>();
@@ -309,8 +302,7 @@ export class MasterDetail
 
         if (init && this.query != null)
         {
-            this.waiting.block = block;
-            this.waiting.record = record;
+            this.waiting = block;
             return;
         }
 
@@ -357,15 +349,13 @@ export class MasterDetail
 
     public done() : void
     {
-        let record:number = 0;
         let block:BlockImpl = null;
 
         if (this.waiting.block != null)
         {
-            block = this.waiting.block;
-            record = this.waiting.record;
+            block = this.waiting;
 
-            this.waiting.block = null;
+            this.waiting = null;
 
             this.query = new MasterDetailQuery(this,this.links,block);
             this.query.ready(block);
