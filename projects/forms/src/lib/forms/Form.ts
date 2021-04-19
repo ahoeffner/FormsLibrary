@@ -8,6 +8,7 @@ import { BlockImpl } from "../blocks/BlockImpl";
 import { Statement } from "../database/Statement";
 import { Container } from "../container/Container";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { TableDefinition } from "../database/TableDefinition";
 import { Component, AfterViewInit, OnInit } from "@angular/core";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 
@@ -140,6 +141,11 @@ export class Form implements OnInit, AfterViewInit
     public clearCallStack() : void
     {
         this._impl_.clearStack();
+    }
+
+    public getTable(block:string) : TableDefinition
+    {
+        return(this.getBlock(block)?.table);
     }
 
     public get parameters() : Map<string,any>

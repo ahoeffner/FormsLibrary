@@ -70,6 +70,12 @@ export class Table
     }
 
 
+    public get tabdef()
+    {
+        return(this.table)
+    }
+
+
     public get columns() : string[]
     {
         return(this.cnames);

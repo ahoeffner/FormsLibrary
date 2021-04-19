@@ -5,6 +5,7 @@ import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { TableDefinition } from "../database/TableDefinition";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 
 
@@ -21,6 +22,11 @@ export class Block
     public get form(): Form
     {
         return(this._impl_.form.form);
+    }
+
+    public get table() : TableDefinition
+    {
+        return(this._impl_.table);
     }
 
     public getValue(record:number, field:string) : any

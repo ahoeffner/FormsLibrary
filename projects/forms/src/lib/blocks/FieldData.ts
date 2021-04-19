@@ -6,6 +6,7 @@ import { Table } from "../database/Table";
 import { NameValuePair } from "../utils/NameValuePair";
 import { SQL, Statement } from "../database/Statement";
 import { FieldDefinition } from "../input/FieldDefinition";
+import { TableDefinition } from "../database/TableDefinition";
 
 
 export class FieldData
@@ -40,6 +41,12 @@ export class FieldData
     public get table() : Table
     {
         return(this.table$);
+    }
+
+
+    public get tabdef() : TableDefinition
+    {
+        return(this.table$?.tabdef);
     }
 
 

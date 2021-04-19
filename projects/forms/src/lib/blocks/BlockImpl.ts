@@ -15,14 +15,14 @@ import { Trigger, Triggers } from "../events/Triggers";
 import { ListOfValues } from "../listval/ListOfValues";
 import { NameValuePair } from "../utils/NameValuePair";
 import { DatabaseUsage } from "../database/DatabaseUsage";
+import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
+import { TableDefinition } from "../database/TableDefinition";
 import { LOVDefinition } from "../annotations/LOVDefinitions";
 import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
-import { field } from "../annotations/field";
-import { FieldDefinition } from "../input/FieldDefinition";
 
 
 export class BlockImpl
@@ -83,6 +83,12 @@ export class BlockImpl
     public get alias() : string
     {
         return(this.alias$);
+    }
+
+
+    public get table() : TableDefinition
+    {
+        return(this.data?.tabdef);
     }
 
 

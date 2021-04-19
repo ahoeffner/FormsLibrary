@@ -400,8 +400,8 @@ export class FormImpl
             block.setMasterDetail(this.depencies);
 
             // Finish setup for each block
-            let tabdef:TableDefinition = TableDefinitions.get(block.clazz);
             let keydefs:KeyDefinition[] = BlockDefinitions.getKeys(block.clazz);
+            let tabdef:TableDefinition = utils.clone(TableDefinitions.get(block.clazz));
 
             // Column definitions
             let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
