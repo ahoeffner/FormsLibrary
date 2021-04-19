@@ -154,6 +154,10 @@ export class Connection
         if (this.conn == null && cmd != "connect")
             return({status: "failed", message: "Not logged on"});
 
+        if (cmd == "lock" || cmd == "insert" || cmd == "update" || cmd == "delete")
+            this.app.appstate.transactionChange(true);
+
+
         return(
             this.client.post<any>(url+cmd,body).toPromise().then
             (

@@ -431,20 +431,30 @@ export class FieldData
     }
 
 
-    public delete(record:number) : boolean
+    public async delete(record:number) : Promise<any>
     {
         let data:Row[] = [];
+        let response:any = {status: "ok"};
 
         if (record < 0 || record >= this.data.length)
-            return(false);
+            return(response);
 
-        this.data[record].scn++;
+        if (this.data[+record].state == RecordState.insert)
+            return(response);
+
+        if (this.table != null)
+        {
+            response = await this.table.delete(record);
+
+            if (response["status"] == "failed")
+                return(response);
+        }
 
         data = this.data.slice(0,record);
         data = data.concat(this.data.slice(+record+1,this.data.length));
 
         this.data = data;
-        return(true);
+        return(response);
     }
 
 

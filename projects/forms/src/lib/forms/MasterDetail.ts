@@ -351,7 +351,7 @@ export class MasterDetail
     {
         let block:BlockImpl = null;
 
-        if (this.waiting.block != null)
+        if (this.waiting != null)
         {
             block = this.waiting;
 

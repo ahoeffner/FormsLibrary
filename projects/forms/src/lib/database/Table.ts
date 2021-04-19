@@ -239,12 +239,18 @@ export class Table
 
         let where:boolean = true;
 
+        if (this.table.where != null && this.table.where.trim.length > 0)
+        {
+            where = false;
+            stmt.constrain = "where "+this.table.where;
+        }
+
         for (let i = 0; i < keyval.length; i++)
         {
             let type:Column = this.index.get(this.columns[i]).type;
 
-            if (!where) stmt.and(data[i].name,keyval[i],type);
-            else        stmt.where(data[i].name,keyval[i],type);
+            if (!where) stmt.and(this.columns[i],keyval[i],type);
+            else        stmt.where(this.columns[i],keyval[i],type);
 
             where = false;
         }
@@ -261,6 +267,45 @@ export class Table
     }
 
 
+    public async delete(record:number) : Promise<any>
+    {
+        let keyval:any[] = this.keys[+record];
+        let stmt:Statement = new Statement(SQLType.delete);
+
+        let where:boolean = true;
+
+        if (this.table.where != null && this.table.where.trim.length > 0)
+        {
+            where = false;
+            stmt.constrain = "where "+this.table.where;
+        }
+
+        for (let i = 0; i < keyval.length; i++)
+        {
+            let type:Column = this.index.get(this.columns[i]).type;
+
+            if (!where) stmt.and(this.columns[i],keyval[i],type);
+            else        stmt.where(this.columns[i],keyval[i],type);
+
+            where = false;
+        }
+
+        stmt.table = this.table.name;
+
+        let delrow:SQL = stmt.build();
+        let response:any = await this.conn.invoke("delete",delrow);
+
+        if (response["status"] == "failed")
+            return(response);
+
+        let keys:any[] = this.keys.slice(0,record);
+        keys = keys.concat(this.keys.slice(+record+1,this.keys.length));
+
+        this.keys = keys;
+        return(response);
+    }
+
+
     public parseQuery(keys:Key[], subquery:SQL, fields:Field[]) : Statement
     {
         let stmt:Statement = new Statement(SQLType.select);
@@ -271,6 +316,12 @@ export class Table
         stmt.order = this.table.order;
 
         let where:boolean = true;
+
+        if (this.table.where != null && this.table.where.trim.length > 0)
+        {
+            where = false;
+            stmt.constrain = "where "+this.table.where;
+        }
 
         if (fields.length > 0)
         {

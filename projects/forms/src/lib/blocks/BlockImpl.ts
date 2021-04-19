@@ -839,11 +839,20 @@ export class BlockImpl
 
     public async delete() : Promise<boolean>
     {
+        if (this.data == null) return(false);
+
         if (this.data.database && !this.app.connected)
             return(false);
 
-        if (!this.data.delete(this.sum(this.row,this.offset)))
+        let response:any = await this.data.delete(this.sum(this.row,this.offset));
+
+        if (response["status"] == "failed")
+        {
+            this.alert(JSON.stringify(response),"Delete Failed")
             return(false);
+        }
+
+        this.app.appstate.transactionChange(true);
 
         if (this.masterdetail != null)
             this.masterdetail.cleardetails(this);
@@ -1026,6 +1035,10 @@ export class BlockImpl
     public async clearblock()
     {
         await this.clear();
+
+        this.row = 1;
+        this.focus();
+
         this.searchfilter = [];
     }
 
@@ -1293,6 +1306,9 @@ export class BlockImpl
         // Delete
         if (type == "key" && key == keymap.delete)
         {
+            if (event != null && event["preventDefault"] != null)
+                event.preventDefault();
+
             trgevent = new KeyTriggerEvent(field,key,event);
 
             if (this.records[+this.row]?.state == RecordState.update)

@@ -40,6 +40,7 @@ export class Statement
     private cursor$:string = null;
     private columns$:string[] = [];
     private errors:string[] = null;
+    private constrain$:string = null;
     private updates$:BindValue[] = [];
     private condition$:Condition = null;
     private bindvalues:BindValue[] = [];
@@ -103,6 +104,11 @@ export class Statement
     public set table(table:string)
     {
         this.table$ = table;
+    }
+
+    public set constrain(where:string)
+    {
+        this.constrain$ = where;
     }
 
     public set order(order:string)
@@ -320,10 +326,12 @@ export class Statement
             case SQLType.select: return(this.buildselect());
             case SQLType.insert: return(this.buildinsert());
             case SQLType.update: return(this.buildupdate());
+            case SQLType.delete: return(this.builddelete());
 
-            default: console.log("don't know hoe to build "+SQLType[this.type]);
+            default: console.log("don't know how to build "+SQLType[this.type]);
         }
     }
+
 
     private buildcall() : SQL
     {
@@ -341,6 +349,7 @@ export class Statement
 
         return({sql: this.sql$, bindvalues: bindvals});
     }
+
 
     private buildinsert() : SQL
     {
@@ -376,6 +385,7 @@ export class Statement
 
         return({sql: this.sql$, bindvalues: bindvals});
     }
+
 
     private buildupdate() : SQL
     {
@@ -419,11 +429,56 @@ export class Statement
             if (i < updates.length - 1) this.sql$ += ", ";
         }
 
+        if (this.constrain$ != null)
+            this.sql$ += " "+this.constrain$;
+
         if (this.condition$ != null)
             this.sql$ += " "+this.condition$.toString();
 
         return({sql: this.sql$, bindvalues: bindvals});
     }
+
+    private builddelete() : SQL
+    {
+        let sql:string = this.sql$;
+
+        if (sql == null)
+            sql = "delete from "+this.table$;
+
+        if (this.constrain$ != null)
+            sql += " "+this.constrain$;
+
+        let bindvalues:BindValue[] = this.bindvalues;
+
+        if (this.condition$ != null)
+        {
+            sql += " "+this.condition$.toString();
+            this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+        }
+
+        let bindvals:bindvalue[] = [];
+
+        bindvalues.forEach((bindv) =>
+        {
+            bindvals.push
+            ({
+                name: bindv.name,
+                type: Column[bindv.type].toLowerCase(),
+                value: bindv.value
+            });
+        });
+
+
+        if (this.subquery$ != null)
+        {
+            sql += " "+this.subquery$.sql;
+            this.subquery$.bindvalues.forEach((bindv) =>
+            {bindvals.push(bindv)});
+        }
+
+        return({sql: sql, bindvalues: bindvals});
+    }
+
 
     private buildselect() : SQL
     {
@@ -444,6 +499,9 @@ export class Statement
             if (this.table$ != null)
                 sql += " from "+this.table$;
         }
+
+        if (this.constrain$ != null)
+            sql += " "+this.constrain$;
 
         let bindvalues:BindValue[] = this.bindvalues;
 
