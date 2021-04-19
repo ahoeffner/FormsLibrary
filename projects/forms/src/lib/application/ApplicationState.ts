@@ -57,6 +57,12 @@ export class ApplicationState
     }
 
 
+    public async clearAllForms()
+    {
+        this.forms.forEach((form) => {form.clear()});
+    }
+
+
     public async onConnect() : Promise<boolean>
     {
         this.menus.forEach((mhdl) => {mhdl.onConnect()});

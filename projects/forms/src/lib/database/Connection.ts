@@ -85,7 +85,10 @@ export class Connection
             let response:any = await this.invoke("rollback",{});
 
             if (response["status"] != "ok")
+            {
                 this.alert(JSON.stringify(response));
+                return(false);
+            }
 
             this.app.appstate.transactionChange(false);
             return(false);

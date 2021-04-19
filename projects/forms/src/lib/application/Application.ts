@@ -123,8 +123,8 @@ export class Application
     {
         if (this._impl_.connected)
         {
-            let status:boolean = await this._impl_.connection.rollback();
-            if (status && this.form != null) this.form.clear();
+            await this._impl_.appstate.clearAllForms();
+            await this._impl_.connection.rollback();
         }
     }
 

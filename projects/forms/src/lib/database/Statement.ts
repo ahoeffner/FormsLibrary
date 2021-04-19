@@ -500,7 +500,6 @@ export class Statement
                 sql += " from "+this.table$;
         }
 
-        console.log("constraint "+this.constraint$)
         if (this.constraint$ != null)
             sql += " "+this.constraint$;
 
