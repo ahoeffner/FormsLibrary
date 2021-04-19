@@ -852,8 +852,6 @@ export class BlockImpl
             return(false);
         }
 
-        this.app.appstate.transactionChange(true);
-
         if (this.masterdetail != null)
             this.masterdetail.cleardetails(this);
 
@@ -908,7 +906,6 @@ export class BlockImpl
             return(false);
         }
 
-        this.app.appstate.transactionChange(true);
         return(true);
     }
 
