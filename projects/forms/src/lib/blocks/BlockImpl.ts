@@ -1033,9 +1033,7 @@ export class BlockImpl
     {
         await this.clear();
 
-        this.row = 1;
-        this.focus();
-
+        this.focus(0);
         this.searchfilter = [];
     }
 
