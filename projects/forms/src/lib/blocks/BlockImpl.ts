@@ -388,7 +388,7 @@ export class BlockImpl
             this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
 
             if (record == this.record && this.masterdetail != null && value != previous)
-                this.masterdetail.sync(this,record,dbcol);
+                this.masterdetail.sync(this,dbcol);
         }
     }
 
@@ -886,7 +886,7 @@ export class BlockImpl
         this.focus(row);
 
         if (this.masterdetail != null)
-            this.masterdetail.querydetails(this,this.record);
+            this.masterdetail.querydetails(this);
     }
 
 
@@ -969,7 +969,7 @@ export class BlockImpl
         if  (field.value != previous)
         {
             if (this.sum(field.row,this.offset) == this.record && this.masterdetail != null)
-                this.masterdetail.sync(this,this.record,field.definition.column);
+                this.masterdetail.sync(this,field.definition.column);
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
                 return(false);
@@ -1186,7 +1186,7 @@ export class BlockImpl
                 let state:RecordState = this.records[field.row].state
 
                 if (this.masterdetail != null && state != RecordState.na)
-                    this.masterdetail.querydetails(this,this.sum(field.row,this.offset),true);
+                    this.masterdetail.querydetails(this,true);
             }
 
             this.field$ = field;
@@ -1423,7 +1423,7 @@ export class BlockImpl
             this.focus(row);
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,this.record,true);
+                this.masterdetail.querydetails(this,true);
 
             return(true);
         }
@@ -1454,7 +1454,7 @@ export class BlockImpl
             this.focus(row);
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,this.record,true);
+                this.masterdetail.querydetails(this,true);
 
             return(true);
         }
@@ -1479,7 +1479,7 @@ export class BlockImpl
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,this.record,true);
+                this.masterdetail.querydetails(this,true);
 
             return(true);
         }
@@ -1502,7 +1502,7 @@ export class BlockImpl
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,this.record,true);
+                this.masterdetail.querydetails(this,true);
 
             return(true);
         }

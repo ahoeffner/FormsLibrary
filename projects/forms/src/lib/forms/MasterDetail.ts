@@ -96,7 +96,7 @@ export class MasterDetail
     }
 
 
-    public sync(block:BlockImpl, record:number, col:string) : void
+    public sync(block:BlockImpl, col:string) : void
     {
         if (col == null) return;
         let dep:dependencies = this.links.get(block.alias);
@@ -105,7 +105,7 @@ export class MasterDetail
         {
             if (!dep.keycols.has(col)) return;
             this.query = new MasterDetailQuery(this,this.links,block,col);
-            this.querydetails(block,record);
+            this.querydetails(block);
         }
     }
 
@@ -295,10 +295,9 @@ export class MasterDetail
     }
 
 
-    public querydetails(block:BlockImpl, record?:number, init?:boolean) : void
+    public querydetails(block:BlockImpl, init?:boolean) : void
     {
         if (init == null) init = false;
-        if (record == null) record = 0;
 
         if (init && this.query != null)
         {
