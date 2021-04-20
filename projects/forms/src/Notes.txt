@@ -1,11 +1,7 @@
-Dont set row = 0 @clear
-value NULL wtf !!
-
 @menu
 Drop down colors
 Add submenu levels
 Add F1-F12 in KeyCodes
-Fieldnavigation, stay in table + next "section" key
 
 
 Add assets to library ng-package.json
