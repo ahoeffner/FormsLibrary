@@ -55,21 +55,38 @@ export class MasterDetailQuery
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep.details != null) this.execute(dep);
-        else
-        {
-            if (this.detailblks.has(block.alias))
-                this.detailblks.set(block.alias,1);
-        }
+        else                     this.state(block,1);
     }
 
 
     public done(block:BlockImpl) : void
     {
         this.finished++;
+        this.state(block,2);
 
-        if (this.detailblks.has(block.alias))
-            this.detailblks.set(block.alias,2);
+        if (this.finished == this.detailblks.size)
+            this.md.finished();
+    }
 
+
+    public failed(block:BlockImpl) : void
+    {
+        console.log("remove "+block.alias+" state: "+this.detailblks.get(block.alias));
+
+        if (this.detailblks.get(block.alias) == 0)
+        {
+            this.detailblks.delete(block.alias);
+            let dep:dependencies = this.links.get(block.alias);
+
+            if (dep.details != null)
+            {
+                dep.details.forEach((det) =>
+                {this.failed(det.block);});
+            }
+        }
+        else this.finished++;
+
+        console.log("after remove, finished: "+this.finished+" size: "+this.detailblks.size)
         if (this.finished == this.detailblks.size)
             this.md.finished();
     }
@@ -84,8 +101,7 @@ export class MasterDetailQuery
                 if (this.isready(dep.details[i].block))
                 {
                     dep.details[i].block.executeqry();
-                    if (this.detailblks.has(dep.details[i].block.alias))
-                        this.detailblks.set(dep.details[i].block.alias,1);
+                    this.state(dep.details[i].block,1);
                 }
             }
         }
@@ -108,5 +124,15 @@ export class MasterDetailQuery
         }
 
         return(ready);
+    }
+
+
+    private state(block:BlockImpl,state:number) : void
+    {
+        if (!this.detailblks.has(block.alias))
+            console.log("Block "+block.alias+" !!!!");
+
+        if (this.detailblks.has(block.alias))
+            this.detailblks.set(block.alias,state);
     }
 }

@@ -36,7 +36,6 @@ export class MasterDetail
     private master$:BlockImpl = null;
     private waiting:BlockImpl = null;
     private query:MasterDetailQuery = null;
-    private queries:Map<string,number> = new Map<string,number>();
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private links:Map<string,dependencies> = new Map<string,dependencies>();
     private defined:Map<string,Map<string,Key>> = new Map<string,Map<string,Key>>();
@@ -45,11 +44,6 @@ export class MasterDetail
     constructor(form:FormImpl)
     {
         this.form = form;
-        this.queries.set("loc",0);
-        this.queries.set("dept",0);
-        this.queries.set("emp",0);
-        this.queries.set("waits",0);
-        this.queries.set("completed",0);
     }
 
 
@@ -313,16 +307,12 @@ export class MasterDetail
                 if (this.query != null)
                 {
                     this.waiting = block;
-                    this.queries.set("waits",+this.queries.get("waits")+1);
-                    this.queries.forEach((execs,blk) => {console.log(blk+": "+execs)})
                     return;
                 }
 
                 this.master = block;
                 this.query = new MasterDetailQuery(this,this.links,block);
             }
-
-            if (ready) this.queries.set(block.alias,+this.queries.get(block.alias)+1);
 
             if (ready) this.query.ready(block);
             else       this.query.waitfor(block);
@@ -332,14 +322,16 @@ export class MasterDetail
 
     public done(block:BlockImpl,success:boolean)
     {
-        this.query.done(block);
+        console.log(block.alias+" done: "+success)
+        if (success) this.query.done(block);
+        else         this.query.failed(block);
     }
 
 
     public finished() : void
     {
         let block:BlockImpl = null;
-        this.queries.set("completed",+this.queries.get("completed")+1);
+        console.log("finished")
 
         if (this.waiting != null)
         {
@@ -348,7 +340,6 @@ export class MasterDetail
             this.waiting = null;
 
             this.query = new MasterDetailQuery(this,this.links,block);
-            this.queries.set(block.alias,+this.queries.get(block.alias)+1);
             this.query.ready(block);
         }
         else

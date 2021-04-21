@@ -757,6 +757,13 @@ export class BlockImpl
 
         this.state = FormState.exeqry;
 
+        if (this.alias == "dept")
+        {
+            this.querying$ = false;
+            this.masterdetail.done(this,false);
+            return(false);
+        }
+
         stmt = event.stmt; // could be replaced by trigger
         let response:any = await this.data.executequery(stmt);
 
