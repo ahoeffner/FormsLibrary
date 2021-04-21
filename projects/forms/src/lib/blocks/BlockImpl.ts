@@ -642,7 +642,10 @@ export class BlockImpl
         let subquery:SQL = null;
 
         if (this.masterdetail != null)
+        {
             subquery = this.masterdetail.getDetailQuery();
+            this.masterdetail.querydetails(this,true,false);
+        }
 
         let status = await this.executeqry(subquery);
         this.focus(0);
@@ -686,6 +689,13 @@ export class BlockImpl
     }
 
 
+    public get querying() : boolean
+    {
+        return(this.querying$);
+    }
+
+
+    // Public because of master-detail. Dont call direct
     public async executeqry(subquery?:SQL) : Promise<boolean>
     {
         if (this.data.database && !this.app.connected)
@@ -698,7 +708,12 @@ export class BlockImpl
         let fields:Field[] = [];
 
         if (this.querying$)
+        {
+            if (this.masterdetail != null)
+                this.masterdetail.done(this,false);
+
             return(false);
+        }
 
         this.querying$ = true;
 
@@ -726,7 +741,7 @@ export class BlockImpl
             this.querying$ = false;
 
             if (this.masterdetail != null)
-                this.masterdetail.done();
+                this.masterdetail.done(this,false);
 
             return(false);
         }
@@ -735,7 +750,7 @@ export class BlockImpl
         if (!await this.invokeTriggers(Trigger.PreQuery,event))
         {
             if (this.masterdetail != null)
-                this.masterdetail.done();
+                this.masterdetail.done(this,false);
 
             return(false);
         }
@@ -753,14 +768,14 @@ export class BlockImpl
             this.querying$ = false;
 
             if (this.masterdetail != null)
-                this.masterdetail.done();
+                this.masterdetail.done(this,false);
 
             this.state = FormState.normal;
             return(false);
         }
 
         if (this.masterdetail != null)
-            this.masterdetail.querydetails(this);
+            this.masterdetail.querydetails(this,false,true);
 
         this.row = 0;
         await this.display(0);
@@ -768,6 +783,9 @@ export class BlockImpl
         this.querying$ = false;
         this.state = FormState.normal;
         this.records[0].current = true;
+
+        if (this.masterdetail != null)
+            this.masterdetail.done(this,true);
 
         return(true);
     }
@@ -886,7 +904,7 @@ export class BlockImpl
         this.focus(row);
 
         if (this.masterdetail != null)
-            this.masterdetail.querydetails(this);
+            this.masterdetail.querydetails(this,true,true);
     }
 
 
@@ -1186,7 +1204,7 @@ export class BlockImpl
                 let state:RecordState = this.records[field.row].state
 
                 if (this.masterdetail != null && state != RecordState.na)
-                    this.masterdetail.querydetails(this,true);
+                    this.masterdetail.querydetails(this,true,true);
             }
 
             this.field$ = field;
@@ -1423,7 +1441,7 @@ export class BlockImpl
             this.focus(row);
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,true);
+                this.masterdetail.querydetails(this,true,true);
 
             return(true);
         }
@@ -1454,7 +1472,7 @@ export class BlockImpl
             this.focus(row);
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,true);
+                this.masterdetail.querydetails(this,true,true);
 
             return(true);
         }
@@ -1479,7 +1497,7 @@ export class BlockImpl
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,true);
+                this.masterdetail.querydetails(this,true,true);
 
             return(true);
         }
@@ -1502,7 +1520,7 @@ export class BlockImpl
             this.focus();
 
             if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,true);
+                this.masterdetail.querydetails(this,true,true);
 
             return(true);
         }

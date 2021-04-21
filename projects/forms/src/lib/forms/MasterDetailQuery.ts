@@ -1,14 +1,13 @@
-import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { dependencies, MasterDetail } from "./MasterDetail";
 
 
 export class MasterDetailQuery
 {
-    private done:number = 0;
     private root$:BlockImpl;
+    private finished:number = 0;
+    private detailblks:Map<string,number> = new Map<string,number>();
     private masterblks:Map<string,boolean> = new Map<string,boolean>();
-    private detailblks:Map<string,boolean> = new Map<string,boolean>();
 
 
     constructor(private md:MasterDetail, private links:Map<string,dependencies>, block:BlockImpl, col?:string)
@@ -36,11 +35,17 @@ export class MasterDetailQuery
             {
                 if (col == null || det.mkey.partof(col))
                 {
+                    this.waitfor(det.block);
                     this.findblocks(det.block.alias,null);
-                    this.detailblks.set(det.block.alias,false);
                 }
             });
         }
+    }
+
+
+    public waitfor(block:BlockImpl) : void
+    {
+        this.detailblks.set(block.alias,0);
     }
 
 
@@ -48,8 +53,25 @@ export class MasterDetailQuery
     {
         this.masterblks.set(block.alias,true);
         let dep:dependencies = this.links.get(block.alias);
-        if (dep.details == null) this.md.done();
-        else this.execute(dep);
+
+        if (dep.details != null) this.execute(dep);
+        else
+        {
+            if (this.detailblks.has(block.alias))
+                this.detailblks.set(block.alias,1);
+        }
+    }
+
+
+    public done(block:BlockImpl) : void
+    {
+        this.finished++;
+
+        if (this.detailblks.has(block.alias))
+            this.detailblks.set(block.alias,2);
+
+        if (this.finished == this.detailblks.size)
+            this.md.finished();
     }
 
 
@@ -61,15 +83,9 @@ export class MasterDetailQuery
             {
                 if (this.isready(dep.details[i].block))
                 {
-                    let last:boolean = this.done == this.detailblks.size - 1;
-
-                    if (!last) dep.details[i].block.executeqry();
-                    else await dep.details[i].block.executeqry();
-
-                    this.detailblks.set(dep.details[i].block.alias,true);
-
-                    if (++this.done == this.detailblks.size)
-                        this.md.done();
+                    dep.details[i].block.executeqry();
+                    if (this.detailblks.has(dep.details[i].block.alias))
+                        this.detailblks.set(dep.details[i].block.alias,1);
                 }
             }
         }

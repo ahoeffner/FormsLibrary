@@ -36,6 +36,7 @@ export class MasterDetail
     private master$:BlockImpl = null;
     private waiting:BlockImpl = null;
     private query:MasterDetailQuery = null;
+    private queries:Map<string,number> = new Map<string,number>();
     private blocks:Map<string,BlockImpl> = new Map<string,BlockImpl>();
     private links:Map<string,dependencies> = new Map<string,dependencies>();
     private defined:Map<string,Map<string,Key>> = new Map<string,Map<string,Key>>();
@@ -44,6 +45,11 @@ export class MasterDetail
     constructor(form:FormImpl)
     {
         this.form = form;
+        this.queries.set("loc",0);
+        this.queries.set("dept",0);
+        this.queries.set("emp",0);
+        this.queries.set("waits",0);
+        this.queries.set("completed",0);
     }
 
 
@@ -105,7 +111,7 @@ export class MasterDetail
         {
             if (!dep.keycols.has(col)) return;
             this.query = new MasterDetailQuery(this,this.links,block,col);
-            this.querydetails(block);
+            this.querydetails(block,true,true);
         }
     }
 
@@ -295,24 +301,59 @@ export class MasterDetail
     }
 
 
-    public querydetails(block:BlockImpl, init?:boolean) : void
+    public querydetails(block:BlockImpl, init:boolean, ready:boolean) : void
     {
         if (init == null) init = false;
-
-        if (init && this.query != null)
-        {
-            this.waiting = block;
-            return;
-        }
-
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null)
         {
-            if (this.query == null)
-                this.query = new MasterDetailQuery(this,this.links,block);
+            if (init)
+            {
+                if (this.query != null)
+                {
+                    this.waiting = block;
+                    this.queries.set("waits",+this.queries.get("waits")+1);
+                    this.queries.forEach((execs,blk) => {console.log(blk+": "+execs)})
+                    return;
+                }
 
+                this.master = block;
+                this.query = new MasterDetailQuery(this,this.links,block);
+            }
+
+            if (ready) this.queries.set(block.alias,+this.queries.get(block.alias)+1);
+
+            if (ready) this.query.ready(block);
+            else       this.query.waitfor(block);
+        }
+    }
+
+
+    public done(block:BlockImpl,success:boolean)
+    {
+        this.query.done(block);
+    }
+
+
+    public finished() : void
+    {
+        let block:BlockImpl = null;
+        this.queries.set("completed",+this.queries.get("completed")+1);
+
+        if (this.waiting != null)
+        {
+            block = this.waiting;
+
+            this.waiting = null;
+
+            this.query = new MasterDetailQuery(this,this.links,block);
+            this.queries.set(block.alias,+this.queries.get(block.alias)+1);
             this.query.ready(block);
+        }
+        else
+        {
+            this.query = null;
         }
     }
 
@@ -343,23 +384,6 @@ export class MasterDetail
         }
 
         return(keys);
-    }
-
-
-    public done() : void
-    {
-        let block:BlockImpl = null;
-
-        if (this.waiting != null)
-        {
-            block = this.waiting;
-
-            this.waiting = null;
-
-            this.query = new MasterDetailQuery(this,this.links,block);
-            this.query.ready(block);
-        }
-        else this.query = null;
     }
 
 
