@@ -297,26 +297,23 @@ export class MasterDetail
 
     public querydetails(block:BlockImpl, init:boolean, ready:boolean) : void
     {
-        if (init == null) init = false;
-        let dep:dependencies = this.links.get(block.alias);
+        if (init == null)
+            init = false;
 
-        if (dep != null)
+        if (init)
         {
-            if (init)
+            if (this.query != null)
             {
-                if (this.query != null)
-                {
-                    this.waiting = block;
-                    return;
-                }
-
-                this.master = block;
-                this.query = new MasterDetailQuery(this,this.links,block);
+                this.waiting = block;
+                return;
             }
 
-            if (ready) this.query.ready(block);
-            else       this.query.waitfor(block);
+            this.master = block;
+            this.query = new MasterDetailQuery(this,this.links,block);
         }
+
+        if (ready) this.query.ready(block);
+        else       this.query.waitfor(block);
     }
 
 

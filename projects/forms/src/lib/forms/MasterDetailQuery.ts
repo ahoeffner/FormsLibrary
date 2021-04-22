@@ -27,7 +27,7 @@ export class MasterDetailQuery
     {
         let dep:dependencies = this.links.get(block);
 
-        if (dep.details != null)
+        if (this.details(dep))
         {
             this.masterblks.set(block,false);
 
@@ -54,8 +54,14 @@ export class MasterDetailQuery
         this.masterblks.set(block.alias,true);
         let dep:dependencies = this.links.get(block.alias);
 
-        if (dep.details != null) this.execute(dep);
-        else                     this.state(block,2);
+        if (this.detailblks.size == 0)
+        {
+            this.md.finished();
+            return;
+        }
+
+        if (this.details(dep)) this.execute(dep);
+        else                   this.state(block,2);
     }
 
 
@@ -143,10 +149,12 @@ export class MasterDetailQuery
 
     private state(block:BlockImpl,state:number) : void
     {
-        if (!this.detailblks.has(block.alias))
-            console.log("MDQ, Block "+block.alias+" is not a part of the query-tree");
+        this.detailblks.set(block.alias,state);
+    }
 
-        if (this.detailblks.has(block.alias))
-            this.detailblks.set(block.alias,state);
+
+    private details(dep:dependencies) : boolean
+    {
+       return(dep != null && dep.details != null);
     }
 }
