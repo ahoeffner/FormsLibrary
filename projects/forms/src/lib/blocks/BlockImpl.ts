@@ -738,6 +738,7 @@ export class BlockImpl
 
             this.alert(msg,"Query Condition");
 
+            this.clear();
             this.querying$ = false;
 
             if (this.masterdetail != null)
@@ -757,21 +758,14 @@ export class BlockImpl
 
         this.state = FormState.exeqry;
 
-        if (this.alias == "dept")
-        {
-            this.querying$ = false;
-            this.masterdetail.done(this,false);
-            return(false);
-        }
-
         stmt = event.stmt; // could be replaced by trigger
         let response:any = await this.data.executequery(stmt);
 
         if (response["status"] == "failed")
         {
-            this.clear();
             this.alert(JSON.stringify(response),"Database Query");
 
+            this.clear();
             this.querying$ = false;
 
             if (this.masterdetail != null)

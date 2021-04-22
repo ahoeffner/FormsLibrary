@@ -322,7 +322,6 @@ export class MasterDetail
 
     public done(block:BlockImpl,success:boolean)
     {
-        console.log(block.alias+" done: "+success)
         if (success) this.query.done(block);
         else         this.query.failed(block);
     }
@@ -331,7 +330,6 @@ export class MasterDetail
     public finished() : void
     {
         let block:BlockImpl = null;
-        console.log("finished")
 
         if (this.waiting != null)
         {

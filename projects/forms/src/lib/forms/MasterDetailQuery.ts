@@ -35,8 +35,8 @@ export class MasterDetailQuery
             {
                 if (col == null || det.mkey.partof(col))
                 {
-                    this.waitfor(det.block);
                     this.findblocks(det.block.alias,null);
+                    this.detailblks.set(det.block.alias,0);
                 }
             });
         }
@@ -45,7 +45,7 @@ export class MasterDetailQuery
 
     public waitfor(block:BlockImpl) : void
     {
-        this.detailblks.set(block.alias,0);
+        this.detailblks.set(block.alias,1);
     }
 
 
@@ -55,14 +55,14 @@ export class MasterDetailQuery
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep.details != null) this.execute(dep);
-        else                     this.state(block,1);
+        else                     this.state(block,2);
     }
 
 
     public done(block:BlockImpl) : void
     {
         this.finished++;
-        this.state(block,2);
+        this.state(block,3);
 
         if (this.finished == this.detailblks.size)
             this.md.finished();
@@ -71,9 +71,16 @@ export class MasterDetailQuery
 
     public failed(block:BlockImpl) : void
     {
-        console.log("remove "+block.alias+" state: "+this.detailblks.get(block.alias));
+        this.remove(block);
 
-        if (this.detailblks.get(block.alias) == 0)
+        if (this.finished == this.detailblks.size)
+            this.md.finished();
+    }
+
+
+    private remove(block:BlockImpl) : void
+    {
+        if (this.detailblks.get(block.alias) < 2)
         {
             this.detailblks.delete(block.alias);
             let dep:dependencies = this.links.get(block.alias);
@@ -81,14 +88,21 @@ export class MasterDetailQuery
             if (dep.details != null)
             {
                 dep.details.forEach((det) =>
-                {this.failed(det.block);});
+                {this.remove(det.block);});
             }
         }
-        else this.finished++;
+        else
+        {
+            this.finished++;
+            this.state(block,3);
+        }
+    }
 
-        console.log("after remove, finished: "+this.finished+" size: "+this.detailblks.size)
-        if (this.finished == this.detailblks.size)
-            this.md.finished();
+
+    public status(state:string)
+    {
+        console.log(state+" finished: "+this.finished+" "+this.detailblks.size);
+        this.detailblks.forEach((state,blk) => {console.log(blk+" "+state)})
     }
 
 
@@ -130,7 +144,7 @@ export class MasterDetailQuery
     private state(block:BlockImpl,state:number) : void
     {
         if (!this.detailblks.has(block.alias))
-            console.log("Block "+block.alias+" !!!!");
+            console.log("MDQ, Block "+block.alias+" is not a part of the query-tree");
 
         if (this.detailblks.has(block.alias))
             this.detailblks.set(block.alias,state);
