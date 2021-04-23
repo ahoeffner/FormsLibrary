@@ -429,8 +429,9 @@ export class FieldData
         data = this.data.slice(0,record);
 
         data[+record] = new Row(0,this);
-        data[+record].state = RecordState.insert;
 
+        data[+record].locked = true;
+        data[+record].state = RecordState.insert;
         data = data.concat(this.data.slice(record,this.data.length));
 
         this.data = data;
@@ -543,8 +544,6 @@ export class Row
         let values:any[] = [];
         this.fields.forEach((col) =>
         {
-            let val:any = col.value$;
-            if (val == null) val = "";
             values.push(col.value$)
         });
         return(values);
