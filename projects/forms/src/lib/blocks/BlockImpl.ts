@@ -5,8 +5,10 @@ import { Utils } from "../utils/Utils";
 import { FieldData } from "./FieldData";
 import { keymap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
+import { FieldType } from "../input/FieldType";
 import { Record, RecordState } from "./Record";
 import { FormState } from "../forms/FormState";
+import { DatePicker } from "../dates/DatePicker";
 import { MessageBox } from "../popup/MessageBox";
 import { MasterDetail } from "../forms/MasterDetail";
 import { SQL, Statement } from "../database/Statement";
@@ -1303,6 +1305,16 @@ export class BlockImpl
         // ListOfValues / Datepicker
         if (type == "key" && key == keymap.listval)
         {
+            if (event != null && event["preventDefault"] != null)
+                event.preventDefault();
+
+            let type:FieldType = field.definition.type;
+            if (type == FieldType.date || type == FieldType.datetime)
+            {
+                console.log("datepicker")
+                DatePicker.show(this.app,this);
+            }
+
             this.showListOfValues(field.name,field.id,this.row);
             return(true);
         }

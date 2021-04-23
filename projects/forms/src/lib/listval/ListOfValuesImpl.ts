@@ -21,7 +21,6 @@ import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent } from "../events/T
 
 
 @Component({
-    selector: '',
     template:
     `
         <div class="lov">

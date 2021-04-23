@@ -545,10 +545,7 @@ export class FieldInstance implements AfterViewInit
         {
             if (this.readonly) return;
 
-            if (+event.keyCode >= 16 && +event.keyCode <= 20)
-                return;
-
-            if (this.firstchange)
+            if (this.firstchange && this.value != this.lvalue)
             {
                 this.firstchange = false;
                 if (!this.valid) this.fgroup$.valid = true;
@@ -563,6 +560,9 @@ export class FieldInstance implements AfterViewInit
 
     private continious(event:any, value:any) : void
     {
+        if (this.value == value)
+            return;
+
         if (this.def.type == FieldType.integer)
         {
             if (!this.valnumber(value))
