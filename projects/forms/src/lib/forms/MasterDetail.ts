@@ -340,6 +340,7 @@ export class MasterDetail
         else
         {
             this.query = null;
+            this.master = null;
         }
     }
 

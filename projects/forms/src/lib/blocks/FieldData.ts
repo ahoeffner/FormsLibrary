@@ -373,6 +373,7 @@ export class FieldData
 
         if (this.table != null && +colno < this.table.columns.length)
         {
+            rec.failed = null;
             rec.validated = false;
             rec.fields[+colno].validated = false;
         }
@@ -448,7 +449,13 @@ export class FieldData
             return(response);
 
         if (this.data[+record].state == RecordState.insert)
+        {
+            data = this.data.slice(0,record);
+            data = data.concat(this.data.slice(+record+1,this.data.length));
+
+            this.data = data;
             return(response);
+        }
 
         if (this.table != null)
         {

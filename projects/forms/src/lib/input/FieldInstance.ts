@@ -588,7 +588,7 @@ export class FieldInstance implements AfterViewInit
     private valnumber(value:string) : boolean
     {
         if (this.state == RecordState.qmode)
-            return(false);
+            return(true);
 
         let nvalue:string = this.value;
 
@@ -610,7 +610,7 @@ export class FieldInstance implements AfterViewInit
     private valdecimal(value:string) : boolean
     {
         if (this.state == RecordState.qmode)
-            return(false);
+            return(true);
 
         let nvalue:string = this.value;
 

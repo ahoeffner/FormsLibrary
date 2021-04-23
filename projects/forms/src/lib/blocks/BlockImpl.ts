@@ -574,9 +574,16 @@ export class BlockImpl
     private async keydelete() : Promise<boolean>
     {
         if (this.data == null) return(false);
-        if (!this.usage.delete) return(false);
+        if (this.row >= this.data.rows) return(true);
+        if (this.state == FormState.entqry) return(true);
+
+        let rec:Record = this.records[+this.row];
+        if (rec.state == RecordState.na) return(true);
 
         if (this.data.database && !this.app.connected)
+            return(false);
+
+        if (!this.usage.delete && rec.state != RecordState.insert)
             return(false);
 
         return(await this.delete());
@@ -1009,7 +1016,6 @@ export class BlockImpl
         if (this.data == null) return(true);
         if (this.row >= this.data.rows) return(true);
         if (this.state == FormState.entqry) return(true);
-        if (this.records[+this.row].state == RecordState.na) return(true);
 
         let rec:Record = this.records[+this.row];
         if (rec.state == RecordState.na) return(true);
