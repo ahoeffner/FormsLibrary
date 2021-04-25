@@ -27,7 +27,6 @@ export class FieldInstance implements AfterViewInit
     private fgroup$:Field = null;
     private valid$:boolean = true;
     private lvalid:boolean = true;
-    private type$:FieldType = null;
     private enforce:boolean = false;
     private enabled$:boolean = false;
     private readonly$:boolean = false;
@@ -431,7 +430,6 @@ export class FieldInstance implements AfterViewInit
 
     private setType(type:FieldType) : void
     {
-        this.type$ = type;
         let seq:number = this.seq;
         this.container.innerHTML = null;
         let cname:any = FieldImplementation.getClass(FieldType[type]);
