@@ -1312,7 +1312,7 @@ export class BlockImpl
             if (type == FieldType.date || type == FieldType.datetime)
             {
                 console.log("datepicker")
-                DatePicker.show(this.app,this);
+                DatePicker.show(this.app,this,this.record,field.name,field.value);
             }
 
             this.showListOfValues(field.name,field.id,this.row);
