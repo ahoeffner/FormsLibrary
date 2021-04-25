@@ -167,8 +167,6 @@ export class DatePicker implements Popup, AfterViewInit
 
         this.days.innerHTML = "";
         this.days.appendChild(table);
-
-        console.log("html: "+this.cal.innerHTML)
     }
 
 
@@ -176,18 +174,20 @@ export class DatePicker implements Popup, AfterViewInit
     {
         this.cal.innerHTML =
         `
-            <style>
-
-            /* (C) MONTH + YEAR */
-            .datepicker-month, .datepicker-year
+        <style>
+            .datepicker-month
             {
-                width: 30%;
-                padding: 5px;
-                font-size: 16px;
-                box-sizing: border-box;
+                width: 64px;
+                font-size: 15px;
             }
 
-            /* Table */
+            .datepicker-year
+            {
+                width: 64px;
+                font-size: 15px;
+                margin-left: 32px;
+            }
+
             .datepicker-table
             {
                 color: #333;
@@ -196,7 +196,6 @@ export class DatePicker implements Popup, AfterViewInit
                 margin-top: 10px;
             }
 
-            /* (D) DAY */
             .datepicker-day
             {
                 color: #fff;
@@ -206,13 +205,6 @@ export class DatePicker implements Popup, AfterViewInit
                 background: #2d68c4;
             }
 
-            /* HEADER */
-            .datepicker-head
-            {
-                font-weight: bold;
-            }
-
-            /* BLANK DATES */
             .datepicker-blank
             {
                 background: #ddd;
@@ -224,7 +216,6 @@ export class DatePicker implements Popup, AfterViewInit
                 background: #ffe0d4;
             }
 
-            /* PICKABLE DATES */
             .datepicker-day:hover
             {
                 color: #fff;
