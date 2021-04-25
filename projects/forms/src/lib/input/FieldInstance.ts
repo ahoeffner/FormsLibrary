@@ -543,7 +543,7 @@ export class FieldInstance implements AfterViewInit
         {
             if (this.readonly) return;
 
-            if (this.firstchange && this.value != this.lvalue)
+            if (this.firstchange && event.key.length === 1)
             {
                 this.firstchange = false;
                 if (!this.valid) this.fgroup$.valid = true;

@@ -1,4 +1,5 @@
 import { Popup } from "../popup/Popup";
+import { Field } from "../input/Field";
 import { KeyCodes } from "../keymap/KeyCodes";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Context } from "../application/Context";
@@ -35,13 +36,13 @@ export class DatePicker implements Popup, AfterViewInit
     @ViewChild("calendar", {read: ElementRef}) private calelem: ElementRef;
 
 
-    public static show(app:ApplicationImpl, impl:BlockImpl)
+    public static show(app:ApplicationImpl, impl:BlockImpl, record:number, field:string, date:Date)
     {
         let pinst:PopupInstance = new PopupInstance();
         pinst.display(app,DatePicker);
 
         let dpwin:DatePicker = pinst.popup() as DatePicker;
-        dpwin.date = new Date();
+        dpwin.date = date;
     }
 
 
@@ -60,6 +61,7 @@ export class DatePicker implements Popup, AfterViewInit
 
     public set date(date:Date)
     {
+        if (date == null) date = new Date();
         this.cdate = date;
     }
 
@@ -90,13 +92,13 @@ export class DatePicker implements Popup, AfterViewInit
     public ngAfterViewInit(): void
     {
 		this.cal = this.calelem?.nativeElement as HTMLDivElement;
-        this.build(this.cdate,60,25);
+        this.build(this.cdate,75,75);
     }
 
 
     public navigate(event:any) : void
     {
-        if (event.keyCode == 12)
+        if (event.keyCode == KeyCodes.tab)
         {
             event.preventDefault();
 
@@ -206,9 +208,12 @@ export class DatePicker implements Popup, AfterViewInit
 
    private draw() : void
    {
-        let cday:number = this.cdate.getUTCDate();
-        let cmonth:number = this.cdate.getUTCMonth();
-        let cyear:number = this.cdate.getUTCFullYear();
+        let cday:number = this.cdate.getDate();
+        let cmonth:number = this.cdate.getMonth();
+        let cyear:number = this.cdate.getFullYear();
+
+        console.log(this.cdate);
+        console.log("cday: "+cday);
 
         let year:number = +this.years.value;
         let month:number = +this.months.value;
