@@ -1,6 +1,9 @@
 {
     "title": "Forms42",
     "theme": "default",
+
+    "locale": "da-DK",
     "datefmt": "DD-MM-YYYY",
+
     "backend" : "http://localhost:8001"
 }

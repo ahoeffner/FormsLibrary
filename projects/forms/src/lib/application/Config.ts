@@ -19,6 +19,7 @@ export class Config
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
     private themes:Map<string,Theme> = new Map<string,Theme>();
+    private lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 
 
     constructor(private client:HttpClient)
@@ -43,8 +44,12 @@ export class Config
     private loaded(config:any) : void
     {
         this.config = config;
+
         this.datefmt$ = this.config["datefmt"];
         dates.setFormat(this.datefmt$);
+
+        if (this.config["locale"] != null)
+            this.lang = this.config["locale"];
     }
 
     public async ready() : Promise<boolean>
@@ -56,6 +61,11 @@ export class Config
         }
 
         return(true);
+    }
+
+    public get locale() : string
+    {
+        return(this.lang);
     }
 
     public get datefmt() : string

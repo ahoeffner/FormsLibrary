@@ -1,4 +1,5 @@
 import { Popup } from "../popup/Popup";
+import { KeyCodes } from "../keymap/KeyCodes";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Context } from "../application/Context";
 import { PopupWindow } from "../popup/PopupWindow";
@@ -19,10 +20,11 @@ export class DatePicker implements Popup, AfterViewInit
 {
     public top:string = null;
     public left:string = null;
-    public width?:string = "254px";
-    public height?:string = "254px";
+    public width?:string = "256px";
+    public height?:string = "256px";
     public title:string = "Calendar";
 
+    private cdate:Date = null;
     private app:ApplicationImpl;
     private win:PopupWindow = null;
     private cal:HTMLDivElement = null;
@@ -39,10 +41,11 @@ export class DatePicker implements Popup, AfterViewInit
         pinst.display(app,DatePicker);
 
         let dpwin:DatePicker = pinst.popup() as DatePicker;
+        dpwin.date = new Date();
     }
 
 
-    constructor(ctx:Context)
+    constructor(private ctx:Context)
     {
         this.app = ctx.app["_impl_"];
     }
@@ -50,12 +53,31 @@ export class DatePicker implements Popup, AfterViewInit
 
     public close(cancel: boolean): void
     {
+        this.win.closeWindow();
+    }
+
+
+    public set date(date:Date)
+    {
+        this.cdate = date;
     }
 
 
     private pick(event:any) : void
     {
-        console.log("picked");
+        let year:number = +this.years.value;
+        let month:number = +this.months.value;
+        let day:number = +event.target.innerHTML;
+
+        let cday:number = this.cdate.getUTCDate();
+        let cmonth:number = this.cdate.getUTCMonth();
+        let cyear:number = this.cdate.getUTCFullYear();
+
+        if (year != cyear || month != cmonth || day != cday)
+        {
+            this.cdate = new Date(Date.UTC(year, month, day))
+            console.log("new date: "+this.cdate);
+        }
     }
 
 
@@ -68,21 +90,76 @@ export class DatePicker implements Popup, AfterViewInit
     public ngAfterViewInit(): void
     {
 		this.cal = this.calelem?.nativeElement as HTMLDivElement;
-        this.build(new Date(),10);
+        this.build(this.cdate,60,25);
     }
 
 
-    public build(date:Date, years:number) : void
+    public navigate(event:any) : void
+    {
+        if (event.keyCode == 12)
+        {
+            event.preventDefault();
+
+            if (event.target.name == "months") this.years.focus();
+            else                               this.months.focus();
+
+            return;
+        }
+
+        if (event.keyCode == KeyCodes.escape)
+            this.close(true);
+    }
+
+
+    public weekdays(locale:string) : string[]
+    {
+        let fmt = new Intl.DateTimeFormat(locale,{weekday: "short"}).format;
+        let names:string[] = [...Array(7).keys()].map((d) => fmt(new Date(Date.UTC(2021, 1, d))));
+
+        for (let i = 0; i < 7; i++)
+        {
+            if (names[i].endsWith("."))
+                names[i] = names[i].substring(0,names[i].length-1);
+        }
+
+        let sun:string = names[0];
+
+        names.shift();
+        names.push(sun);
+
+        return(names);
+    }
+
+
+    public monthnames(locale:string) : string[]
+    {
+        let fmt = new Intl.DateTimeFormat(locale,{month: "short"}).format;
+        let names:string[] = [...Array(12).keys()].map((m) => fmt(new Date(Date.UTC(2021, m))));
+
+        for (let i = 0; i < 12; i++)
+        {
+            if (names[i].endsWith("."))
+                names[i] = names[i].substring(0,names[i].length-1);
+        }
+
+        return(names);
+    }
+
+
+    public build(date:Date, bef:number, aft:number) : void
     {
         this.styles();
 
         let month:number = date.getUTCMonth();
         let year:number = date.getUTCFullYear();
 
-        let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        let months = this.monthnames(this.ctx.conf.locale);
 
         this.years = document.createElement("select");
         this.months = document.createElement("select");
+
+        this.years.name = "years";
+        this.months.name = "months";
 
         this.addFieldTriggers(this.years);
         this.addFieldTriggers(this.months);
@@ -104,7 +181,7 @@ export class DatePicker implements Popup, AfterViewInit
 
         this.years.classList.add("datepicker-year");
 
-        for (let i = year - years/2; i < year + years/2; i++)
+        for (let i = year - bef; i < year + aft; i++)
         {
             let option = document.createElement("option");
 
@@ -114,7 +191,7 @@ export class DatePicker implements Popup, AfterViewInit
             this.years.appendChild(option);
         }
 
-        this.years.selectedIndex = years/2;
+        this.years.selectedIndex = bef;
         this.cal.appendChild(this.years);
 
         this.days = document.createElement("div");
@@ -129,8 +206,15 @@ export class DatePicker implements Popup, AfterViewInit
 
    private draw() : void
    {
+        let cday:number = this.cdate.getUTCDate();
+        let cmonth:number = this.cdate.getUTCMonth();
+        let cyear:number = this.cdate.getUTCFullYear();
+
         let year:number = +this.years.value;
         let month:number = +this.months.value;
+
+        if (year != cyear || month != +cmonth + +1)
+            cday = 0;
 
         let days:number = new Date(Date.UTC(year, month, 0)).getUTCDate();
         let first:number = new Date(Date.UTC(year, month-1, 1)).getUTCDay();
@@ -150,7 +234,7 @@ export class DatePicker implements Popup, AfterViewInit
         while(squares.length%7 != 0)
             squares.push([false,0]);
 
-        let names:string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        let names:string[] = this.weekdays(this.ctx.conf.locale);
 
         let table:HTMLTableElement = document.createElement("table");
         table.classList.add("datepicker-table");
@@ -168,10 +252,15 @@ export class DatePicker implements Popup, AfterViewInit
         {
             if (i%7 == 0) row = table.insertRow();
             let cell:HTMLTableCellElement = row.insertCell();
+
             if (squares[i][0])
             {
-                cell.innerHTML = (+squares[i][1] + +1)+"";
+                let dom:number = +squares[i][1] + +1;
+
+                cell.innerHTML = dom+"";
                 cell.classList.add("datepicker-day");
+
+                if (dom == cday) cell.classList.add("datepicker-current");
                 this.addDayTriggers(cell);
             }
             else
@@ -194,6 +283,7 @@ export class DatePicker implements Popup, AfterViewInit
     private addFieldTriggers(change:HTMLSelectElement) : void
     {
         change.addEventListener("change",() => {this.draw()});
+        change.addEventListener("keydown",(event) => {this.navigate(event)});
     }
 
 
@@ -217,7 +307,6 @@ export class DatePicker implements Popup, AfterViewInit
 
             .datepicker-table
             {
-                color: #333;
                 width: 100%;
                 margin-top: 14px;
                 border-collapse: separate;
@@ -227,11 +316,12 @@ export class DatePicker implements Popup, AfterViewInit
             {
                 font-weight: bold;
                 text-align: center;
+                color: `+this.app.config.colors.text+`;
             }
 
             .datepicker-day
             {
-                color: #fff;
+                color: `+this.app.config.colors.buttontext+`;
                 padding: 5px;
                 width: 14.28%;
                 text-align: center;
@@ -243,17 +333,17 @@ export class DatePicker implements Popup, AfterViewInit
                 background: #ddd;
             }
 
-            /* TODAY */
-            .picker-d-td
+            .datepicker-current
             {
-                background: #ffe0d4;
+                font-size: 16px;
+                font-weight: bold;
             }
 
             .datepicker-day:hover
             {
-                color: #fff;
                 cursor: pointer;
-                background: #2d68c4;
+                font-weight: bold;
+                font-style: italic;
             }
         </style>
         `;
