@@ -967,17 +967,20 @@ export class BlockImpl
         if (this.state != FormState.normal) return(true);
         if (this.records[+this.row].state == RecordState.na) return(true);
 
+        let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
+
+        // Nothing has changed
+        if (field.value == previous) return(this.data.getValidated(this.sum(field.row,this.offset),field.name));
+
+        if (!await this.lockrecord(this.sum(field.row,this.offset),field.name))
+            return(false);
+
         if (!field.validate())
         {
             field.valid = false;
             this.data.setValue(this.sum(field.row,this.offset),field.name,field.value);
             return(false);
         }
-
-        let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
-
-        // Nothing has changed
-        if (field.value == previous) return(this.data.getValidated(this.sum(field.row,this.offset),field.name));
 
         this.data.setValue(+field.row+this.offset,field.name,field.value);
 
@@ -990,9 +993,6 @@ export class BlockImpl
 
         field.parent.valid = true;
         this.data.setValidated(this.sum(field.row,this.offset),field.name);
-
-        if (!await this.lockrecord(this.sum(field.row,this.offset),field.name))
-            return(false);
 
         if  (field.value != previous)
         {
@@ -1311,8 +1311,8 @@ export class BlockImpl
             let type:FieldType = field.definition.type;
             if (type == FieldType.date || type == FieldType.datetime)
             {
-                console.log("datepicker")
                 DatePicker.show(this.app,this,this.record,field.name,field.value);
+                return(true);
             }
 
             this.showListOfValues(field.name,field.id,this.row);

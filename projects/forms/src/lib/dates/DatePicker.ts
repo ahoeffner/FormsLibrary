@@ -212,9 +212,6 @@ export class DatePicker implements Popup, AfterViewInit
         let cmonth:number = this.cdate.getMonth();
         let cyear:number = this.cdate.getFullYear();
 
-        console.log(this.cdate);
-        console.log("cday: "+cday);
-
         let year:number = +this.years.value;
         let month:number = +this.months.value;
 
