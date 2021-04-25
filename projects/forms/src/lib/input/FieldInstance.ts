@@ -2,6 +2,7 @@ import { Field } from './Field';
 import { CheckBox } from './CheckBox';
 import { Case } from '../database/Case';
 import { RadioButton } from './RadioButton';
+import { KeyCodes } from '../keymap/KeyCodes';
 import { RecordState } from '../blocks/Record';
 import { Context } from '../application/Context';
 import { Key, keymap, KeyMapper } from '../keymap/KeyMap';
@@ -543,7 +544,7 @@ export class FieldInstance implements AfterViewInit
         {
             if (this.readonly) return;
 
-            if (this.firstchange && (event.key.length == 1 || this.value != this.lvalue))
+            if (this.firstchange && (event.key.length == 1 || event.keyCode == KeyCodes.backspace))
             {
                 this.firstchange = false;
                 if (!this.valid) this.fgroup$.valid = true;
