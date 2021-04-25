@@ -20,9 +20,9 @@ export class DatePicker implements Popup, AfterViewInit
 {
     public top:string = null;
     public left:string = null;
+    public title:string = null;
     public width?:string = "256px";
     public height?:string = "256px";
-    public title:string = "Calendar";
 
     private cdate:Date = null;
     private app:ApplicationImpl;
@@ -48,6 +48,7 @@ export class DatePicker implements Popup, AfterViewInit
     constructor(private ctx:Context)
     {
         this.app = ctx.app["_impl_"];
+        this.title = ctx.conf.calendarname;
     }
 
 
@@ -75,8 +76,7 @@ export class DatePicker implements Popup, AfterViewInit
 
         if (year != cyear || month != cmonth || day != cday)
         {
-            this.cdate = new Date(Date.UTC(year, month, day))
-            console.log("new date: "+this.cdate);
+            this.cdate = new Date(Date.UTC(year, month-1, day))
         }
     }
 
@@ -296,6 +296,7 @@ export class DatePicker implements Popup, AfterViewInit
             {
                 width: 64px;
                 font-size: 15px;
+                margin-left: 16px;
             }
 
             .datepicker-year

@@ -25,7 +25,7 @@ export class Connection
             await this.app.config.ready();
             let conf:any = await this.app.config.others;
 
-            this.url = conf["backend"];
+            this.url = conf["database.js"];
             if (this.url == null || this.url.length == 0)
                 this.url = window.location.origin;
         }

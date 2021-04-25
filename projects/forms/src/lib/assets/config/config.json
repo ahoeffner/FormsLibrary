@@ -4,6 +4,7 @@
 
     "locale": "da-DK",
     "datefmt": "DD-MM-YYYY",
+    "calendar": "Vælg dato",
 
-    "backend" : "http://localhost:8001"
+    "database.js" : "http://localhost:8001"
 }

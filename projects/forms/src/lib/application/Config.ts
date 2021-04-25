@@ -18,6 +18,7 @@ export class Config
     private config:any = null;
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
+    private calendar:string = "Calendar";
     private themes:Map<string,Theme> = new Map<string,Theme>();
     private lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 
@@ -50,6 +51,9 @@ export class Config
 
         if (this.config["locale"] != null)
             this.lang = this.config["locale"];
+
+        if (this.config["calendar"] != null)
+            this.calendar = this.config["calendar"];
     }
 
     public async ready() : Promise<boolean>
@@ -105,5 +109,17 @@ export class Config
             this.colors = ttheme;
             this.notifications.forEach((notify) => {notify.instance[notify.func]()});
         }
+    }
+
+
+    public set calendarname(name:string)
+    {
+        this.calendar = name;
+    }
+
+
+    public get calendarname() : string
+    {
+        return(this.calendar);
     }
 }
