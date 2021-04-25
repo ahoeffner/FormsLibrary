@@ -1,5 +1,6 @@
 import { Popup } from "../popup/Popup";
 import { BlockImpl } from "../blocks/BlockImpl";
+import { Context } from "../application/Context";
 import { PopupWindow } from "../popup/PopupWindow";
 import { PopupInstance } from "../popup/PopupInstance";
 import { ApplicationImpl } from "../application/ApplicationImpl";
@@ -18,10 +19,11 @@ export class DatePicker implements Popup, AfterViewInit
 {
     public top:string = null;
     public left:string = null;
-    public width?:string = "300px";
-    public height?:string = "280px";
+    public width?:string = "254px";
+    public height?:string = "254px";
     public title:string = "Calendar";
 
+    private app:ApplicationImpl;
     private win:PopupWindow = null;
     private cal:HTMLDivElement = null;
     private days:HTMLDivElement = null;
@@ -40,8 +42,20 @@ export class DatePicker implements Popup, AfterViewInit
     }
 
 
+    constructor(ctx:Context)
+    {
+        this.app = ctx.app["_impl_"];
+    }
+
+
     public close(cancel: boolean): void
     {
+    }
+
+
+    private pick(event:any) : void
+    {
+        console.log("picked");
     }
 
 
@@ -69,6 +83,9 @@ export class DatePicker implements Popup, AfterViewInit
 
         this.years = document.createElement("select");
         this.months = document.createElement("select");
+
+        this.addFieldTriggers(this.years);
+        this.addFieldTriggers(this.months);
 
         this.months.classList.add("datepicker-month");
 
@@ -130,11 +147,8 @@ export class DatePicker implements Popup, AfterViewInit
         for (let i = 0; i < days; i++)
             squares.push([true,i]);
 
-        let total:number = 35;
-        let used:number = squares.length;
-
-        for (let i = used; i < total; i++)
-            squares.push([false,i]);
+        while(squares.length%7 != 0)
+            squares.push([false,0]);
 
         let names:string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -158,6 +172,7 @@ export class DatePicker implements Popup, AfterViewInit
             {
                 cell.innerHTML = (+squares[i][1] + +1)+"";
                 cell.classList.add("datepicker-day");
+                this.addDayTriggers(cell);
             }
             else
             {
@@ -167,6 +182,18 @@ export class DatePicker implements Popup, AfterViewInit
 
         this.days.innerHTML = "";
         this.days.appendChild(table);
+    }
+
+
+    private addDayTriggers(cell:HTMLTableCellElement) : void
+    {
+        cell.addEventListener("click",(event) => {this.pick(event)});
+    }
+
+
+    private addFieldTriggers(change:HTMLSelectElement) : void
+    {
+        change.addEventListener("change",() => {this.draw()});
     }
 
 
@@ -191,9 +218,15 @@ export class DatePicker implements Popup, AfterViewInit
             .datepicker-table
             {
                 color: #333;
-                border-collapse: separate;
                 width: 100%;
-                margin-top: 10px;
+                margin-top: 14px;
+                border-collapse: separate;
+            }
+
+            .datepicker-head
+            {
+                font-weight: bold;
+                text-align: center;
             }
 
             .datepicker-day
@@ -202,7 +235,7 @@ export class DatePicker implements Popup, AfterViewInit
                 padding: 5px;
                 width: 14.28%;
                 text-align: center;
-                background: #2d68c4;
+                background: `+this.app.config.colors.topbar+`;
             }
 
             .datepicker-blank
