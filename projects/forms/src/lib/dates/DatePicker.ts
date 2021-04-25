@@ -16,17 +16,18 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
 
 export class DatePicker implements Popup, AfterViewInit
 {
-    public top?: string;
-    public left?: string;
-    public width?: string;
-    public height?: string;
-    public title: string = "Calendar";
+    public top:string = null;
+    public left:string = null;
+    public width?:string = "300px";
+    public height?:string = "280px";
+    public title:string = "Calendar";
 
     private win:PopupWindow = null;
     private cal:HTMLDivElement = null;
     private days:HTMLDivElement = null;
     private years:HTMLSelectElement = null;
     private months:HTMLSelectElement = null;
+
     @ViewChild("calendar", {read: ElementRef}) private calelem: ElementRef;
 
 
@@ -59,7 +60,7 @@ export class DatePicker implements Popup, AfterViewInit
 
     public build(date:Date, years:number) : void
     {
-        this.cal.innerHTML = "";
+        this.styles();
 
         let month:number = date.getUTCMonth();
         let year:number = date.getUTCFullYear();
@@ -105,6 +106,7 @@ export class DatePicker implements Popup, AfterViewInit
         this.cal.appendChild(this.days);
 
         this.draw();
+        this.months.focus();
    }
 
 
@@ -137,11 +139,14 @@ export class DatePicker implements Popup, AfterViewInit
         let names:string[] = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
         let table:HTMLTableElement = document.createElement("table");
+        table.classList.add("datepicker-table");
+
         let row:HTMLTableRowElement = table.insertRow();
 
         names.forEach((day) =>
         {
             let cell:HTMLTableCellElement = row.insertCell();
+            cell.classList.add("datepicker-head")
             cell.innerHTML = day;
         });
 
@@ -149,9 +154,84 @@ export class DatePicker implements Popup, AfterViewInit
         {
             if (i%7 == 0) row = table.insertRow();
             let cell:HTMLTableCellElement = row.insertCell();
-            if (squares[i][0]) cell.innerHTML = (+squares[i][1] + +1)+"";
+            if (squares[i][0])
+            {
+                cell.innerHTML = (+squares[i][1] + +1)+"";
+                cell.classList.add("datepicker-day");
+            }
+            else
+            {
+                cell.classList.add("datepicker-blank");
+            }
         }
 
-        this.cal.appendChild(table);
+        this.days.innerHTML = "";
+        this.days.appendChild(table);
+
+        console.log("html: "+this.cal.innerHTML)
+    }
+
+
+    private styles() : void
+    {
+        this.cal.innerHTML =
+        `
+            <style>
+
+            /* (C) MONTH + YEAR */
+            .datepicker-month, .datepicker-year
+            {
+                width: 30%;
+                padding: 5px;
+                font-size: 16px;
+                box-sizing: border-box;
+            }
+
+            /* Table */
+            .datepicker-table
+            {
+                color: #333;
+                border-collapse: separate;
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            /* (D) DAY */
+            .datepicker-day
+            {
+                color: #fff;
+                padding: 5px;
+                width: 14.28%;
+                text-align: center;
+                background: #2d68c4;
+            }
+
+            /* HEADER */
+            .datepicker-head
+            {
+                font-weight: bold;
+            }
+
+            /* BLANK DATES */
+            .datepicker-blank
+            {
+                background: #ddd;
+            }
+
+            /* TODAY */
+            .picker-d-td
+            {
+                background: #ffe0d4;
+            }
+
+            /* PICKABLE DATES */
+            .datepicker-day:hover
+            {
+                color: #fff;
+                cursor: pointer;
+                background: #2d68c4;
+            }
+        </style>
+        `;
     }
 }
