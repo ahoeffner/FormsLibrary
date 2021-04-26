@@ -34,6 +34,11 @@ export class Block
         return(this._impl_.getValue(record,field));
     }
 
+    public getQueryValue(field:string) : any
+    {
+        return(this._impl_.getFieldValue(0,field));
+    }
+
     public async setValue(record:number, field:string, value:any) : Promise<boolean>
     {
         return(await this._impl_.setValue(record,field,value));

@@ -206,6 +206,7 @@ export class Condition
 
     public setCondition(condition:string) : void
     {
+        this.error$ = null;
         this.condition$ = condition;
     }
 
