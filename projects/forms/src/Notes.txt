@@ -22,7 +22,7 @@ Change project angular.json to include folder-open etc:
     "projects/demo/src/assets",
     {
     "glob": "**/*",
-    "input": "./node_modules/m42forms/src/lib/assets/",
+    "input": "./node_modules/forms42/src/lib/assets/",
     "output": "./assets/"
     }
 ],
