@@ -291,7 +291,7 @@ export class FieldInstance implements AfterViewInit
 
     public validate() : boolean
     {
-        if (this.state == RecordState.qmode)
+        if (this.state == RecordState.qmode || this.state == RecordState.na)
             return(true);
 
         if (!this.clazz.validate())
