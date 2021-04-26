@@ -8,9 +8,10 @@ export class Condition
     private value$:any;
     private error$:string;
     private column$:string;
-    private placeholder:any;
+    private placeholder$:any;
     private operator$:string;
     private datatype$:Column;
+    private condition$:string;
     private level$:number = 0;
     private type$:string = "and";
     private prev$:Condition = null;
@@ -38,13 +39,13 @@ export class Condition
         return(condition);
     }
 
-    
+
     constructor(column:string, value:any, datatype?:Column)
     {
         this.error$ = null;
         this.column$ = column;
         this.datatype$ = datatype;
-        this.placeholder = column + Condition.ubid();
+        this.placeholder$ = column + Condition.ubid();
 
         if (this.column$ == null)
         {
@@ -52,7 +53,7 @@ export class Condition
             return;
         }
 
-        if (value != null && this.datatype$ == null)
+        if (value != null)
         {
             let type:string = value.constructor.name.toLowerCase();
 
@@ -61,7 +62,7 @@ export class Condition
                 this.operator$ = "=";
                 this.datatype$ = Column.date;
                 this.value$ = (value as Date).getTime();
-                this.bindvalues$.push({name: this.placeholder, value: this.value$, type: this.datatype$});
+                this.bindvalues$.push({name: this.placeholder$, value: this.value$, type: this.datatype$});
                 return;
             }
 
@@ -70,7 +71,7 @@ export class Condition
                 this.value$ = value;
                 this.operator$ = "=";
                 this.datatype$ = Column.decimal;
-                this.bindvalues$.push({name: this.placeholder, value: this.value$, type: this.datatype$});
+                this.bindvalues$.push({name: this.placeholder$, value: this.value$, type: this.datatype$});
                 return;
             }
         }
@@ -161,21 +162,40 @@ export class Condition
                 let edate:number = date.getTime() + 60 * 60 * 24 * 1000;
 
                 this.value$ = [sdate,edate];
-                this.placeholder = [this.placeholder+"-0",this.placeholder+"-1"];
+                this.placeholder$ = [this.placeholder$+"-0",this.placeholder$+"-1"];
             }
         }
 
 
         if (this.operator$ != "between")
         {
-            this.bindvalues$.push({name: this.placeholder, value: this.value$, type: this.datatype$});
+            this.bindvalues$.push({name: this.placeholder$, value: this.value$, type: this.datatype$});
         }
         else
         {
-            this.bindvalues$.push({name: this.placeholder[0], value: this.value$[0], type: this.datatype$});
-            this.bindvalues$.push({name: this.placeholder[1], value: this.value$[1], type: this.datatype$});
+            this.bindvalues$.push({name: this.placeholder$[0], value: this.value$[0], type: this.datatype$});
+            this.bindvalues$.push({name: this.placeholder$[1], value: this.value$[1], type: this.datatype$});
         }
     }
+
+
+    public get column() : string
+    {
+        return(this.column$);
+    }
+
+
+    public get placeholder() : string|string[]
+    {
+        return(this.placeholder$);
+    }
+
+
+    public set condition(condition:string)
+    {
+        this.condition$ = condition;
+    }
+
 
     public error() : string
     {
@@ -332,13 +352,16 @@ export class Condition
 
     private clause(cond:Condition) : string
     {
+        if (this.condition$ != null)
+            return(this.condition$);
+            
         if (cond.operator$.startsWith("is"))
             return(cond.column$+" "+cond.operator$);
 
         else if (cond.operator$ == "between")
-            return(cond.column$+" between :"+cond.placeholder[0]+" and :"+cond.placeholder[1]);
+            return(cond.column$+" between :"+cond.placeholder$[0]+" and :"+cond.placeholder$[1]);
 
         else
-            return(cond.column$+" "+cond.operator$+" :"+cond.placeholder);
+            return(cond.column$+" "+cond.operator$+" :"+cond.placeholder$);
     }
 }

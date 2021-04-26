@@ -92,7 +92,7 @@ export class FieldInstance implements AfterViewInit
     {
         let name:string = this.block$+"."+this.name;
         if (this.id.length > 0) name += "."+this.id;
-        //name += "["+this.row+"]("+this.guid+")";
+        name += "["+this.row+"]("+this.guid+")";
         return(name);
     }
 

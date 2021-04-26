@@ -1,5 +1,4 @@
 import { Popup } from "../popup/Popup";
-import { Field } from "../input/Field";
 import { KeyCodes } from "../keymap/KeyCodes";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Context } from "../application/Context";
@@ -25,6 +24,10 @@ export class DatePicker implements Popup, AfterViewInit
     public width?:string = "256px";
     public height?:string = "256px";
 
+    private field:string
+    private record:number;
+    private impl:BlockImpl;
+
     private cdate:Date = null;
     private app:ApplicationImpl;
     private win:PopupWindow = null;
@@ -41,8 +44,10 @@ export class DatePicker implements Popup, AfterViewInit
         let pinst:PopupInstance = new PopupInstance();
         pinst.display(app,DatePicker);
 
-        let dpwin:DatePicker = pinst.popup() as DatePicker;
-        dpwin.date = date;
+        let datepicker:DatePicker = pinst.popup() as DatePicker;
+
+        datepicker.date = date;
+        datepicker.setDestination(impl,record,field);
     }
 
 
@@ -53,7 +58,7 @@ export class DatePicker implements Popup, AfterViewInit
     }
 
 
-    public close(cancel: boolean): void
+    public close(_cancel: boolean): void
     {
         this.win.closeWindow();
     }
@@ -63,6 +68,14 @@ export class DatePicker implements Popup, AfterViewInit
     {
         if (date == null) date = new Date();
         this.cdate = date;
+    }
+
+
+    public setDestination(impl:BlockImpl, record:number, field:string) : void
+    {
+        this.impl = impl;
+        this.field = field;
+        this.record = record;
     }
 
 
@@ -78,8 +91,11 @@ export class DatePicker implements Popup, AfterViewInit
 
         if (year != cyear || month != cmonth || day != cday)
         {
-            this.cdate = new Date(Date.UTC(year, month-1, day))
+            this.cdate = new Date(Date.UTC(year, month-1, day));
+            this.impl.setValue(this.record,this.field,this.cdate);
         }
+
+        this.close(false);
     }
 
 

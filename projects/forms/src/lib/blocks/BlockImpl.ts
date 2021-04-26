@@ -365,8 +365,13 @@ export class BlockImpl
     {
         if (this.data == null) return(false);
 
-        if (!await this.lockrecord(record,column))
-            return(false);
+        if (this.state == FormState.entqry)
+        {
+            let field:Field = this.records[record-this.offset].getField(column);
+            if (field != null) field.value = value;
+            return(true);
+        }
+
 
         if (+record >= +this.offset && +record < this.sum(this.offset,this.rows))
         {
@@ -380,6 +385,9 @@ export class BlockImpl
             }
 
             let previous:any = this.data.getValue(+record,column);
+
+            if (!await this.lockrecord(record,column))
+                return(false);
 
             if (!this.data.setValue(+record,column,value))
                 return(false);
@@ -1195,6 +1203,8 @@ export class BlockImpl
 
         if (type == "focus")
         {
+            this.field$ = field;
+
             if (this.form != null)
                 this.form.block = this;
 
@@ -1216,7 +1226,6 @@ export class BlockImpl
                     this.masterdetail.querydetails(this,true,true);
             }
 
-            this.field$ = field;
             this.row = field.row;
             this.records$[+field.row].current = true;
 
