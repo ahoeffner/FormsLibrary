@@ -178,24 +178,36 @@ export class Condition
         }
     }
 
-
     public get column() : string
     {
         return(this.column$);
     }
-
 
     public get placeholder() : string|string[]
     {
         return(this.placeholder$);
     }
 
+    public getValue() : any
+    {
+        if (this.bindvalues$.length == 0)
+            return(null);
 
-    public set condition(condition:string)
+        if (this.bindvalues$.length == 1)
+            return(this.bindvalues$[0].value);
+
+        if (this.bindvalues$.length > 1)
+        {
+            let vals:any[] = [];
+            this.bindvalues$.forEach((bv) => {vals.push(bv.value)});
+            return(vals);
+        }
+    }
+
+    public setCondition(condition:string) : void
     {
         this.condition$ = condition;
     }
-
 
     public error() : string
     {
@@ -295,7 +307,7 @@ export class Condition
     }
 
 
-    public bindvalues() : BindValue[]
+    public getAllBindvalues() : BindValue[]
     {
         let bindvalues:BindValue[] = [];
         let cd:Condition = this.first();
@@ -354,7 +366,7 @@ export class Condition
     {
         if (this.condition$ != null)
             return(this.condition$);
-            
+
         if (cond.operator$.startsWith("is"))
             return(cond.column$+" "+cond.operator$);
 

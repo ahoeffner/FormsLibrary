@@ -232,7 +232,7 @@ export class MasterDetail
                 stmt.columns = dkey.columns();
 
                 sub.sql = stmt.build().sql;
-                sub.bindvalues = cond.bindvalues();
+                sub.bindvalues = cond.getAllBindvalues();
             }
 
             let dep:dependencies = this.links.get(block.alias);

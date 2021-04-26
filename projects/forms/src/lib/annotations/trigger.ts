@@ -2,7 +2,7 @@ import { Utils } from "../utils/Utils";
 import { Trigger } from "../events/Triggers";
 import { TriggerDefinition, TriggerDefinitions } from "./TriggerDefinitions";
 
-export const trigger = (trigger:Trigger,field:string|string[]) =>
+export const trigger = (trigger:Trigger,field?:string|string[]) =>
 {
     function define(comp:any, func?:string)
     {
@@ -27,6 +27,8 @@ export const trigger = (trigger:Trigger,field:string|string[]) =>
         if (ctype == "Block") block = true;
 
         let fields:string[] = [];
+        if (field == null) field = [null];
+
         if (field.constructor.name == "Array") fields = field as string[];
         else                                   fields.push(field as string);
 

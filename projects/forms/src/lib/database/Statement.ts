@@ -408,7 +408,7 @@ export class Statement
         let bindvalues:BindValue[] = this.bindvalues;
 
         if (this.condition$ != null)
-            this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+            this.condition$.getAllBindvalues().forEach((bind) => {bindvalues.push(bind);});
 
         // Bindvalues for the whereclause
         this.bindvalues.forEach((bindv) =>
@@ -453,7 +453,7 @@ export class Statement
         if (this.condition$ != null)
         {
             sql += " "+this.condition$.toString();
-            this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+            this.condition$.getAllBindvalues().forEach((bind) => {bindvalues.push(bind);});
         }
 
         let bindvals:bindvalue[] = [];
@@ -508,7 +508,7 @@ export class Statement
         if (this.condition$ != null)
         {
             sql += " "+this.condition$.toString();
-            this.condition$.bindvalues().forEach((bind) => {bindvalues.push(bind);});
+            this.condition$.getAllBindvalues().forEach((bind) => {bindvalues.push(bind);});
         }
 
         let bindvals:bindvalue[] = [];

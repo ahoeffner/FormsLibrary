@@ -20,13 +20,13 @@ export class TriggerDefinitions
     {
         let parts:string[] = TriggerDefinitions.split(def.field);
 
-        if (isblock && parts.length != 1)
+        if (isblock && parts.length > 1)
         {
             console.log("validate must specify field without '.' or ' '");
             return;
         }
 
-        if (!isblock && parts.length != 2)
+        if (!isblock && (parts.length < 1 || parts.length > 2))
         {
             console.log("validate must specify alias.field without '.' or ' '");
             return;
@@ -40,13 +40,13 @@ export class TriggerDefinitions
         if (isblock)
         {
             block = cname;
-            field = parts.shift();
+            if (parts.length > 0) field = parts.shift();
         }
         else
         {
             form = cname;
             block = parts.shift();
-            field = parts.shift();
+            if (parts.length > 0) field = parts.shift();
         }
 
         def.field = field;
@@ -108,6 +108,7 @@ export class TriggerDefinitions
 
     private static split(name:string) : string[]
     {
+        if (name == null) return([]);
         let tokens:string[] = name.trim().split(".");
 
         for(let i = 0; i < tokens.length; i++)
