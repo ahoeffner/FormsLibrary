@@ -222,6 +222,12 @@ export class Statement
         return(this);
     }
 
+    public whand(column:string, value:any, datatype?:Column) : Statement
+    {
+        if (this.condition$ != null) return(this.and(column,value,datatype));
+        else                         return(this.where(column,value,datatype));
+    }
+
     public and(column:string, value:any, datatype?:Column) : Statement
     {
         if (this.condition$ == null)
