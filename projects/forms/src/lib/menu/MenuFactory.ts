@@ -9,10 +9,10 @@ export class MenuFactory
 {
     constructor(private builder:Builder) {}
 
-    public create(app:ApplicationImpl, menu?:Menu) : ComponentRef<DropDownMenu>
+    public create(menu?:Menu) : ComponentRef<DropDownMenu>
     {
         let ref:ComponentRef<DropDownMenu> = this.builder.createComponent(DropDownMenu);
-        (ref.instance as DropDownMenu).display(app,menu);
+        (ref.instance as DropDownMenu).display(menu);
         return(ref);
     }
 }

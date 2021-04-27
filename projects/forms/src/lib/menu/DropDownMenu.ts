@@ -143,18 +143,18 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     }
 
 
-    public display(app:ApplicationImpl, menu?:Menu) : void
+    public display(menu?:Menu) : void
     {
+        if (menu == null)
+            return;
+
         if (this.html == null)
         {
-            setTimeout(() => {this.display(app,menu);},10);
+            setTimeout(() => {this.display(menu);},10);
             return;
         }
 
         this.app$ = this.ctx.app["_impl_"];
-
-        if (menu == null)
-            menu = new DefaultMenu();
 
         this.menu = menu;
         let intf:MenuInterface = new MenuInterface(this);

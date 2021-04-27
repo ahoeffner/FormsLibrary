@@ -430,7 +430,7 @@ export class ApplicationImpl
         if (menu == null) return(null);
 
         this.state.addMenu(menu);
-        let ddmenu:ComponentRef<DropDownMenu> = this.mfactory.create(this,menu);
+        let ddmenu:ComponentRef<DropDownMenu> = this.mfactory.create(menu);
 
         return(ddmenu);
     }
