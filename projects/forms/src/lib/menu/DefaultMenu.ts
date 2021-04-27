@@ -20,6 +20,7 @@ export class DefaultMenu implements Menu
                     {name: "execute query",     action: "executeFormQuery"},
                     {name: "clear",             action: "clear"},
                     {name: "close",             action: "close"},
+                    {name: "shortkeys",         action: "showkeymap"},
                 ]
             }
             ,

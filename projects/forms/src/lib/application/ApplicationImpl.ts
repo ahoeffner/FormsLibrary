@@ -512,6 +512,7 @@ export class ApplicationImpl
 
         if
         (
+            key == keymap.close           ||
             key == keymap.delete          ||
             key == keymap.listval         ||
             key == keymap.insertafter     ||

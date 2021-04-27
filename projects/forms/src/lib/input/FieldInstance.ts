@@ -522,6 +522,7 @@ export class FieldInstance implements AfterViewInit
                 // handled by application
                 if
                 (
+                    key == keymap.close           ||
                     key == keymap.listval         ||
                     key == keymap.connect         ||
                     key == keymap.disconnect      ||

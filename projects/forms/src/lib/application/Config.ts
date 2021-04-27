@@ -1,5 +1,5 @@
 import { dates } from "../dates/dates";
-import { KeyMapper } from "../keymap/KeyMap";
+import { KeyMap, KeyMapper } from "../keymap/KeyMap";
 import { Injectable } from "@angular/core";
 import { MacKeyMap } from "../keymap/MacKeyMap";
 import { HttpClient } from "@angular/common/http";
@@ -13,12 +13,14 @@ import { Theme, Pink, Grey, Yellow, Indigo, defaultTheme } from "./Themes";
 
 export class Config
 {
+    private keymap:KeyMap;
     private colors$:Theme;
     private datefmt$:string;
     private config:any = null;
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
-    private calendar:string = "Calendar";
+    private caltitle:string = "Calendar";
+    private keymaphelp:string = "Shortkeys";
     private themes:Map<string,Theme> = new Map<string,Theme>();
     private lang:string = Intl.DateTimeFormat().resolvedOptions().locale;
 
@@ -32,7 +34,9 @@ export class Config
         this.themes.set("yellow",new Yellow());
         this.themes.set("default",new defaultTheme());
 
-        KeyMapper.index(new MacKeyMap());
+        this.keymap = new MacKeyMap();
+
+        KeyMapper.index(this.keymap);
         this.colors = this.themes.get("default");
     }
 
@@ -53,7 +57,10 @@ export class Config
             this.lang = this.config["locale"];
 
         if (this.config["calendar"] != null)
-            this.calendar = this.config["calendar"];
+            this.caltitle = this.config["calendar"];
+
+        if (this.config["keymap"] != null)
+            this.keymaphelp = this.config["keymap"];
     }
 
     public async ready() : Promise<boolean>
@@ -112,14 +119,20 @@ export class Config
     }
 
 
-    public set calendarname(name:string)
+    public get keymapping() : KeyMap
     {
-        this.calendar = name;
+        return(this.keymap);
+    }
+
+
+    public get keymaptitle() : string
+    {
+        return(this.keymaphelp);
     }
 
 
     public get calendarname() : string
     {
-        return(this.calendar);
+        return(this.caltitle);
     }
 }

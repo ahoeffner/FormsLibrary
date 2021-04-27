@@ -14,6 +14,7 @@ export interface KeyMap
     escape:string;
 
     zoom:string;
+    close:string;
     listval:string;
 
     delete:string;
@@ -44,12 +45,16 @@ export interface KeyMap
 
     enterquery:string;
     executequery:string;
+
+    map:string;
 }
 
 export enum keymap
 {
     enter,
     escape,
+
+    close,
 
     listval,
 

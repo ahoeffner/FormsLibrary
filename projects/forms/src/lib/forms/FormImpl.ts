@@ -1058,7 +1058,8 @@ export class FormImpl
 
     public sendkey(event:any,key:keymap) : void
     {
-        this.block?.sendkey(event,key);
+        if (key == keymap.close) this.close(true);
+        else       this.block?.sendkey(event,key);
     }
 
 

@@ -6,5 +6,7 @@
     "datefmt": "DD-MM-YYYY",
     "calendar": "Vælg dato",
 
+    "keymap": "shortkeys",
+
     "database.js" : "http://localhost:8001"
 }

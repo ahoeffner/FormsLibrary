@@ -36,6 +36,7 @@ export class DefaultMenuHandler extends MenuHandler
     private init() : void
     {
         this.disable();
+        this.enable("/form/shortkeys");
 
         if (this.form != null)
         {
@@ -171,5 +172,10 @@ export class DefaultMenuHandler extends MenuHandler
     {
         this.form?.close(false);
         this.init();
+    }
+
+    public showkeymap() : void
+    {
+        this.app.showKeyMap();
     }
 }

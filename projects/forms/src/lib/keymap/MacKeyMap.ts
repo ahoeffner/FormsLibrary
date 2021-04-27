@@ -4,6 +4,7 @@ import { KeyMap, KeyMapper } from "./KeyMap";
 export class MacKeyMap implements KeyMap
 {
     zoom:string = KeyMapper.map({code: 90, ctrl: true});
+    close:string = KeyMapper.map({code: 87, ctrl: true});
 
     enter:string = KeyMapper.map({code: KeyCodes.enter});
     escape:string = KeyMapper.map({code: KeyCodes.escape});
@@ -39,4 +40,17 @@ export class MacKeyMap implements KeyMap
 
     enterquery:string = KeyMapper.map({code: 81, ctrl: true});
     executequery:string = KeyMapper.map({code: 81, shift: true, ctrl: true});
+
+    map:string;
+
+
+    public constructor()
+    {
+        this.map =
+        `
+        Keymap:
+            <table>
+            </table>
+        `;
+    }
 }

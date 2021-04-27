@@ -3,6 +3,7 @@ import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Context } from "./Context";
 import { Form } from "../forms/Form";
+import { KeyMapHelp } from "./KeyMapHelp";
 import { Builder } from "../utils/Builder";
 import { Injectable } from '@angular/core';
 import { FormImpl } from "../forms/FormImpl";
@@ -126,6 +127,11 @@ export class Application
             await this._impl_.appstate.clearAllForms();
             await this._impl_.connection.rollback();
         }
+    }
+
+    public showKeyMap() : void
+    {
+        KeyMapHelp.show(this._impl_);
     }
 
     public alert(message:string, title?:string, width?:string, height?:string) : void
