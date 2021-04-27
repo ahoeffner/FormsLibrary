@@ -527,6 +527,21 @@ export class BlockImpl
     }
 
 
+    public showDatePicker(field:string, row?:number) : void
+    {
+        if (row == null || row == -1)
+            row = this.row;
+
+        let record:number = this.sum(this.offset,row);
+        let fld:Field = this.records[+record].getField(field);
+
+        let value:Date = new Date();
+        if (fld != null) value = fld.value;
+
+        DatePicker.show(this.app,this,record,field,value);
+    }
+
+
     public showListOfValues(field:string, id?:string, row?:number) : void
     {
         if (field == null)

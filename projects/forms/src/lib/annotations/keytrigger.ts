@@ -1,8 +1,10 @@
 import { Utils } from "../utils/Utils";
+import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { TriggerDefinition, TriggerDefinitions } from "./TriggerDefinitions";
 
-export const trigger = (trigger:Trigger,field?:string|string[]) =>
+
+export const keytrigger = (trigger:Trigger,key:keymap|keymap[]) =>
 {
     function define(comp:any, func?:string)
     {
@@ -19,24 +21,23 @@ export const trigger = (trigger:Trigger,field?:string|string[]) =>
 
         if (ctype != "Block" && ctype != "Form")
         {
-            console.log("@trigger can only be applied on Block or Form");
+            console.log("@keytrigger can only be applied on Block or Form");
             return;
         }
 
         let block:boolean = false;
         if (ctype == "Block") block = true;
 
-        let fields:string[] = [];
-        if (field == null) field = [null];
+        let keys:keymap[] = [];
 
-        if (field.constructor.name == "Array") fields = field as string[];
-        else                                   fields.push(field as string);
+        if (key.constructor.name == "Array") keys = key as keymap[];
+        else                                 keys.push(key as keymap);
 
-        fields.forEach((fld)=>
+        keys.forEach((key)=>
         {
             let trg:TriggerDefinition =
             {
-                field: fld,
+                key: key,
                 block: block,
                 params: params,
                 func: comp[func],

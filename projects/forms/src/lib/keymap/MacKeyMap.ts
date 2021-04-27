@@ -3,6 +3,8 @@ import { KeyMap, KeyMapper } from "./KeyMap";
 
 export class MacKeyMap implements KeyMap
 {
+    zoom:string = KeyMapper.map({code: 90, ctrl: true});
+
     enter:string = KeyMapper.map({code: KeyCodes.enter});
     escape:string = KeyMapper.map({code: KeyCodes.escape});
 

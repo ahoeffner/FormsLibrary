@@ -1,22 +1,42 @@
+import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { TriggerFunction } from "../events/TriggerFunction";
 
+
 export interface TriggerDefinition
 {
-    field:string;
+    key?:keymap,
+    field?:string;
     block:boolean;
     trigger:Trigger;
     params:string[];
     func:TriggerFunction;
 }
 
+
 export class TriggerDefinitions
 {
-    private static btriggers:Map<string,Map<string,TriggerDefinition>> = new Map<string,Map<string,TriggerDefinition>>();
-    private static fbtriggers:Map<string,Map<string,Map<string,TriggerDefinition>>> = new Map<string,Map<string,Map<string,TriggerDefinition>>>();
+    private static bftriggers:Map<string,Map<string,TriggerDefinition>> = new Map<string,Map<string,TriggerDefinition>>();
+    private static bktriggers:Map<string,Map<string,TriggerDefinition>> = new Map<string,Map<string,TriggerDefinition>>();
+    private static fktriggers:Map<string,Map<string,TriggerDefinition>> = new Map<string,Map<string,TriggerDefinition>>();
+    private static fftriggers:Map<string,Map<string,Map<string,TriggerDefinition>>> = new Map<string,Map<string,Map<string,TriggerDefinition>>>();
 
 
     public static add(isblock:boolean, cname:string, def:TriggerDefinition) : void
+    {
+        if (def.key == null) this.addft(isblock,cname,def);
+        else                 this.addkt(isblock,cname,def);
+    }
+
+
+    private static addkt(isblock:boolean, cname:string, def:TriggerDefinition) : void
+    {
+        if (isblock) TriggerDefinitions.addKeyTrigger(cname,def);
+        else         TriggerDefinitions.addFormKeyTrigger(cname,def);
+    }
+
+
+    private static addft(isblock:boolean, cname:string, def:TriggerDefinition) : void
     {
         let parts:string[] = TriggerDefinitions.split(def.field);
 
@@ -51,33 +71,47 @@ export class TriggerDefinitions
 
         def.field = field;
 
-        if (isblock) TriggerDefinitions.addTrigger(block,field,def);
-        else         TriggerDefinitions.addFormTrigger(form,block,field,def);
+        if (isblock) TriggerDefinitions.addFieldTrigger(block,field,def);
+        else         TriggerDefinitions.addFormFieldTrigger(form,block,field,def);
     }
 
 
-    private static addTrigger(block:string,field:string,def:TriggerDefinition)
+    private static addFieldTrigger(block:string,field:string,def:TriggerDefinition)
     {
-        let triggers:Map<string,TriggerDefinition> = TriggerDefinitions.btriggers.get(block);
+        let triggers:Map<string,TriggerDefinition> = TriggerDefinitions.bftriggers.get(block);
 
         if (triggers == null)
         {
             triggers = new Map<string,TriggerDefinition>();
-            TriggerDefinitions.btriggers.set(block,triggers);
+            TriggerDefinitions.bftriggers.set(block,triggers);
         }
 
         triggers.set(field+"["+Trigger[def.trigger]+"]",def);
     }
 
 
-    private static addFormTrigger(form:string,block:string,field:string,def:TriggerDefinition)
+    private static addKeyTrigger(block:string,def:TriggerDefinition)
     {
-        let ftriggers:Map<string,Map<string,TriggerDefinition>> = TriggerDefinitions.fbtriggers.get(form);
+        let triggers:Map<string,TriggerDefinition> = TriggerDefinitions.bktriggers.get(block);
+
+        if (triggers == null)
+        {
+            triggers = new Map<string,TriggerDefinition>();
+            TriggerDefinitions.bktriggers.set(block,triggers);
+        }
+
+        triggers.set(keymap[def.key]+"["+Trigger[def.trigger]+"]",def);
+    }
+
+
+    private static addFormFieldTrigger(form:string,block:string,field:string,def:TriggerDefinition)
+    {
+        let ftriggers:Map<string,Map<string,TriggerDefinition>> = TriggerDefinitions.fftriggers.get(form);
 
         if (ftriggers == null)
         {
             ftriggers = new Map<string,Map<string,TriggerDefinition>>();
-            TriggerDefinitions.fbtriggers.set(form,ftriggers);
+            TriggerDefinitions.fftriggers.set(form,ftriggers);
         }
 
         let triggers:Map<string,TriggerDefinition> = ftriggers.get(block);
@@ -92,17 +126,43 @@ export class TriggerDefinitions
     }
 
 
-    public static getTriggers(block:string) : Map<string,TriggerDefinition>
+    private static addFormKeyTrigger(form:string,def:TriggerDefinition)
     {
-        return(new Map(TriggerDefinitions.btriggers.get(block.toLowerCase())));
+        let triggers:Map<string,TriggerDefinition> = TriggerDefinitions.fktriggers.get(form);
+
+        if (triggers == null)
+        {
+            triggers = new Map<string,TriggerDefinition>();
+            TriggerDefinitions.fktriggers.set(form,triggers);
+        }
+
+        triggers.set(keymap[def.key]+"["+Trigger[def.trigger]+"]",def);
     }
 
 
-    public static getFormTriggers(form:string,block:string) : Map<string,TriggerDefinition>
+    public static getFieldTriggers(block:string) : Map<string,TriggerDefinition>
     {
-        let triggers:Map<string,Map<string,TriggerDefinition>> = TriggerDefinitions.fbtriggers.get(form.toLowerCase());
+        return(new Map(TriggerDefinitions.bftriggers.get(block.toLowerCase())));
+    }
+
+
+    public static getKeyTriggers(block:string) : Map<string,TriggerDefinition>
+    {
+        return(new Map(TriggerDefinitions.bktriggers.get(block.toLowerCase())));
+    }
+
+
+    public static getFormFieldTriggers(form:string,block:string) : Map<string,TriggerDefinition>
+    {
+        let triggers:Map<string,Map<string,TriggerDefinition>> = TriggerDefinitions.fftriggers.get(form.toLowerCase());
         if (triggers != null) return(new Map(triggers.get(block.toLowerCase())));
         return(new Map());
+    }
+
+
+    public static getFormKeyTriggers(form:string) : Map<string,TriggerDefinition>
+    {
+        return(new Map(TriggerDefinitions.fktriggers.get(form.toLowerCase())));
     }
 
 

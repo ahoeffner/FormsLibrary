@@ -147,6 +147,11 @@ export class Block
         return(this._impl_.setPossibleValues(field,values,enforce));
     }
 
+    public showDatePicker(field:string, row?:number) : void
+    {
+        this._impl_.showDatePicker(field,row);
+    }
+
     public showListOfValues(field:string, id?:string, row?:number) : void
     {
         this._impl_.showListOfValues(field,id,row);

@@ -609,15 +609,28 @@ export class FormImpl
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);
 
-            let btriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getTriggers(block.name);
-            let ftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormTriggers(this.name,block.alias);
+            // Field triggers, form overrides
+            let bftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFieldTriggers(block.name);
+            let fftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,block.alias);
 
-            ftriggers.forEach((def,trg) => {btriggers.set(trg,def)});
+            fftriggers.forEach((def,trg) => {bftriggers.set(trg,def)});
 
-            btriggers.forEach((def) =>
+            bftriggers.forEach((def) =>
             {
                 if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field)
                 else            block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field);
+            });
+
+            // Key triggers, form overrides
+            let bktriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFieldTriggers(block.name);
+            let fktriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,block.alias);
+
+            fktriggers.forEach((def,trg) => {bktriggers.set(trg,def)});
+
+            bktriggers.forEach((def) =>
+            {
+                if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field, def.key)
+                else            block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field, def.key);
             });
 
             // Create data-backing table

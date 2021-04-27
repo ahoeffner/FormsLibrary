@@ -15,6 +15,7 @@ export {connect} from './lib/annotations/connect';
 export {destroy} from './lib/annotations/destroy';
 export {trigger} from './lib/annotations/trigger';
 export {database} from './lib/annotations/database';
+export {keytrigger} from './lib/annotations/keytrigger';
 export {disconnect} from './lib/annotations/disconnect';
 export {listofvalues} from './lib/annotations/listofvalues';
 export {JOINDefinition} from './lib/annotations/JOINDefinitions';

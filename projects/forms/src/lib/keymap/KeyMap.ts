@@ -13,6 +13,7 @@ export interface KeyMap
     enter:string;
     escape:string;
 
+    zoom:string;
     listval:string;
 
     delete:string;
@@ -79,7 +80,9 @@ export enum keymap
     clearblock,
 
     enterquery,
-    executequery
+    executequery,
+
+    zoom
 }
 
 
