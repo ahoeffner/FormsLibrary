@@ -121,6 +121,16 @@ export class Block
         return(this._impl_.record);
     }
 
+    public exists(record:number) : boolean
+    {
+        return(this._impl_.exists(record));
+    }
+
+    public displayed(record:number) : boolean
+    {
+        return(this._impl_.displayed(record));
+    }
+
     public get filtered() : boolean
     {
         return(this._impl_.searchfilter.length > 0);

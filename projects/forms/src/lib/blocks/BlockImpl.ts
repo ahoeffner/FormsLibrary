@@ -106,6 +106,28 @@ export class BlockImpl
     }
 
 
+    public exists(record:number) : boolean
+    {
+        if (+record < +this.data.rows) return(true);
+        return(false);
+    }
+
+
+    public displayed(record:number) : boolean
+    {
+        if (+record < +this.offset) return(false);
+        if (+record > +this.sum(this.offset,this.rows)) return(false);
+
+        let row:number = +record - +this.offset;
+        let state:RecordState = this.records[+row].state;
+
+        if (state == RecordState.na || state == RecordState.qmode)
+            return(false);
+
+        return(true);
+    }
+
+
     public get rows() : number
     {
         return(this.records$.length);
