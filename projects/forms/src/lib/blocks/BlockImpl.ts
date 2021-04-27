@@ -403,9 +403,10 @@ export class BlockImpl
     }
 
 
-    public getFieldValue(row:number, column:string)
+    public getQueryValue(row:number, column:string)
     {
         if (row < 0 || row >= this.rows) return(null);
+        if (this.records[+row].state != RecordState.qmode) return(null);
         return(this.records[+row].getField(column)?.value);
     }
 

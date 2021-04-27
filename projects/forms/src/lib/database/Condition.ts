@@ -365,7 +365,7 @@ export class Condition
 
     private clause(cond:Condition) : string
     {
-        if (this.condition$ != null)
+        if (cond.condition$ != null)
             return(this.condition$);
 
         if (cond.operator$.startsWith("is"))

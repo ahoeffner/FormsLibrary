@@ -36,7 +36,7 @@ export class Block
 
     public getQueryValue(field:string) : any
     {
-        return(this._impl_.getFieldValue(0,field));
+        return(this._impl_.getQueryValue(0,field));
     }
 
     public async setValue(record:number, field:string, value:any) : Promise<boolean>
