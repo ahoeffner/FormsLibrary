@@ -7,6 +7,7 @@ import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { TableDefinition } from "../database/TableDefinition";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
+import { NameValuePair } from "../utils/NameValuePair";
 
 
 export class Block
@@ -57,6 +58,17 @@ export class Block
     public get ready() : boolean
     {
         return(this._impl_.ready)
+    }
+
+    public get searchfilter() : NameValuePair[]
+    {
+        return(this._impl_.searchfilter);
+    }
+
+
+    public set searchfilter(filter:NameValuePair[])
+    {
+        this._impl_.searchfilter = filter;
     }
 
     public async enterquery(override?:boolean) : Promise<boolean>

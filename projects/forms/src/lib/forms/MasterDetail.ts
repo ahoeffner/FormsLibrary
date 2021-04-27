@@ -2,10 +2,12 @@ import { Key } from "../blocks/Key";
 import { FormImpl } from "./FormImpl";
 import { Field } from "../input/Field";
 import { Column } from "../database/Column";
+import { Trigger } from "../events/Triggers";
 import { BlockImpl } from "../blocks/BlockImpl";
 import { Condition } from "../database/Condition";
 import { BindValue } from "../database/BindValue";
 import { MasterDetailQuery } from "./MasterDetailQuery";
+import { SQLTriggerEvent } from "../events/TriggerEvent";
 import { JOINDefinition } from "../annotations/JOINDefinitions";
 import { bindvalue, SQL, Statement } from "../database/Statement";
 
@@ -149,7 +151,7 @@ export class MasterDetail
 
 
     // Build subquery from details
-    public getDetailQuery() : SQL
+    public async getDetailQuery() : Promise<SQL>
     {
         let block:BlockImpl = this.master$;
         this.master$ = null;
@@ -171,7 +173,7 @@ export class MasterDetail
         if (dep != null && dep.details != null)
         {
             for (let i = 0; i < dep.details.length; i++)
-                this.subquery(sub,dep.details[i]);
+                await this.subquery(sub,dep.details[i]);
         }
 
         let subq:SQL = null;
@@ -198,7 +200,7 @@ export class MasterDetail
     }
 
 
-    private subquery(parent:subquery,detail:any) : void
+    private async subquery(parent:subquery,detail:any)
     {
         let mkey:Key = detail.dkey;
         let dkey:Key = detail.dkey;
@@ -222,6 +224,11 @@ export class MasterDetail
             let fields:Field[] = block.records[0].fields;
             let stmt:Statement = block.data.parseQuery([],null,fields);
 
+            let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
+
+            if (!await block.invokeTriggers(Trigger.PreQuery,event))
+                return;
+
             block.cancelqry();
 
             let cond:Condition = stmt.getCondition();
@@ -240,7 +247,7 @@ export class MasterDetail
             if (dep != null && dep.details != null)
             {
                 for (let i = 0; i < dep.details.length; i++)
-                    this.subquery(sub,dep.details[i]);
+                    await this.subquery(sub,dep.details[i]);
             }
         }
     }

@@ -661,7 +661,7 @@ export class BlockImpl
 
         if (this.masterdetail != null)
         {
-            subquery = this.masterdetail.getDetailQuery();
+            subquery = await this.masterdetail.getDetailQuery();
             this.masterdetail.querydetails(this,true,false);
         }
 
