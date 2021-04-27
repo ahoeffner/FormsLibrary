@@ -37,12 +37,14 @@ export class KeyTriggerEvent extends TriggerEvent
 {
     private key$:keymap;
     private field$:string;
+    private block$:string;
 
-    constructor(field:FieldInstance, key:keymap, jsevent:any)
+    constructor(block:string, field:FieldInstance, key:keymap, jsevent:any)
     {
         super(0,jsevent);
 
         this.key$ = key;
+        this.block$ = block;
 
         if (field != null)
         {
@@ -54,6 +56,11 @@ export class KeyTriggerEvent extends TriggerEvent
     public get key() : keymap
     {
         return(this.key$);
+    }
+
+    public get block() : string
+    {
+        return(this.block$);
     }
 
     public get field() : string

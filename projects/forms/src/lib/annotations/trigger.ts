@@ -32,7 +32,7 @@ export const trigger = (trigger:Trigger,field?:string|string[]) =>
         if (field.constructor.name == "Array") fields = field as string[];
         else                                   fields.push(field as string);
 
-        fields.forEach((fld)=>
+        fields.forEach((fld) =>
         {
             let trg:TriggerDefinition =
             {

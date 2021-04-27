@@ -4,7 +4,7 @@ import { Trigger } from "../events/Triggers";
 import { TriggerDefinition, TriggerDefinitions } from "./TriggerDefinitions";
 
 
-export const keytrigger = (trigger:Trigger,key:keymap|keymap[]) =>
+export const keytrigger = (key:keymap|keymap[]) =>
 {
     function define(comp:any, func?:string)
     {
@@ -33,7 +33,7 @@ export const keytrigger = (trigger:Trigger,key:keymap|keymap[]) =>
         if (key.constructor.name == "Array") keys = key as keymap[];
         else                                 keys.push(key as keymap);
 
-        keys.forEach((key)=>
+        keys.forEach((key) =>
         {
             let trg:TriggerDefinition =
             {
@@ -41,7 +41,7 @@ export const keytrigger = (trigger:Trigger,key:keymap|keymap[]) =>
                 block: block,
                 params: params,
                 func: comp[func],
-                trigger: trigger
+                trigger: Trigger.Key
             }
 
             TriggerDefinitions.add(block,cname,trg);

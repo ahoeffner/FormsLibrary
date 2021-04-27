@@ -351,6 +351,10 @@ export class FormImpl
         let utils:Utils = new Utils();
         this.depencies = new MasterDetail(this);
 
+        // Add all form key triggers
+        let fktriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormKeyTriggers(this.name);
+        fktriggers.forEach((def) => {this.triggers.addTrigger(this.form,def.func, def.trigger, def.field, def.key);});
+
         // Create blocks
         let blockdef:BlockDefinition[] = BlockDefinitions.getBlocks(this.name);
         blockdef.forEach((bdef) => {this.createBlock(bdef)});
@@ -464,15 +468,8 @@ export class FormImpl
             let fieldidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
             let ffieldidx:Map<string,FieldDefinition> = FieldDefinitions.getFormFieldIndex(this.name,block.alias);
 
-            // Index defining class
-            let compidx:Map<string,any> = new Map<string,any>();
-
             // Override by form
-            ffieldidx.forEach((def,fld) =>
-            {
-                fieldidx.set(fld,def);
-                compidx.set(fld,this);
-            });
+            ffieldidx.forEach((def,fld) => {fieldidx.set(fld,def);});
 
             columns.forEach((column) =>
             {
@@ -609,29 +606,25 @@ export class FormImpl
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);
 
-            // Field triggers, form overrides
+            // Field triggers for block
             let bftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFieldTriggers(block.name);
             let fftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,block.alias);
 
+            // Form overrides
             fftriggers.forEach((def,trg) => {bftriggers.set(trg,def)});
 
             bftriggers.forEach((def) =>
             {
-                if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field)
+                if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field);
                 else            block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field);
             });
 
-            // Key triggers, form overrides
-            let bktriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFieldTriggers(block.name);
-            let fktriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,block.alias);
+            // Key triggers for block
+            let bktriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getKeyTriggers(block.name);
 
-            fktriggers.forEach((def,trg) => {bktriggers.set(trg,def)});
-
-            bktriggers.forEach((def) =>
-            {
-                if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field, def.key)
-                else            block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field, def.key);
-            });
+            // delete block-triggers if defined on form
+            fktriggers.forEach((_def,trg) => {bktriggers.delete(trg)});
+            bktriggers.forEach((def) => {block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field, def.key);});
 
             // Create data-backing table
             let table:Table = null;
