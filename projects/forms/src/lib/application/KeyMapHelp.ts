@@ -10,6 +10,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
     template:
     `
         <div #keymap></div>
+        <button style="width: 100%; height: 1px" #ok></button>
     `
 })
 
@@ -18,14 +19,16 @@ export class KeyMapHelp implements Popup, AfterViewInit
 {
     public top?: string;
     public left?: string;
-    public width?: string;
-    public height?: string;
+    public width?: string = "300px";
+    public height?: string = "475px";
     public title: string = "ShortKeys";
 
     private html:string = null;
     private win:PopupWindow = null;
     private map:HTMLDivElement = null;
+    private okbtn:HTMLButtonElement = null;
 
+    @ViewChild("ok", {read: ElementRef}) private okelem: ElementRef;
     @ViewChild("keymap", {read: ElementRef}) private mapelem: ElementRef;
 
 
@@ -58,6 +61,12 @@ export class KeyMapHelp implements Popup, AfterViewInit
     public ngAfterViewInit(): void
     {
 		this.map = this.mapelem?.nativeElement as HTMLDivElement;
+		this.okbtn = this.okelem?.nativeElement as HTMLButtonElement;
+
+        this.okbtn.addEventListener("keydown",() => this.close(true));
+        this.okbtn.addEventListener("keypress",() => this.close(true));
+
         this.map.innerHTML = this.html;
+        this.okbtn.focus();
     }
 }
