@@ -108,8 +108,8 @@ export class Application
     {
         if (this._impl_.connected)
         {
-            let form:FormImpl = this._impl_.getCurrentForm();
-            if (form != null) await form.clear();
+            await this._impl_.appstate.clearAllForms();
+            await this._impl_.connection.rollback();
             await this._impl_.disconnect();
         }
     }
