@@ -75,6 +75,12 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
         if (kevent.key == keymap.enter) this.close(false);
         if (kevent.key == keymap.escape) this.close(true);
 
+        if (kevent.key == keymap.nextfield && kevent.field == "usr")
+        {
+            kevent.event.preventDefault();
+            this.pwd.focus();
+        }
+
         if (kevent.key == keymap.nextfield && kevent.field == "pwd")
         {
             kevent.event.preventDefault();
@@ -85,6 +91,12 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
         {
             kevent.event.preventDefault();
             this.pwd.focus();
+        }
+
+        if (kevent.key == keymap.prevfield && kevent.field == "pwd")
+        {
+            kevent.event.preventDefault();
+            this.usr.focus();
         }
 
         return(true);
