@@ -43,9 +43,10 @@ export class DropDownMenu implements onEventListener, AfterViewInit
     }
 
 
-    constructor(ctx:Context)
+    constructor(private ctx:Context)
     {
         this.conf = ctx.conf;
+        this.app$ = ctx.app["_impl_"]; // might not be initialized
         this.instance = "DropDownMenu-"+(DropDownMenu.instances++);
     }
 
@@ -150,7 +151,7 @@ export class DropDownMenu implements onEventListener, AfterViewInit
             return;
         }
 
-        this.app$ = app;
+        this.app$ = this.ctx.app["_impl_"];
 
         if (menu == null)
             menu = new DefaultMenu();

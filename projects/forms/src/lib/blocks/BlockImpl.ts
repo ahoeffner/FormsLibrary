@@ -1629,6 +1629,9 @@ export class BlockImpl
 
         if (type == "key")
         {
+            if (event != null && event["preventDefault"] != null)
+                event.preventDefault();
+
             trgevent = new KeyTriggerEvent(this.alias,field,key,event);
             return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
