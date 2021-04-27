@@ -276,6 +276,9 @@ export class ModalWindow implements onEventListener, AfterViewInit
 		{
 			this.top = form.windowopts.offsetTop;
 			this.left = form.windowopts.offsetLeft;
+
+			if (this.top == "undefined") this.top = null;
+			if (this.left == "undefined") this.left = null;
 		}
 
 		this.width = form.windowopts.width;
@@ -292,6 +295,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			this.top = "0";
 			this.height = "100%";
 		}
+
+		this.change.detectChanges();
 	}
 
 
@@ -334,19 +339,27 @@ export class ModalWindow implements onEventListener, AfterViewInit
 			this.height = this.sizey+"px";
 		}
 
-		if (this.top == null || this.top.trim.length == 0)
+		if (this.top == null || this.top.trim().length == 0)
 		{
 			resize = true;
 			this.top = ((+window.innerHeight - this.sizey)/3)+"px";
 		}
 
-		if (this.left == null || this.left.trim.length == 0)
+		if (this.left == null || this.left.trim().length == 0)
 		{
 			resize = true;
 			this.left = ((+window.innerWidth - this.sizex)/3)+"px";
 		}
 
-		if (resize) this.change.detectChanges();
+		if (resize)
+		{
+			this.change.detectChanges();
+
+			this.posy = this.window.offsetTop;
+			this.posx = this.window.offsetLeft;
+			this.sizex = this.window.offsetWidth;
+			this.sizey = this.window.offsetHeight;
+		}
 	}
 
 
