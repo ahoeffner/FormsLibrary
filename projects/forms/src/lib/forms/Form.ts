@@ -128,9 +128,11 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.showform(form,false,parameters);
     }
 
-    public callform(form:any, parameters?:Map<string,any>) : void
+    public async callform(form:any, parameters?:Map<string,any>) : Promise<Form>
     {
-        this._impl_.callform(form,false,parameters);
+        let impl:FormImpl = await this._impl_.callform(form,false,parameters);
+        if (impl != null) return(impl.form);
+        return(null);
     }
 
     public getCallStack() : Form[]

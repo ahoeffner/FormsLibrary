@@ -521,6 +521,7 @@ export class ApplicationImpl
             key == keymap.executequery
         )
         {
+            event.preventDefault();
             let form:FormImpl = this.getCurrentForm();
             if (form != null) form.sendkey(event,key);
         }

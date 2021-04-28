@@ -717,7 +717,7 @@ export class FormImpl
     }
 
 
-    public async callform(form:any, destroy:boolean, parameters?:Map<string,any>)
+    public async callform(form:any, destroy:boolean, parameters?:Map<string,any>) : Promise<FormImpl>
     {
         let utils:Utils = new Utils();
         let name:string = utils.getName(form);
@@ -736,6 +736,7 @@ export class FormImpl
         if (id == null)
         {
             id = this.app.getNewInstance(form);
+            if (id == null) return(null);
             this.stack.set(name,id);
         }
 
@@ -755,6 +756,8 @@ export class FormImpl
             id.impl.setRoot(this);
             this.app.showinstance(inst);
         }
+
+        return(id.impl);
     }
 
 
@@ -796,7 +799,7 @@ export class FormImpl
         let menu:boolean = (this.root == null);
         let root:boolean = (this.parent == null);
 
-        if (!this.cancelled && !destroy && !this.validate())
+        if (!this.cancelled && !destroy && !await this.validate())
             return;
 
         this.next = null;
@@ -1058,7 +1061,7 @@ export class FormImpl
 
     public sendkey(event:any,key:keymap) : void
     {
-        if (key == keymap.close) this.close(true);
+        if (key == keymap.close) this.close(false);
         else       this.block?.sendkey(event,key);
     }
 

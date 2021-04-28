@@ -1013,7 +1013,7 @@ export class BlockImpl
         if (this.state != FormState.normal) return(true);
         if (this.records[+this.row].state == RecordState.na) return(true);
 
-        let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name)
+        let previous:any = this.data.getValue(this.sum(field.row,this.offset),field.name);
 
         // Nothing has changed
         if (field.value == previous) return(this.data.getValidated(this.sum(field.row,this.offset),field.name));
