@@ -1019,7 +1019,7 @@ export class BlockImpl
         if (field.value == previous) return(this.data.getValidated(this.sum(field.row,this.offset),field.name));
 
         if (!await this.lockrecord(this.sum(field.row,this.offset),field.name))
-            return(false);
+            return(true);
 
         if (!field.validate())
         {
