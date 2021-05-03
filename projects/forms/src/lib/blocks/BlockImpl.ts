@@ -844,12 +844,12 @@ export class BlockImpl
     {
         if (!this.data.database)
         {
-            if (await this.insert(true))
-            {
-                this.records[+this.row].state = RecordState.update;
-                this.records[+this.row].enable(false);
-                return(this.record);
-            }
+            if (!this.data.insert(this.sum(this.row,this.offset,1)))
+                return(-1);
+
+            this.records[+this.row].state = RecordState.update;
+            this.records[+this.row].enable(false);
+            return(this.record);
         }
 
         return(-1);
@@ -875,7 +875,6 @@ export class BlockImpl
         // Is first row
         if (this.data.rows == 1)
         {
-
             await this.display(this.offset);
 
             if (this.form == null) this.disableall();
@@ -1349,7 +1348,6 @@ export class BlockImpl
                 event.preventDefault();
 
             let type:FieldType = field.definition.type;
-            console.log("fieldtype: "+FieldType[type])
             if (type == FieldType.date || type == FieldType.datetime)
             {
                 DatePicker.show(this.app,this,this.record,field.name,field.value);

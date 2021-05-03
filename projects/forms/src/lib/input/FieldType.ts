@@ -60,6 +60,7 @@ export class FieldImplementation
             if (type == Column.date) ftype = FieldType.date;
             if (type == Column.integer) ftype = FieldType.integer;
             if (type == Column.decimal) ftype = FieldType.decimal;
+            if (type == Column.datetime) ftype = FieldType.datetime;
         }
 
         return(ftype);
