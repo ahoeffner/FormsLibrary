@@ -512,9 +512,6 @@ export class Statement
                 sql += " from "+this.table$;
         }
 
-        if (this.limit$ != null)
-            sql += " "+this.limit$;
-
         if (this.constraint$ != null)
             sql += " "+this.constraint$;
 
@@ -548,6 +545,9 @@ export class Statement
 
         if (this.type$ == SQLType.select && this.order$ != null)
             sql += " order by "+this.order$;
+
+        if (this.limit$ != null)
+            sql += " "+this.limit$;
 
         return({sql: sql, bindvalues: bindvals});
     }

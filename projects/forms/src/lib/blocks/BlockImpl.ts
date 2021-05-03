@@ -1349,6 +1349,7 @@ export class BlockImpl
                 event.preventDefault();
 
             let type:FieldType = field.definition.type;
+            console.log("fieldtype: "+FieldType[type])
             if (type == FieldType.date || type == FieldType.datetime)
             {
                 DatePicker.show(this.app,this,this.record,field.name,field.value);
