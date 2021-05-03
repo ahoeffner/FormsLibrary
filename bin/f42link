@@ -2,7 +2,7 @@
 
 if test "$#" -ne "1" 
 then 
-	echo "Use: m42link target-folder"
+	echo "Use: f42link target-folder"
     exit -1
 fi
 

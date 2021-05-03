@@ -59,10 +59,14 @@ export class Condition
 
             if (type == "date")
             {
-                this.operator$ = "=";
                 this.datatype$ = Column.date;
                 this.value$ = (value as Date).getTime();
-                this.bindvalues$.push({name: this.placeholder$, value: this.value$, type: this.datatype$});
+
+                this.datebtwn();
+
+                this.bindvalues$.push({name: this.placeholder$[0], value: this.value$[0], type: this.datatype$});
+                this.bindvalues$.push({name: this.placeholder$[1], value: this.value$[1], type: this.datatype$});
+
                 return;
             }
 
@@ -155,15 +159,7 @@ export class Condition
             this.value$ = date.getTime();
 
             if (this.operator$ == "=")
-            {
-                this.operator$ = "between";
-
-                let sdate:number = this.value$;
-                let edate:number = date.getTime() + 60 * 60 * 24 * 1000;
-
-                this.value$ = [sdate,edate];
-                this.placeholder$ = [this.placeholder$+"-0",this.placeholder$+"-1"];
-            }
+                this.datebtwn();
         }
 
 
@@ -176,6 +172,17 @@ export class Condition
             this.bindvalues$.push({name: this.placeholder$[0], value: this.value$[0], type: this.datatype$});
             this.bindvalues$.push({name: this.placeholder$[1], value: this.value$[1], type: this.datatype$});
         }
+    }
+
+    private datebtwn() : void
+    {
+        this.operator$ = "between";
+
+        let sdate:number = this.value$;
+        let edate:number = sdate + 60 * 60 * 24 * 1000;
+
+        this.value$ = [sdate,edate];
+        this.placeholder$ = [this.placeholder$+"_0",this.placeholder$+"_1"];
     }
 
     public get column() : string

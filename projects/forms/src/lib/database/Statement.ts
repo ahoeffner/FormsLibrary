@@ -36,6 +36,7 @@ export class Statement
     private subquery$:SQL = null;
     private table$:string = null;
     private order$:string = null;
+    private limit$:string = null;
     private type$:SQLType = null;
     private cursor$:string = null;
     private columns$:string[] = [];
@@ -104,6 +105,11 @@ export class Statement
     public set table(table:string)
     {
         this.table$ = table;
+    }
+
+    public set limit(limit:string)
+    {
+        this.limit$ = limit;
     }
 
     public set constraint(where:string)
@@ -505,6 +511,9 @@ export class Statement
             if (this.table$ != null)
                 sql += " from "+this.table$;
         }
+
+        if (this.limit$ != null)
+            sql += " "+this.limit$;
 
         if (this.constraint$ != null)
             sql += " "+this.constraint$;

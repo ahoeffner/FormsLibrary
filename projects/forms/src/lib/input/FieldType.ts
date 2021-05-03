@@ -41,6 +41,7 @@ export class FieldImplementation
         FieldImplementation.impl.set(FieldType[FieldType.checkbox],CheckBox);
         FieldImplementation.impl.set(FieldType[FieldType.password],Password);
         FieldImplementation.impl.set(FieldType[FieldType.dropdown],DropDown);
+        FieldImplementation.impl.set(FieldType[FieldType.datetime],DateField);
     }
 
     public static getClass(type:string) : any

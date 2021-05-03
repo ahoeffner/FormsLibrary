@@ -85,7 +85,10 @@ export class Form implements OnInit, AfterViewInit
     public getBlockFilter(block:string) : string
     {
         let blk:Block = this.getBlock(block);
-        if (blk != null && blk.filtered) return(this.colors.rowindicator);
+
+        if (blk != null && blk.searchfilter.length > 0)
+            return(this.colors.rowindicator);
+            
         return("");
     }
 

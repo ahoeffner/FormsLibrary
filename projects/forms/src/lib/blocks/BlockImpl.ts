@@ -425,14 +425,6 @@ export class BlockImpl
     }
 
 
-    public getQueryValue(row:number, column:string)
-    {
-        if (row < 0 || row >= this.rows) return(null);
-        if (this.records[+row].state != RecordState.qmode) return(null);
-        return(this.records[+row].getField(column)?.value);
-    }
-
-
     public get records() : Record[]
     {
         return(this.records$);
@@ -441,7 +433,7 @@ export class BlockImpl
 
     public getRecord(row:number) : Record
     {
-        if (row < this.records$.length)
+        if (+row < +this.records$.length)
             return(this.records$[+row]);
 
         return(null);
@@ -834,6 +826,7 @@ export class BlockImpl
             this.masterdetail.querydetails(this,false,true);
 
         this.row = 0;
+        await this.clear();
         await this.display(0);
 
         this.querying$ = false;

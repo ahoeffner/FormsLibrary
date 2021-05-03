@@ -8,6 +8,7 @@ import { TriggerFunction } from "../events/TriggerFunction";
 import { TableDefinition } from "../database/TableDefinition";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { NameValuePair } from "../utils/NameValuePair";
+import { RecordState } from "./Record";
 
 
 export class Block
@@ -35,11 +36,6 @@ export class Block
         return(this._impl_.getValue(record,field));
     }
 
-    public getQueryValue(field:string) : any
-    {
-        return(this._impl_.getQueryValue(0,field));
-    }
-
     public async setValue(record:number, field:string, value:any) : Promise<boolean>
     {
         return(await this._impl_.setValue(record,field,value));
@@ -48,6 +44,11 @@ export class Block
     public get querymode() : boolean
     {
         return(this._impl_.querymode);
+    }
+
+    public exist(record:number) : boolean
+    {
+        return(this._impl_.getRecord(record).state != RecordState.na);
     }
 
     public cancel() : void
@@ -119,21 +120,6 @@ export class Block
     public get record() : number
     {
         return(this._impl_.record);
-    }
-
-    public exists(record:number) : boolean
-    {
-        return(this._impl_.exists(record));
-    }
-
-    public displayed(record:number) : boolean
-    {
-        return(this._impl_.displayed(record));
-    }
-
-    public get filtered() : boolean
-    {
-        return(this._impl_.searchfilter.length > 0);
     }
 
     public async createControlRecord() : Promise<number>
