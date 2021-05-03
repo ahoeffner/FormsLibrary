@@ -339,9 +339,7 @@ export class Table
         let where:boolean = true;
 
         if (this.table.limit != null)
-        {
-            stmt.constraint = "where "+this.table.where;
-        }
+            stmt.limit = this.table.limit;
 
         if (this.table.where != null)
         {
