@@ -38,7 +38,8 @@ export const keytrigger = (key:keymap|keymap[]) =>
             let trg:TriggerDefinition =
             {
                 key: key,
-                block: block,
+                block: null,
+                blktrg: block,
                 params: params,
                 func: comp[func],
                 trigger: Trigger.Key

@@ -224,7 +224,7 @@ export class MasterDetail
             let fields:Field[] = block.records[0].fields;
             let stmt:Statement = block.data.parseQuery([],null,fields);
 
-            let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
+            let event:SQLTriggerEvent = new SQLTriggerEvent(block.alias,0,stmt);
 
             if (!await block.invokeTriggers(Trigger.PreQuery,event))
                 return;

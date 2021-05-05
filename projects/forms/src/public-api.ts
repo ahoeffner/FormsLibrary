@@ -51,6 +51,8 @@ export {Statement} from './lib/database/Statement';
 export {DatabaseUsage} from './lib/database/DatabaseUsage'
 export {ColumnDefinition} from './lib/database/ColumnDefinition';
 
+export {DateUtils} from './lib/dates/DateUtils';
+
 export {CallBack} from './lib/forms/Form';
 export {FormList} from './lib/menu/FormList';
 export {FormArea} from './lib/forms/FormArea';

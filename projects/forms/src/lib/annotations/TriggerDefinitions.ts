@@ -7,7 +7,8 @@ export interface TriggerDefinition
 {
     key?:keymap,
     field?:string;
-    block:boolean;
+    block:string;
+    blktrg:boolean;
     trigger:Trigger;
     params:string[];
     func:TriggerFunction;
@@ -66,6 +67,7 @@ export class TriggerDefinitions
         {
             form = cname;
             block = parts.shift();
+            def.block = block;
             if (parts.length > 0) field = parts.shift();
         }
 

@@ -611,12 +611,20 @@ export class FormImpl
             let fftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,block.alias);
 
             // Form overrides
-            fftriggers.forEach((def,trg) => {bftriggers.set(trg,def)});
+            fftriggers.forEach((def,trg) => {bftriggers.set(trg,def);});
 
             bftriggers.forEach((def) =>
             {
-                if (!def.block) this.triggers.addTrigger(this.form,def.func, def.trigger, def.field);
-                else            block["triggers"].addTrigger(block.block, def.func, def.trigger, def.field);
+                if (!def.blktrg && def.block == block.alias)
+                {
+                    // Blocktrigger defined on form
+                    block["triggers"].addTrigger(this.form,def.func,def.trigger,def.field);
+                }
+                else
+                {
+                    if (!def.blktrg) this.triggers.addTrigger(this.form,def.func,def.trigger,def.field);
+                    else             block["triggers"].addTrigger(block.block,def.func,def.trigger,def.field);
+                }
             });
 
             // Key triggers for block

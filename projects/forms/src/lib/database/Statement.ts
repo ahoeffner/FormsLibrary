@@ -496,14 +496,6 @@ export class Statement
             });
         });
 
-
-        if (this.subquery$ != null)
-        {
-            sql += " "+this.subquery$.sql;
-            this.subquery$.bindvalues.forEach((bindv) =>
-            {bindvals.push(bindv)});
-        }
-
         return({sql: sql, bindvalues: bindvals});
     }
 

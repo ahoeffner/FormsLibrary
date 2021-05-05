@@ -794,7 +794,7 @@ export class BlockImpl
             return(false);
         }
 
-        let event:SQLTriggerEvent = new SQLTriggerEvent(0,stmt);
+        let event:SQLTriggerEvent = new SQLTriggerEvent(this.alias,0,stmt);
         if (!await this.invokeTriggers(Trigger.PreQuery,event))
         {
             if (this.masterdetail != null)
@@ -971,7 +971,7 @@ export class BlockImpl
             return(false);
         }
 
-        let trgevent:TriggerEvent = new TriggerEvent(record,null);
+        let trgevent:TriggerEvent = new TriggerEvent(this.alias,record,null);
 
         if (!await this.invokeTriggers(Trigger.Lock,trgevent))
             return(false);
@@ -1081,7 +1081,7 @@ export class BlockImpl
             return(true);
         }
 
-        let trgevent:TriggerEvent = new TriggerEvent(this.record,null);
+        let trgevent:TriggerEvent = new TriggerEvent(this.alias,this.record,null);
 
         if (!await this.invokeTriggers(Trigger.WhenValidateRecord,trgevent))
             return(false);
@@ -1195,7 +1195,7 @@ export class BlockImpl
                     execs.push(this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent));
                 }
 
-                execs.push(this.invokeTriggers(Trigger.PostChange, new TriggerEvent(this.sum(r,this.offset))));
+                execs.push(this.invokeTriggers(Trigger.PostChange, new TriggerEvent(this.alias,this.sum(r,this.offset))));
                 state = this.data.state(this.sum(this.offset,r),RecordState.update);
 
                 for (let i = 0; i < execs.length; i++) await execs[i];

@@ -23,8 +23,8 @@ export const trigger = (trigger:Trigger,field?:string|string[]) =>
             return;
         }
 
-        let block:boolean = false;
-        if (ctype == "Block") block = true;
+        let blktrg:boolean = false;
+        if (ctype == "Block") blktrg = true;
 
         let fields:string[] = [];
         if (field == null) field = [null];
@@ -37,13 +37,14 @@ export const trigger = (trigger:Trigger,field?:string|string[]) =>
             let trg:TriggerDefinition =
             {
                 field: fld,
-                block: block,
+                block: null,
+                blktrg: blktrg,
                 params: params,
                 func: comp[func],
                 trigger: trigger
             }
 
-            TriggerDefinitions.add(block,cname,trg);
+            TriggerDefinitions.add(blktrg,cname,trg);
         });
     }
 
