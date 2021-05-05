@@ -373,7 +373,7 @@ export class Condition
     private clause(cond:Condition) : string
     {
         if (cond.condition$ != null)
-            return(this.condition$);
+            return(cond.condition$);
 
         if (cond.operator$.startsWith("is"))
             return(cond.column$+" "+cond.operator$);

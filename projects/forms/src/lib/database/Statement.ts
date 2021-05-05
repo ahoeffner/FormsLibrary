@@ -55,6 +55,11 @@ export class Statement
             else this.type$ = sql as SQLType;
         }
 
+        this.findtype();
+    }
+
+    private findtype() : void
+    {
         if (this.sql$ != null)
         {
             this.type$ = SQLType.call;
@@ -75,6 +80,17 @@ export class Statement
     public get type() : SQLType
     {
         return(this.type$);
+    }
+
+    public get sql() : string
+    {
+        return(this.build().sql);
+    }
+
+    public set sql(sql:string)
+    {
+        this.sql$ = sql;
+        this.findtype();
     }
 
     public isFunction() : boolean
@@ -179,7 +195,7 @@ export class Statement
         }
     }
 
-    public set condition(condition:Condition|Condition[])
+    public setCondition(condition:Condition|Condition[]) : void
     {
         if (condition.constructor.name == "Array")
         {
@@ -510,18 +526,27 @@ export class Statement
 
             if (this.table$ != null)
                 sql += " from "+this.table$;
-        }
 
-        if (this.constraint$ != null)
-            sql += " "+this.constraint$;
+            if (this.constraint$ != null)
+                sql += " "+this.constraint$;
+
+            if (this.condition$ != null)
+                sql += " "+this.condition$.toString();
+
+            if (this.subquery$ != null)
+                sql += " "+this.subquery$.sql;
+
+            if (this.type$ == SQLType.select && this.order$ != null)
+                sql += " order by "+this.order$;
+
+            if (this.limit$ != null)
+                sql += " "+this.limit$;
+        }
 
         let bindvalues:BindValue[] = this.bindvalues;
 
         if (this.condition$ != null)
-        {
-            sql += " "+this.condition$.toString();
             this.condition$.getAllBindvalues().forEach((bind) => {bindvalues.push(bind);});
-        }
 
         let bindvals:bindvalue[] = [];
 
@@ -535,19 +560,11 @@ export class Statement
             });
         });
 
-
         if (this.subquery$ != null)
         {
-            sql += " "+this.subquery$.sql;
             this.subquery$.bindvalues.forEach((bindv) =>
             {bindvals.push(bindv)});
         }
-
-        if (this.type$ == SQLType.select && this.order$ != null)
-            sql += " order by "+this.order$;
-
-        if (this.limit$ != null)
-            sql += " "+this.limit$;
 
         return({sql: sql, bindvalues: bindvals});
     }
