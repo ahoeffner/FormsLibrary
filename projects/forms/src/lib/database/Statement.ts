@@ -41,6 +41,7 @@ export class Statement
     private cursor$:string = null;
     private columns$:string[] = [];
     private errors:string[] = null;
+    private override:boolean = false;
     private constraint$:string = null;
     private updates$:BindValue[] = [];
     private condition$:Condition = null;
@@ -91,6 +92,7 @@ export class Statement
     {
         this.sql$ = sql;
         this.findtype();
+        this.override = true;
     }
 
     public isFunction() : boolean
@@ -518,7 +520,10 @@ export class Statement
 
             if (this.table$ != null)
                 sql += " from "+this.table$;
+        }
 
+        if (!this.override)
+        {
             if (this.constraint$ != null)
                 sql += " "+this.constraint$;
 
@@ -533,6 +538,7 @@ export class Statement
 
             if (this.limit$ != null)
                 sql += " "+this.limit$;
+
         }
 
         let bindvalues:BindValue[] = this.bindvalues;
