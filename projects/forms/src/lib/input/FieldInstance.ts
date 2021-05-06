@@ -451,6 +451,9 @@ export class FieldInstance implements AfterViewInit
 
             this.disable();
             this.addTriggers();
+
+            // Ugly, but need to set name
+            (this.clazz.element as any).name = this.name;
         }
     }
 

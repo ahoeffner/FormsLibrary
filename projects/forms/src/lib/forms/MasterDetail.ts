@@ -231,15 +231,13 @@ export class MasterDetail
 
             block.cancelqry();
 
-            let cond:Condition = stmt.getCondition();
-
-            if (cond)
+            if (block.searchfilter.length > 0)
             {
                 stmt.order = null;
                 stmt.columns = dkey.columns();
 
                 sub.sql = stmt.build().sql;
-                sub.bindvalues = cond.getAllBindvalues();
+                sub.bindvalues = stmt.getCondition().getAllBindvalues();
             }
 
             let dep:dependencies = this.links.get(block.alias);

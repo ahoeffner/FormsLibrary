@@ -797,6 +797,8 @@ export class BlockImpl
         let event:SQLTriggerEvent = new SQLTriggerEvent(this.alias,0,stmt);
         if (!await this.invokeTriggers(Trigger.PreQuery,event))
         {
+            this.querying$ = false;
+
             if (this.masterdetail != null)
                 this.masterdetail.done(this,false);
 
