@@ -263,7 +263,7 @@ export class Table
         if (this.table.where != null && this.table.where.trim.length > 0)
         {
             where = false;
-            stmt.constraint = "where "+this.table.where;
+            stmt.constraint = this.table.where;
         }
 
         for (let i = 0; i < keyval.length; i++)
@@ -298,7 +298,7 @@ export class Table
         if (this.table.where != null && this.table.where.trim.length > 0)
         {
             where = false;
-            stmt.constraint = "where "+this.table.where;
+            stmt.constraint = this.table.where;
         }
 
         for (let i = 0; i < keyval.length; i++)
@@ -344,7 +344,7 @@ export class Table
         if (this.table.where != null)
         {
             where = false;
-            stmt.constraint = "where "+this.table.where;
+            stmt.constraint = this.table.where;
         }
 
         if (fields.length > 0)
@@ -386,12 +386,7 @@ export class Table
         });
 
         if (subquery != null)
-        {
-            if (!where) subquery.sql = "and "+subquery.sql;
-            else        subquery.sql = "where "+subquery.sql;
-
             stmt.subquery = subquery;
-        }
 
         return(stmt);
     }

@@ -524,15 +524,27 @@ export class Statement
 
         if (!this.override)
         {
-            if (this.constraint$ != null)
-                sql += " "+this.constraint$;
+            let whand:string = " where ";
 
             if (this.condition$ != null)
+            {
                 sql += " "+this.condition$.toString();
+                whand = " and ";
+            }
+
+            if (this.constraint$ != null)
+            {
+                sql += whand+this.constraint$;
+                whand = " and ";
+            }
 
             if (this.subquery$ != null)
-                sql += " "+this.subquery$.sql;
+            {
+                sql += whand+this.subquery$.sql;
+                whand = " and ";
+            }
 
+            // Don't order by if lock
             if (this.type$ == SQLType.select && this.order$ != null)
                 sql += " order by "+this.order$;
 

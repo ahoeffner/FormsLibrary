@@ -1498,10 +1498,13 @@ export class BlockImpl
                 await this.display(this.sum(this.offset,1));
             }
 
-            this.focus(row);
+            if (this.records[+row]?.enabled)
+            {
+                this.focus(row);
 
-            if (this.masterdetail != null)
-                this.masterdetail.querydetails(this,true,true);
+                if (this.masterdetail != null)
+                    this.masterdetail.querydetails(this,true,true);
+            }
 
             return(true);
         }
