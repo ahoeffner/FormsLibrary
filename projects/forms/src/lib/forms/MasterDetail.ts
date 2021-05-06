@@ -360,16 +360,17 @@ export class MasterDetail
         {
             dep.masters.forEach((master) =>
             {
+                let c:number = 0;
                 let record:number = master.block.record;
 
-                master.dkey.columns().forEach((col) =>
+                master.mkey.columns().forEach((col) =>
                 {
                     let val:any = null;
 
                     if (record < master.block.datarows)
                         val = master.block.getValue(record,col);
 
-                    master.dkey.set(col,val);
+                    master.dkey.set(c++,val);
                 });
 
                 keys.push(master.dkey);

@@ -431,8 +431,10 @@ export class FormImpl
 
                     kdef.columns.forEach((col) =>
                     {
-                        if (colindex.get(col) != null) key.addColumn(col);
-                        else console.log("key "+kdef.name+" column "+col+" is not a column, ignored");
+                        key.addColumn(col);
+
+                        if (colindex.get(col) == null)
+                            console.log("warning key "+kdef.name+" column "+col+" is not a column");
                     });
 
                     if (kdef.unique && pkey == null) pkey = key;

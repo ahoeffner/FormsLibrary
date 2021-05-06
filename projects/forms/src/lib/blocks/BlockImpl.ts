@@ -389,15 +389,20 @@ export class BlockImpl
 
         if (this.state == FormState.entqry)
         {
-            let field:Field = this.records[record-this.offset].getField(column);
+            let field:Field = this.records[0].getField(column);
             if (field != null) field.value = value;
             return(true);
         }
 
+        let displayed:boolean = false;
 
         if (+record >= +this.offset && +record < this.sum(this.offset,this.rows))
+            displayed = true;
+
+        let dbcol:string = column;
+
+        if (displayed)
         {
-            let dbcol:string = column;
             let field:Field = this.records[record-this.offset].getField(column);
 
             if (field != null)
@@ -405,23 +410,23 @@ export class BlockImpl
                 field.value = value;
                 dbcol = field.definition.column;
             }
-
-            let previous:any = this.data.getValue(+record,column);
-
-            if (!await this.lockrecord(record,column))
-                return(false);
-
-            if (!this.data.setValue(+record,column,value))
-                return(false);
-
-            this.data.setValidated(record,column);
-
-            let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,column,null,+record,value,previous);
-            this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
-
-            if (record == this.record && this.masterdetail != null && value != previous)
-                this.masterdetail.sync(this,dbcol);
         }
+
+        let previous:any = this.data.getValue(+record,column);
+
+        if (!await this.lockrecord(record,column))
+            return(false);
+
+        if (!this.data.setValue(+record,column,value))
+            return(false);
+
+        this.data.setValidated(record,column);
+
+        let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,column,null,+record,value,previous);
+        this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
+
+        if (record == this.record && this.masterdetail != null && value != previous)
+            this.masterdetail.sync(this,dbcol);
     }
 
 

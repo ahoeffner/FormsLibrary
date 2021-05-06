@@ -3,8 +3,10 @@ import { RecordState } from "./Record";
 import { Field } from "../input/Field";
 import { BlockImpl } from "./BlockImpl";
 import { Table } from "../database/Table";
+import { Trigger } from "../events/Triggers";
 import { NameValuePair } from "../utils/NameValuePair";
 import { SQL, Statement } from "../database/Statement";
+import { SQLTriggerEvent } from "../events/TriggerEvent";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { TableDefinition } from "../database/TableDefinition";
 
@@ -418,7 +420,21 @@ export class FieldData
     {
         this.query = stmt;
         if (this.table == null) return({status: "ok"});
-        return(this.table.executequery(stmt));
+
+        let response:any = await this.table.executequery(stmt);
+
+        if (response["status"] != "failed")
+        {
+            let rows:any[] = response["rows"];
+
+            for (let i = 0; i < rows.length; i++)
+            {
+                let event:SQLTriggerEvent = new SQLTriggerEvent(this.block.alias,i,null);
+                this.block.invokeTriggers(Trigger.PostQuery,event);
+            }
+        }
+
+        return(response);
     }
 
 
@@ -489,6 +505,16 @@ export class FieldData
             {
                 this.block.alert(JSON.stringify(response),"Database");
                 return(0);
+            }
+            else
+            {
+                let rows:any[] = response["rows"];
+
+                for (let i = 1; i <= rows.length; i++)
+                {
+                    let event:SQLTriggerEvent = new SQLTriggerEvent(this.block.alias,+i + +offset,null);
+                    this.block.invokeTriggers(Trigger.PostQuery,event);
+                }
             }
         }
 

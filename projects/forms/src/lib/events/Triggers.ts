@@ -22,6 +22,7 @@ export enum Trigger
     WhenValidateField,
     WhenValidateRecord,
     PreQuery,
+    PostQuery,
     PreInsert,
     PreUpdate,
     PreDelete

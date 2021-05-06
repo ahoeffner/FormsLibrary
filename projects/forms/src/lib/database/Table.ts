@@ -53,7 +53,6 @@ export class Table
             if (this.table.where.startsWith("where "))
                 this.table.where = this.table.where.substring(6);
 
-
             if (this.table.where.startsWith("and "))
                 this.table.where = this.table.where.substring(4);
 
