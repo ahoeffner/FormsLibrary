@@ -3,9 +3,9 @@ Drop down colors
 Add submenu levels
 Add F1-F12 in KeyCodes
 
-update master column doesn't work
 commit must clean out locks
 Record changed by another user dowsn't work
+Message when unable to logon
 
 
 Add assets to library ng-package.json

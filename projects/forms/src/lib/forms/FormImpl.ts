@@ -503,8 +503,7 @@ export class FormImpl
             // Then other defined fields (block or form)
             fieldidx.forEach((field) => {if (!fields.includes(field.name,0)) fields.push(field.name)});
 
-            // Field overrides. ovcompidx is not used
-            let ovcompidx:Map<string,any> = new Map<string,any>();
+            // Field overrides.
             let overideidx:Map<string,FieldDefinition> = FieldDefinitions.getFieldIndex(block.clazz);
 
             // Set field properties and add undefined fields
@@ -536,24 +535,14 @@ export class FormImpl
                 // Override def
                 if (inst.id.length > 0)
                 {
-                    let comp:any = null;
                     let id:string = inst.name+"."+inst.id;
                     let iddef:FieldDefinition = utils.clone(FieldDefinitions.getFormFieldOverride(this.name,block.alias,id));
 
-                    if (iddef != null)
-                    {
-                        comp = block;
-                        fdef = iddef;
-                    }
-                    else
-                    {
-                        comp = this;
+                    if (iddef == null)
                         iddef = utils.clone(FieldDefinitions.getFieldOverride(block.clazz,id));
-                    }
 
                     if (iddef != null)
                     {
-                        ovcompidx.set(id,comp);
                         overideidx.set(id,iddef);
                         iddef.column = fdef.column;
                         fdef = iddef;

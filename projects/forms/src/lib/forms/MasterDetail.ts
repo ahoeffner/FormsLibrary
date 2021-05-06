@@ -4,7 +4,6 @@ import { Field } from "../input/Field";
 import { Column } from "../database/Column";
 import { Trigger } from "../events/Triggers";
 import { BlockImpl } from "../blocks/BlockImpl";
-import { Condition } from "../database/Condition";
 import { BindValue } from "../database/BindValue";
 import { MasterDetailQuery } from "./MasterDetailQuery";
 import { SQLTriggerEvent } from "../events/TriggerEvent";
@@ -106,8 +105,10 @@ export class MasterDetail
         if (dep != null)
         {
             if (!dep.keycols.has(col)) return;
+
+            this.master = block;
             this.query = new MasterDetailQuery(this,this.links,block,col);
-            this.querydetails(block,true,true);
+            this.query.ready(block);
         }
     }
 

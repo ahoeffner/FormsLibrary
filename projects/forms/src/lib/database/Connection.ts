@@ -47,7 +47,7 @@ export class Connection
 
         if (response["status"] == "failed")
         {
-            this.alert(JSON.stringify(response));
+            this.alert(response["message"]);
             return;
         }
 
