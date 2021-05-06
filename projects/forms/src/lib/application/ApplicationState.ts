@@ -67,11 +67,14 @@ export class ApplicationState
     {
         this.menus.forEach((mhdl) => {mhdl.onConnect()});
 
-        this.forms.forEach(async (form) =>
+        let forms:FormImpl[] = [];
+        this.forms.forEach(async (form) => {forms.push(form)});
+
+        for (let f = 0; f < forms.length; f++)
         {
-            let funcs:string[] = FormDefinitions.getOnConnect(form.name);
-            for(let i = 0; i < funcs.length; i++) await this.app.execfunc(form,funcs[i]);
-        });
+            let funcs:string[] = FormDefinitions.getOnConnect(forms[f].name);
+            for(let i = 0; i < funcs.length; i++) await this.app.execfunc(forms[f],funcs[i]);
+        }
 
         return(true);
     }
@@ -79,6 +82,9 @@ export class ApplicationState
 
     public transactionChange(trans:boolean) : void
     {
+        if (!trans)
+            this.forms.forEach((form) => {form.onCommit()});
+
         if (trans+"" != this.transaction+"")
         {
             this.transaction = trans;
@@ -91,11 +97,14 @@ export class ApplicationState
     {
         this.menus.forEach((mhdl) => {mhdl.onDisconnect()});
 
-        this.forms.forEach(async (form) =>
+        let forms:FormImpl[] = [];
+        this.forms.forEach(async (form) => {forms.push(form)});
+
+        for (let f = 0; f < forms.length; f++)
         {
-            let funcs:string[] = FormDefinitions.getOnDisconnect(form.name);
-            for(let i = 0; i < funcs.length; i++) await this.app.execfunc(form,funcs[i]);
-        });
+            let funcs:string[] = FormDefinitions.getOnDisconnect(forms[f].name);
+            for(let i = 0; i < funcs.length; i++) await this.app.execfunc(forms[f],funcs[i]);
+        }
 
         return(true);
     }

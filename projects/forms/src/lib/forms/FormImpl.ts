@@ -316,6 +316,12 @@ export class FormImpl
     }
 
 
+    public async onCommit()
+    {
+        this.blocks.forEach((blk) => {console.log("remove locks on "+blk.alias)});
+    }
+
+
     public async execute(stmt:Statement, firstrow?:boolean, firstcolumn?:boolean) : Promise<any>
     {
         let response:any = await this.app.appstate.connection.invokestmt(stmt);
