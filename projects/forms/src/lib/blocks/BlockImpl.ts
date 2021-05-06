@@ -394,24 +394,7 @@ export class BlockImpl
             return(true);
         }
 
-        let displayed:boolean = false;
-
-        if (+record >= +this.offset && +record < this.sum(this.offset,this.rows))
-            displayed = true;
-
-        let dbcol:string = column;
-
-        if (displayed)
-        {
-            let field:Field = this.records[record-this.offset].getField(column);
-
-            if (field != null)
-            {
-                field.value = value;
-                dbcol = field.definition.column;
-            }
-        }
-
+        let dbcol:string = this.data.getColumn(column);
         let previous:any = this.data.getValue(+record,column);
 
         if (!await this.lockrecord(record,column))

@@ -58,6 +58,13 @@ export class FieldData
     }
 
 
+    public getColumn(field:string) : string
+    {
+        let def:FieldDefinition = this.fielddef.get(field);
+        return(def?.column);
+    }
+
+
     public databasecolumn(column:string) : boolean
     {
         if (this.table == null) return(false);
