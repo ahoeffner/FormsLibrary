@@ -360,10 +360,16 @@ export class Table
         {
             key.values.forEach((part) =>
             {
-                let type:Column = this.index.get(part.name).type;
+                let col:string = part.name;
 
-                if (!where) stmt.and(part.name,part.value,type);
-                else        stmt.where(part.name,part.value,type);
+                // Check if key column is mapped to diff. name
+                let def:FieldDefinition = this.fielddef.get(col);
+                if (def != null) col = def.column;
+
+                let type:Column = this.index.get(col).type;
+
+                if (!where) stmt.and(col,part.value,type);
+                else        stmt.where(col,part.value,type);
 
                 where = false;
             });

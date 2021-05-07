@@ -416,6 +416,11 @@ export class FormImpl
             // Column definitions
             let colindex:Map<string,ColumnDefinition> = ColumnDefinitions.getIndex(block.clazz);
 
+            // Columns mapped to fields. Form definitions overrides
+            let colfields:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
+            let colffields:Map<string,FieldDefinition> = FieldDefinitions.getFormColumnIndex(this.name,block.alias);
+            colffields.forEach((def,fld) => {colfields.set(fld,def)});
+
             // Create keys and decide on primary
             let pkey:Key = null;
             let keys:Map<string,Key> = new Map<string,Key>();
@@ -431,10 +436,12 @@ export class FormImpl
 
                     kdef.columns.forEach((col) =>
                     {
-                        key.addColumn(col);
+                        let fdef:FieldDefinition = colfields.get(col);
 
-                        if (colindex.get(col) == null)
-                            console.log("warning key "+kdef.name+" column "+col+" is not a column");
+                        if (fdef != null)
+                            col = fdef.name;
+
+                        key.addColumn(col);
                     });
 
                     if (kdef.unique && pkey == null) pkey = key;
@@ -447,11 +454,6 @@ export class FormImpl
             });
 
             this.depencies.addKeys(block,keys);
-
-            // Columns mapped to fields. Form definitions overrides
-            let colfields:Map<string,FieldDefinition> = FieldDefinitions.getColumnIndex(block.clazz);
-            let colffields:Map<string,FieldDefinition> = FieldDefinitions.getFormColumnIndex(this.name,block.alias);
-            colffields.forEach((def,fld) => {colfields.set(fld,def)});
 
             let fields:string[] = [];
             let sorted:ColumnDefinition[] = [];

@@ -99,7 +99,6 @@ export class MasterDetail
 
     public sync(block:BlockImpl, col:string) : void
     {
-        if (col == null) return;
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null)

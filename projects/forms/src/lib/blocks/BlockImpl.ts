@@ -394,7 +394,6 @@ export class BlockImpl
             return(true);
         }
 
-        let dbcol:string = this.data.getColumn(column);
         let previous:any = this.data.getValue(+record,column);
 
         if (!await this.lockrecord(record,column))
@@ -415,7 +414,7 @@ export class BlockImpl
         }
 
         if (record == this.record && this.masterdetail != null && value != previous)
-            this.masterdetail.sync(this,dbcol);
+            this.masterdetail.sync(this,column);
     }
 
 
@@ -1038,7 +1037,7 @@ export class BlockImpl
         if  (field.value != previous)
         {
             if (this.sum(field.row,this.offset) == this.record && this.masterdetail != null)
-                this.masterdetail.sync(this,field.definition.column);
+                this.masterdetail.sync(this,field.name);
 
             if (!await this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent))
                 return(false);

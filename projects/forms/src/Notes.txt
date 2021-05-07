@@ -1,10 +1,8 @@
 @menu
 Drop down colors
 Add submenu levels
+Add table scrollbar
 Add F1-F12 in KeyCodes
-Dont use fielddefinition.column except in sql. Map @key to fieldname
-
-Record changed by another user dowsn't work
 
 
 Add assets to library ng-package.json

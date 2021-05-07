@@ -129,14 +129,8 @@ export class FieldDefinitions
 
         if (def.hasOwnProperty("column"))
         {
-            if (def.column.constructor.name == "Boolean")
-            {
-                if (!def.column) def.column = null;
-                else             def.column = def.name;
-            }
-
             if (def.column != null)
-                def.column = (""+def.column).toLowerCase();
+                def.column = def.column.toLowerCase();
         }
 
         if (index.get(def.name) != null)
@@ -153,7 +147,7 @@ export class FieldDefinitions
 
         fields.unshift(def);
         index.set(def.name,def);
-        if (def.column != null) columns.set(""+def.column,def);
+        if (def.column != null) columns.set(def.column,def);
     }
 
 
