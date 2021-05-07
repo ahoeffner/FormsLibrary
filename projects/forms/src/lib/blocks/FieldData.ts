@@ -101,6 +101,12 @@ export class FieldData
     }
 
 
+    public removeLocks() : void
+    {
+        this.data.forEach((row) => {row.locked = false});
+    }
+
+
     public async lock(record:number) : Promise<any>
     {
         if (record < 0 || record >= this.data.length)
@@ -517,10 +523,13 @@ export class FieldData
             {
                 let rows:any[] = response["rows"];
 
-                for (let i = 1; i <= rows.length; i++)
+                if (rows != null)
                 {
-                    let event:SQLTriggerEvent = new SQLTriggerEvent(this.block.alias,+i + +offset,null);
-                    this.block.invokeTriggers(Trigger.PostQuery,event);
+                    for (let i = 1; i <= rows.length; i++)
+                    {
+                        let event:SQLTriggerEvent = new SQLTriggerEvent(this.block.alias,+i + +offset,null);
+                        this.block.invokeTriggers(Trigger.PostQuery,event);
+                    }
                 }
             }
         }

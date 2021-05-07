@@ -2,14 +2,12 @@
 Drop down colors
 Add submenu levels
 Add F1-F12 in KeyCodes
+Dont use fielddefinition.column except in sql. Map @key to fieldname
 
-commit must clean out locks
 Record changed by another user dowsn't work
-Message when unable to logon
 
 
 Add assets to library ng-package.json
-
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/forms",
@@ -20,7 +18,6 @@ Add assets to library ng-package.json
 }
 
 Change project angular.json to include folder-open etc:
-
 "assets": [
     "projects/demo/src/favicon.ico",
     "projects/demo/src/assets",
@@ -32,7 +29,6 @@ Change project angular.json to include folder-open etc:
 ],
 
 Remove compile warnings
-
 node_modules/stylus/lib/nodes/index.js
 
 exports.lineno = null;

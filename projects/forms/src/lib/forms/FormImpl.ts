@@ -318,7 +318,7 @@ export class FormImpl
 
     public async onCommit()
     {
-        this.blocks.forEach((blk) => {console.log("remove locks on "+blk.alias)});
+        this.blocks.forEach((blk) => {blk.removeLocks()});
     }
 
 

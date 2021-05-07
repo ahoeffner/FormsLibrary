@@ -408,6 +408,12 @@ export class BlockImpl
         let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,column,null,+record,value,previous);
         this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
 
+        if (+record >= +this.offset && +record < this.sum(this.offset,this.rows))
+        {
+            let field:Field = this.records[record-this.offset].getField(column);
+            if (field != null) field.value = value;
+        }
+
         if (record == this.record && this.masterdetail != null && value != previous)
             this.masterdetail.sync(this,dbcol);
     }
@@ -483,6 +489,13 @@ export class BlockImpl
     {
         if (this.data != null)
             this.data.searchfilter = filter;
+    }
+
+
+    public removeLocks() : void
+    {
+        if (this.data != null)
+            this.data.removeLocks();
     }
 
 

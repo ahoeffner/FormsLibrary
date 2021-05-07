@@ -114,10 +114,20 @@ export class Application
         }
     }
 
-    public commit() : void
+    public async commit()
     {
-        if (this._impl_.connected)
-            this._impl_.connection.commit();
+        if (!this._impl_.connected)
+            return;
+
+        let form:FormImpl = this._impl_.getCurrentForm();
+
+        if (form != null)
+        {
+            if (!await form.validate())
+                return;
+        }
+        
+        this._impl_.connection.commit();
     }
 
     public async rollback()
