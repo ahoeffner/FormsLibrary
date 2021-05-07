@@ -378,6 +378,12 @@ export class BlockImpl
 
     public getValue(record:number, column:string) : any
     {
+        if (this.state == FormState.entqry)
+        {
+            let field:Field = this.records[0].getField(column);
+            return(field?.value);
+        }
+
         if (this.data == null) return(null);
         return(this.data.getValue(+record,column));
     }
@@ -632,6 +638,9 @@ export class BlockImpl
 
     public async keyentqry(force?:boolean) : Promise<boolean>
     {
+        let event:KeyTriggerEvent = new KeyTriggerEvent(this.alias,null,keymap.enterquery,null);
+        this.invokeTriggers(Trigger.Key,event,keymap.enterquery);
+
         if (force == null) force = false;
 
         if (!force)
@@ -1114,6 +1123,7 @@ export class BlockImpl
 
         this.focus(0);
         this.searchfilter = [];
+        if (this.data) this.data.clear();
     }
 
 

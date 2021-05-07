@@ -67,6 +67,11 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.block?.block);
     }
 
+    public get connected() : boolean
+    {
+        return(this._impl_.getApplication().connected);
+    }
+
     public groupfields(groups:string[]) : void
     {
         this._impl_.groupfields(groups);
@@ -88,7 +93,7 @@ export class Form implements OnInit, AfterViewInit
 
         if (blk != null && blk.searchfilter.length > 0)
             return(this.colors.rowindicator);
-            
+
         return("");
     }
 

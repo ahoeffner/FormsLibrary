@@ -19,6 +19,8 @@ export enum Trigger
     KeyNextField,
     KeyPrevBlock,
     KeyNextBlock,
+    KeyEnterQuery,
+    KeyExecuteQuery,
     WhenValidateField,
     WhenValidateRecord,
     PreQuery,

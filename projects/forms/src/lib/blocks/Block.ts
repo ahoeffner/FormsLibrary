@@ -1,14 +1,14 @@
 import { Form } from "../forms/Form";
+import { RecordState } from "./Record";
 import { BlockImpl } from "./BlockImpl";
 import { keymap } from "../keymap/KeyMap";
 import { Trigger } from "../events/Triggers";
 import { Statement } from "../database/Statement";
+import { NameValuePair } from "../utils/NameValuePair";
 import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { TableDefinition } from "../database/TableDefinition";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
-import { NameValuePair } from "../utils/NameValuePair";
-import { RecordState } from "./Record";
 
 
 export class Block
@@ -29,6 +29,11 @@ export class Block
     public get table() : TableDefinition
     {
         return(this._impl_.table);
+    }
+
+    public get connected() : boolean
+    {
+        return(this.form.connected);
     }
 
     public getValue(record:number, field:string) : any
