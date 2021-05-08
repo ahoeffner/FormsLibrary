@@ -202,7 +202,7 @@ export class MasterDetail
 
     private async subquery(parent:subquery,detail:any)
     {
-        let mkey:Key = detail.dkey;
+        let mkey:Key = detail.mkey;
         let dkey:Key = detail.dkey;
         let block:BlockImpl = detail.block;
 
