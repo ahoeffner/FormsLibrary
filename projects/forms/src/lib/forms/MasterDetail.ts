@@ -129,7 +129,7 @@ export class MasterDetail
             {
                 if (det.block.usage.query)
                     det.block.enterqry();
-                    
+
                 this.enterdetailquery(det.block);
             });
         }
@@ -269,7 +269,10 @@ export class MasterDetail
         let and:boolean = false;
         let where:boolean = false;
 
-        if (sub.sql != null) and = true;
+        if (sub.sql != null)
+        {
+            and = true;
+        }
         else if (children && sub.mtab != null)
         {
             where = true;

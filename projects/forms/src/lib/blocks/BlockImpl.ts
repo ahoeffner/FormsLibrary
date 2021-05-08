@@ -783,6 +783,7 @@ export class BlockImpl
 
         let stmt:Statement = this.data.parseQuery(keys,subquery,fields);
 
+        await this.clear();
         let errors:string[] = stmt.validate();
 
         if (errors.length > 0)
@@ -793,7 +794,6 @@ export class BlockImpl
 
             this.alert(msg,"Query Condition");
 
-            this.clear();
             this.querying$ = false;
 
             if (this.masterdetail != null)
@@ -822,7 +822,6 @@ export class BlockImpl
         {
             this.alert(JSON.stringify(response),"Database Query");
 
-            this.clear();
             this.querying$ = false;
 
             if (this.masterdetail != null)
@@ -836,7 +835,6 @@ export class BlockImpl
             this.masterdetail.querydetails(this,false,true);
 
         this.row = 0;
-        await this.clear();
         await this.display(0);
 
         this.querying$ = false;
@@ -1685,7 +1683,7 @@ export class BlockImpl
     }
 
 
-    public alert(msg:string, title:string, width?:string, height?:string) : void
+    public alert(msg:string, title?:string, width?:string, height?:string) : void
     {
         if (title == null) title = this.alias;
         MessageBox.show(this.app,msg,title,width,height);

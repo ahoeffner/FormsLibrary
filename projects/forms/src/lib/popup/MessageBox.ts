@@ -171,11 +171,17 @@ export class MessageBox implements Popup, AfterViewInit
         this.msg = this.msgelem?.nativeElement as HTMLDivElement;
         this.btn = this.acceptelem?.nativeElement as HTMLButtonElement;
 
-        this.btn.addEventListener("click",() => {this.close(false)});
-        this.btn.addEventListener("keydown",() => {this.close(false)});
+        setTimeout(() => {this.addTriggers()},1);
 
         this.msg.innerHTML = this.message;
         this.keepFocus(0);
+    }
+
+
+    private addTriggers() : void
+    {
+        this.btn.addEventListener("click",() => {this.close(false)});
+        this.btn.addEventListener("keydown",() => {this.close(false)});
     }
 
 

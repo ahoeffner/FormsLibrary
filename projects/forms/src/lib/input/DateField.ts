@@ -25,7 +25,7 @@ export class DateField extends TextField
     {
         if (value == null || value.constructor.name != "Date")
         {
-            if (value != this.formatted)
+            if (value != this.formatted || value != this.element$.value)
             {
                 this.dateval = null;
                 this.formatted = value;
