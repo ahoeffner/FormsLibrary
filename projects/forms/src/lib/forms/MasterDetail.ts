@@ -127,7 +127,9 @@ export class MasterDetail
         {
             dep.details.forEach((det) =>
             {
-                det.block.enterqry();
+                if (det.block.usage.query)
+                    det.block.enterqry();
+                    
                 this.enterdetailquery(det.block);
             });
         }
