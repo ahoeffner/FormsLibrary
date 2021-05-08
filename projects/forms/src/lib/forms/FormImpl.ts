@@ -19,7 +19,7 @@ import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
-import { TriggerEvent } from "../events/TriggerEvent";
+import { KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { FieldImplementation } from "../input/FieldType";
@@ -167,13 +167,18 @@ export class FormImpl
     }
 
 
-    public async clear()
+    public async clear() : Promise<boolean>
     {
         for (let i = 0; i < this.blocks.length; i++)
-            await this.blocks[i].clearblock();
+        {
+            if (!await this.blocks[i].sendkey(null,keymap.clearblock))
+                return(false);
+        }
 
         if (this.blocks.length > 0) this.block = this.blocks[0];
         this.block?.focus();
+
+        return(true);
     }
 
 
@@ -1232,6 +1237,13 @@ export class FormImpl
                     }
                 }
             }
+        }
+
+        if (type == "key" && key == keymap.clearform)
+        {
+            let event:KeyTriggerEvent = new KeyTriggerEvent(null,null,keymap.clearform,null);
+            if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearform)) return(false);
+            this.clear();
         }
     }
 

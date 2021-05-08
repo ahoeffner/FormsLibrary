@@ -1622,6 +1622,13 @@ export class BlockImpl
             }
         }
 
+        if (type == "key" && key == keymap.clearblock)
+        {
+            trgevent = new KeyTriggerEvent(this.alias,null,keymap.clearblock,null);
+            if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearblock)) return(false);
+            this.clearblock();
+        }
+
         if (type == "key" && key == keymap.prevfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 

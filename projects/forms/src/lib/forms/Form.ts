@@ -184,7 +184,7 @@ export class Form implements OnInit, AfterViewInit
 
     public clear() : void
     {
-        this._impl_.clear();
+        this._impl_.block.sendkey(null,keymap.clearform);
     }
 
     public cancel() : void
