@@ -476,10 +476,9 @@ export class BlockImpl
     }
 
 
-    public sendkey(event:any,key:keymap) : boolean
+    public async sendkey(event:any,key:keymap) : Promise<boolean>
     {
-        this.onEvent(event,this.field,"key",key);
-        return(true);
+        return(await this.onEvent(event,this.field,"key",key));
     }
 
 

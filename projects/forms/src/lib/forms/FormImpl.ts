@@ -1071,10 +1071,15 @@ export class FormImpl
     }
 
 
-    public sendkey(event:any,key:keymap) : void
+    public async sendkey(event:any,key:keymap) : Promise<boolean>
     {
-        if (key == keymap.close) this.close(false);
-        else       this.block?.sendkey(event,key);
+        if (key == keymap.close)
+        {
+            await this.close(false);
+            return(true);
+        }
+
+        return(await this.block?.sendkey(event,key));
     }
 
 

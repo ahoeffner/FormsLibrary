@@ -1,4 +1,5 @@
 import { Form } from "../forms/Form";
+import { keymap } from "../keymap/KeyMap";
 import { MenuHandler } from './MenuHandler';
 
 
@@ -95,7 +96,7 @@ export class DefaultMenuHandler extends MenuHandler
 
     public clear() : void
     {
-        this.form?.clear();
+        this.form?.sendKey(keymap.clearform);
     }
 
     public cancel() : void

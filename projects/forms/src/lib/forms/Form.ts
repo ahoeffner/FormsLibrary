@@ -182,9 +182,9 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.wasCancelled());
     }
 
-    public clear() : void
+    public async clear() : Promise<boolean>
     {
-        this._impl_.block.sendkey(null,keymap.clearform);
+        return(await this._impl_.clear());
     }
 
     public cancel() : void
@@ -192,9 +192,14 @@ export class Form implements OnInit, AfterViewInit
         this._impl_.cancel();
     }
 
-    public close(dismiss?:boolean) : void
+    public async close(dismiss?:boolean) : Promise<void>
     {
-        this._impl_.close(dismiss);
+        await this._impl_.close(dismiss);
+    }
+
+    public async sendKey(key:keymap) : Promise<boolean>
+    {
+        return(await this._impl_.sendkey(null,key));
     }
 
     public setCallback(func:CallBack) : void
