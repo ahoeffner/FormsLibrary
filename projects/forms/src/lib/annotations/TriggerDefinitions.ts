@@ -43,16 +43,15 @@ export class TriggerDefinitions
 
         if (isblock && parts.length > 1)
         {
-            console.log("validate must specify field without '.' or ' '");
+            console.log("trigger must specify field without '.' or ' '");
             return;
         }
 
-        if (!isblock && (parts.length < 1 || parts.length > 2))
+        if (!isblock && parts.length > 2)
         {
-            console.log("validate must specify alias.field without '.' or ' '");
+            console.log("trigger must specify blockalias.field without ' '");
             return;
         }
-
 
         let form:string = null;
         let block:string = null;
@@ -108,6 +107,7 @@ export class TriggerDefinitions
 
     private static addFormFieldTrigger(form:string,block:string,field:string,def:TriggerDefinition)
     {
+        if (block == null) block = "";
         let ftriggers:Map<string,Map<string,TriggerDefinition>> = TriggerDefinitions.fftriggers.get(form);
 
         if (ftriggers == null)
@@ -156,6 +156,7 @@ export class TriggerDefinitions
 
     public static getFormFieldTriggers(form:string,block:string) : Map<string,TriggerDefinition>
     {
+        if (block == null) block = "";
         let triggers:Map<string,Map<string,TriggerDefinition>> = TriggerDefinitions.fftriggers.get(form.toLowerCase());
         if (triggers != null) return(new Map(triggers.get(block.toLowerCase())));
         return(new Map());

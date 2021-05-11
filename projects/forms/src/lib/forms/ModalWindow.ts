@@ -209,7 +209,8 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	public newForm(form:FormInstance) : void
 	{
-		if (!form.windowopts?.inherit) this.resize(form,false);
+		if (!form.windowopts?.inherit)
+			this.resize(form,false);
 
 		let formelem:Element = this.content.firstElementChild;
 		if (formelem != null) this.content.removeChild(formelem);

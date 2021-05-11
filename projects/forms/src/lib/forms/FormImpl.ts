@@ -610,11 +610,15 @@ export class FormImpl
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);
 
+            // Form triggers
+            let ftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,null);
+
             // Field triggers for block
             let bftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFieldTriggers(block.name);
             let fftriggers:Map<string,TriggerDefinition> = TriggerDefinitions.getFormFieldTriggers(this.name,block.alias);
 
             // Form overrides
+            ftriggers.forEach((def,trg) => {bftriggers.set(trg,def);});
             fftriggers.forEach((def,trg) => {bftriggers.set(trg,def);});
 
             bftriggers.forEach((def) =>

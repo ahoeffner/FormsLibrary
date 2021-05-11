@@ -91,7 +91,7 @@ export class MasterDetailQuery
             this.detailblks.delete(block.alias);
             let dep:dependencies = this.links.get(block.alias);
 
-            if (dep.details != null)
+            if (dep != null && dep.details != null)
             {
                 dep.details.forEach((det) =>
                 {this.remove(det.block);});
