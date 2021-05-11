@@ -273,6 +273,34 @@ export class ModalWindow implements onEventListener, AfterViewInit
 
 	private resize(form:FormInstance, pos:boolean) : void
 	{
+		if (form.windowopts.offsetLeft != null && form.windowopts.offsetLeft.trim().endsWith("%"))
+		{
+			let s:string = form.windowopts.offsetLeft.trim();
+			let n:number = +s.substring(0,s.length-1);
+			form.windowopts.offsetLeft = (window.innerWidth*n/100)+"px";
+		}
+
+		if (form.windowopts.width != null && form.windowopts.width.trim().endsWith("%"))
+		{
+			let s:string = form.windowopts.width.trim();
+			let n:number = +s.substring(0,s.length-1);
+			form.windowopts.width = (window.innerWidth*n/100)+"px";
+		}
+
+		if (form.windowopts.offsetTop != null && form.windowopts.offsetTop.trim().endsWith("%"))
+		{
+			let s:string = form.windowopts.offsetTop.trim();
+			let n:number = +s.substring(0,s.length-1);
+			form.windowopts.offsetTop = (window.innerHeight*n/100)+"px";
+		}
+
+		if (form.windowopts.height != null && form.windowopts.height.trim().endsWith("%"))
+		{
+			let s:string = form.windowopts.height.trim();
+			let n:number = +s.substring(0,s.length-1);
+			form.windowopts.height = (window.innerHeight*n/100)+"px";
+		}
+
 		if (pos)
 		{
 			this.top = form.windowopts.offsetTop;
