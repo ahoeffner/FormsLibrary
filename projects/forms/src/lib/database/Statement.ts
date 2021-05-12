@@ -33,6 +33,7 @@ export interface bindvalue
 export class Statement
 {
     private sql$:string = null;
+    private rows$:number = null;
     private subquery$:SQL = null;
     private table$:string = null;
     private order$:string = null;
@@ -64,7 +65,7 @@ export class Statement
         if (this.sql$ != null)
         {
             this.type$ = SQLType.call;
-            let test:string = this.sql$.substring(0,7).trim().toLowerCase();
+            let test:string = this.sql$.trim().substring(0,7).trim().toLowerCase();
 
             if (test == "select") this.type$ = SQLType.select;
             if (test == "insert") this.type$ = SQLType.insert;
@@ -93,6 +94,16 @@ export class Statement
         this.sql$ = sql;
         this.findtype();
         this.override = true;
+    }
+
+    public set rows(rows:number)
+    {
+        this.rows$ = rows;
+    }
+
+    public get rows() : number
+    {
+        return(this.rows$);
     }
 
     public isFunction() : boolean
@@ -576,6 +587,9 @@ export class Statement
             {bindvals.push(bindv)});
         }
 
-        return({sql: sql, bindvalues: bindvals});
+        let sqlstmt:SQL = {sql: sql, bindvalues: bindvals};
+        if (this.rows$ != null) sqlstmt["rows"] = this.rows$;
+
+        return(sqlstmt);
     }
 }
