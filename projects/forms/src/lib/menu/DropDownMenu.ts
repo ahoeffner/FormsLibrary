@@ -1,7 +1,6 @@
 import { Menu } from './Menu';
 import { Form } from '../forms/Form';
 import { MenuEntry } from './MenuEntry';
-import { DefaultMenu } from './DefaultMenu';
 import { Config } from '../application/Config';
 import { MenuInterface } from './MenuInterface';
 import { Context } from '../application/Context';

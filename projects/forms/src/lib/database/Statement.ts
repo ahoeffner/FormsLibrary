@@ -96,14 +96,10 @@ export class Statement
         this.override = true;
     }
 
-    public set rows(rows:number)
+    public rows(rows:number) : Statement
     {
         this.rows$ = rows;
-    }
-
-    public get rows() : number
-    {
-        return(this.rows$);
+        return(this);
     }
 
     public isFunction() : boolean

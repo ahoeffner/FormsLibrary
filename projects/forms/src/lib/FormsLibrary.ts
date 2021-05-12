@@ -1,3 +1,4 @@
+import { Wait } from './utils/Wait';
 import { NgModule } from '@angular/core';
 import { MenuArea } from './menu/MenuArea';
 import { FormList } from './menu/FormList';
@@ -11,7 +12,7 @@ import { ListOfValuesImpl } from './listval/ListOfValuesImpl';
 
 
 @NgModule({
-    declarations: [FormList, FormArea, ModalWindow, MenuArea, LoginForm, FieldInstance, ListOfValuesImpl],
+    declarations: [FormList, FormArea, ModalWindow, MenuArea, LoginForm, FieldInstance, ListOfValuesImpl, Wait],
     exports     : [FormList, FormArea, MenuArea, FieldInstance],
     imports     : [CommonModule, HttpClientModule]
 })
