@@ -9,9 +9,12 @@ export class Connection
 {
     private url:string = null;
     private conn:string = null;
-    private running:number = 0;
     private keepalive:number = 0;
     private client:HttpClient = null;
+
+    private stmtid:number = 0;
+    private waitlim:number = 250;
+    private running:Map<number,number> = new Map<number,number>();
 
 
     public constructor(private app:ApplicationImpl)
@@ -168,24 +171,28 @@ export class Connection
         if (cmd == "lock" || cmd == "insert" || cmd == "update" || cmd == "delete")
             this.app.appstate.transactionChange(true);
 
-        this.running++;
-        setTimeout(() => {this.showwait(true)},5000);
+        let stid:number = this.stmtid++;
+        let start:number = new Date().getTime();
+
+        this.running.set(stid,start);
+        setTimeout(() => {this.showwait()},this.waitlim);
 
         return(
             this.client.post<any>(url+cmd,body).toPromise().then
             (
-                data => {return(this.onReply(data));},
-                error => {return(this.onReply(error));}
+                data => {return(this.onReply(stid,data));},
+                error => {return(this.onReply(stid,error));}
             )
         );
     }
 
 
-    private onReply(data:any) : any
+    private onReply(stid:number, data:any) : any
     {
-        this.running--;
         let response:any = null;
-        setTimeout(() => {this.showwait(false)},1);
+
+        this.running.delete(stid);
+        this.showwait();
 
         if (!(data instanceof HttpErrorResponse)) response = data;
         else response = {status: "failed", error: "500", message: JSON.stringify(data.message)};
@@ -200,9 +207,20 @@ export class Connection
     }
 
 
-    private showwait(show:boolean) : void
+    private showwait() : void
     {
-        if (show && this.running > 0) Wait.show(this.app);
-        if (!show && this.running == 0) Wait.close(this.app);
+        let now:number = new Date().getTime();
+        let min:number = now;
+
+        this.running.forEach((start) =>
+        {
+            if (+start < +min) min = start;
+        });
+
+        let show:boolean = false;
+        if (now - min > +this.waitlim) show = true;
+
+        if (show) Wait.show(this.app);
+        else      Wait.close(this.app);
     }
 }
