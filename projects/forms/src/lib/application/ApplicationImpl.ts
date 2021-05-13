@@ -1,6 +1,7 @@
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Context } from "./Context";
+import { Wait } from "../utils/Wait";
 import { Builder } from "../utils/Builder";
 import { Application } from "./Application";
 import { FormList } from "../menu/FormList";
@@ -486,6 +487,9 @@ export class ApplicationImpl
 
     public async onEvent(event:any)
     {
+        if (Wait.waiting())
+            return;
+
         let keydef:Key =
         {
             code  : event.keyCode,

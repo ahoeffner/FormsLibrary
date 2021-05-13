@@ -10,6 +10,7 @@ export class Connection
     private url:string = null;
     private conn:string = null;
     private keepalive:number = 0;
+    private running:boolean = false;
     private waiting:boolean = false;
     private client:HttpClient = null;
 
@@ -131,13 +132,19 @@ export class Connection
     {
         if (this.conn != null && +this.keepalive > 0)
         {
+            let response:any = null;
             let body:any = {"keep-alive": true};
-            let response:any = await this.invoke("ping",body);
+
+            await this.client.post<any>(this.url+"/"+this.conn+"/ping",body).toPromise().then
+            (
+                data => {response = data},
+                error => {response = error}
+            )
 
             if (response["status"] != "ok")
             {
-                this.alert(JSON.stringify(response),"KeepAlive stopped");
                 this.keepalive = 0;
+                this.alert(JSON.stringify(response),"KeepAlive stopped");
             }
 
             setTimeout(() => {this.keepAlive()},this.keepalive*1000);
@@ -162,10 +169,8 @@ export class Connection
         if (cmd == "lock" || cmd == "insert" || cmd == "update" || cmd == "delete")
             this.app.appstate.transactionChange(true);
 
-        if (cmd != "ping")
-        {
-            
-        }
+        this.running = true;
+        setTimeout(() => {this.showwait(true)},10);
 
         return(
             this.client.post<any>(url+cmd,body).toPromise().then
@@ -179,7 +184,10 @@ export class Connection
 
     private onReply(data:any) : any
     {
+        this.running = false;
         let response:any = null;
+        setTimeout(() => {this.showwait(false)},1);
+
         if (!(data instanceof HttpErrorResponse)) response = data;
         else response = {status: "failed", error: "500", message: JSON.stringify(data.message)};
         return(response);
@@ -190,5 +198,19 @@ export class Connection
     {
         if (title == null) title = "Database Call Failed";
         MessageBox.show(this.app,msg,title);
+    }
+
+
+    private showwait(on:boolean) : void
+    {
+        if (on)
+        {
+            if (this.running)
+                Wait.show(this.app);
+        }
+        else
+        {
+            Wait.close();
+        }
     }
 }
