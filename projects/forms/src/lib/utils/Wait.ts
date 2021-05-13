@@ -47,45 +47,53 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, C
 
 export class Wait implements AfterViewInit
 {
-    private static app:ApplicationImpl = null;
+    private static ready:boolean = false;
+    private static displayed:boolean = false;
     private static win:ComponentRef<Wait> = null;
 
 
     public static show(app:ApplicationImpl) : void
     {
-        if (Wait.app != null)
+        if (Wait.displayed)
             return;
 
-        Wait.app = app;
-        console.log("show");
+        Wait.ready = false;
+        Wait.displayed = true;
         Wait.win = app.builder.createComponent(Wait);
 
         let element:HTMLElement = (Wait.win.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
         app.builder.getAppRef().attachView(Wait.win.hostView);
 
         document.body.appendChild(element);
+        Wait.ready = true;
     }
 
 
     public static waiting() : boolean
     {
-        return(Wait.win != null);
+        return(Wait.displayed);
     }
 
 
-    public static close() : void
+    public static close(app:ApplicationImpl) : void
     {
-        if (Wait.win == null)
+        if (!Wait.displayed)
             return;
 
-        console.log("hide");
+        if (!Wait.ready)
+        {
+            setTimeout(() => {Wait.close(app)},1);
+            return;
+        }
+
+        Wait.displayed = false;
         let element:HTMLElement = (Wait.win.hostView as EmbeddedViewRef<any>).rootNodes[0] as HTMLElement;
 		document.body.removeChild(element);
 
-		Wait.app.builder.getAppRef().detachView(Wait.win.hostView);
+		app.builder.getAppRef().detachView(Wait.win.hostView);
 		Wait.win.destroy();
 
-        Wait.win = null;
+        app.getCurrentForm().focus();
     }
 
 

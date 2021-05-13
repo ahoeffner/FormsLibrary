@@ -9,9 +9,8 @@ export class Connection
 {
     private url:string = null;
     private conn:string = null;
+    private running:number = 0;
     private keepalive:number = 0;
-    private running:boolean = false;
-    private waiting:boolean = false;
     private client:HttpClient = null;
 
 
@@ -169,8 +168,8 @@ export class Connection
         if (cmd == "lock" || cmd == "insert" || cmd == "update" || cmd == "delete")
             this.app.appstate.transactionChange(true);
 
-        this.running = true;
-        setTimeout(() => {this.showwait(true)},10);
+        this.running++;
+        setTimeout(() => {this.showwait(true)},5000);
 
         return(
             this.client.post<any>(url+cmd,body).toPromise().then
@@ -184,7 +183,7 @@ export class Connection
 
     private onReply(data:any) : any
     {
-        this.running = false;
+        this.running--;
         let response:any = null;
         setTimeout(() => {this.showwait(false)},1);
 
@@ -201,16 +200,9 @@ export class Connection
     }
 
 
-    private showwait(on:boolean) : void
+    private showwait(show:boolean) : void
     {
-        if (on)
-        {
-            if (this.running)
-                Wait.show(this.app);
-        }
-        else
-        {
-            Wait.close();
-        }
+        if (show && this.running > 0) Wait.show(this.app);
+        if (!show && this.running == 0) Wait.close(this.app);
     }
 }
