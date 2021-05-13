@@ -175,7 +175,7 @@ export class Connection
         let start:number = new Date().getTime();
 
         this.running.set(stid,start);
-        setTimeout(() => {this.showwait()},this.waitlim);
+        setTimeout(() => {this.showwait()},+this.waitlim + +10);
 
         return(
             this.client.post<any>(url+cmd,body).toPromise().then

@@ -20,7 +20,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, C
 
         .wait-canvas
         {
-            top: 40%;
+            top: 20%;
             left: 40%;
             width: 320px;
             height: 160px;
@@ -109,13 +109,26 @@ export class Wait implements AfterViewInit
 		this.input = this.inputElement?.nativeElement as HTMLInputElement;
 		this.canvas = this.canvasElement?.nativeElement as HTMLCanvasElement;
         let ctx:CanvasRenderingContext2D = this.canvas.getContext("2d");
-        setTimeout(() => {this.input.focus()},1);
-        this.draw(ctx,0);
+        setTimeout(() => {this.focus()},10);
+        setTimeout(() => {this.showrunning(ctx,0)},250);
     }
 
 
-    private draw(ctx:CanvasRenderingContext2D, pick:number) : void
+    private focus() : void
     {
+        if (!Wait.displayed)
+            return;
+
+        this.input.focus();
+        setTimeout(() => {this.focus()},100);
+    }
+
+
+    private showrunning(ctx:CanvasRenderingContext2D, pick:number) : void
+    {
+        if (!Wait.displayed)
+            return;
+
         ctx.lineWidth = 5;
         let pcolor:string = "black";
         let bcolor:string = "#DCDCDC";
@@ -151,6 +164,6 @@ export class Wait implements AfterViewInit
         ctx.stroke();
         ctx.closePath();
 
-        setTimeout(() => this.draw(ctx,pick+1), 250);
+        setTimeout(() => {this.showrunning(ctx,pick+1)}, 250);
     }
 }
