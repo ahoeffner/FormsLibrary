@@ -1,5 +1,5 @@
 import { ApplicationImpl } from '../application/ApplicationImpl';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentRef, ElementRef, EmbeddedViewRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ComponentRef, ElementRef, EmbeddedViewRef, ViewChild } from '@angular/core';
 
 
 @Component({
@@ -20,7 +20,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, C
 
         .wait-canvas
         {
-            top: 20%;
+            top: 25%;
             left: 40%;
             width: 320px;
             height: 160px;
@@ -41,8 +41,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, C
             box-shadow: inset 0px 0px 400px 110px rgba(0, 0, 0, .2);
         }
         `
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    ]
 })
 
 export class Wait implements AfterViewInit
@@ -142,7 +141,7 @@ export class Wait implements AfterViewInit
         ctx.strokeStyle=bcolor;
         if (pick == 0) ctx.strokeStyle=pcolor;
 
-        ctx.arc(rad+off, 2*rad+off, rad, 0, 2 * Math.PI);
+        ctx.arc(rad+off, 2*rad, rad, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.closePath();
 
@@ -151,7 +150,7 @@ export class Wait implements AfterViewInit
         ctx.strokeStyle=bcolor;
         if (pick == 1) ctx.strokeStyle=pcolor;
 
-        ctx.arc(6*rad+off, 2*rad+off, rad, 0, 2 * Math.PI);
+        ctx.arc(6*rad+off, 2*rad, rad, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.closePath();
 
@@ -160,7 +159,7 @@ export class Wait implements AfterViewInit
         ctx.strokeStyle=bcolor;
         if (pick == 2) ctx.strokeStyle=pcolor;
 
-        ctx.arc(11*rad+off, 2*rad+off, rad, 0, 2 * Math.PI);
+        ctx.arc(11*rad+off, 2*rad, rad, 0, 2 * Math.PI);
         ctx.stroke();
         ctx.closePath();
 
