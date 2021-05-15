@@ -13,6 +13,9 @@ export interface KeyMap
     enter:string;
     escape:string;
 
+    undo:string;
+    paste:string;
+
     zoom:string;
     close:string;
     listval:string;
@@ -53,6 +56,9 @@ export enum keymap
 {
     enter,
     escape,
+
+    undo,
+    paste,
 
     close,
 
