@@ -177,9 +177,10 @@ export class Condition
     private datebtwn() : void
     {
         this.operator$ = "between";
-
         let sdate:number = this.value$;
-        let edate:number = sdate + 60 * 60 * 24 * 1000;
+
+        // add 24 hours - minus 1 sec
+        let edate:number = sdate + 60 * 60 * 24 * 1000 - 1000;
 
         this.value$ = [sdate,edate];
         this.placeholder$ = [this.placeholder$+"_0",this.placeholder$+"_1"];

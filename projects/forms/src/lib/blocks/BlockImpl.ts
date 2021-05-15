@@ -1359,7 +1359,9 @@ export class BlockImpl
             let type:FieldType = field.definition.type;
             if (type == FieldType.date || type == FieldType.datetime)
             {
-                DatePicker.show(this.app,this,this.record,field.name,field.value);
+                if (!field.readonly)
+                    DatePicker.show(this.app,this,this.record,field.name,field.value);
+                    
                 return(true);
             }
 

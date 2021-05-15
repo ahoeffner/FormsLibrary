@@ -92,7 +92,12 @@ export class DatePicker implements Popup, AfterViewInit
         if (year != cyear || month != cmonth || day != cday)
         {
             this.cdate = new Date(Date.UTC(year, month-1, day));
+
+            // Truncate
+            this.cdate = new Date(this.cdate.toDateString());
+
             this.impl.setValue(this.record,this.field,this.cdate);
+            this.impl.focus();
         }
 
         this.close(false);
