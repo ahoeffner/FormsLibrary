@@ -44,6 +44,7 @@ export class BlockImpl
     private disabled$:boolean = false;
     private navigable$:boolean = true;
     private masterdetail:MasterDetail;
+    private lastqry:NameValuePair[] = [];
     private fields$:FieldInstance[] = [];
     private lovs:Map<string,LOVDefinition>;
     private idlovs:Map<string,LOVDefinition>;
@@ -782,6 +783,7 @@ export class BlockImpl
             keys = this.masterdetail.getKeys(this);
 
         let stmt:Statement = this.data.parseQuery(keys,subquery,fields);
+        this.lastqry = this.searchfilter;
 
         await this.clear();
         let errors:string[] = stmt.validate();
@@ -1372,6 +1374,16 @@ export class BlockImpl
         // Enter query
         if (type == "key" && key == keymap.enterquery)
         {
+            if (this.state == FormState.entqry)
+            {
+                for (let i = 0; i < this.lastqry.length; i++)
+                {
+                    let nvp:NameValuePair = this.lastqry[i];
+                    await this.setValue(0,nvp.name,nvp.value);
+                    return(true);
+                }
+            }
+
             if (!await this.validate()) return(false);
 
             if (!await this.keyentqry())
