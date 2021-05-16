@@ -4,6 +4,7 @@ Add submenu levels
 Add table scrollbar
 Add F1-F12 in KeyCodes
 
+Menu should use sendkey
 enter-query twice => last criteria
 Error on locking, show only once, but show indicator
 
