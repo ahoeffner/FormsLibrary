@@ -127,15 +127,15 @@ export class FormImpl
     }
 
 
-    public enterquery() : void
+    public enterquery(force?:boolean) : void
     {
-        this.depencies.getRoot()?.sendkey(null,keymap.enterquery);
+        this.depencies.getRoot()?.keyentqry(force);
     }
 
 
-    public executequery() : void
+    public executequery(force?:boolean) : void
     {
-        this.depencies.getRoot()?.sendkey(null,keymap.executequery);
+        this.depencies.getRoot()?.keyexeqry(force);
     }
 
 
@@ -989,7 +989,6 @@ export class FormImpl
         if (fusage == null) fusage = {};
 
         usage = DBUsage.merge(pusage,dusage);
-        usage = DBUsage.merge(fusage,usage);
         usage = DBUsage.override(fusage,usage);
         usage = DBUsage.complete(usage);
 

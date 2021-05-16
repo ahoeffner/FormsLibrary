@@ -219,15 +219,15 @@ export class Form implements OnInit, AfterViewInit
     }
 
 
-    public enterquery() : void
+    public enterquery(force?:boolean) : void
     {
-        this._impl_.enterquery();
+        this._impl_.enterquery(force);
     }
 
 
-    public executequery() : void
+    public executequery(force?:boolean) : void
     {
-        this._impl_.executequery();
+        this._impl_.executequery(force);
     }
 
 

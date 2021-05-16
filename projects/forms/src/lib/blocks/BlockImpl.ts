@@ -637,9 +637,6 @@ export class BlockImpl
 
     public async keyentqry(force?:boolean) : Promise<boolean>
     {
-        let event:KeyTriggerEvent = new KeyTriggerEvent(this.alias,null,keymap.enterquery,null);
-        this.invokeTriggers(Trigger.Key,event,keymap.enterquery);
-
         if (force == null) force = false;
 
         if (!force)
@@ -650,6 +647,9 @@ export class BlockImpl
             if (this.data.database && !this.app.connected)
                 return(false);
         }
+
+        let event:KeyTriggerEvent = new KeyTriggerEvent(this.alias,null,keymap.enterquery,null);
+        this.invokeTriggers(Trigger.Key,event,keymap.enterquery);
 
         if (!await this.enterqry())
             return(false);
@@ -1361,7 +1361,7 @@ export class BlockImpl
             {
                 if (!field.readonly)
                     DatePicker.show(this.app,this,this.record,field.name,field.value);
-                    
+
                 return(true);
             }
 

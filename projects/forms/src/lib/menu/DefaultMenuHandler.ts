@@ -116,12 +116,12 @@ export class DefaultMenuHandler extends MenuHandler
 
     public enterQuery() : void
     {
-        this.form?.block?.enterquery();
+        this.form?.block?.sendKey(keymap.enterquery);
     }
 
     public executeQuery() : void
     {
-        this.form?.block?.executequery();
+        this.form?.block?.sendKey(keymap.executequery);
     }
 
     public deleteRecord() : void

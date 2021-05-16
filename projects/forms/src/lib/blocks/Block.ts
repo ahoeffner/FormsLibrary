@@ -71,10 +71,14 @@ export class Block
         return(this._impl_.searchfilter);
     }
 
-
     public set searchfilter(filter:NameValuePair[])
     {
         this._impl_.searchfilter = filter;
+    }
+
+    public async sendKey(key:keymap) : Promise<boolean>
+    {
+        return(await this._impl_.sendkey(null,key));
     }
 
     public async enterquery(override?:boolean) : Promise<boolean>
