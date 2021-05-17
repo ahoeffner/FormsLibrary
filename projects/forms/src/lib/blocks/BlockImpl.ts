@@ -1380,8 +1380,9 @@ export class BlockImpl
                 {
                     let nvp:NameValuePair = this.lastqry[i];
                     await this.setValue(0,nvp.name,nvp.value);
-                    return(true);
                 }
+
+                return(true);
             }
 
             if (!await this.validate()) return(false);
