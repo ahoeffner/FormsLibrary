@@ -352,7 +352,7 @@ export class FieldInstance implements AfterViewInit
         if (!this.options$.navigable)
         {
             if (this.clazz != null)
-                this.clazz.enable = this.enabled$;
+                this.clazz.enable = false;
 
             return;
         }

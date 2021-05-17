@@ -36,9 +36,19 @@ export class TextField implements FieldInterface
         this.element$ = element as HTMLInputElement;
     }
 
+    public get enable() : boolean
+    {
+        return(!this.element$.disabled);
+    }
+
     public set enable(flag:boolean)
     {
         this.element$.disabled = !flag;
+    }
+
+    public get readonly() : boolean
+    {
+        return(this.element$.readOnly);
     }
 
     public set readonly(flag:boolean)
