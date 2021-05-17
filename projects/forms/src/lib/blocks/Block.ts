@@ -51,9 +51,9 @@ export class Block
         return(this._impl_.querymode);
     }
 
-    public exist(record:number) : boolean
+    public empty() : boolean
     {
-        return(this._impl_.getRecord(record).state != RecordState.na);
+        return(this._impl_.getRecord(0).state == RecordState.na);
     }
 
     public cancel() : void
