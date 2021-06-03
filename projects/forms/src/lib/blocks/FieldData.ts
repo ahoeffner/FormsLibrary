@@ -118,10 +118,7 @@ export class FieldData
             response = await this.table.lock(record,this.data[+record].values);
 
             if (response["status"] == "failed")
-            {
-                this.data[record].failed = "lock";
                 return(response);
-            }
         }
 
         this.data[record].locked = true;
@@ -134,13 +131,6 @@ export class FieldData
         if (record < 0 || record >= this.data.length) return(false);
         if (this.data[+record].state == RecordState.insert) return(true);
         return(this.data[+record].locked);
-    }
-
-
-    public failed(record:number) : string
-    {
-        if (record < 0 || record >= this.data.length) return(null);
-        return(this.data[+record].failed);
     }
 
 
@@ -285,9 +275,6 @@ export class FieldData
 
         if (column == null)
         {
-            if (rec.failed != null)
-                return({status: "failed", message: rec.failed});
-
             if (rec.validated)
                 return({status: "failed", message: "Record already validated"});
 
@@ -299,10 +286,7 @@ export class FieldData
                     let response:any = await this.table.insert(record,this.data[+record].values);
 
                     if (response["status"] == "failed")
-                    {
-                        this.data[record].failed = "insert";
                         return(response);
-                    }
 
                     rec.dbn = scn;
                 }
@@ -328,10 +312,7 @@ export class FieldData
                 let response:any = await this.table.update(record,columns);
 
                 if (response["status"] == "failed")
-                {
-                    this.data[record].failed = "update";
                     return(response);
-                }
 
                 rec.dbn = scn;
             }
@@ -381,7 +362,6 @@ export class FieldData
 
         if (this.table != null && +colno < this.table.columns.length)
         {
-            rec.failed = null;
             rec.validated = false;
             rec.fields[+colno].validated = false;
         }
@@ -554,7 +534,6 @@ export class Row
     public scn:number = 0;
     public dbn:number = 0;
     public fields:Column[] = [];
-    public failed:string = null;
     public locked:boolean = false;
     public validated:boolean = true;
     public state:RecordState = RecordState.na;

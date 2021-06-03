@@ -975,12 +975,6 @@ export class BlockImpl
         if (this.data.locked(record))
             return(true);
 
-        if (this.data.failed(record) != null)
-        {
-            this.alert("The backend has failed locking this row","Lock Failure")
-            return(false);
-        }
-
         let trgevent:TriggerEvent = new TriggerEvent(this.alias,record,null);
 
         if (!await this.invokeTriggers(Trigger.Lock,trgevent))
@@ -990,7 +984,10 @@ export class BlockImpl
 
         if (response["status"] == "failed")
         {
-            this.alert(JSON.stringify(response),"Lock Record Backend Response");
+            this.alert("The backend has failed locking this row","Lock Failure")
+            let value:any = this.getValue(record,field);
+            let ffield:Field = this.records[record].getField(field);
+            if (ffield != null) ffield.value = value;
             return(false);
         }
 
@@ -1084,12 +1081,6 @@ export class BlockImpl
 
         // Check record is validated
         if (this.data.validated(this.record,false)) return(true);
-
-        if (this.data.failed(this.record) != null)
-        {
-            this.alert("Backend has not processed this record, requery to see actual data","Validation error");
-            return(true);
-        }
 
         let trgevent:TriggerEvent = new TriggerEvent(this.alias,this.record,null);
 
