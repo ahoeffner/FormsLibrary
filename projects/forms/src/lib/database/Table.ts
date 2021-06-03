@@ -163,7 +163,7 @@ export class Table
         if (response["status"] == "failed")
         {
             console.log(JSON.stringify(response));
-            return(response);
+            return({status: "failed", message: "Row is locked by another user. Try later"});
         }
 
         let rows:any[] = response["rows"];
@@ -186,8 +186,8 @@ export class Table
             if (row[this.columns[i]] != cval)
             {
                 let problem:string = cols[i].name+"["+record+"], db: "+row[this.columns[i]]+" != "+cval;
-                console.log("Value '"+problem+"' has been changed by another user. Requery to see changes");
-                return({status: "failed", message: "Value '"+problem+"' has been changed by another user. Requery to see changes"});
+                console.log("Row has been changed by another user. Requery to see changes");
+                return({status: "failed", message: "Row has been changed by another user. Requery to see changes"});
             }
         }
 

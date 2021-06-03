@@ -984,9 +984,10 @@ export class BlockImpl
 
         if (response["status"] == "failed")
         {
-            this.alert("The backend has failed locking this row","Lock Failure")
+            let row:number = +record - +this.offset;
+            this.alert(response["message"],"Lock Failure")
             let value:any = this.getValue(record,field);
-            let ffield:Field = this.records[record].getField(field);
+            let ffield:Field = this.records[+row].getField(field);
             if (ffield != null) ffield.value = value;
             return(false);
         }
