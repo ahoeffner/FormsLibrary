@@ -1,8 +1,8 @@
 import { dates } from "../dates/dates";
-import { KeyMap, KeyMapper } from "../keymap/KeyMap";
 import { Injectable } from "@angular/core";
 import { MacKeyMap } from "../keymap/MacKeyMap";
 import { HttpClient } from "@angular/common/http";
+import { KeyMap, KeyMapper } from "../keymap/KeyMap";
 import { Theme, Pink, Grey, Yellow, Indigo, defaultTheme } from "./Themes";
 
 
@@ -34,6 +34,7 @@ export class Config
         this.themes.set("yellow",new Yellow());
         this.themes.set("default",new defaultTheme());
 
+        console.log("nav: "+navigator.platform.toUpperCase());
         this.keymap = new MacKeyMap();
 
         KeyMapper.index(this.keymap);
