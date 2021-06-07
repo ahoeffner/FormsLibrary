@@ -1,6 +1,7 @@
 import { dates } from "../dates/dates";
 import { Injectable } from "@angular/core";
 import { MacKeyMap } from "../keymap/MacKeyMap";
+import { WinKeyMap } from "../keymap/WinKeyMap";
 import { HttpClient } from "@angular/common/http";
 import { KeyMap, KeyMapper } from "../keymap/KeyMap";
 import { Theme, Pink, Grey, Yellow, Indigo, defaultTheme } from "./Themes";
@@ -34,11 +35,25 @@ export class Config
         this.themes.set("yellow",new Yellow());
         this.themes.set("default",new defaultTheme());
 
-        console.log("nav: "+navigator.platform.toUpperCase());
-        this.keymap = new MacKeyMap();
+        let os:string = this.os();
+
+        if (os == "Windows") this.keymap = new WinKeyMap();
+        else                 this.keymap = new MacKeyMap();
 
         KeyMapper.index(this.keymap);
         this.colors = this.themes.get("default");
+    }
+
+    private os() : string
+    {
+        let os:string = "unknown";
+
+        if (navigator.appVersion.indexOf("Mac") != -1)   os="MacOS";
+        if (navigator.appVersion.indexOf("X11") != -1)   os="UNIX";
+        if (navigator.appVersion.indexOf("Linux") != -1) os="Linux";
+        if (navigator.appVersion.indexOf("Win") != -1)   os="Windows";
+
+        return(os);
     }
 
     private async load()

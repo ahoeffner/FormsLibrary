@@ -932,6 +932,20 @@ export class BlockImpl
         if (this.data.database && !this.app.connected)
             return(false);
 
+        let record:number = this.sum(this.row,this.offset);
+
+        // Lock the record
+        if (!this.data.locked(record))
+        {
+            let response:any = await this.data.lock(record);
+
+            if (response["status"] == "failed")
+            {
+                this.alert(response["message"],"Lock Failure")
+                return(false);
+            }
+        }
+
         let response:any = await this.data.delete(this.sum(this.row,this.offset));
 
         if (response["status"] == "failed")
