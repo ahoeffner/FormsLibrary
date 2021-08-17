@@ -1647,6 +1647,9 @@ export class BlockImpl
             this.clearblock();
         }
 
+        if (type == "key" && key == keymap.clearform && this.form != null)
+            await this.form.onEvent(event,field,type,key);
+
         if (type == "key" && key == keymap.prevfield && this.form != null)
             await this.form.onEvent(event,field,type,key);
 

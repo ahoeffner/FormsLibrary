@@ -519,6 +519,9 @@ export class ApplicationImpl
             key == keymap.close           ||
             key == keymap.delete          ||
             key == keymap.listval         ||
+            key == keymap.commit          ||
+            key == keymap.rollback        ||
+            key == keymap.clearform       ||
             key == keymap.insertafter     ||
             key == keymap.insertbefore    ||
             key == keymap.enterquery      ||

@@ -536,7 +536,10 @@ export class FieldInstance implements AfterViewInit
                     key == keymap.listval         ||
                     key == keymap.connect         ||
                     key == keymap.disconnect      ||
+                    key == keymap.commit          ||
+                    key == keymap.rollback        ||
                     key == keymap.delete          ||
+                    key == keymap.clearform       ||
                     key == keymap.insertafter     ||
                     key == keymap.insertbefore    ||
                     key == keymap.enterquery      ||
