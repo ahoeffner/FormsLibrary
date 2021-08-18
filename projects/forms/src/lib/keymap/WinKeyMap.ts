@@ -24,7 +24,7 @@ export class WinKeyMap implements KeyMap
     dublicate:string = KeyMapper.map({code: 86, ctrl: true});
 
     commit:string = KeyMapper.map({code: KeyCodes.enter, ctrl: true});
-    rollback:string = KeyMapper.map({code: KeyCodes.escape, ctrl: true, shift: true});
+    rollback:string = KeyMapper.map({code: KeyCodes.f1, ctrl: true, shift: true});
 
     connect:string = KeyMapper.map({code: 67, ctrl: true});
     disconnect:string = KeyMapper.map({code: 67, shift:true, ctrl: true});

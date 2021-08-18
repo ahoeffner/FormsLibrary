@@ -19,7 +19,6 @@ import { DefaultMenu } from "../menu/DefaultMenu";
 import { Container } from "../container/Container";
 import { Connection } from "../database/Connection";
 import { DropDownMenu } from "../menu/DropDownMenu";
-import { KeyTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 import { FieldInstance } from "../input/FieldInstance";
 import { Trigger, Triggers } from "../events/Triggers";
 import { FieldImplementation } from "../input/FieldType";
@@ -29,6 +28,7 @@ import { TriggerFunction } from "../events/TriggerFunction";
 import { KeyDefinition } from "../annotations/KeyDefinition";
 import { TableDefinition } from "../database/TableDefinition";
 import { ColumnDefinition } from "../database/ColumnDefinition";
+import { JOINDefinitions } from "../annotations/JOINDefinitions";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { BlockDefinitions } from "../annotations/BlockDefinitions";
 import { DatabaseUsage, DBUsage } from "../database/DatabaseUsage";
@@ -37,8 +37,8 @@ import { TableDefinitions } from "../annotations/TableDefinitions";
 import { ColumnDefinitions } from "../annotations/ColumnDefinitions";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 import { LOVDefinition, LOVDefinitions } from "../annotations/LOVDefinitions";
+import { KeyTriggerEvent, Origin, TriggerEvent } from "../events/TriggerEvent";
 import { TriggerDefinition, TriggerDefinitions } from "../annotations/TriggerDefinitions";
-import { JOINDefinitions } from "../annotations/JOINDefinitions";
 
 
 export class FormImpl
@@ -171,7 +171,8 @@ export class FormImpl
     {
         for (let i = 0; i < this.blocks.length; i++)
         {
-            if (!await this.blocks[i].sendkey(null,keymap.clearblock))
+            let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,this.blocks[i].alias,null,keymap.clearblock,null);
+            if (!await this.blocks[i].sendkey(event,keymap.clearblock))
                 return(false);
         }
 
@@ -1082,6 +1083,7 @@ export class FormImpl
             return(true);
         }
 
+        if (event == null) event = new KeyTriggerEvent(Origin.Form,null,null,keymap.clearblock,null);
         return(await this.block?.sendkey(event,key));
     }
 
@@ -1249,7 +1251,7 @@ export class FormImpl
 
         if (type == "key" && key == keymap.clearform)
         {
-            let event:KeyTriggerEvent = new KeyTriggerEvent(null,null,keymap.clearform,null);
+            let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,null,null,keymap.clearform,null);
             if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearform)) return(false);
             this.clear();
         }

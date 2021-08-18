@@ -3,6 +3,13 @@ import { keymap } from "../keymap/KeyMap";
 import { Statement } from "../database/Statement";
 import { FieldInstance } from "../input/FieldInstance";
 
+export enum Origin
+{
+    Form,
+    Block,
+    Field
+}
+
 
 export class TriggerEvent
 {
@@ -44,12 +51,14 @@ export class KeyTriggerEvent extends TriggerEvent
 {
     private key$:keymap;
     private field$:string;
+    private origin$:number;
 
-    constructor(block:string, field:FieldInstance, key:keymap, jsevent:any)
+    constructor(origin:Origin, block:string, field:FieldInstance, key:keymap, jsevent:any)
     {
         super(block,0,jsevent);
 
         this.key$ = key;
+        this.origin$ = origin;
 
         if (field != null)
         {
@@ -66,6 +75,11 @@ export class KeyTriggerEvent extends TriggerEvent
     public get field() : string
     {
         return(this.field$);
+    }
+
+    public get origin() : number
+    {
+        return(this.origin$);
     }
 }
 

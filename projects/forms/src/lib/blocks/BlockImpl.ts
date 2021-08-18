@@ -24,7 +24,7 @@ import { LOVDefinition } from "../annotations/LOVDefinitions";
 import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
-import { FieldTriggerEvent, KeyTriggerEvent, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
+import { FieldTriggerEvent, KeyTriggerEvent, Origin, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
 
 
 export class BlockImpl
@@ -479,6 +479,7 @@ export class BlockImpl
 
     public async sendkey(event:any,key:keymap) : Promise<boolean>
     {
+        if (event == null) event = new KeyTriggerEvent(Origin.Block,this.alias,null,key,null);
         return(await this.onEvent(event,this.field,"key",key));
     }
 
@@ -649,7 +650,7 @@ export class BlockImpl
                 return(false);
         }
 
-        let event:KeyTriggerEvent = new KeyTriggerEvent(this.alias,null,keymap.enterquery,null);
+        let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Block,this.alias,null,keymap.enterquery,null);
         this.invokeTriggers(Trigger.Key,event,keymap.enterquery);
 
         if (!await this.enterqry())
@@ -1399,7 +1400,7 @@ export class BlockImpl
                 return(false);
             }
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
@@ -1408,7 +1409,7 @@ export class BlockImpl
         if (type == "key" && key == keymap.executequery)
         {
             if (!await this.validate()) return(false);
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1422,7 +1423,7 @@ export class BlockImpl
             if (event != null && event["preventDefault"] != null)
                 event.preventDefault();
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (this.records[+this.row]?.state == RecordState.update)
             {
@@ -1438,7 +1439,7 @@ export class BlockImpl
         {
             if (!await this.validate()) return(false);
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1457,7 +1458,7 @@ export class BlockImpl
         {
             if (!await this.validate()) return(false);
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1506,7 +1507,7 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1546,7 +1547,7 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1574,7 +1575,7 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1602,7 +1603,7 @@ export class BlockImpl
             if (!await this.validate())
                 return(false);
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
 
             if (!await this.invokeTriggers(Trigger.Key,trgevent,key))
                 return(true);
@@ -1642,7 +1643,7 @@ export class BlockImpl
 
         if (type == "key" && key == keymap.clearblock)
         {
-            trgevent = new KeyTriggerEvent(this.alias,null,keymap.clearblock,null);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,null,keymap.clearblock,null);
             if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearblock)) return(false);
             this.clearblock();
         }
@@ -1667,7 +1668,7 @@ export class BlockImpl
             if (event != null && event["preventDefault"] != null)
                 event.preventDefault();
 
-            trgevent = new KeyTriggerEvent(this.alias,field,key,event);
+            trgevent = new KeyTriggerEvent(Origin.Block,this.alias,field,key,event);
             return(await this.invokeTriggers(Trigger.Key,trgevent,key));
         }
 
