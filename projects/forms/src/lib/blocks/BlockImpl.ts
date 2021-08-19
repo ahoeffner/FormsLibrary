@@ -554,7 +554,14 @@ export class BlockImpl
             row = this.row;
 
         let record:number = this.sum(this.offset,row);
+
+        if (record >= this.records.length)
+            return;
+
         let fld:Field = this.records[+record].getField(field);
+
+        if (this.records[record].state == RecordState.na)
+            return;
 
         let value:Date = new Date();
         if (fld != null) value = fld.value;

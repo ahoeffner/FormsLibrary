@@ -222,12 +222,17 @@ export class DatePicker implements Popup, AfterViewInit
         this.days.classList.add("datepicker-days");
         this.cal.appendChild(this.days);
 
-        this.draw();
+        let table:HTMLTableElement = this.draw();
+        let width:string = (1.2*table.offsetWidth)+"px";
+        let height:string = (1.2*table.offsetHeight)+"px";
+
+        this.win.resize(width,height);
+
         this.months.focus();
    }
 
 
-   private draw() : void
+   private draw() : HTMLTableElement
    {
         let cday:number = this.cdate.getDate();
         let cmonth:number = this.cdate.getMonth();
@@ -294,6 +299,8 @@ export class DatePicker implements Popup, AfterViewInit
 
         this.days.innerHTML = "";
         this.days.appendChild(table);
+
+        return(table);
     }
 
 
@@ -317,16 +324,16 @@ export class DatePicker implements Popup, AfterViewInit
         <style>
             .datepicker-month
             {
-                width: 64px;
                 font-size: 15px;
                 margin-left: 16px;
+                width: fit-content;
             }
 
             .datepicker-year
             {
-                width: 64px;
                 font-size: 15px;
                 margin-left: 32px;
+                width: fit-content;
             }
 
             .datepicker-table

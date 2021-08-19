@@ -8,7 +8,7 @@ export class TextField implements FieldInterface
 
     public get html() : string
     {
-        return("<input></input>");
+        return("<input type='text'></input>");
     }
 
     public set size(size:number)

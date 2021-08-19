@@ -17,7 +17,7 @@ import { AfterViewInit, Component, OnInit } from "@angular/core";
     selector: '',
     template:
     `
-        <table style='margin-top: 20px'>
+        <table style='margin-top: "20px"; margin-right: "10px"'>
           <tr>
             <td>Username</td><td>: <field name='usr'></field> </td>
           </tr>
@@ -40,6 +40,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
     public left:string   = "25%";
     public width:string  = "300px";
     public height:string = "150px";
+    public tmargin:string = "20px";
     public title:string  = "Login";
 
     constructor(ctx:Context)
@@ -127,6 +128,13 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
 
         this.usr.enable(false);
         this.pwd.enable(false);
+
+        let field:HTMLInputElement = document.getElementsByName("usr")[1] as HTMLInputElement;
+
+        let width:string = (1.75*field.offsetWidth+10)+"px";
+        let height:string = (4*field.offsetHeight+20)+"px";
+
+        this.win.resize(width,height);
 
         this.usr.focus();
         this.app.dropContainer();

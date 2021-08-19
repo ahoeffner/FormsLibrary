@@ -15,7 +15,10 @@ import { AfterViewInit, Component, ComponentRef, ElementRef, EmbeddedViewRef, Vi
         `
         .wait-input
         {
+            width: 0;
             height: 0;
+            opacity: 0;
+            filter:alpha(opacity=0);
         }
 
         .wait-canvas

@@ -172,8 +172,7 @@ export class FormImpl
         for (let i = 0; i < this.blocks.length; i++)
         {
             let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,this.blocks[i].alias,null,keymap.clearblock,null);
-            if (!await this.blocks[i].sendkey(event,keymap.clearblock))
-                return(false);
+            await this.blocks[i].sendkey(event,keymap.clearblock);
         }
 
         if (this.blocks.length > 0) this.block = this.blocks[0];

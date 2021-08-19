@@ -213,7 +213,8 @@ export class ApplicationImpl
 
     public async disconnect() : Promise<void>
     {
-        return(await this.appstate.connection.disconnect());
+        await this.appstate.connection.disconnect();
+        this.getCurrentForm()?.focus();
     }
 
 

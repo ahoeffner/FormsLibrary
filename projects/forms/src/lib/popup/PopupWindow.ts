@@ -210,6 +210,14 @@ export class PopupWindow implements onEventListener, AfterViewInit
     }
 
 
+	public resize(width:string, height:string) : void
+	{
+		this.width = width;
+		this.height = height;
+		this.change.detectChanges();
+	}
+
+
 	public setWinRef(winref:ComponentRef<any>) : void
 	{
 		this.winref = winref;

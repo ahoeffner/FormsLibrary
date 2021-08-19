@@ -61,6 +61,12 @@ export class Block
         this._impl_.sendkey(null,keymap.escape);
     }
 
+    public goField(field:string, row?:number) : void
+    {
+        if (row == null) row = this._impl_.row;
+        this._impl_.getField(row,field).focus();
+    }
+
     public get ready() : boolean
     {
         return(this._impl_.ready)
