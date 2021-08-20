@@ -83,7 +83,7 @@ export class Application
         return(this.conf.colors);
     }
 
-    public set theme(theme:string)
+    public set theme(theme:string|Theme)
     {
         setTimeout(() => {this.conf.setTheme(theme);},50);
     }
@@ -126,7 +126,7 @@ export class Application
             if (!await form.validate())
                 return;
         }
-        
+
         this._impl_.connection.commit();
     }
 

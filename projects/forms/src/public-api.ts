@@ -59,7 +59,7 @@ export {FormArea} from './lib/forms/FormArea';
 export {WindowOptions} from './lib/forms/WindowOptions';
 export {FormDefinition} from './lib/forms/FormsDefinition';
 
-export {Theme} from './lib/application/Themes';
 export {Application} from './lib/application/Application';
+export {Theme, defaultTheme} from './lib/application/Themes';
 
 export {FormsLibrary} from './lib/FormsLibrary';
