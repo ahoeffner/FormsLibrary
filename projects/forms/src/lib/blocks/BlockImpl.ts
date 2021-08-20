@@ -558,10 +558,13 @@ export class BlockImpl
         if (record >= this.records.length)
             return;
 
-        let fld:Field = this.records[+record].getField(field);
-
         if (this.records[record].state == RecordState.na)
             return;
+
+        if (this.records[record].state == RecordState.update && !this.usage.update)
+            return;
+
+        let fld:Field = this.records[+record].getField(field);
 
         let value:Date = new Date();
         if (fld != null) value = fld.value;
