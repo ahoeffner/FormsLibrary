@@ -222,12 +222,12 @@ export class DatePicker implements Popup, AfterViewInit
         this.days.classList.add("datepicker-days");
         this.cal.appendChild(this.days);
 
-        let table:HTMLTableElement = this.draw();
-        let width:string = (1.2*table.offsetWidth)+"px";
-        let height:string = (1.2*table.offsetHeight)+"px";
+        this.draw();
+
+        let width:string = (1.25*this.cal.offsetWidth)+"px";
+        let height:string = (1.10*this.cal.offsetHeight+32)+"px";
 
         this.win.resize(width,height);
-
         this.months.focus();
    }
 
@@ -325,6 +325,7 @@ export class DatePicker implements Popup, AfterViewInit
             .datepicker-month
             {
                 font-size: 15px;
+                margin-top: 16px;
                 margin-left: 16px;
                 width: fit-content;
             }
@@ -332,6 +333,7 @@ export class DatePicker implements Popup, AfterViewInit
             .datepicker-year
             {
                 font-size: 15px;
+                margin-top: 16px;
                 margin-left: 32px;
                 width: fit-content;
             }
