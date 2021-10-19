@@ -212,6 +212,12 @@ export class Condition
         }
     }
 
+    public setValue(value:any) : void
+    {
+        for(let i = 0; i < this.bindvalues$.length; i++)
+            this.bindvalues$[i].value = value;
+    }
+
     public setCondition(condition:string) : void
     {
         this.error$ = null;

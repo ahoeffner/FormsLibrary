@@ -97,6 +97,12 @@ export class Form implements OnInit, AfterViewInit
         return("");
     }
 
+    public showRowIndicator(block:string, row:number) : boolean
+    {
+        if (row == this.getCurrentRow(block)) return(true);
+        return(false);
+    }
+
     public getRowIndicator(block:string, row:number) : string
     {
         if (row == this.getCurrentRow(block)) return(this.colors.rowindicator);

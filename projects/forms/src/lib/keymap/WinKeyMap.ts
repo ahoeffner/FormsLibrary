@@ -7,7 +7,7 @@ export class WinKeyMap implements KeyMap
     close:string = KeyMapper.map({code: 87, ctrl: true});
 
     undo:string = KeyMapper.map({code: 90, meta: true});
-    paste:string = KeyMapper.map({code: 86, meta: true});
+    paste:string = KeyMapper.map({code: 86, ctrl: true});
 
     enter:string = KeyMapper.map({code: KeyCodes.enter});
     escape:string = KeyMapper.map({code: KeyCodes.escape});

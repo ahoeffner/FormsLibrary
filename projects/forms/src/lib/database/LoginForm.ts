@@ -132,7 +132,7 @@ export class LoginForm extends Block implements Popup, OnInit, AfterViewInit
         let field:HTMLInputElement = document.getElementsByName("usr")[1] as HTMLInputElement;
 
         let width:string = (1.75*field.offsetWidth+10)+"px";
-        let height:string = (4*field.offsetHeight+20)+"px";
+        let height:string = (6*field.offsetHeight+20)+"px";
 
         this.win.resize(width,height);
 
