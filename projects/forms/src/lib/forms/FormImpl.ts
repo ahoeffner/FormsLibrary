@@ -596,16 +596,32 @@ export class FormImpl
             let idlovs:Map<string,LOVDefinition> = new Map<string,LOVDefinition>();
 
             def = LOVDefinitions.getblock(block.name);
-            def.forEach((lov,fld) => {lovs.set(fld,lov)});
+            def.forEach((lov,fld) =>
+            {
+                lov.inst = block;
+                lovs.set(fld,lov);
+            });
 
             def = LOVDefinitions.getblockid(block.name);
-            def.forEach((lov,fld) => {lovs.set(fld,lov)});
+            def.forEach((lov,fld) =>
+            {
+                lov.inst = block;
+                lovs.set(fld,lov);
+            });
 
             ovf = LOVDefinitions.getform(this.name,block.alias);
-            ovf.forEach((lov,fld) => {lovs.set(fld,lov)});
+            ovf.forEach((lov,fld) =>
+            {
+                lov.inst = this.form;
+                lovs.set(fld,lov);
+            });
 
             ovf = LOVDefinitions.getidform(this.name,block.alias);
-            ovf.forEach((lov,fld) => {idlovs.set(fld,lov)});
+            ovf.forEach((lov,fld) =>
+            {
+                lov.inst = this.form;
+                idlovs.set(fld,lov);
+            });
 
             block.setListOfValues(lovs);
             block.setIdListOfValues(idlovs);

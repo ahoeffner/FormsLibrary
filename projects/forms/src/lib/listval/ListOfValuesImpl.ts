@@ -223,12 +223,14 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.rblock.addTrigger(this,this.onMouse,Trigger.MouseDoubleClick);
 
         this.rblock.navigable = false;
+
         this.filter.focus();
+        this.filter.value = this.lov.value;
 
         if (this.lov.autoquery)
         {
             this.last = " ";
-            this.search(null);
+            this.search(this.filter.value);
         }
     }
 

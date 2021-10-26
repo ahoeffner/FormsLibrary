@@ -9,6 +9,8 @@ export interface ListOfValues
     width?:string;
     height?:string;
 
+    value?:any;
+
     case?:Case;
     minlen?:number;
     prefix?:string;
