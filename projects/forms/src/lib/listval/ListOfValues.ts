@@ -10,6 +10,7 @@ export interface ListOfValues
     height?:string;
 
     value?:any;
+    modfunc?:Function;
 
     case?:Case;
     minlen?:number;

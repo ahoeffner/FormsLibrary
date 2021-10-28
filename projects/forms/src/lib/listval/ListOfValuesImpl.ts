@@ -273,8 +273,13 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         if (this.lov.bindvalues != null)
             this.lov.bindvalues.forEach((bv) => {stmt.bind(bv.name,bv.value,bv.type)});
 
-        if (this.filter.value == null) this.filter.value = "";
-        stmt.bind("filter",this.prefix+this.filter.value+this.postfix);
+        let filter:string = this.filter.value;
+
+        if (this.lov.modfunc != null)
+            filter = this.lov.modfunc(this.filter.value);
+
+        if (filter == null) filter = "";
+        stmt.bind("filter",this.prefix+filter+this.postfix);
 
         event.stmt = stmt;
         return(true);
