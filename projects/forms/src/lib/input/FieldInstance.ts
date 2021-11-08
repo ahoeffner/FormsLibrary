@@ -38,15 +38,15 @@ export class FieldInstance implements AfterViewInit
     private state$:RecordState = RecordState.na;
     private options$:FieldOptions = {query: true, insert: true, update: true, navigable: true};
 
-    @Input("id")    private id$:string = "";
-    @Input("row")   private row$:number = -1;
-    @Input("name")  private name$:string = "";
-    @Input("block") private block$:string = "";
-    @Input("group") private group$:string = "";
-    @Input("class") private class$:string = "";
-    @Input("style") private style$:string = "";
-    @Input("size")  private size$:number = null;
-    @Input("value") private value$:string = null;
+    @Input("id")    public id$:string = "";
+    @Input("row")   public row$:number = -1;
+    @Input("name")  public name$:string = "";
+    @Input("block") public block$:string = "";
+    @Input("group") public group$:string = "";
+    @Input("class") public class$:string = "";
+    @Input("style") public style$:string = "";
+    @Input("size")  public size$:number = null;
+    @Input("value") public value$:string = null;
 
     @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
 
