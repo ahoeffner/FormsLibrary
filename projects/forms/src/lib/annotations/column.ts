@@ -11,6 +11,9 @@ export const column = (definition:ColumnDefinition) =>
         let cname:string = utils.getName(comp);
         let ctype:string = utils.getType(comp);
 
+        console.log("column component "+comp);
+        console.log("name: "+cname+" type: "+ctype);
+
         if (ctype != "Block")
         {
             console.log("@column("+definition.name+","+definition.type+") can only be used on blocks");

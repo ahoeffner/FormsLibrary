@@ -45,7 +45,7 @@ export class FieldInstance implements AfterViewInit
     @Input("group") public group$:string = "";
     @Input("class") public class$:string = "";
     @Input("style") public style$:string = "";
-    @Input("size")  public size$:number = null;
+    @Input("size")  public size$:string = null;
     @Input("value") public value$:string = null;
 
     @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
@@ -442,7 +442,7 @@ export class FieldInstance implements AfterViewInit
             this.container.innerHTML = this.clazz.html;
             this.clazz.element = this.container.children[0] as HTMLElement;
 
-            if (this.size$ != null) this.clazz.size = this.size$;
+            if (this.size$ != null) this.clazz.size = +this.size$;
             if (this.value$ != null) this.clazz.value = this.value$;
             if (this.class$ != "") this.clazz.element.classList.add(this.class$);
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
