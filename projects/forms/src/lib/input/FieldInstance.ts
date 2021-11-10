@@ -38,15 +38,15 @@ export class FieldInstance implements AfterViewInit
     private state$:RecordState = RecordState.na;
     private options$:FieldOptions = {query: true, insert: true, update: true, navigable: true};
 
-    @Input("id")    public id$:string = "";
-    @Input("row")   public row$:number = -1;
-    @Input("name")  public name$:string = "";
-    @Input("block") public block$:string = "";
-    @Input("group") public group$:string = "";
-    @Input("class") public class$:string = "";
-    @Input("style") public style$:string = "";
-    @Input("size")  public size$:string = null;
-    @Input("value") public value$:string = null;
+    @Input("id")    private id$:string = "";
+    @Input("row")   private row$:number = -1;
+    @Input("name")  private name$:string = "";
+    @Input("block") private block$:string = "";
+    @Input("group") private group$:string = "";
+    @Input("class") private class$:string = "";
+    @Input("style") private style$:string = "";
+    @Input("size")  private size$:number = null;
+    @Input("value") private value$:string = null;
 
     @ViewChild("container", {read: ElementRef}) private containerelem: ElementRef;
 
@@ -442,7 +442,7 @@ export class FieldInstance implements AfterViewInit
             this.container.innerHTML = this.clazz.html;
             this.clazz.element = this.container.children[0] as HTMLElement;
 
-            if (this.size$ != null) this.clazz.size = +this.size$;
+            if (this.size$ != null) this.clazz.size = this.size$;
             if (this.value$ != null) this.clazz.value = this.value$;
             if (this.class$ != "") this.clazz.element.classList.add(this.class$);
             if (this.style$ != "") this.clazz.element.style.cssText = this.style$;
