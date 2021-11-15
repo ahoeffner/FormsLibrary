@@ -5,6 +5,7 @@ import { TextField } from "./TextField";
 import { DateField } from "./DateField";
 import { RadioButton } from "./RadioButton";
 import { Column } from "../database/Column";
+import { DateTimeField } from "./DateTimeField";
 
 
 export enum FieldType
@@ -41,7 +42,7 @@ export class FieldImplementation
         FieldImplementation.impl.set(FieldType[FieldType.checkbox],CheckBox);
         FieldImplementation.impl.set(FieldType[FieldType.password],Password);
         FieldImplementation.impl.set(FieldType[FieldType.dropdown],DropDown);
-        FieldImplementation.impl.set(FieldType[FieldType.datetime],DateField);
+        FieldImplementation.impl.set(FieldType[FieldType.datetime],DateTimeField);
     }
 
     public static getClass(type:string) : any

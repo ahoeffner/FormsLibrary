@@ -35,7 +35,6 @@ export class dates
 
         dates.formattokens = new Set<string>();
         dates.formattokens.add("m");
-        dates.formattokens.add("d");
         dates.formattokens.add("o");
         dates.formattokens.add("d");
         dates.formattokens.add("y");
@@ -48,6 +47,11 @@ export class dates
     public static setFormat(format:string) : void
     {
         dates.init(format);
+    }
+
+    public static getFormat() : string
+    {
+        return(dates.deffmt);
     }
 
     public static parse(datestr:string, format?:string) : Date
