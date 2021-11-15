@@ -160,9 +160,11 @@ export class Connection
     }
 
 
-    public async invoke(cmd:string, body:any) : Promise<any>
+    public async invoke(cmd:string, body:any, nowait?:boolean) : Promise<any>
     {
         let url:string = this.url + "/";
+
+        if (nowait == null) nowait = false;
         if (this.conn != null) url = url + this.conn + "/";
 
         if (this.conn == null && cmd != "connect")
@@ -174,8 +176,11 @@ export class Connection
         let stid:number = this.stmtid++;
         let start:number = new Date().getTime();
 
-        this.running.set(stid,start);
-        setTimeout(() => {this.showwait()},+this.waitlim + +10);
+        if (!nowait)
+        {
+            this.running.set(stid,start);
+            setTimeout(() => {this.showwait()},+this.waitlim + +10);    
+        }
 
         return(
             this.client.post<any>(url+cmd,body).toPromise().then

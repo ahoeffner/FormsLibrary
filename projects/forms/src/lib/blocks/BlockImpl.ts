@@ -40,6 +40,7 @@ export class BlockImpl
     private ready$:boolean = false;
     private dbusage$:DatabaseUsage;
     private records$:Record[] = [];
+    private nowait$:boolean = false;
     private querying$:boolean = false;
     private disabled$:boolean = false;
     private navigable$:boolean = true;
@@ -171,6 +172,18 @@ export class BlockImpl
             rec.enable(true);
             rec.current = true;
         }
+    }
+
+
+    public get nowait()
+    {
+        return(this.nowait$);
+    }
+
+
+    public set nowait(nowait:boolean)
+    {
+        this.nowait$ = nowait;
     }
 
 
@@ -667,7 +680,7 @@ export class BlockImpl
             return(false);
 
         if (this.masterdetail != null)
-            this.masterdetail.enterquery(this);
+            await this.masterdetail.enterquery(this);
 
         this.focus(0);
         return(true);

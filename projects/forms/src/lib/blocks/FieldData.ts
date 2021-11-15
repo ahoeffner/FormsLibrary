@@ -407,7 +407,7 @@ export class FieldData
         this.query = stmt;
         if (this.table == null) return({status: "ok"});
 
-        let response:any = await this.table.executequery(stmt);
+        let response:any = await this.table.executequery(stmt,this.block.nowait);
 
         if (response["status"] != "failed")
         {

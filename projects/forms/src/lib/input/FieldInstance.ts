@@ -519,14 +519,11 @@ export class FieldInstance implements AfterViewInit
 
             let map:string = KeyMapper.map(keydef);
             let key:keymap = KeyMapper.keymap(map);
-
-            if (key == keymap.paste)
-                console.log("paste");
-
+            
             if (key == keymap.undo || key == keymap.paste)
             {
-                setTimeout(() => {this.blur()},1);
-                setTimeout(() => {this.focus()},1);
+                //setTimeout(() => {this.blur()},1);
+                //setTimeout(() => {this.focus()},1);
                 return;
             }
 

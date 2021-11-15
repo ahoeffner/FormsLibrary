@@ -397,7 +397,7 @@ export class Table
     }
 
 
-    public async executequery(stmt:Statement) : Promise<any>
+    public async executequery(stmt:Statement, nowait:boolean) : Promise<any>
     {
         this.keys = [];
         this.eof = false;
@@ -407,7 +407,7 @@ export class Table
         this.select.rows = this.fetch$;
         this.select.cursor = stmt.cursor;
 
-        let response:any = await this.conn.invoke("select",this.select);
+        let response:any = await this.conn.invoke("select",this.select,nowait);
 
         if (response["status"] == "failed")
             return(response);

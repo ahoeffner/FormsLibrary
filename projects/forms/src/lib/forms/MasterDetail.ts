@@ -112,23 +112,23 @@ export class MasterDetail
     }
 
 
-    public enterquery(block:BlockImpl) : void
+    public async enterquery(block:BlockImpl)
     {
         this.master$ = block;
-        this.enterdetailquery(block);
+        await this.enterdetailquery(block);
     }
 
 
-    private enterdetailquery(block:BlockImpl) : void
+    private async enterdetailquery(block:BlockImpl)
     {
         let dep:dependencies = this.links.get(block.alias);
 
         if (dep != null && dep.details != null)
         {
-            dep.details.forEach((det) =>
+            dep.details.forEach(async (det) =>
             {
                 if (det.block.usage.query)
-                    det.block.enterqry();
+                    await det.block.enterqry();
 
                 this.enterdetailquery(det.block);
             });

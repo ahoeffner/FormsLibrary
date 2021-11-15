@@ -222,6 +222,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
         this.rblock.addTrigger(this,this.prequery,Trigger.PreQuery);
         this.rblock.addTrigger(this,this.onMouse,Trigger.MouseDoubleClick);
 
+        this.rblock.nowait = true;
         this.rblock.navigable = false;
 
         this.filter.focus();
