@@ -522,8 +522,8 @@ export class FieldInstance implements AfterViewInit
             
             if (key == keymap.undo || key == keymap.paste)
             {
-                //setTimeout(() => {this.blur()},1);
-                //setTimeout(() => {this.focus()},1);
+                setTimeout(() => {this.blur()},1);
+                setTimeout(() => {this.focus()},1);
                 return;
             }
 

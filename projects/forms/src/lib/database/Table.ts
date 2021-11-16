@@ -444,13 +444,14 @@ export class Table
             {
                 let keys:string[] = Object.keys(row);
                 let flds:string[] = this.fielddata.fields;
+                let addcols:number = keys.length - flds.length;
 
-                for(let i = 0; i < keys.length; i++)
-                    this.cnames.push(keys[i]);
-
-                for(let i = 0; i < keys.length - flds.length; i++)
+                for(let i = addcols-1; i >= 0; i--)
                     flds.unshift(keys[i]);
 
+                for(let i = 0; i < flds.length; i++)
+                    this.cnames.push(flds[i]);
+ 
                 this.fielddata.fields = flds;
             }
 

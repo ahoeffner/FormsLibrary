@@ -181,6 +181,7 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
             this.filter.setDefinition(filtdef,true);
             this.filter.enable(false);
 
+            this.sblock.addTrigger(this.sblock,this.search,Trigger.PostChange);
         })
 
         let fielddef:Map<string,FieldDefinition> = new Map<string,FieldDefinition>();
@@ -306,6 +307,9 @@ export class ListOfValuesImpl implements Popup, OnInit, AfterViewInit
                 this.rblock.navigable = true;
                 this.rblock.focus(0);
             }
+
+            if (event.key == keymap.enter)
+                this.execute();
         }
 
         if (event.type == Trigger.Key && event.field == "description")

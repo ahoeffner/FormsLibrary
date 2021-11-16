@@ -3,8 +3,8 @@ import { KeyMap, KeyMapper } from "./KeyMap";
 
 export class WinKeyMap implements KeyMap
 {
+    close:string = KeyMapper.map({code: KeyCodes.f4});
     zoom:string = KeyMapper.map({code: 90, ctrl: true});
-    close:string = KeyMapper.map({code: 87, ctrl: true});
 
     undo:string = KeyMapper.map({code: 90, meta: true});
     paste:string = KeyMapper.map({code: 86, ctrl: true});
@@ -54,7 +54,7 @@ export class WinKeyMap implements KeyMap
             <table>
                 <tr><td class="kmtd">   connect            </td><td>   ctrl-c             </td></tr>
                 <tr><td class="kmtd">   disconnect         </td><td>   ctrl-shift-c       </td></tr>
-                <tr><td class="kmtd">   close              </td><td>   ctrl-w             </td></tr>
+                <tr><td class="kmtd">   close              </td><td>   f4                 </td></tr>
                 <tr><td class="kmtd">   zoom               </td><td>   ctrl-z             </td></tr>
                 <tr><td class="kmtd">   datepicker         </td><td>   F9                 </td></tr>
                 <tr><td class="kmtd">   list of values     </td><td>   F9                 </td></tr>

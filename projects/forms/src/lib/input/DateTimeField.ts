@@ -6,7 +6,7 @@ export class DateTimeField extends TextField
 {
     private dateval:Date = null;
     private formatted:string = null;
-    private format:string = dates.getFormat()+" hh:mm:ss";
+    private format:string = dates.getFormat()+" hh:MM:ss";
 
     public get value() : any
     {
@@ -24,6 +24,7 @@ export class DateTimeField extends TextField
 
     public set value(value:any)
     {
+        console.log("Set DateTime, format: "+this.format+" value: "+value);
         if (value == null || value.constructor.name != "Date")
         {
             if (value != this.formatted || value != this.element$.value)
