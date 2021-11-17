@@ -16,12 +16,11 @@ export class dates
 
     private static delim:string = null;
     private static deffmt:string = null;
+    private static deftmfmt:string = null;
     private static tokens$:datepart[] = null;
-    private static formattokens:Set<string> = null;
 
     private static init(format:string) : void
     {
-        dates.deffmt = format;
         this.tokens$ = dates.split(format,"-/:. ");
 
         for(let i = 0; i < this.tokens$.length; i++)
@@ -32,26 +31,23 @@ export class dates
                 break;
             }
         }
-
-        dates.formattokens = new Set<string>();
-        dates.formattokens.add("m");
-        dates.formattokens.add("o");
-        dates.formattokens.add("d");
-        dates.formattokens.add("y");
-        dates.formattokens.add("a");
-        dates.formattokens.add("h");
-        dates.formattokens.add("s");
-        dates.formattokens.add("z");
     }
 
-    public static setFormat(format:string) : void
+    public static setFormat(datefmt:string, timefmt:string) : void
     {
-        dates.init(format);
+        dates.deffmt = datefmt;
+        dates.deftmfmt = timefmt;
+        dates.init(datefmt);
     }
 
-    public static getFormat() : string
+    public static getDateFormat() : string
     {
         return(dates.deffmt);
+    }
+
+    public static getDateTimeFormat() : string
+    {
+        return(dates.deftmfmt);
     }
 
     public static parse(datestr:string, format?:string) : Date
@@ -68,9 +64,29 @@ export class dates
         return(parseimpl(datestr,format));
     }
 
+    public static parsetime(datestr:string, format?:string) : Date
+    {
+        if (format == null) format = dates.deftmfmt;
+
+        if (datestr == null || datestr.trim().length == 0)
+            return(null);
+
+        let date:Date = parseimpl(datestr,format);
+        if (date == null) datestr = dates.reformat(datestr);
+
+        if (datestr == null) return(null);
+        return(parseimpl(datestr,format));
+    }
+
     public static format(date:Date, format?:string) : string
     {
         if (format == null) format = dates.deffmt;
+        return(formatimpl(date,format));
+    }
+
+    public static formattime(date:Date, format?:string) : string
+    {
+        if (format == null) format = dates.deftmfmt;
         return(formatimpl(date,format));
     }
 

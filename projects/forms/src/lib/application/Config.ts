@@ -17,6 +17,7 @@ export class Config
     private keymap:KeyMap;
     private colors$:Theme;
     private datefmt$:string;
+    private timefmt$:string;
     private config:any = null;
     private notifications:any[] = [];
     private invoker:Promise<any> = null;
@@ -67,7 +68,12 @@ export class Config
         this.config = config;
 
         this.datefmt$ = this.config["datefmt"];
-        dates.setFormat(this.datefmt$);
+        this.timefmt$ = this.config["datetimefmt"];
+
+        if (this.timefmt$ == null)
+            this.timefmt$ = this.datefmt$ + " hh:mm:ss";
+
+        dates.setFormat(this.datefmt$,this.timefmt$);
 
         if (this.config["locale"] != null)
             this.lang = this.config["locale"];

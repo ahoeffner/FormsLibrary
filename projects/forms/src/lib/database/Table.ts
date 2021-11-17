@@ -70,7 +70,7 @@ export class Table
             this.index.set(column.name,column);
 
             let date:boolean = false;
-            if (column.type == Column.date)
+            if (column.type == Column.date || column.type == Column.datetime)
                 date = true;
 
             this.dates.push(date);

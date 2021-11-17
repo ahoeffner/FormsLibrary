@@ -462,6 +462,9 @@ export class FieldInstance implements AfterViewInit
     {
         let keypress:boolean = false;
 
+        //if (event.type.indexOf("key") >= 0) 
+            //console.log(event);
+
         if (this.fgroup$ == null)
             return;
 
