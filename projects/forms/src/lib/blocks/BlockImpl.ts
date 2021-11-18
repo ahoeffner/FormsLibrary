@@ -453,6 +453,12 @@ export class BlockImpl
     }
 
 
+    public getRecordNumber(row:number) : number
+    {
+        return(this.sum(this.offset,row));
+    }
+
+
     public getField(row:number, name:string) : Field
     {
         return(this.records[+row]?.getField(name));

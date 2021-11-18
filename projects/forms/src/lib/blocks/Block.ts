@@ -137,6 +137,11 @@ export class Block
         return(this._impl_.record);
     }
 
+    public getRecord(row:number) : number
+    {
+        return(this._impl_.getRecordNumber(row));
+    }
+
     public async createControlRecord() : Promise<number>
     {
         return(this._impl_.createControlRecord());
