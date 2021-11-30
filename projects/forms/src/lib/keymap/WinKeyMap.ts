@@ -20,7 +20,7 @@ export class WinKeyMap implements KeyMap
     insertafter:string = KeyMapper.map({code: KeyCodes.insert});
     insertbefore:string = KeyMapper.map({code: KeyCodes.insert, shift:true});
 
-    dublicate:string = KeyMapper.map({code: 86, ctrl: true});
+    dublicate:string = KeyMapper.map({code: 0, ctrl: true});
     delete:string = KeyMapper.map({code: KeyCodes.delete, ctrl: true});
 
     commit:string = KeyMapper.map({code: KeyCodes.f10, ctrl: false, shift: false});

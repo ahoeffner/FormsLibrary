@@ -10,6 +10,7 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldDefinition, FieldOptions } from './FieldDefinition';
 import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
+import { Trace } from '../application/Trace';
 
 
 @Component({
@@ -462,9 +463,6 @@ export class FieldInstance implements AfterViewInit
     {
         let keypress:boolean = false;
 
-        if (event.type.indexOf("key") >= 0) 
-            console.log(event.type+" "+event.keyCode);
-
         if (this.fgroup$ == null)
             return;
 
@@ -526,7 +524,7 @@ export class FieldInstance implements AfterViewInit
             if (key == keymap.undo || key == keymap.paste)
             {
                 setTimeout(() => {this.blur()},1);
-                setTimeout(() => {this.focus()},1);
+                setTimeout(() => {this.focus()},2);
                 return;
             }
 

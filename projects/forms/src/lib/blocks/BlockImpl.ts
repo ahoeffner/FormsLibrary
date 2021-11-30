@@ -25,6 +25,7 @@ import { ListOfValuesImpl } from "../listval/ListOfValuesImpl";
 import { ApplicationImpl } from "../application/ApplicationImpl";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
 import { FieldTriggerEvent, KeyTriggerEvent, Origin, SQLTriggerEvent, TriggerEvent } from "../events/TriggerEvent";
+import { Features } from "../application/Features";
 
 
 export class BlockImpl
@@ -1410,7 +1411,7 @@ export class BlockImpl
         // Enter query
         if (type == "key" && key == keymap.enterquery)
         {
-            if (this.state == FormState.entqry)
+            if (this.state == FormState.entqry && Features.ShowLastQuery)
             {
                 for (let i = 0; i < this.lastqry.length; i++)
                 {

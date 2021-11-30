@@ -59,6 +59,8 @@ export {FormArea} from './lib/forms/FormArea';
 export {WindowOptions} from './lib/forms/WindowOptions';
 export {FormDefinition} from './lib/forms/FormsDefinition';
 
+export {Trace} from './lib/application/Trace';
+export {Features} from './lib/application/Features';
 export {Application} from './lib/application/Application';
 export {Theme, defaultTheme} from './lib/application/Themes';
 
