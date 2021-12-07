@@ -466,6 +466,12 @@ export class BlockImpl
     }
 
 
+    public getFieldInstance(row:number, name:string, id:string) : FieldInstance
+    {
+        return(this.records[+row]?.getFieldById(name,id));
+    }
+
+
     public addRecord(record:Record)
     {
         this.records.push(record);

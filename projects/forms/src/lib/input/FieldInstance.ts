@@ -10,7 +10,6 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldDefinition, FieldOptions } from './FieldDefinition';
 import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
-import { Trace } from '../application/Trace';
 
 
 @Component({

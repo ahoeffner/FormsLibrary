@@ -49,6 +49,7 @@ export class TriggerEvent
 
 export class KeyTriggerEvent extends TriggerEvent
 {
+    private id$:string;
     private key$:keymap;
     private field$:string;
     private origin$:number;
@@ -62,9 +63,15 @@ export class KeyTriggerEvent extends TriggerEvent
 
         if (field != null)
         {
+            this.id$ = field.id;
             this.field$ = field.name;
             this["record$"] = field.row;
         }
+    }
+
+    public get id() : string
+    {
+        return(this.id$);
     }
 
     public get key() : keymap

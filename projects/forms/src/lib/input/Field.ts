@@ -71,6 +71,21 @@ export class Field
         return(this.index.get(guid));
     }
 
+    public getInstanceById(id:string) : FieldInstance
+    {
+        return(this.ids.get(id));
+    }
+
+    public getInstanceIds() : string[]
+    {
+        let ids:string[] = [];
+
+        for(let key of this.ids.keys())
+            ids.push(key);
+
+        return(ids);
+    }
+
     public getFirstInstance() : FieldInstance
     {
         if (this.fields.length > 0)

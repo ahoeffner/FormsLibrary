@@ -112,10 +112,25 @@ export class Record
         return(this.index.get(name.toLowerCase()));
     }
 
-    public getFieldByGuid(name:string, guid:string) : FieldInstance
+    public getFieldById(name:string, id:string) : FieldInstance
     {
         let field:Field = this.index.get(name.toLowerCase());
-        if (field != null) return(field.getInstance(guid));
-        return(null);
+        
+        if (field == null) 
+        {
+            console.log("No such field <"+name+">");
+            return(null);
+        }
+
+        let inst:FieldInstance = field.getInstanceById(id);
+
+        if (inst == null)
+        {
+            console.log("No such instance "+name+"["+id+"] Possible values:");
+            field.getInstanceIds().forEach(id => {console.log("id: "+id)});
+            return(null);
+        } 
+        
+        return(inst);
     }
 }

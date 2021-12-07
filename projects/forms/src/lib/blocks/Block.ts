@@ -67,6 +67,12 @@ export class Block
         this._impl_.getField(row,field).focus();
     }
 
+    public goFieldById(field:string, id:string, row?:number) : void
+    {
+        if (row == null) row = this._impl_.row;
+        this._impl_.getFieldInstance(row,field,id)?.focus();
+    }
+
     public get ready() : boolean
     {
         return(this._impl_.ready)
