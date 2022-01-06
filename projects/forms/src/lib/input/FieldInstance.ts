@@ -10,6 +10,7 @@ import { ApplicationImpl } from "../application/ApplicationImpl";
 import { FieldDefinition, FieldOptions } from './FieldDefinition';
 import { FieldImplementation, FieldInterface, FieldType } from './FieldType';
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from "@angular/core";
+import { Trace } from '../application/Trace';
 
 
 @Component({
@@ -461,6 +462,9 @@ export class FieldInstance implements AfterViewInit
     public async onEvent(event:any)
     {
         let keypress:boolean = false;
+
+        if (Trace.keystroke && (event.type+"").startsWith("key"))
+            console.log(event.type+" key="+event.keyCode)
 
         if (this.fgroup$ == null)
             return;
