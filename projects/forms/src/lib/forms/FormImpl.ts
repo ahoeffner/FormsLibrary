@@ -39,6 +39,7 @@ import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
 import { LOVDefinition, LOVDefinitions } from "../annotations/LOVDefinitions";
 import { KeyTriggerEvent, Origin, TriggerEvent } from "../events/TriggerEvent";
 import { TriggerDefinition, TriggerDefinitions } from "../annotations/TriggerDefinitions";
+import { Trace } from "../application/Trace";
 
 
 export class FormImpl

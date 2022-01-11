@@ -1,3 +1,4 @@
+import { Trace } from "./Trace";
 import { Config } from "./Config";
 import { Menu } from "../menu/Menu";
 import { Context } from "./Context";
@@ -58,6 +59,8 @@ export class ApplicationImpl
         this.instances = new InstanceControl(this.formsctl);
         this.setFormsDefinitions(FormDefinitions.getForms());
         this.state.appmenu = this.createmenu(this.state.menu);
+
+        console.log("Version 3.14");
     }
 
 
@@ -515,13 +518,24 @@ export class ApplicationImpl
             return;
         }
 
+        if (key == keymap.commit)
+        {
+            this.connection.commit();
+            return;
+        }
+
+        if (key == keymap.rollback)
+        {
+            this.connection.rollback();
+            return;
+        }
+
+
         if
         (
             key == keymap.close           ||
             key == keymap.delete          ||
             key == keymap.listval         ||
-            key == keymap.commit          ||
-            key == keymap.rollback        ||
             key == keymap.clearform       ||
             key == keymap.insertafter     ||
             key == keymap.insertbefore    ||

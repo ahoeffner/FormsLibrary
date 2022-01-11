@@ -1,7 +1,7 @@
 export class Trace
 {
     public static keystroke:boolean = false;
-    public static flag2:boolean = false;
+    public static fieldinfo:boolean = false;
     public static flag3:boolean = false;
     public static flag4:boolean = false;
     public static flag5:boolean = false;

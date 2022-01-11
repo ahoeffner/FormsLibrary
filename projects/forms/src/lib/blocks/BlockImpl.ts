@@ -3,6 +3,7 @@ import { Block } from "./Block";
 import { Field } from "../input/Field";
 import { Utils } from "../utils/Utils";
 import { FieldData } from "./FieldData";
+import { Trace } from "../application/Trace";
 import { keymap } from "../keymap/KeyMap";
 import { FormImpl } from "../forms/FormImpl";
 import { FieldType } from "../input/FieldType";
