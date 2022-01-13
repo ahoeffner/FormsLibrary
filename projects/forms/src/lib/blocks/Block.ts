@@ -9,6 +9,7 @@ import { FieldDefinition } from "../input/FieldDefinition";
 import { TriggerFunction } from "../events/TriggerFunction";
 import { TableDefinition } from "../database/TableDefinition";
 import { ListOfValuesFunction } from "../listval/ListOfValuesFunction";
+import { Field } from "../input/Field";
 
 
 export class Block
@@ -46,9 +47,34 @@ export class Block
         return(await this._impl_.setValue(record,field,value));
     }
 
+    public enable(field:string, flag:boolean) : void
+    {
+        let row:number = this._impl_.row;
+        let fld:Field = this._impl_.getField(row,field);
+        let def:FieldDefinition = fld.definition;
+
+        def.fieldoptions.insert = flag;
+        def.fieldoptions.update = flag;
+
+        fld.setDefinition(def,true);
+        fld.enable(!flag);    
+    }
+
     public get querymode() : boolean
     {
         return(this._impl_.querymode);
+    }
+
+    public get inserting() : boolean
+    {
+        let record:number = this._impl_.record;
+        return(this._impl_.getRecord(record).state == RecordState.insert);
+    }
+
+    public get updating() : boolean
+    {
+        let record:number = this._impl_.record;
+        return(this._impl_.getRecord(record).state == RecordState.update);
     }
 
     public empty() : boolean
