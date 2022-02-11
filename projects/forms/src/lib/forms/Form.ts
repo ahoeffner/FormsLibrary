@@ -72,6 +72,16 @@ export class Form implements OnInit, AfterViewInit
         return(this._impl_.getApplication().connected);
     }
 
+    public async commit() : Promise<void>
+    {
+        await this._impl_.getApplication().getApplication().commit();
+    }
+
+    public async rollback() : Promise<void>
+    {
+        await this._impl_.getApplication().getApplication().rollback();
+    }
+
     public groupfields(groups:string[]) : void
     {
         this._impl_.groupfields(groups);

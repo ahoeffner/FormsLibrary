@@ -520,6 +520,7 @@ export class ApplicationImpl
 
         if (key == keymap.commit)
         {
+            console.log("commit");
             this.connection.commit();
             return;
         }

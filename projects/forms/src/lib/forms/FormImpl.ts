@@ -1271,6 +1271,12 @@ export class FormImpl
             if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearform)) return(false);
             this.clear();
         }
+
+        if (type == "key" && key == keymap.commit)
+            if (!this.app.onEvent(event)) return(false);
+
+        if (type == "key" && key == keymap.rollback)
+            if (!this.app.onEvent(event)) return(false);
     }
 
 

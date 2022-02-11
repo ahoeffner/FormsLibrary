@@ -23,6 +23,7 @@ export enum Trigger
     KeyExecuteQuery,
     WhenValidateField,
     WhenValidateRecord,
+    OnNewRecord,
     PreQuery,
     PostQuery,
     PreInsert,

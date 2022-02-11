@@ -37,6 +37,21 @@ export class Block
         return(this.form.connected);
     }
 
+    public async validate() : Promise<boolean>
+    {
+        return(await this._impl_.validate());
+    }
+
+    public async commit() : Promise<void>
+    {
+        await this._impl_.form.getApplication().getApplication().commit();
+    }
+
+    public async rollback() : Promise<void>
+    {
+        await this._impl_.form.getApplication().getApplication().rollback();
+    }
+
     public getValue(record:number, field:string) : any
     {
         return(this._impl_.getValue(record,field));

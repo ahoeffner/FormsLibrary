@@ -348,7 +348,7 @@ export class FieldInstance implements AfterViewInit
 
     private setInputState() : void
     {
-        this.enabled$ = false;
+        this.enabled$ = true;
 
         if (!this.options$.navigable)
         {
@@ -357,6 +357,17 @@ export class FieldInstance implements AfterViewInit
 
             return;
         }
+
+        this.readonly$ = true;
+
+        if (this.state$ == RecordState.insert && this.options$.insert)         this.readonly$ = false;
+        else if (this.state$ == RecordState.update && this.options$.update)    this.readonly$ = false;
+        else if (this.state$ == RecordState.qmode && this.options$.query)      this.readonly$ = false;
+
+        this.clazz.enable = this.enabled$;
+        this.clazz.readonly = this.readonly$;
+
+        /*
 
         if (this.state$ == RecordState.na) this.enabled$ = true;
         else if (this.state$ == RecordState.insert && this.options$.insert) this.enabled$ = true;
@@ -371,9 +382,13 @@ export class FieldInstance implements AfterViewInit
                 this.readonly$ = true;
             }
 
+            if (this.name == "complaint")
+                console.log(this.name+"["+this.row+"] state: "+RecordState[this.state$]+" upd: "+this.options$.update+" enable: "+this.enabled$+" rdonly: "+this.readonly$)
+
             this.clazz.enable = this.enabled$;
             this.clazz.readonly = this.readonly$;
         }
+        */
     }
 
     public get definition() : FieldDefinition
@@ -407,8 +422,12 @@ export class FieldInstance implements AfterViewInit
             }
         }
 
+        let tchange:boolean = true;
+        if (this.def != null && def != null && def.type == this.def.type) 
+            tchange = false;
+
         this.def = def;
-        this.setType(def.type);
+        if (tchange) this.setType(def.type);
 
         if (!this.def.hasOwnProperty("case"))
             this.def.case = Case.mixed;

@@ -1305,6 +1305,11 @@ export class BlockImpl
                     return(false);
                 }
 
+                trgevent = new TriggerEvent(this.alias,this.sum(field.row,this.offset),null);
+
+                if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                    return(false);
+
                 let state:RecordState = this.records[field.row].state
 
                 if (this.masterdetail != null && state != RecordState.na)
@@ -1312,7 +1317,7 @@ export class BlockImpl
             }
 
             this.row = field.row;
-            this.records$[+field.row].current = true;
+            this.records$[+field.row].current = true;    
 
             trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent));
@@ -1468,8 +1473,16 @@ export class BlockImpl
                     return(false);
             }
 
-            return(await this.keydelete());
-        }
+            if (!await this.keydelete())
+                return(false);
+
+            trgevent = new TriggerEvent(this.alias,this.sum(this.row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
+
+            return(true);
+    }
 
         // Insert after
         if (type == "key" && key == keymap.insertafter)
@@ -1486,6 +1499,11 @@ export class BlockImpl
                 field.focus();
                 return(false);
             }
+
+            trgevent = new TriggerEvent(this.alias,this.sum(this.row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
 
             return(true);
         }
@@ -1505,6 +1523,11 @@ export class BlockImpl
                 field.focus();
                 return(false);
             }
+
+            trgevent = new TriggerEvent(this.alias,this.sum(this.row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
 
             return(true);
         }
@@ -1572,6 +1595,11 @@ export class BlockImpl
                     this.masterdetail.querydetails(this,true,true);
             }
 
+            trgevent = new TriggerEvent(this.alias,this.sum(row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
+
             return(true);
         }
 
@@ -1603,6 +1631,11 @@ export class BlockImpl
             if (this.masterdetail != null)
                 this.masterdetail.querydetails(this,true,true);
 
+            trgevent = new TriggerEvent(this.alias,this.sum(row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
+    
             return(true);
         }
 
@@ -1628,6 +1661,11 @@ export class BlockImpl
             if (this.masterdetail != null)
                 this.masterdetail.querydetails(this,true,true);
 
+            trgevent = new TriggerEvent(this.alias,this.sum(this.row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
+    
             return(true);
         }
 
@@ -1651,6 +1689,11 @@ export class BlockImpl
             if (this.masterdetail != null)
                 this.masterdetail.querydetails(this,true,true);
 
+            trgevent = new TriggerEvent(this.alias,this.sum(this.row,this.offset),null);
+
+            if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
+                return(false);
+    
             return(true);
         }
 
@@ -1684,6 +1727,12 @@ export class BlockImpl
             if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearblock)) return(false);
             this.clearblock();
         }
+
+        if (type == "key" && key == keymap.commit && this.form != null)
+            await this.form.onEvent(event,field,type,key);
+
+        if (type == "key" && key == keymap.rollback && this.form != null)
+            await this.form.onEvent(event,field,type,key);
 
         if (type == "key" && key == keymap.clearform && this.form != null)
             await this.form.onEvent(event,field,type,key);
