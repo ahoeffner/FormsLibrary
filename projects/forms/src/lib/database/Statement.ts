@@ -429,6 +429,27 @@ export class Statement
         let updates:bindvalue[] = [];
         let bindvals:bindvalue[] = [];
 
+        if (this.sql$ != null)
+        {
+            let bindvalues:BindValue[] = this.bindvalues;
+
+            if (this.condition$ != null)
+                this.condition$.getAllBindvalues().forEach((bind) => {bindvalues.push(bind);});
+
+            // Bindvalues for the whereclause
+            this.bindvalues.forEach((bindv) =>
+            {
+                bindvals.push
+                ({
+                    name: bindv.name,
+                    type: Column[bindv.type].toLowerCase(),
+                    value: bindv.value
+                });
+            });
+
+            return({sql: this.sql$, bindvalues: bindvals});
+        }
+
         for (let i = 0; i < this.updates$.length; i++)
         {
             updates.push(
@@ -474,6 +495,7 @@ export class Statement
 
         return({sql: this.sql$, bindvalues: bindvals});
     }
+
 
     private builddelete() : SQL
     {

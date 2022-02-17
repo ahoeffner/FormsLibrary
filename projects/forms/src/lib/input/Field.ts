@@ -231,6 +231,12 @@ export class Field
 
     public get definition() : FieldDefinition
     {
+        if (this.def == null)
+        {
+            let ff:FieldInstance = this.getFirstInstance();
+            return(ff.definition);
+        }
+
         return(this.def);
     }
 

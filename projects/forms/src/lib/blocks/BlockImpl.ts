@@ -1317,7 +1317,7 @@ export class BlockImpl
             }
 
             this.row = field.row;
-            this.records$[+field.row].current = true;    
+            this.records$[+field.row].current = true;
 
             trgevent = new FieldTriggerEvent(this.alias,field.name,field.id,this.sum(field.row,this.offset),field.value,field.value,event);
             return(await this.invokeFieldTriggers(Trigger.PreField,field.name,trgevent));
@@ -1635,7 +1635,7 @@ export class BlockImpl
 
             if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
                 return(false);
-    
+
             return(true);
         }
 
@@ -1665,7 +1665,7 @@ export class BlockImpl
 
             if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
                 return(false);
-    
+
             return(true);
         }
 
@@ -1693,7 +1693,7 @@ export class BlockImpl
 
             if (!await this.invokeTriggers(Trigger.OnNewRecord,trgevent))
                 return(false);
-    
+
             return(true);
         }
 

@@ -329,6 +329,7 @@ export class FieldInstance implements AfterViewInit
 
     public enable()
     {
+        this.enabled$ = true;
         this.setInputState();
     }
 
@@ -348,24 +349,26 @@ export class FieldInstance implements AfterViewInit
 
     private setInputState() : void
     {
-        this.enabled$ = true;
-
         if (!this.options$.navigable)
         {
+            this.readonly$ = true;
+            this.enabled$ = false;
+
             if (this.clazz != null)
                 this.clazz.enable = false;
 
             return;
         }
 
-        this.readonly$ = true;
+        if (this.state$ == RecordState.insert && !this.options$.insert)         this.readonly$ = true;
+        else if (this.state$ == RecordState.update && !this.options$.update)    this.readonly$ = true;
+        else if (this.state$ == RecordState.qmode && !this.options$.query)      this.readonly$ = true;
 
-        if (this.state$ == RecordState.insert && this.options$.insert)         this.readonly$ = false;
-        else if (this.state$ == RecordState.update && this.options$.update)    this.readonly$ = false;
-        else if (this.state$ == RecordState.qmode && this.options$.query)      this.readonly$ = false;
-
-        this.clazz.enable = this.enabled$;
-        this.clazz.readonly = this.readonly$;
+        if (this.clazz != null)
+        {
+            this.clazz.enable = this.enabled$;
+            this.clazz.readonly = this.readonly$;    
+        }
 
         /*
 

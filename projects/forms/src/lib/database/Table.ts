@@ -451,7 +451,7 @@ export class Table
 
                 for(let i = 0; i < flds.length; i++)
                     this.cnames.push(flds[i]);
- 
+
                 this.fielddata.fields = flds;
             }
 

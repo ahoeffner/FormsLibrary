@@ -72,7 +72,7 @@ export class Block
         def.fieldoptions.update = flag;
 
         fld.setDefinition(def,true);
-        fld.enable(!flag);    
+        fld.enable(!flag);
     }
 
     public get querymode() : boolean
