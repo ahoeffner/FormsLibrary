@@ -1728,6 +1728,7 @@ export class BlockImpl
             this.clearblock();
         }
 
+
         if (type == "key" && key == keymap.commit && this.form != null)
             await this.form.onEvent(event,field,type,key);
 

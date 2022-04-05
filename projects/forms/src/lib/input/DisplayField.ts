@@ -22,7 +22,7 @@ export class DisplayField implements FieldInterface
         this.element$ = element as HTMLSpanElement;
     }
 
-    public focus(): void 
+    public focus(): void
     {
         this.element$.focus();
     }
@@ -37,7 +37,7 @@ export class DisplayField implements FieldInterface
         this.element$.tabIndex = seq;
     }
 
-    public validate(): boolean 
+    public validate(): boolean
     {
         return(true);
     }
@@ -49,6 +49,8 @@ export class DisplayField implements FieldInterface
 
     public set value(value:any)
     {
-        this.element$.textContent = value;
+        this.element$.innerHTML = "";
+        if (typeof value === "string") this.element$.textContent = value;
+        else this.element$.appendChild(value);
     }
 }

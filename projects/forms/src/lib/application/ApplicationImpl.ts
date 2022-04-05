@@ -27,6 +27,8 @@ import { InstanceControl } from "../forms/InstanceControl";
 import { FormDefinitions } from "../annotations/FormDefinitions";
 import { ContainerControl } from "../container/ContainerControl";
 import { DatabaseDefinitions } from "../annotations/DatabaseDefinitions";
+import { KeyTriggerEvent, Origin } from "../events/TriggerEvent";
+import { Trigger } from "../events/Triggers";
 
 
 export class ApplicationImpl
@@ -520,7 +522,14 @@ export class ApplicationImpl
 
         if (key == keymap.commit)
         {
-            console.log("commit");
+            let form:FormImpl = this.getCurrentForm();
+
+            if (form != null)
+            {
+                let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,null,null,key,null);
+                if (!form.invokeTriggers(Trigger.Key,event,key)) return;
+            }
+
             this.connection.commit();
             return;
         }

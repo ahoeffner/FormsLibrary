@@ -1267,16 +1267,17 @@ export class FormImpl
 
         if (type == "key" && key == keymap.clearform)
         {
-            let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,null,null,keymap.clearform,null);
-            if (!await this.invokeTriggers(Trigger.Key,event,keymap.clearform)) return(false);
+            let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,null,null,key,null);
+            if (!await this.invokeTriggers(Trigger.Key,event,key)) return(false);
             this.clear();
         }
 
-        if (type == "key" && key == keymap.commit)
+        if (type == "key")
+        {
+            let event:KeyTriggerEvent = new KeyTriggerEvent(Origin.Form,null,null,key,null);
+            if (!await this.invokeTriggers(Trigger.Key,event,key)) return(false);
             if (!this.app.onEvent(event)) return(false);
-
-        if (type == "key" && key == keymap.rollback)
-            if (!this.app.onEvent(event)) return(false);
+        }
     }
 
 

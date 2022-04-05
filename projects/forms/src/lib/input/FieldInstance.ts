@@ -367,7 +367,7 @@ export class FieldInstance implements AfterViewInit
         if (this.clazz != null)
         {
             this.clazz.enable = this.enabled$;
-            this.clazz.readonly = this.readonly$;    
+            this.clazz.readonly = this.readonly$;
         }
 
         /*
@@ -426,7 +426,7 @@ export class FieldInstance implements AfterViewInit
         }
 
         let tchange:boolean = true;
-        if (this.def != null && def != null && def.type == this.def.type) 
+        if (this.def != null && def != null && def.type == this.def.type)
             tchange = false;
 
         this.def = def;
@@ -545,7 +545,7 @@ export class FieldInstance implements AfterViewInit
 
             let map:string = KeyMapper.map(keydef);
             let key:keymap = KeyMapper.keymap(map);
-            
+
             if (key == keymap.undo || key == keymap.paste)
             {
                 setTimeout(() => {this.blur()},1);
