@@ -414,8 +414,6 @@ export class BlockImpl
         {
             let field:Field = this.records[0].getField(column);
             if (field != null) field.value = value;
-			let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,column,null,+record,value,previous);
-			this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
 			return(true);
         }
 
@@ -872,8 +870,11 @@ export class BlockImpl
             return(false);
         }
 
-        if (this.masterdetail != null)
-            this.masterdetail.querydetails(this,false,true);
+		if (this.data.rows > 0)
+		{
+			if (this.masterdetail != null)
+	            this.masterdetail.querydetails(this,false,true);
+		}
 
         this.row = 0;
         await this.display(0);
@@ -882,8 +883,16 @@ export class BlockImpl
         this.state = FormState.normal;
         this.records[0].current = true;
 
-        if (this.masterdetail != null)
-            this.masterdetail.done(this,true);
+		if (this.data.rows > 0)
+		{
+			if (this.masterdetail != null)
+	            this.masterdetail.done(this,true);
+		}
+		else
+		{
+			if (this.masterdetail != null)
+	            this.masterdetail.finished();
+		}
 
         return(true);
     }
@@ -1363,6 +1372,13 @@ export class BlockImpl
                 this.field.focus();
                 return(false);
             }
+
+			if (this.state == FormState.entqry)
+			{
+				let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,field.name,null,+this.sum(field.row,this.offset),field.value,null);
+				this.invokeFieldTriggers(Trigger.PostChange,field.name,trgevent);
+				return(true);
+			}
 
             return(true);
         }

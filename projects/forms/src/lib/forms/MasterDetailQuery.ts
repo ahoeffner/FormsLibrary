@@ -1,4 +1,5 @@
 import { BlockImpl } from "../blocks/BlockImpl";
+import { RecordState } from "../blocks/Record";
 import { dependencies, MasterDetail } from "./MasterDetail";
 
 
