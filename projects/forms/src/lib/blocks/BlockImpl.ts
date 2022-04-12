@@ -408,15 +408,16 @@ export class BlockImpl
     public async setValue(record:number, column:string, value:any) : Promise<boolean>
     {
         if (this.data == null) return(false);
+        let previous:any = this.data.getValue(+record,column);
 
         if (this.state == FormState.entqry)
         {
             let field:Field = this.records[0].getField(column);
             if (field != null) field.value = value;
-            return(true);
+			let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,column,null,+record,value,previous);
+			this.invokeFieldTriggers(Trigger.PostChange,column,trgevent);
+			return(true);
         }
-
-        let previous:any = this.data.getValue(+record,column);
 
         if (!await this.lockrecord(record,column))
             return(false);
