@@ -310,7 +310,7 @@ export class MasterDetail
         if (init == null)
             init = false;
 
-        if (init)
+        if (init || this.query == null)
         {
             if (this.query != null)
             {
