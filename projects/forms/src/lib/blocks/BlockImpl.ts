@@ -1821,8 +1821,14 @@ export class BlockImpl
 
     private sum(n1:number,n2:number, n3?:number) : number
     {
-        let s:number = +n1 + +n2;
-        if (n3 != null) s = +s + +n3;
+		let s:number = +n1;
+
+		s += +n1;
+		s += +n2;
+		if (n3 != null) s += +n3;
+
+        //let s:number = +n1 + +n2;
+        //if (n3 != null) s = +s + +n3;
         return(s);
     }
 }
