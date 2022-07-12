@@ -83,7 +83,9 @@ export class Block
     public get inserting() : boolean
     {
         let record:number = this._impl_.record;
-        return(this._impl_.getRecord(record).state == RecordState.insert);
+		let row:number = this._impl_.getRowNumber(record);
+		console.log("inserting ? rec: "+record+" row: "+row);
+        return(this._impl_.getRecord(row).state == RecordState.insert);
     }
 
     public get updating() : boolean
