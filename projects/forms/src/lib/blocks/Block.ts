@@ -84,14 +84,14 @@ export class Block
     {
         let record:number = this._impl_.record;
 		let row:number = this._impl_.getRowNumber(record);
-		console.log("inserting ? rec: "+record+" row: "+row);
         return(this._impl_.getRecord(row).state == RecordState.insert);
     }
 
     public get updating() : boolean
     {
         let record:number = this._impl_.record;
-        return(this._impl_.getRecord(record).state == RecordState.update);
+		let row:number = this._impl_.getRowNumber(record);
+        return(this._impl_.getRecord(row).state == RecordState.update);
     }
 
     public empty() : boolean

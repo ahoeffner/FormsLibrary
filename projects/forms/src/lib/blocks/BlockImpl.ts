@@ -303,11 +303,13 @@ export class BlockImpl
         fields.forEach((inst) =>
         {
             let name:string = inst.name;
+			this.fieldidx$.set(name,inst);
 
             if (inst.id != null && inst.id.length > 0)
+			{
                 name += "."+inst.id;
-
-            this.fieldidx$.set(name,inst);
+				this.fieldidx$.set(name,inst);
+			}
         });
     }
 
@@ -459,8 +461,6 @@ export class BlockImpl
 
     public getRecord(row:number) : Record
     {
-		console.log("get row: "+row+", records: "+this.records$.length);
-
 		if (+row < +this.records$.length)
             return(this.records$[+row]);
 
@@ -1276,7 +1276,6 @@ export class BlockImpl
                     let fname:string = columns[c];
                     if (field != null) fname = field.name;
 
-					console.log("invoke postchange, row: "+r+" offset: "+this.offset+" rec: "+this.sum(r,this.offset))
                     let trgevent:FieldTriggerEvent = new FieldTriggerEvent(this.alias,fname,null,this.sum(r,this.offset),value,value);
                     execs.push(this.invokeFieldTriggers(Trigger.PostChange,fname,trgevent));
                 }
@@ -1613,18 +1612,13 @@ export class BlockImpl
             let row:number = this.sum(field.row,1);
             if (this.data == null) return(false);
 
-			console.log("row: "+row+" offset: "+this.offset)
-
             if (+row >= +this.rows)
             {
-				console.log("fetch before: "+this.records$.length+" row: "+row+" offset: "+this.offset)
                 row = +this.rows - 1;
                 if (this.data == null) return(false);
 
                 let offset:number = this.sum(field.row,this.offset);
                 let fetched:number = await this.data.fetch(offset,1);
-
-				console.log("fetch after: "+this.records$.length+" row: "+row+" offset: "+this.offset)
 
                 if (fetched == 0) return(false);
                 await this.display(this.sum(this.offset,1));
@@ -1827,7 +1821,6 @@ export class BlockImpl
 
     public async invokeFieldTriggers(type:Trigger, field:string, event:TriggerEvent, key?:keymap) : Promise<boolean>
     {
-		console.log(Trigger[type]+" fired with record: "+event.record+" of "+this.records.length);
         if (this.form != null) if (!await this.form.invokeFieldTriggers(type,field,event,key)) return(false);
         return(await this.triggers.invokeFieldTriggers(type,field,event,key));
     }
